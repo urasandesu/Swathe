@@ -1,0 +1,18 @@
+// UrasandesuSwathe.idl : Urasandesu.Swathe の IDL ソース
+//
+
+// このファイルは、タイプ ライブラリ (UrasandesuSwathe.tlb) およびマーシャリング コードを
+// 作成するために MIDL ツールによって処理されます。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(A67E348A-EDB5-4496-B837-544E0FEF131A),
+	version(1.0),
+]
+library UrasandesuSwatheLib
+{
+	importlib("stdole2.tlb");
+};
+

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{a9682ec1-7dc2-42a0-9973-4be34c0ac8b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="生成されたファイル">
+      <UniqueIdentifier>{374e1eaa-69f1-4311-864c-062e93c43079}</UniqueIdentifier>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Urasandesu.Swatheps.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UrasandesuSwathe_i.c">
+      <Filter>生成されたファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="UrasandesuSwathe_p.c">
+      <Filter>生成されたファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="dlldata.c">
+      <Filter>生成されたファイル</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
