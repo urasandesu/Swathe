@@ -17,6 +17,84 @@
       <UniqueIdentifier>{35b38539-0c36-41f5-a0e1-70b48ec3be11}</UniqueIdentifier>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu">
+      <UniqueIdentifier>{470fc9b4-9459-4026-aaf5-5ca14d59d4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe">
+      <UniqueIdentifier>{4045de02-b117-4932-a9e6-bed295dae7d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Urasandesu">
+      <UniqueIdentifier>{ab47a13c-4a8b-40dd-ae47-c43d946db140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Urasandesu\Swathe">
+      <UniqueIdentifier>{d6fabcb2-7699-4326-84c1-1b4536532b96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\ApiHolders">
+      <UniqueIdentifier>{58c31d7a-2dcd-460f-bfea-40a082995233}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Urasandesu\Swathe\ApiHolders">
+      <UniqueIdentifier>{76f3665a-2c38-4980-ab26-02ba2df0da81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\SwatheStorageDetail">
+      <UniqueIdentifier>{b5b90146-0fad-4ec6-8bac-782da0d210c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Fusion">
+      <UniqueIdentifier>{9f9da1cf-fc3f-4d17-8d37-954f7885963e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Fusion\ApiHolders">
+      <UniqueIdentifier>{0fc935c3-e8bd-4dd5-8a00-b1b9c9b01bc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Urasandesu\Swathe\Fusion">
+      <UniqueIdentifier>{fc633202-01db-43ae-8fb8-36f81abca38f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Urasandesu\Swathe\Fusion\ApiHolders">
+      <UniqueIdentifier>{b64b76d9-863c-47d7-aba9-4df69ea021d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Fusion\Interfaces">
+      <UniqueIdentifier>{4234e491-c6eb-4cac-ac8a-81196f8bfa9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Hosting">
+      <UniqueIdentifier>{f68c0206-fb64-42d5-87d3-e4ba13936787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Hosting\ApiHolders">
+      <UniqueIdentifier>{327deeb2-1e0d-4ed8-8421-1fd3403f8b89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Urasandesu\Swathe\Hosting">
+      <UniqueIdentifier>{6ff57af3-534a-472d-b0d3-2dd45b213aa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Urasandesu\Swathe\Hosting\ApiHolders">
+      <UniqueIdentifier>{39b8886f-6943-480c-9edc-8f9e1a184029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Hosting\Interfaces">
+      <UniqueIdentifier>{53b79dbf-9048-46dd-93a0-1a7121397fec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Interfaces">
+      <UniqueIdentifier>{033fdbb7-4670-4adb-b044-e6f19745c7db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Metadata">
+      <UniqueIdentifier>{e82cdeee-1d86-4378-bcfb-bf4ec42994c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders">
+      <UniqueIdentifier>{04ec6d82-1454-416b-b233-fefac31d3cfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces">
+      <UniqueIdentifier>{bd1482a1-c166-41ec-a22e-a4ce490637f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\Profiling">
+      <UniqueIdentifier>{3ba50bd2-8d70-41c9-b245-6ca461628cf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Urasandesu\Swathe\Profiling">
+      <UniqueIdentifier>{3d59406c-cd89-4fa0-ad71-771bbeb12c0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\StrongNaming">
+      <UniqueIdentifier>{78459558-03f4-46af-870c-dd4380f74869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\ApiHolders">
+      <UniqueIdentifier>{ccb86e05-cf70-4b42-8f81-6052b3811d0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\Interfaces">
+      <UniqueIdentifier>{4af5ec89-eeb2-4b30-b405-042db740a153}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -30,6 +108,24 @@
     </ClCompile>
     <ClCompile Include="UrasandesuSwathe_i.c">
       <Filter>生成されたファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\BaseCppAnonymStorage.cpp">
+      <Filter>ソース ファイル\Urasandesu\Swathe</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\ApiHolders\DefaultCppAnonymStorageApiHolder.cpp">
+      <Filter>ソース ファイル\Urasandesu\Swathe\ApiHolders</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\Fusion\ApiHolders\DefaultFusionInfoApiHolder.cpp">
+      <Filter>ソース ファイル\Urasandesu\Swathe\Fusion\ApiHolders</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\Hosting\ApiHolders\DefaultHostInfoApiHolder.cpp">
+      <Filter>ソース ファイル\Urasandesu\Swathe\Hosting\ApiHolders</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\Hosting\ApiHolders\DefaultRuntimeHostApiHolder.cpp">
+      <Filter>ソース ファイル\Urasandesu\Swathe\Hosting\ApiHolders</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\Profiling\DefaultInfoProfilingApi.cpp">
+      <Filter>ソース ファイル\Urasandesu\Swathe\Profiling</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +143,651 @@
     </ClInclude>
     <ClInclude Include="UrasandesuSwathe_i.h">
       <Filter>生成されたファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe.h">
+      <Filter>ヘッダー ファイル\Urasandesu</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\MetaData.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\AssemblyQueryTypes.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\BaseAssemblyInfo.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\BaseAssemblyInfoFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\BaseFusionInfo.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\BaseFusionInfoFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\FusionDependsOn.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\ApiHolders\DefaultAssemblyInfoApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\ApiHolders\DefaultAssemblyInfoApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\ApiHolders\DefaultFusionInfoApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\ApiHolders\DefaultFusionInfoApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\Interfaces\AssemblyInfoApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\Interfaces\AssemblyInfoLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\Interfaces\FusionInfoApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\Interfaces\FusionInfoLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Fusion\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\BaseHostInfo.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\BaseHostInfoFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\BaseRuntimeHost.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\BaseRuntimeHostFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\HostingDependsOn.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\ImageFileMachine.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\PortableExecutableKinds.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\ApiHolders\DefaultHostInfoApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\ApiHolders\DefaultHostInfoApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\ApiHolders\DefaultRuntimeHostApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\ApiHolders\DefaultRuntimeHostApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\Interfaces\HostInfoApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\Interfaces\HostInfoLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\Interfaces\RuntimeHostApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\Interfaces\RuntimeHostLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Hosting\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseAssemblyMetadata.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseAssemblyMetadataFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseAssemblyNameMetadataGenerator.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseAssemblyNameMetadataGeneratorFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseFieldNameMetadataGenerator.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseFieldNameMetadataGeneratorFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseIAssemblyMetadata.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseIAssemblyMetadataFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseIMethodMetadata.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseIMethodMetadataFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseIModuleMetadata.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseIModuleMetadataFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseInstruction.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseInstructionFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseITypeMetadata.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseITypeMetadataFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseLocalNameMetadataGenerator.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseLocalNameMetadataGeneratorFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMetadataDispenser.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMetadataDispenserFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMetadataInfo.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMetadataInfoFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMethodBodyWriter.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMethodBodyWriterFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMethodMetadata.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMethodMetadataFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMethodNameMetadataGenerator.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseMethodNameMetadataGeneratorFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseModuleMetadata.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseModuleMetadataFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseModuleNameMetadataGenerator.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseModuleNameMetadataGeneratorFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BasePropertyNameMetadataGenerator.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BasePropertyNameMetadataGeneratorFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseTypeMetadata.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseTypeMetadataFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseTypeNameMetadataGenerator.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseTypeNameMetadataGeneratorFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\CallingConventions.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ControlFlow.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ControlFlowFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ControlFlows.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ControlFlowTypes.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\FieldAttributes.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\IMetaDataImport2Impl.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\MetadataDependsOn.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\MetadataSpecialValues.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\MethodAttributes.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OpCode.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OpCodeFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OpCodeKind.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OpCodeKindFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OpCodeKinds.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OpCodeKindTypes.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OpCodes.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OpCodeTypes.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OperandParam.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OperandParamFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OperandParams.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\OperandParamTypes.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\PropertyAttributes.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\SignatureUtil.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\StackBehaviour.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\StackBehaviourFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\StackBehaviours.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\StackBehaviourTypes.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\TypeAttributes.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\TypeKinds.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultAssemblyMetadataApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultAssemblyMetadataApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultAssemblyNameMetadataGeneratorApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultAssemblyNameMetadataGeneratorApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultFieldNameMetadataGeneratorApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultFieldNameMetadataGeneratorApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultIAssemblyMetadataApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultIAssemblyMetadataApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultIMethodMetadataApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultIMethodMetadataApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultIModuleMetadataApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultIModuleMetadataApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultInstructionApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultInstructionApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultITypeMetadataApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultITypeMetadataApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultLocalNameMetadataGeneratorApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultLocalNameMetadataGeneratorApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMetadataDispenserApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMetadataDispenserApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMetadataInfoApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMetadataInfoApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMethodBodyWriterApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMethodBodyWriterApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMethodMetadataApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMethodMetadataApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMethodNameMetadataGeneratorApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultMethodNameMetadataGeneratorApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultModuleMetadataApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultModuleMetadataApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultModuleNameMetadataGeneratorApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultModuleNameMetadataGeneratorApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultPropertyNameMetadataGeneratorApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultPropertyNameMetadataGeneratorApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultTypeMetadataApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultTypeMetadataApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultTypeNameMetadataGeneratorApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\ApiHolders\DefaultTypeNameMetadataGeneratorApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\AssemblyMetadataApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\AssemblyMetadataLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\AssemblyNameMetadataGeneratorApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\AssemblyNameMetadataGeneratorLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\FieldNameMetadataGeneratorApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\FieldNameMetadataGeneratorLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\IAssemblyMetadataApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\IAssemblyMetadataLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\IMethodMetadataApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\IMethodMetadataLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\IModuleMetadataApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\IModuleMetadataLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\InstructionApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\InstructionLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\ITypeMetadataApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\ITypeMetadataLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\LocalNameMetadataGeneratorApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\LocalNameMetadataGeneratorLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MetadataDispenserApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MetadataDispenserLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MetadataInfoApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MetadataInfoLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MethodBodyWriterApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MethodBodyWriterLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MethodMetadataApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MethodMetadataLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MethodNameMetadataGeneratorApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\MethodNameMetadataGeneratorLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\ModuleMetadataApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\ModuleMetadataLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\ModuleNameMetadataGeneratorApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\ModuleNameMetadataGeneratorLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\PropertyNameMetadataGeneratorApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\PropertyNameMetadataGeneratorLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\TypeMetadataApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\TypeMetadataLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\TypeNameMetadataGeneratorApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\Interfaces\TypeNameMetadataGeneratorLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Metadata\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\BaseAppDomainProfile.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\BaseAssemblyProfile.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\BaseMethodBodyProfile.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\BaseMethodProfile.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\BaseModuleProfile.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\BaseProcessProfile.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\BaseProfilingInfo.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\BaseTypeProfile.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\DefaultInfoProfilingApi.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\ICorProfilerCallback2Impl.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\IProfilingApiOperable.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\ProfilingDependsOn.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\BaseStrongNameInfo.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\BaseStrongNameInfoFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\BaseStrongNameKey.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\BaseStrongNameKeyFwd.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\StrongNamingDependsOn.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\ApiHolders\DefaultStrongNameInfoApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\ApiHolders\DefaultStrongNameInfoApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\ApiHolders\DefaultStrongNameKeyApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\ApiHolders\DefaultStrongNameKeyApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\Interfaces\StrongNameInfoApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\Interfaces\StrongNameInfoLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\Interfaces\StrongNameKeyApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\StrongNaming\Interfaces\StrongNameKeyLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\StrongNaming\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\BaseSwatheStorage.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\BaseSwatheStorageFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\ApiHolders\DefaultSwatheStorageApiHolder.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\ApiHolders\DefaultSwatheStorageApiHolderFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\ApiHolders</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Interfaces\SwatheStorageApiHolderLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Interfaces\SwatheStorageLabel.hpp">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\SwatheDependsOn.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\SwatheStorageDetail\SwatheStorageApiAt.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\SwatheStorageDetail</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\SwatheStorageDetail\SwatheStorageApiAtFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\SwatheStorageDetail</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\SwatheStorageDetail\SwatheStorageFacade.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\SwatheStorageDetail</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\SwatheStorageDetail\SwatheStorageFacadeFwd.h">
+      <Filter>ヘッダー ファイル\Urasandesu\Swathe\SwatheStorageDetail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
