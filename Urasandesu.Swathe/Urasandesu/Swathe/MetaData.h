@@ -1,9 +1,223 @@
-﻿#pragma once
+﻿/* 
+ * File: MetaData.h
+ * 
+ * Author: Akira Sugiura (urasandesu@gmail.com)
+ * 
+ * 
+ * Copyright (c) 2014 Akira Sugiura
+ *  
+ *  This software is MIT License.
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
+
+
+#pragma once
 #ifndef URASANDESU_SWATHE_METADATA_H
 #define URASANDESU_SWATHE_METADATA_H
 
 #ifndef URASANDESU_SWATHE_METADATA_METADATADEPENDSON_H
 #include <Urasandesu/Swathe/Metadata/MetadataDependsOn.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMETADATAINFOAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultMetadataInfoApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMETADATADISPENSERAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultMetadataDispenserApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTASSEMBLYMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultAssemblyMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTASSEMBLYGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultAssemblyGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMODULEMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultModuleMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMODULEGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultModuleGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTTYPEMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultTypeMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTTYPEGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultTypeGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMETHODMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultMethodMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMETHODGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultMethodGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTFIELDGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultFieldGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTPROPERTYMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultPropertyMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTPROPERTYGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultPropertyGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTPARAMETERMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultParameterMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTPARAMETERGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultParameterGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMETHODBODYMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultMethodBodyMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMETHODBODYGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultMethodBodyGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTLOCALMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultLocalMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTLOCALGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultLocalGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTINSTRUCTIONMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultInstructionMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTINSTRUCTIONGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultInstructionGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTCUSTOMATTRIBUTEMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultCustomAttributeMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTCUSTOMATTRIBUTEGENERATORAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultCustomAttributeGeneratorApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METADATAINFO_H
+#include <Urasandesu/Swathe/Metadata/MetadataInfo.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METADATADISPENSER_H
+#include <Urasandesu/Swathe/Metadata/MetadataDispenser.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_ASSEMBLYMETADATA_H
+#include <Urasandesu/Swathe/Metadata/AssemblyMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_ASSEMBLYGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/AssemblyGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_MODULEMETADATA_H
+#include <Urasandesu/Swathe/Metadata/ModuleMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_MODULEGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/ModuleGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_TYPEMETADATA_H
+#include <Urasandesu/Swathe/Metadata/TypeMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_TYPEGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/TypeGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METHODMETADATA_H
+#include <Urasandesu/Swathe/Metadata/MethodMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METHODGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/MethodGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_FIELDGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/FieldGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_PROPERTYMETADATA_H
+#include <Urasandesu/Swathe/Metadata/PropertyMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_PROPERTYGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/PropertyGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_PARAMETERMETADATA_H
+#include <Urasandesu/Swathe/Metadata/ParameterMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_PARAMETERGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/ParameterGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METHODBODYMETADATA_H
+#include <Urasandesu/Swathe/Metadata/MethodBodyMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METHODBODYGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/MethodBodyGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_LOCALMETADATA_H
+#include <Urasandesu/Swathe/Metadata/LocalMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_LOCALGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/LocalGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_INSTRUCTIONMETADATA_H
+#include <Urasandesu/Swathe/Metadata/InstructionMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_INSTRUCTIONGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/InstructionGenerator.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_CUSTOMATTRIBUTEMETADATA_H
+#include <Urasandesu/Swathe/Metadata/CustomAttributeMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_CUSTOMATTRIBUTEGENERATOR_H
+#include <Urasandesu/Swathe/Metadata/CustomAttributeGenerator.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_METADATA_IMETADATAIMPORT2IMPL_HPP
@@ -16,10 +230,6 @@
 
 #ifndef URASANDESU_SWATHE_METADATA_OPCODETYPES_H
 #include <Urasandesu/Swathe/Metadata/OpCodeTypes.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_SIGNATUREUTIL_HPP
-#include <Urasandesu/Swathe/Metadata/SignatureUtil.hpp>
 #endif
 
 #ifndef URASANDESU_SWATHE_METADATA_STACKBEHAVIOURTYPES_H
@@ -76,310 +286,6 @@
 
 #ifndef URASANDESU_SWATHE_METADATA_OPCODES_H
 #include <Urasandesu/Swathe/Metadata/OpCodes.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METADATAINFOAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MetadataInfoApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTMETADATAINFOAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultMetadataInfoApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METADATAINFOLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MetadataInfoLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEMETADATAINFO_HPP
-#include <Urasandesu/Swathe/Metadata/BaseMetadataInfo.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METADATADISPENSERAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MetadataDispenserApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTMETADATADISPENSERAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultMetadataDispenserApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METADATADISPENSERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MetadataDispenserLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEMETADATADISPENSER_HPP
-#include <Urasandesu/Swathe/Metadata/BaseMetadataDispenser.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_IASSEMBLYMETADATAAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/IAssemblyMetadataApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTIASSEMBLYMETADATAAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultIAssemblyMetadataApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_IASSEMBLYMETADATALABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/IAssemblyMetadataLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEIASSEMBLYMETADATA_HPP
-#include <Urasandesu/Swathe/Metadata/BaseIAssemblyMetadata.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_ASSEMBLYMETADATAAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/AssemblyMetadataApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTASSEMBLYMETADATAAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultAssemblyMetadataApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_ASSEMBLYMETADATALABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/AssemblyMetadataLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEASSEMBLYMETADATA_HPP
-#include <Urasandesu/Swathe/Metadata/BaseAssemblyMetadata.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_ASSEMBLYNAMEMETADATAGENERATORAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/AssemblyNameMetadataGeneratorApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTASSEMBLYNAMEMETADATAGENERATORAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultAssemblyNameMetadataGeneratorApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_ASSEMBLYNAMEMETADATAGENERATORLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/AssemblyNameMetadataGeneratorLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEASSEMBLYNAMEMETADATAGENERATOR_HPP
-#include <Urasandesu/Swathe/Metadata/BaseAssemblyNameMetadataGenerator.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_MODULENAMEMETADATAGENERATORAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/ModuleNameMetadataGeneratorApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTMODULENAMEMETADATAGENERATORAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultModuleNameMetadataGeneratorApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_MODULENAMEMETADATAGENERATORLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/ModuleNameMetadataGeneratorLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEMODULENAMEMETADATAGENERATOR_HPP
-#include <Urasandesu/Swathe/Metadata/BaseModuleNameMetadataGenerator.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_IMODULEMETADATAAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/IModuleMetadataApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTIMODULEMETADATAAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultIModuleMetadataApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_IMODULEMETADATALABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/IModuleMetadataLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEIMODULEMETADATAFWD_HPP
-#include <Urasandesu/Swathe/Metadata/BaseIModuleMetadata.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_MODULEMETADATAAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/ModuleMetadataApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTMODULEMETADATAAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultModuleMetadataApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_MODULEMETADATALABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/ModuleMetadataLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEMODULEMETADATA_HPP
-#include <Urasandesu/Swathe/Metadata/BaseModuleMetadata.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_ITYPEMETADATAAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/ITypeMetadataApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTITYPEMETADATAAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultITypeMetadataApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_ITYPEMETADATALABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/ITypeMetadataLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEITYPEMETADATA_HPP
-#include <Urasandesu/Swathe/Metadata/BaseITypeMetadata.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_TYPEMETADATAAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/TypeMetadataApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTTYPEMETADATAAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultTypeMetadataApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_TYPEMETADATALABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/TypeMetadataLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASETYPEMETADATA_HPP
-#include <Urasandesu/Swathe/Metadata/BaseTypeMetadata.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_TYPENAMEMETADATAGENERATORAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/TypeNameMetadataGeneratorApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTTYPENAMEMETADATAGENERATORAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultTypeNameMetadataGeneratorApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_TYPENAMEMETADATAGENERATORLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/TypeNameMetadataGeneratorLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASETYPENAMEMETADATAGENERATOR_HPP
-#include <Urasandesu/Swathe/Metadata/BaseTypeNameMetadataGenerator.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METHODNAMEMETADATAGENERATORAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MethodNameMetadataGeneratorApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTMETHODNAMEMETADATAGENERATORAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultMethodNameMetadataGeneratorApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METHODNAMEMETADATAGENERATORLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MethodNameMetadataGeneratorLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEMETHODNAMEMETADATAGENERATOR_HPP
-#include <Urasandesu/Swathe/Metadata/BaseMethodNameMetadataGenerator.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_IMETHODMETADATAAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/IMethodMetadataApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTIMETHODMETADATAAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultIMethodMetadataApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_IMETHODMETADATALABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/IMethodMetadataLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEIMETHODMETADATA_HPP
-#include <Urasandesu/Swathe/Metadata/BaseIMethodMetadata.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METHODMETADATAAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MethodMetadataApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTMETHODMETADATAAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultMethodMetadataApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METHODMETADATALABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MethodMetadataLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEMETHODMETADATA_HPP
-#include <Urasandesu/Swathe/Metadata/BaseMethodMetadata.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_PROPERTYNAMEMETADATAGENERATORAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/PropertyNameMetadataGeneratorApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTPROPERTYNAMEMETADATAGENERATORAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultPropertyNameMetadataGeneratorApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_PROPERTYNAMEMETADATAGENERATORLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/PropertyNameMetadataGeneratorLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEPROPERTYNAMEMETADATAGENERATOR_HPP
-#include <Urasandesu/Swathe/Metadata/BasePropertyNameMetadataGenerator.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_FIELDNAMEMETADATAGENERATORAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/FieldNameMetadataGeneratorApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTFIELDNAMEMETADATAGENERATORAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultFieldNameMetadataGeneratorApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_FIELDNAMEMETADATAGENERATORLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/FieldNameMetadataGeneratorLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEFIELDNAMEMETADATAGENERATOR_HPP
-#include <Urasandesu/Swathe/Metadata/BaseFieldNameMetadataGenerator.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METHODBODYWRITERAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MethodBodyWriterApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTMETHODBODYWRITERAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultMethodBodyWriterApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_METHODBODYWRITERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/MethodBodyWriterLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEMETHODBODYWRITER_HPP
-#include <Urasandesu/Swathe/Metadata/BaseMethodBodyWriter.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_LOCALNAMEMETADATAGENERATORAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/LocalNameMetadataGeneratorApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTLOCALNAMEMETADATAGENERATORAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultLocalNameMetadataGeneratorApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_LOCALNAMEMETADATAGENERATORLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/LocalNameMetadataGeneratorLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASELOCALNAMEMETADATAGENERATOR_HPP
-#include <Urasandesu/Swathe/Metadata/BaseLocalNameMetadataGenerator.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_INSTRUCTIONAPIHOLDERLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/InstructionApiHolderLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_APIHOLDERS_DEFAULTINSTRUCTIONAPIHOLDER_H
-#include <Urasandesu/Swathe/Metadata/ApiHolders/DefaultInstructionApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_INTERFACES_INSTRUCTIONLABEL_HPP
-#include <Urasandesu/Swathe/Metadata/Interfaces/InstructionLabel.hpp>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_BASEINSTRUCTION_HPP
-#include <Urasandesu/Swathe/Metadata/BaseInstruction.hpp>
 #endif
 
 #ifndef URASANDESU_SWATHE_METADATA_TYPEKINDS_H

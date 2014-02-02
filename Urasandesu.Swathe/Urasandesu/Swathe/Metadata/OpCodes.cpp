@@ -1,36 +1,45 @@
-﻿
+﻿/* 
+ * File: OpCodes.cpp
+ * 
+ * Author: Akira Sugiura (urasandesu@gmail.com)
+ * 
+ * 
+ * Copyright (c) 2014 Akira Sugiura
+ *  
+ *  This software is MIT License.
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
+
+
+
 #include "stdafx.h"
 
-//#ifndef URASANDESU_CPPANONYM_METADATA_OPCODE_H
-//#include <Urasandesu/CppAnonym/Metadata/OpCode.h>
-//#endif
-
-#ifndef URASANDESU_CPPANONYM_METADATA_OPCODES_H
-#include <Urasandesu/CppAnonym/Metadata/OpCodes.h>
+#ifndef URASANDESU_SWATHE_METADATA_OPCODES_H
+#include <Urasandesu/Swathe/Metadata/OpCodes.h>
 #endif
 
-namespace Urasandesu { namespace CppAnonym { namespace Metadata {
-
-    //const StackBehaviour StackBehaviours::Pop0 = StackBehaviour(StackBehaviourTypes::SBT_POP0);
-    //const StackBehaviour StackBehaviours::Pop1 = StackBehaviour(StackBehaviourTypes::SBT_POP1);
-    //const StackBehaviour StackBehaviours::PopI = StackBehaviour(StackBehaviourTypes::SBT_POP_I);
-    //const StackBehaviour StackBehaviours::PopI8 = StackBehaviour(StackBehaviourTypes::SBT_POP_I8);
-    //const StackBehaviour StackBehaviours::PopR4 = StackBehaviour(StackBehaviourTypes::SBT_POP_R4);
-    //const StackBehaviour StackBehaviours::PopR8 = StackBehaviour(StackBehaviourTypes::SBT_POP_R8);
-    //const StackBehaviour StackBehaviours::PopRef = StackBehaviour(StackBehaviourTypes::SBT_POP_REF);
-    //const StackBehaviour StackBehaviours::Push0 = StackBehaviour(StackBehaviourTypes::SBT_PUSH0);
-    //const StackBehaviour StackBehaviours::Push1 = StackBehaviour(StackBehaviourTypes::SBT_PUSH1);
-    //const StackBehaviour StackBehaviours::PushI = StackBehaviour(StackBehaviourTypes::SBT_PUSH_I);
-    //const StackBehaviour StackBehaviours::PushI8 = StackBehaviour(StackBehaviourTypes::SBT_PUSH_I8);
-    //const StackBehaviour StackBehaviours::PushR4 = StackBehaviour(StackBehaviourTypes::SBT_PUSH_R4);
-    //const StackBehaviour StackBehaviours::PushR8 = StackBehaviour(StackBehaviourTypes::SBT_PUSH_R8);
-    //const StackBehaviour StackBehaviours::PushRef = StackBehaviour(StackBehaviourTypes::SBT_PUSH_REF);
-    //const StackBehaviour StackBehaviours::VarPop = StackBehaviour(StackBehaviourTypes::SBT_VAR_POP);
-    //const StackBehaviour StackBehaviours::VarPush = StackBehaviour(StackBehaviourTypes::SBT_VAR_PUSH);
+namespace Urasandesu { namespace Swathe { namespace Metadata {
 
 #define OPDEF_EX(canonicalName, canonicalNameEx) \
     const OpCodeDetail::OpCode_<OpCodeTypes::canonicalName> OpCodes::canonicalNameEx = OpCodeDetail::OpCode_<OpCodeTypes::canonicalName>();
-#include <Urasandesu/CppAnonym/Metadata/OpCodeEx.def>
+#include <Urasandesu/Swathe/Metadata/OpCodeEx.def>
 #undef OPDEF_EX
 
-}}}   // namespace Urasandesu { namespace CppAnonym { namespace Metadata {
+}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
