@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
+    <ProjectConfiguration Include="Debug(.NET 3.5)|Win32">
+      <Configuration>Debug(.NET 3.5)</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
+    <ProjectConfiguration Include="Release(.NET 3.5)|Win32">
+      <Configuration>Release(.NET 3.5)</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -16,14 +16,14 @@
     <RootNamespace>TestUrasandesuSwathe</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug(.NET 3.5)|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfAtl>Static</UseOfAtl>
     <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(.NET 3.5)|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -34,20 +34,22 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug(.NET 3.5)|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release(.NET 3.5)|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug(.NET 3.5)|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)bin\$(Configuration)\$(PlatformTarget)\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(.NET 3.5)|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)bin\$(Configuration)\$(PlatformTarget)\</OutDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug(.NET 3.5)|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -55,7 +57,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;OUTPUT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>/Zm199 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -64,24 +66,30 @@
       <AdditionalDependencies>gtestd.lib;gtest_maind.lib;corguids.lib;Dbghelp.lib;mscoree.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release(.NET 3.5)|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\boost_1_55_0\stage\lib;C:\gtest-1.6.0\msvc\gtest\Release;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gtest.lib;gtest_main.lib;corguids.lib;Dbghelp.lib;mscoree.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="Test.Urasandesu.Swathe.snk" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -97,6 +105,7 @@
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymObjectDisposedException.cpp" />
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymSystemException.cpp" />
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Environment.cpp" />
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Log.cpp" />
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\SimpleDisposable.cpp" />
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\StackFrame.cpp" />
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\StackTrace.cpp" />
@@ -125,7 +134,6 @@
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\IPropertyHash.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\ITypeEqualTo.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\ITypeHash.cpp" />
-    <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\MetadataResolver.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\MetadataSpecialValues.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\OpCode.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\OpCodeKind.cpp" />
@@ -134,8 +142,8 @@
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\Signature.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\StackBehaviour.cpp" />
     <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug(.NET 3.5)|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release(.NET 3.5)|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Test.Urasandesu.Swathe.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\AutoGen\Fusion\BaseClass\BaseAssemblyInfo.cpp" />
@@ -259,6 +267,9 @@
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\AutoGen\Profiling\BaseClass\BaseFunctionBodyProfiler.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\AutoGen\Profiling\BaseClassPersistedHandler\BaseFunctionBodyProfilerPersistedHandler.cpp" />
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\AutoGen\Profiling\BaseClassPimpl\BaseFunctionBodyProfilerPimpl.cpp" />
+    <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\AutoGen\Metadata\BaseClass\BaseFieldMetadata.cpp" />
+    <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\AutoGen\Metadata\BaseClassPersistedHandler\BaseFieldMetadataPersistedHandler.cpp" />
+    <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\AutoGen\Metadata\BaseClassPimpl\BaseFieldMetadataPimpl.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

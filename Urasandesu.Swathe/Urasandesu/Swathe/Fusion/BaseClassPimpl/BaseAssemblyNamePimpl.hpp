@@ -55,15 +55,12 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     {
         using std::vector;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
-        using Urasandesu::CppAnonym::Utilities::StackAllocator;
-
-        typedef vector<WCHAR, StackAllocator<WCHAR> > WCharVector;
 
         if (m_fullName.empty())
         {
             auto &comAsmName = m_pClass->GetCOMAssemblyName();
 
-            auto wzname = WCharVector();
+            auto wzname = vector<WCHAR>();
             auto wznameSize = 0ul;
             auto dwDisplayFlags = static_cast<DWORD>(ASM_DISPLAYF_FULL);
             auto hr = E_FAIL;
@@ -88,15 +85,12 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     {
         using std::vector;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
-        using Urasandesu::CppAnonym::Utilities::StackAllocator;
-
-        typedef vector<WCHAR, StackAllocator<WCHAR> > WCharVector;
 
         if (m_name.empty())
         {
             auto &comAsmName = m_pClass->GetCOMAssemblyName();
 
-            auto wzname = WCharVector();
+            auto wzname = vector<WCHAR>();
             auto wznameSize = 0ul;
             auto hr = E_FAIL;
             hr = comAsmName.GetName(&wznameSize, nullptr);

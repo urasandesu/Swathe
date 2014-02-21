@@ -36,10 +36,6 @@
 #include <Urasandesu/Swathe/Metadata/BaseClassPimpl/BaseParameterGeneratorPimpl.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_METADATA_ITYPE_H
 #include <Urasandesu/Swathe/Metadata/IType.h>
 #endif
@@ -64,6 +60,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_attr(ParameterAttributes::PA_UNREACHED), 
         m_paramTypeInit(false), 
         m_pParamType(nullptr), 
+        m_methodInit(false), 
         m_pSrcParam(nullptr)
     { }
     
@@ -85,18 +82,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseParameterGeneratorPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using boost::apply_visitor;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+
             if (!m_pSrcParam)
             {
+                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcParam)");
+
                 auto mdtTarget = apply_visitor(get_token_visitor(), m_member);
                 auto pos = m_pClass->GetPosition();
                 auto const &name = m_pClass->GetName();
                 auto attr = m_pClass->GetAttribute();
-                D_WCOUT1(L"Getting Parameter Generator Token... 1: %|1$s|", name);
+                CPPANONYM_D_LOGW1(L"Getting Parameter Generator Token... 1: %|1$s|", name);
                 auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                 auto hr = comMetaEmt.DefineParam(mdtTarget, pos, name.c_str(), attr.Value(), ELEMENT_TYPE_VOID, NULL, 0, &m_mdt);
                 if (FAILED(hr))
@@ -107,7 +110,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 // TODO: 仮実装
                 m_mdt = m_pSrcParam->GetToken();
             }
-            D_WCOUT1(L"Token: 0x%|1$08X|", m_mdt);
+            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
         return m_mdt;
     }
@@ -149,16 +152,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     ParameterAttributes BaseParameterGeneratorPimpl<ApiHolder>::GetAttribute() const
     {
         if (m_attr == ParameterAttributes::PA_UNREACHED)
-        {
-            if (!m_pSrcParam)
-            {
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            }
-            else
-            {
-                m_attr = m_pSrcParam->GetAttribute();
-            }
-        }
+            m_attr = !m_pSrcParam ? ParameterAttributes::PA_NONE : m_pSrcParam->GetAttribute();
         return m_attr;
     }
     
@@ -177,12 +171,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    m_pParamType = MetadataResolver::Resolve(m_pSrcParam->GetParameterType());
+                    m_pParamType = m_pAsmGen->Resolve(m_pSrcParam->GetParameterType());
                 }
             }
             else
             {
-                m_pParamType = MetadataResolver::Resolve(m_pParamType);
+                m_pParamType = m_pAsmGen->Resolve(m_pParamType);
             }
             m_paramTypeInit = true;
         }
@@ -205,9 +199,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
+        if (!m_methodInit)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (Empty(m_member))
+            {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
+
+            m_methodInit = true;
         }
 
         auto const *const *ppMethod = get<IMethod const *>(&m_member);
@@ -228,17 +227,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     ParameterProvider const &BaseParameterGeneratorPimpl<ApiHolder>::GetMember() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-        //using boost::apply_visitor;
-        //using Urasandesu::CppAnonym::Utilities::Empty;
-
-        //if (Empty(m_member))
-        //    apply_visitor(assign_member_visitor(m_member), m_paramProvider);
-        //_ASSERTE(!Empty(m_member));
-        //return m_member;
     }
     
     
     
+    template<class ApiHolder>    
+    IAssembly const *BaseParameterGeneratorPimpl<ApiHolder>::GetAssembly() const
+    {
+        return m_pAsmGen;
+    }
+
+
+
     template<class ApiHolder>    
     IParameter const *BaseParameterGeneratorPimpl<ApiHolder>::GetSourceParameter() const
     {
@@ -248,7 +248,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseParameterGeneratorPimpl<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseParameterGeneratorPimpl<ApiHolder>::OutDebugInfo() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }

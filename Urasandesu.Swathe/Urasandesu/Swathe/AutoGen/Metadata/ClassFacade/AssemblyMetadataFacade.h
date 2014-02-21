@@ -108,6 +108,18 @@
 #include <Urasandesu/Swathe/Metadata/PropertyMetadataPersistedHandlerFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_FIELDMETADATAFWD_H
+#include <Urasandesu/Swathe/Metadata/FieldMetadataFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_FIELDMETADATAPIMPLFWD_H
+#include <Urasandesu/Swathe/Metadata/FieldMetadataPimplFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_FIELDMETADATAPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Metadata/FieldMetadataPersistedHandlerFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_METHODBODYMETADATAFWD_H
 #include <Urasandesu/Swathe/Metadata/MethodBodyMetadataFwd.h>
 #endif
@@ -222,6 +234,9 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
         using Urasandesu::Swathe::Metadata::PropertyMetadata;
         using Urasandesu::Swathe::Metadata::PropertyMetadataPimpl;
         using Urasandesu::Swathe::Metadata::PropertyMetadataPersistedHandler;
+        using Urasandesu::Swathe::Metadata::FieldMetadata;
+        using Urasandesu::Swathe::Metadata::FieldMetadataPimpl;
+        using Urasandesu::Swathe::Metadata::FieldMetadataPersistedHandler;
         using Urasandesu::Swathe::Metadata::MethodBodyMetadata;
         using Urasandesu::Swathe::Metadata::MethodBodyMetadataPimpl;
         using Urasandesu::Swathe::Metadata::MethodBodyMetadataPersistedHandler;
@@ -280,6 +295,9 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
             typedef PropertyMetadata property_metadata_label_type;
             typedef PropertyMetadataPimpl property_metadata_pimpl_label_type;
             typedef PropertyMetadataPersistedHandler property_metadata_persisted_handler_label_type;
+            typedef FieldMetadata field_metadata_label_type;
+            typedef FieldMetadataPimpl field_metadata_pimpl_label_type;
+            typedef FieldMetadataPersistedHandler field_metadata_persisted_handler_label_type;
             typedef MethodBodyMetadata method_body_metadata_label_type;
             typedef MethodBodyMetadataPimpl method_body_metadata_pimpl_label_type;
             typedef MethodBodyMetadataPersistedHandler method_body_metadata_persisted_handler_label_type;
@@ -359,6 +377,9 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
     typedef typename facade::property_metadata_label_type property_metadata_label_type; \
     typedef typename facade::property_metadata_pimpl_label_type property_metadata_pimpl_label_type; \
     typedef typename facade::property_metadata_persisted_handler_label_type property_metadata_persisted_handler_label_type; \
+    typedef typename facade::field_metadata_label_type field_metadata_label_type; \
+    typedef typename facade::field_metadata_pimpl_label_type field_metadata_pimpl_label_type; \
+    typedef typename facade::field_metadata_persisted_handler_label_type field_metadata_persisted_handler_label_type; \
     typedef typename facade::method_body_metadata_label_type method_body_metadata_label_type; \
     typedef typename facade::method_body_metadata_pimpl_label_type method_body_metadata_pimpl_label_type; \
     typedef typename facade::method_body_metadata_persisted_handler_label_type method_body_metadata_persisted_handler_label_type; \
@@ -390,6 +411,9 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
     friend typename property_metadata_label_type; \
     friend typename property_metadata_pimpl_label_type; \
     friend typename property_metadata_persisted_handler_label_type; \
+    friend typename field_metadata_label_type; \
+    friend typename field_metadata_pimpl_label_type; \
+    friend typename field_metadata_persisted_handler_label_type; \
     friend typename method_body_metadata_label_type; \
     friend typename method_body_metadata_pimpl_label_type; \
     friend typename method_body_metadata_persisted_handler_label_type; \

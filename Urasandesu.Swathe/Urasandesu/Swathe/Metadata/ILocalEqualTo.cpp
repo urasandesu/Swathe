@@ -43,12 +43,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace ILocalEqualToDetail {
 
-        //using Urasandesu::CppAnonym::Collections::SequenceEqual;
-
         ILocalEqualToImpl::result_type ILocalEqualToImpl::operator()(param_type x, param_type y) const
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            //return x->GetPosition() == y->GetPosition() && x->GetMember() == y->GetMember();
+            if (!x && !y)
+                return true;
+            else if (!x || !y)
+                return false;
+            
+            auto mdtTargetX = x->GetToken();
+            auto const *pBodyX = x->GetMethodBody();
+            auto mdtTargetY = y->GetToken();
+            auto const *pBodyY = y->GetMethodBody();
+
+            return mdtTargetX == mdtTargetY && pBodyX == pBodyY;
         }
 
     }   // namespace ILocalEqualToDetail {

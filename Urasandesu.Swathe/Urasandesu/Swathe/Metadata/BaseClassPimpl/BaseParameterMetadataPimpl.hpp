@@ -189,6 +189,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IAssembly const *BaseParameterMetadataPimpl<ApiHolder>::GetAssembly() const
+    {
+        return m_pAsm;
+    }
+
+
+
+    template<class ApiHolder>    
     IParameter const *BaseParameterMetadataPimpl<ApiHolder>::GetSourceParameter() const
     {
         return m_pSrcParam == nullptr ? m_pClass : m_pSrcParam->GetSourceParameter();
@@ -197,28 +205,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseParameterMetadataPimpl<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseParameterMetadataPimpl<ApiHolder>::OutDebugInfo() const
     {
-#ifdef OUTPUT_DEBUG
-        D_WCOUTI(indent, L"");
-        D_WCOUTI(indent, L"ParameterMetadata -----------------------------------------------------");
-        D_WCOUTI1(indent, L"m_pClass: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pClass));
-        D_WCOUTI1(indent, L"m_pAsm: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pAsm));
-        D_WCOUTI1(indent, L"m_mdt: 0x%|1$08X|", m_mdt);
-        D_WCOUTI1(indent, L"m_mdtOwner: 0x%|1$08X|", m_mdtOwner);
-        D_WCOUTI1(indent, L"m_name: %|1$s|", m_name);
-        D_WCOUTI1(indent, L"m_position: %|1$d|", m_position);
-        D_WCOUTI1(indent, L"m_attr: %|1$d|", m_attr.Value());
-        D_WCOUTI1(indent, L"m_pParamType: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pParamType));
-        if (m_pParamType)
-            m_pParamType->OutDebugInfo(indent + 4);
-        D_WCOUTI1(indent, L"m_member: %|1$d|", m_member.which());
-        D_WCOUTI1(indent, L"m_pSrcParam: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pSrcParam));
-        if (m_pSrcParam && m_pSrcParam != m_pClass)
-            m_pSrcParam->OutDebugInfo(indent + 4);
-        D_WCOUTI(indent, L"------------------------------------------------------------------");
-        D_WCOUTI(indent, L"");
-#endif
+        BOOST_LOG_FUNCTION();
+
+        CPPANONYM_D_LOGW(L"");
+        CPPANONYM_D_LOGW(L"ParameterMetadata -----------------------------------------------------");
+        CPPANONYM_D_LOGW1(L"m_pClass: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pClass));
+        CPPANONYM_D_LOGW1(L"m_pAsm: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pAsm));
+        CPPANONYM_D_LOGW1(L"m_mdt: 0x%|1$08X|", m_mdt);
+        CPPANONYM_D_LOGW1(L"m_mdtOwner: 0x%|1$08X|", m_mdtOwner);
+        CPPANONYM_D_LOGW1(L"m_name: %|1$s|", m_name);
+        CPPANONYM_D_LOGW1(L"m_position: %|1$d|", m_position);
+        CPPANONYM_D_LOGW1(L"m_attr: %|1$d|", m_attr.Value());
+        CPPANONYM_D_LOGW1(L"m_pParamType: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pParamType));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            if (m_pParamType)
+                m_pParamType->OutDebugInfo();
+        }
+        CPPANONYM_D_LOGW1(L"m_member: %|1$d|", m_member.which());
+        CPPANONYM_D_LOGW1(L"m_pSrcParam: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pSrcParam));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            if (m_pSrcParam && m_pSrcParam != m_pClass)
+                m_pSrcParam->OutDebugInfo();
+        }
+        CPPANONYM_D_LOGW(L"------------------------------------------------------------------");
+        CPPANONYM_D_LOGW(L"");
     }
 
 

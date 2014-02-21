@@ -60,6 +60,10 @@
 #include <Urasandesu/Swathe/Metadata/IAssemblyFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_ILOCALFWD_H
+#include <Urasandesu/Swathe/Metadata/ILocalFwd.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<
@@ -81,6 +85,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         Signature const &GetSignature() const;
         IMethodBody const *GetMethodBody() const;
         IAssembly const *GetAssembly() const;
+        ILocal const *GetSourceLocal() const;
         
     private:
         void SetLocalIndex(SIZE_T index);
@@ -95,6 +100,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         SIZE_T m_index;
         mutable bool m_localTypeInit;
         mutable IType const *m_pLocalType;
+        ILocal const *m_pSrcLocal;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

@@ -78,7 +78,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         BasePropertyMetadata();
         ~BasePropertyMetadata();
-
+    
         void Initialize(assembly_metadata_label_type *pAsm);
         mdProperty GetToken() const;
         wstring const &GetName() const;
@@ -93,7 +93,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         PropertyProvider const &GetMember() const;
         IProperty const *GetSourceProperty() const;
         IAssembly const *GetAssembly() const;
-        IParameter const *ResolveParameter(IParameter const *pParam) const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
     
     private:
@@ -108,7 +107,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 120;
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

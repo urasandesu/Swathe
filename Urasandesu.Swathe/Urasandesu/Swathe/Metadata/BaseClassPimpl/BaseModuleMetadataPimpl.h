@@ -85,7 +85,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         vector<IType const *> const &GetTypes() const;
         IAssembly const *GetAssembly() const;
         IModule const *GetSourceModule() const;
-        IType const *ResolveType(IType const *pType) const;
     
     private:
         void SetName(wstring const &name);

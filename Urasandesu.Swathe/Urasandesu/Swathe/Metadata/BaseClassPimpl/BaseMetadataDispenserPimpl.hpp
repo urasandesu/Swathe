@@ -119,14 +119,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
 
-    
-    template<class ApiHolder>    
-    IAssembly const *BaseMetadataDispenserPimpl<ApiHolder>::ResolveAssembly(IAssembly const *pAsm) const
-    {
-        return ResolveAssemblyCore(pAsm);
-    }
-
-
 
     template<class ApiHolder>    
     IAssembly const *BaseMetadataDispenserPimpl<ApiHolder>::GetAssembly(IMetaDataImport2 *pComMetaImp) const
@@ -153,6 +145,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         auto pNewAsmGen = NewAssemblyGenerator(&*pComMetaEmt, pSrcAsm);
         pNewAsmGen.Persist();
+
         return pNewAsmGen.Get();
     }
 
@@ -367,7 +360,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::ResolveAssemblyCore(IAssembly const *pAsm) const
+    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::ResolveAssembly(IAssembly const *pAsm) const
     {
         _ASSERTE(static_cast<IDispenser const *>(m_pClass) == pAsm->GetDispenser());
 

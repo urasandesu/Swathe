@@ -70,7 +70,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual CallingConventions GetCallingConvention() const = 0;
         virtual IType const *GetPropertyType() const = 0;
         virtual std::vector<IParameter const *> const &GetParameters() const = 0;
-        //virtual std::vector<IType const *> const &GetParameterTypes() const = 0;
         virtual PropertyAttributes GetAttribute() const = 0;
         virtual IMethod const *GetGetMethod() const = 0;
         virtual IMethod const *GetSetMethod() const = 0;
@@ -79,7 +78,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual PropertyProvider const &GetMember() const = 0;
         virtual IProperty const *GetSourceProperty() const = 0;
         virtual IAssembly const *GetAssembly() const = 0;
-        virtual IParameter const *ResolveParameter(IParameter const *pParam) const = 0;
         virtual IParameter const *GetParameter(ULONG position, IType const *pParamType) const = 0;
     };
     

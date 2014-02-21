@@ -58,7 +58,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
 #else
-        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), ==, sizeof(storage_type));
+        BOOST_MPL_ASSERT_RELATION(8, <=, sizeof(base_heap_provider_type));
+        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
 #endif
         new(BaseHeapProvider())base_heap_provider_type();
     }

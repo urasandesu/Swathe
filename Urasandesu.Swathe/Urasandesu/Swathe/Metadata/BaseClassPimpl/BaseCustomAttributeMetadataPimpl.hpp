@@ -169,6 +169,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    ICustomAttribute const *BaseCustomAttributeMetadataPimpl<ApiHolder>::GetSourceCustomAttribute() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IType const *BaseCustomAttributeMetadataPimpl<ApiHolder>::GetAttributeType() const
     {
         if (!m_pCtor)

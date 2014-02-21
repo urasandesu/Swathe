@@ -104,6 +104,10 @@
 #include <Urasandesu/Swathe/Metadata/IMethodBodyFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_ILOCALFWD_H
+#include <Urasandesu/Swathe/Metadata/ILocalFwd.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClass { 
 
     using boost::any_range;
@@ -145,6 +149,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetSourceAssembly() const;
         IAssembly const *GetTargetAssembly() const;
         IDispenser const *GetDispenser() const;
+        IField const *GetField(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const;
         IType const *GetType(mdToken mdt) const;
@@ -153,7 +158,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly(wstring const &fullName) const;
         IAssembly const *GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         IAssembly const *GetAssemblyReference(mdAssemblyRef mdt) const;
-        IModule const *ResolveModule(IModule const *pMod) const;
         ICustomAttribute const *GetCustomAttribute(mdToken mdt) const;
         ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
@@ -230,6 +234,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         vector<pair<property_generator_label_type const *, SIZE_T> > const &GetPropertyGeneratorToIndex() const;
         vector<pair<custom_attribute_generator_label_type const *, SIZE_T> > const &GetCustomAttributeGeneratorToIndex() const;
 
+        IModule const *Resolve(IModule const *pMod) const;
+        IType const *Resolve(IType const *pType) const;
+        IField const *Resolve(IField const *pField) const;
+        IProperty const *Resolve(IProperty const *pProp) const;
+        IMethod const *Resolve(IMethod const *pMethod) const;
+        IMethodBody const *Resolve(IMethodBody const *pBody) const;
+        IParameter const *Resolve(IParameter const *pParam) const;
+        ILocal const *Resolve(ILocal const *pLocal) const;
+        ICustomAttribute const *Resolve(ICustomAttribute const *pCa) const;
+
         IMetaDataAssemblyEmit &GetCOMMetaDataAssemblyEmit();
         IMetaDataEmit2 &GetCOMMetaDataEmit();
         
@@ -240,7 +254,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 288;
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

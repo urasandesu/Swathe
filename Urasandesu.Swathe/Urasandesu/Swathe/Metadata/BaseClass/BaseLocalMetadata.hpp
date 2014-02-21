@@ -108,6 +108,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    ILocal const *BaseLocalMetadata<ApiHolder>::GetSourceLocal() const
+    {
+        return Pimpl()->GetSourceLocal();
+    }
+
+    template<class ApiHolder>    
     IAssembly const *BaseLocalMetadata<ApiHolder>::GetAssembly() const
     {
         return Pimpl()->GetAssembly();

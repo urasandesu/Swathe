@@ -90,7 +90,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 352;
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

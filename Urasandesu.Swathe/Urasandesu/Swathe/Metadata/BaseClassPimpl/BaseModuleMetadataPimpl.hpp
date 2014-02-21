@@ -170,14 +170,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         return m_pSrcMod == nullptr ? m_pClass : m_pSrcMod->GetSourceModule();
     }
-    
-    
-    
-    template<class ApiHolder>    
-    IType const *BaseModuleMetadataPimpl<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
 
     
     

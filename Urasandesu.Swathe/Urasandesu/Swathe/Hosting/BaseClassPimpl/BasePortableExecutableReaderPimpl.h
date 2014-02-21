@@ -72,7 +72,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         ATL::CComPtr<IMetaDataImport2> m_pComMetaImp;
         path m_asmPath;
         mutable ATL::CComPtr<IMetaDataTables2> m_pComMetaTbl;
-        
+        int reserved;        
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 

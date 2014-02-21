@@ -141,7 +141,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
 #else
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 40;
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 16;
 #endif
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

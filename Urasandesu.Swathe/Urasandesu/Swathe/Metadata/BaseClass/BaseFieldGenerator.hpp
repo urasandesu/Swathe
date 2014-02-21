@@ -115,6 +115,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IAssembly const *BaseFieldGenerator<ApiHolder>::GetAssembly() const
+    {
+        return Pimpl()->GetAssembly();
+    }
+
+    template<class ApiHolder>    
     IField const *BaseFieldGenerator<ApiHolder>::GetSourceField() const
     {
         return Pimpl()->GetSourceField();

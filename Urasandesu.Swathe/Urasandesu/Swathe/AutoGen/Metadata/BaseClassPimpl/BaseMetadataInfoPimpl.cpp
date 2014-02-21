@@ -142,6 +142,22 @@
 #include <Urasandesu/Swathe/Metadata/BaseClassPersistedHandler/BasePropertyMetadataPersistedHandler.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTFIELDMETADATAAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultFieldMetadataApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_BASECLASS_BASEFIELDMETADATA_H
+#include <Urasandesu/Swathe/Metadata/BaseClass/BaseFieldMetadata.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSPERSISTEDHANDLERAPIHOLDER_DEFAULTFIELDMETADATAPERSISTEDHANDLERAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassPersistedHandlerApiHolder/DefaultFieldMetadataPersistedHandlerApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_BASECLASSPERSISTEDHANDLER_BASEFIELDMETADATAPERSISTEDHANDLER_H
+#include <Urasandesu/Swathe/Metadata/BaseClassPersistedHandler/BaseFieldMetadataPersistedHandler.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_DEFAULTCLASSAPIHOLDER_DEFAULTMETHODBODYMETADATAAPIHOLDER_H
 #include <Urasandesu/Swathe/AutoGen/Metadata/DefaultClassApiHolder/DefaultMethodBodyMetadataApiHolder.h>
 #endif
@@ -387,6 +403,8 @@ extern template class Urasandesu::Swathe::Metadata::BaseClass::BaseMethodMetadat
 extern template class Urasandesu::Swathe::Metadata::BaseClassPersistedHandler::BaseMethodMetadataPersistedHandler<>;
 extern template class Urasandesu::Swathe::Metadata::BaseClass::BasePropertyMetadata<>;
 extern template class Urasandesu::Swathe::Metadata::BaseClassPersistedHandler::BasePropertyMetadataPersistedHandler<>;
+extern template class Urasandesu::Swathe::Metadata::BaseClass::BaseFieldMetadata<>;
+extern template class Urasandesu::Swathe::Metadata::BaseClassPersistedHandler::BaseFieldMetadataPersistedHandler<>;
 extern template class Urasandesu::Swathe::Metadata::BaseClass::BaseMethodBodyMetadata<>;
 extern template class Urasandesu::Swathe::Metadata::BaseClassPersistedHandler::BaseMethodBodyMetadataPersistedHandler<>;
 extern template class Urasandesu::Swathe::Metadata::BaseClass::BaseParameterMetadata<>;

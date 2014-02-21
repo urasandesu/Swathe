@@ -421,6 +421,40 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    TempPtr<typename BaseMetadataInfoPimpl<ApiHolder>::field_metadata_label_type> BaseMetadataInfoPimpl<ApiHolder>::NewFieldCore(assembly_metadata_label_type *pAsm) const
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<field_metadata_label_type>();
+        auto pField = provider.NewObject();
+        pField->Initialize(pAsm);
+        auto handler = field_metadata_persisted_handler_label_type(pAsm);
+        provider.AddPersistedHandler(pField, handler);
+        return pField;
+    }
+
+
+
+    template<class ApiHolder>    
+    typename BaseMetadataInfoPimpl<ApiHolder>::field_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetFieldCore(SIZE_T index) const
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<field_metadata_label_type>();
+        return provider.GetObject(index);
+    }
+
+
+
+    template<class ApiHolder>    
+    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterFieldCore(TempPtr<field_metadata_label_type> &pField)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<field_metadata_label_type>();
+        return provider.RegisterObject(pField);
+    }
+
+
+
+    template<class ApiHolder>    
     TempPtr<typename BaseMetadataInfoPimpl<ApiHolder>::custom_attribute_metadata_label_type> BaseMetadataInfoPimpl<ApiHolder>::NewCustomAttributeCore(assembly_metadata_label_type *pAsm) const
     {
         auto *pBaseProvider = BaseHeapProvider();

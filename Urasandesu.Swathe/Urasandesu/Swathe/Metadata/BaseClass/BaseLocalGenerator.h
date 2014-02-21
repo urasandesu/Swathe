@@ -75,6 +75,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         Signature const &GetSignature() const;
         IMethodBody const *GetMethodBody() const;
         IAssembly const *GetAssembly() const;
+        ILocal const *GetSourceLocal() const;
     
     private:
         local_generator_pimpl_label_type *Pimpl();
@@ -87,7 +88,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 32;
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

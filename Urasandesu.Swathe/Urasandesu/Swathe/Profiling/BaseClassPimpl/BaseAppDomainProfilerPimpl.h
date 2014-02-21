@@ -66,23 +66,16 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         void SetData(wstring const &name, AnyPtr const &pData);
 
     private:
-        base_heap_provider_type *BaseHeapProvider();
-        base_heap_provider_type const *BaseHeapProvider() const;
         void Initialize(process_profiler_label_type *pProcProf, metadata_info_label_type *pMetaInfo);
         void SetID(UINT_PTR id);
-#ifdef _DEBUG
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
-#else
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 40;
-#endif
-        typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
-        storage_type m_storage;
+
         mutable app_domain_profiler_label_type *m_pClass;
         process_profiler_label_type *m_pProcProf;
         metadata_info_label_type *m_pMetaInfo;
         UINT_PTR m_id;
         metadata_dispenser_label_type *m_pDisp;
         unordered_map<wstring, AnyPtr> m_dataEntries;
+        int reserved;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseClassPimpl { 

@@ -440,38 +440,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    IMethod const *BaseMethodMetadataPimpl<ApiHolder>::ResolveMethod(IMethod const *pMethod) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
-    IType const *BaseMethodMetadataPimpl<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
-    IMethodBody const *BaseMethodMetadataPimpl<ApiHolder>::ResolveMethodBody(IMethodBody const *pBody) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
-    IParameter const *BaseMethodMetadataPimpl<ApiHolder>::ResolveParameter(IParameter const *pParam) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
     IParameter const *BaseMethodMetadataPimpl<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         return m_pAsm->GetParameter(position, pParamType, static_cast<IMethod const *>(m_pClass));
@@ -480,45 +448,61 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseMethodMetadataPimpl<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseMethodMetadataPimpl<ApiHolder>::OutDebugInfo() const
     {
-#ifdef OUTPUT_DEBUG
-        D_WCOUTI(indent, L"");
-        D_WCOUTI(indent, L"MethodMetadata -----------------------------------------------------");
-        D_WCOUTI1(indent, L"m_pClass: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pClass));
-        D_WCOUTI1(indent, L"m_pAsm: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pAsm));
-        D_WCOUTI1(indent, L"m_member: %|1$d|", m_member.which());
-        D_WCOUTI1(indent, L"m_mdt: 0x%|1$08X|", m_mdt);
-        D_WCOUTI1(indent, L"m_mdtOwner: 0x%|1$08X|", m_mdtOwner);
-        D_WCOUTI1(indent, L"m_name: %|1$s|", m_name);
-        D_WCOUTI1(indent, L"m_callingConvention: %|1$d|", m_callingConvention.Value());
-        D_WCOUTI1(indent, L"m_pRetType: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pRetType));
-        if (m_pRetType)
-            m_pRetType->OutDebugInfo(indent + 4);
-        D_WCOUTI1(indent, L"m_paramsInit: %|1$d|", m_paramsInit);
-        D_WCOUTI1(indent, L"m_params.size(): %|1$d|", m_params.size());
-        for (auto i = m_params.begin(), i_end = m_params.end(); i != i_end; ++i)
-            (*i)->OutDebugInfo(indent + 4);
-        D_WCOUTI1(indent, L"m_genericArgsInit: %|1$d|", m_genericArgsInit);
-        D_WCOUTI1(indent, L"m_genericArgs.size(): %|1$d|", m_genericArgs.size());
-        for (auto i = m_genericArgs.begin(), i_end = m_genericArgs.end(); i != i_end; ++i)
-            (*i)->OutDebugInfo(indent + 4);
-        auto const &blob = m_sig.GetBlob();
-        std::wcout << std::wstring(indent, L' ') << L"m_sig:";
-        for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
-            std::wcout << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-        std::wcout << std::endl;
-        D_WCOUTI1(indent, L"m_pILBody: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pILBody));
-        D_WCOUTI1(indent, L"m_pBody: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pBody));
-        D_WCOUTI1(indent, L"m_pSrcMethod: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pSrcMethod));
-        if (m_pSrcMethod && m_pSrcMethod != m_pClass)
-            m_pSrcMethod->OutDebugInfo(indent + 4);
-        D_WCOUTI1(indent, L"m_attr: %|1$d|", m_attr.Value());
-        D_WCOUTI1(indent, L"m_codeRva: %|1$d|", m_codeRva);
-        D_WCOUTI1(indent, L"m_implFlags: %|1$d|", m_implFlags.Value());
-        D_WCOUTI(indent, L"------------------------------------------------------------------");
-        D_WCOUTI(indent, L"");
-#endif
+        BOOST_LOG_FUNCTION();
+
+        CPPANONYM_D_LOGW(L"");
+        CPPANONYM_D_LOGW(L"MethodMetadata -----------------------------------------------------");
+        CPPANONYM_D_LOGW1(L"m_pClass: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pClass));
+        CPPANONYM_D_LOGW1(L"m_pAsm: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pAsm));
+        CPPANONYM_D_LOGW1(L"m_member: %|1$d|", m_member.which());
+        CPPANONYM_D_LOGW1(L"m_mdt: 0x%|1$08X|", m_mdt);
+        CPPANONYM_D_LOGW1(L"m_mdtOwner: 0x%|1$08X|", m_mdtOwner);
+        CPPANONYM_D_LOGW1(L"m_name: %|1$s|", m_name);
+        CPPANONYM_D_LOGW1(L"m_callingConvention: %|1$d|", m_callingConvention.Value());
+        CPPANONYM_D_LOGW1(L"m_pRetType: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pRetType));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            if (m_pRetType)
+                m_pRetType->OutDebugInfo();
+        }
+        CPPANONYM_D_LOGW1(L"m_paramsInit: %|1$d|", m_paramsInit);
+        CPPANONYM_D_LOGW1(L"m_params.size(): %|1$d|", m_params.size());
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            for (auto i = m_params.begin(), i_end = m_params.end(); i != i_end; ++i)
+                (*i)->OutDebugInfo();
+        }
+        CPPANONYM_D_LOGW1(L"m_genericArgsInit: %|1$d|", m_genericArgsInit);
+        CPPANONYM_D_LOGW1(L"m_genericArgs.size(): %|1$d|", m_genericArgs.size());
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            for (auto i = m_genericArgs.begin(), i_end = m_genericArgs.end(); i != i_end; ++i)
+                (*i)->OutDebugInfo();
+        }
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto const &blob = m_sig.GetBlob();
+            auto oss = std::wostringstream();
+            oss << L"m_sig:";
+            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"m_pILBody: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pILBody));
+        CPPANONYM_D_LOGW1(L"m_pBody: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pBody));
+        CPPANONYM_D_LOGW1(L"m_pSrcMethod: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pSrcMethod));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            if (m_pSrcMethod && m_pSrcMethod != m_pClass)
+                m_pSrcMethod->OutDebugInfo();
+        }
+        CPPANONYM_D_LOGW1(L"m_attr: %|1$d|", m_attr.Value());
+        CPPANONYM_D_LOGW1(L"m_codeRva: %|1$d|", m_codeRva);
+        CPPANONYM_D_LOGW1(L"m_implFlags: %|1$d|", m_implFlags.Value());
+        CPPANONYM_D_LOGW(L"------------------------------------------------------------------");
+        CPPANONYM_D_LOGW(L"");
     }
 
 

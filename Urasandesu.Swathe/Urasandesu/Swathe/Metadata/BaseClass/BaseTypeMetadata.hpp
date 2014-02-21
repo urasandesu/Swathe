@@ -91,6 +91,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    bool BaseTypeMetadata<ApiHolder>::IsValueType() const
+    {
+        return Pimpl()->IsValueType();
+    }
+
+    template<class ApiHolder>    
     bool BaseTypeMetadata<ApiHolder>::IsGenericParameter() const
     {
         return Pimpl()->IsGenericParameter();
@@ -181,30 +187,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    IMethod const *BaseTypeMetadata<ApiHolder>::ResolveMethod(IMethod const *pMethod) const
-    {
-        return Pimpl()->ResolveMethod(pMethod);
-    }
-
-    template<class ApiHolder>    
-    IProperty const *BaseTypeMetadata<ApiHolder>::ResolveProperty(IProperty const *pProp) const
-    {
-        return Pimpl()->ResolveProperty(pProp);
-    }
-
-    template<class ApiHolder>    
-    IField const *BaseTypeMetadata<ApiHolder>::ResolveField(IField const *pField) const
-    {
-        return Pimpl()->ResolveField(pField);
-    }
-
-    template<class ApiHolder>    
-    IType const *BaseTypeMetadata<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        return Pimpl()->ResolveType(pType);
-    }
-
-    template<class ApiHolder>    
     bool BaseTypeMetadata<ApiHolder>::IsDefined(IType const *pAttrType, bool inherit) const
     {
         return Pimpl()->IsDefined(pAttrType, inherit);
@@ -253,9 +235,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    void BaseTypeMetadata<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseTypeMetadata<ApiHolder>::OutDebugInfo() const
     {
-        Pimpl()->OutDebugInfo(indent);
+        Pimpl()->OutDebugInfo();
     }
 
     template<class ApiHolder>    
@@ -271,9 +253,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IType const *BaseTypeMetadata<ApiHolder>::MakePointerType() const
+    {
+        return Pimpl()->MakePointerType();
+    }
+
+    template<class ApiHolder>    
     IType const *BaseTypeMetadata<ApiHolder>::MakeByRefType() const
     {
         return Pimpl()->MakeByRefType();
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseTypeMetadata<ApiHolder>::MakePinnedType() const
+    {
+        return Pimpl()->MakePinnedType();
     }
 
     template<class ApiHolder>    

@@ -56,10 +56,6 @@
 #include <Urasandesu/Swathe/Metadata/ILocal.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<class ApiHolder>    
@@ -309,19 +305,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     PutInlineBrTarget(this, GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_FIELD:
-                    PutInlineField(GetOperand(), blob);
+                    PutInlineField(this, GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_I:
                     PutInlineI(GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_I8:
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                    PutInlineI8(GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_METHOD:
-                    PutInlineMethod(GetOperand(), blob);
+                    PutInlineMethod(this, GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_R:
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                    PutInlineR(GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_SIG:
                     BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
@@ -333,10 +329,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
                     break;
                 case OperandParamTypes::OPT_INLINE_TOK:
-                    PutInlineToken(GetOperand(), blob);
+                    PutInlineToken(this, GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_TYPE:
-                    PutInlineType(GetOperand(), blob);
+                    PutInlineType(this, GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_VAR:
                     PutInlineVar(GetOperand(), blob);
@@ -424,7 +420,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto *pBodyGen = _this->m_pBodyGen;
 
-        if (auto *const &pLabel = get<Label>(&operand))
+        if (auto *pArg = get<INT>(&operand))
+        {
+            blob.Put<INT>(*pArg);
+        }
+        else if (auto *const &pLabel = get<Label>(&operand))
         {
             auto const *pTargetInst = pBodyGen->GetInstruction(*pLabel);
             auto currentOffset = _this->GetToken();
@@ -439,12 +439,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineField(Operand const &operand, SimpleBlob &blob)
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineField(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob)
     {
         using boost::get;
 
+        auto *pAsmGen = _this->m_pAsmGen;
+
         auto const *pField = get<IField const *>(operand);
-        blob.Put<mdToken>(MetadataResolver::Resolve(pField)->GetToken());
+        blob.Put<mdToken>(pAsmGen->Resolve(pField)->GetToken());
     }
 
 
@@ -463,12 +465,40 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineMethod(Operand const &operand, SimpleBlob &blob)
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineI8(Operand const &operand, SimpleBlob &blob)
     {
         using boost::get;
 
+        if (auto *pArg = get<LONGLONG>(&operand))
+            blob.Put<LONGLONG>(*pArg);
+        else
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineMethod(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob)
+    {
+        using boost::get;
+
+        auto *pAsmGen = _this->m_pAsmGen;
+
         auto const *pMethod = get<IMethod const *>(operand);
-        blob.Put<mdToken>(MetadataResolver::Resolve(pMethod)->GetToken());
+        blob.Put<mdToken>(pAsmGen->Resolve(pMethod)->GetToken());
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineR(Operand const &operand, SimpleBlob &blob)
+    {
+        using boost::get;
+
+        if (auto *pArg = get<DOUBLE>(&operand))
+            blob.Put<DOUBLE>(*pArg);
+        else
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
 
 
@@ -476,19 +506,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineString(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob)
     {
+        BOOST_LOG_FUNCTION();
+
         using boost::get;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         auto *pAsmGen = _this->m_pAsmGen;
 
         auto const &s = get<wstring>(operand);
-        D_WCOUT1(L"Getting User String Token... 1: %|1$s|", s);
+        CPPANONYM_D_LOGW1(L"Getting User String Token... 1: %|1$s|", s);
         auto mds = mdStringNil;
         auto &comMetaEmt = pAsmGen->GetCOMMetaDataEmit();
         auto hr = comMetaEmt.DefineUserString(s.c_str(), s.size(), &mds);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-        D_WCOUT1(L"Token: 0x%|1$08X|", mds);
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mds);
 
         blob.Put<mdToken>(mds);
     }
@@ -496,23 +528,27 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineToken(Operand const &operand, SimpleBlob &blob)
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineToken(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob)
     {
         using boost::get;
 
+        auto *pAsmGen = _this->m_pAsmGen;
+
         auto const *pType = get<IType const *>(operand);
-        blob.Put<mdToken>(MetadataResolver::Resolve(pType)->GetToken());
+        blob.Put<mdToken>(pAsmGen->Resolve(pType)->GetToken());
     }
 
 
 
     template<class ApiHolder>    
-    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineType(Operand const &operand, SimpleBlob &blob)
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineType(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob)
     {
         using boost::get;
 
+        auto *pAsmGen = _this->m_pAsmGen;
+
         if (auto *const *ppType = get<IType const *>(&operand))
-            blob.Put<mdToken>(MetadataResolver::Resolve(*ppType)->GetToken());
+            blob.Put<mdToken>(pAsmGen->Resolve(*ppType)->GetToken());
         else
             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }

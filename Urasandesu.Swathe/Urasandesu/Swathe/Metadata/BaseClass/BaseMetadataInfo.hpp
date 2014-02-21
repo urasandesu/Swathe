@@ -247,6 +247,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    TempPtr<typename BaseMetadataInfo<ApiHolder>::field_metadata_label_type> BaseMetadataInfo<ApiHolder>::NewFieldCore(assembly_metadata_label_type *pAsm) const
+    {
+        return Pimpl()->NewFieldCore(pAsm);
+    }
+
+    template<class ApiHolder>    
+    typename BaseMetadataInfo<ApiHolder>::field_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetFieldCore(SIZE_T index) const
+    {
+        return Pimpl()->GetFieldCore(index);
+    }
+
+    template<class ApiHolder>    
+    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterFieldCore(TempPtr<field_metadata_label_type> &pField)
+    {
+        return Pimpl()->RegisterFieldCore(pField);
+    }
+
+    template<class ApiHolder>    
     TempPtr<typename BaseMetadataInfo<ApiHolder>::custom_attribute_metadata_label_type> BaseMetadataInfo<ApiHolder>::NewCustomAttributeCore(assembly_metadata_label_type *pAsm) const
     {
         return Pimpl()->NewCustomAttributeCore(pAsm);

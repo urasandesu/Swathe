@@ -136,8 +136,16 @@
 #include <Urasandesu/Swathe/Metadata/IFieldFwd.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_IPROPERTY_H
-#include <Urasandesu/Swathe/Metadata/IProperty.h>
+#ifndef URASANDESU_SWATHE_METADATA_IFIELDHASH_H
+#include <Urasandesu/Swathe/Metadata/IFieldHash.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_IFIELDEQUALTO_H
+#include <Urasandesu/Swathe/Metadata/IFieldEqualTo.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_IPROPERTYFWD_H
+#include <Urasandesu/Swathe/Metadata/IPropertyFwd.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_METADATA_IPROPERTYHASH_H
@@ -201,6 +209,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetSourceAssembly() const;
         IAssembly const *GetTargetAssembly() const;
         IDispenser const *GetDispenser() const;
+        IField const *GetField(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const;
         IType const *GetType(mdToken mdt) const;
@@ -209,7 +218,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly(wstring const &fullName) const;
         IAssembly const *GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         IAssembly const *GetAssemblyReference(mdAssemblyRef mdt) const;
-        IModule const *ResolveModule(IModule const *pMod) const;
         ICustomAttribute const *GetCustomAttribute(mdToken mdt) const;
         ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
@@ -262,6 +270,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool TryGetProperty(property_metadata_label_type const &prop, property_metadata_label_type *&pExistingProp) const;
         void RegisterProperty(TempPtr<property_metadata_label_type> &pProp);
         
+        field_metadata_label_type const *GetField(mdToken mdt, FieldProvider const &member) const;
+        TempPtr<field_metadata_label_type> NewField(mdToken mdt, FieldProvider const &member) const;
+        bool TryGetField(field_metadata_label_type const &field, field_metadata_label_type *&pExistingField) const;
+        void RegisterField(TempPtr<field_metadata_label_type> &pField);
+        
         custom_attribute_metadata_label_type const *GetCustomAttribute(mdToken mdt, CustomAttributeProvider const &member) const;
         TempPtr<custom_attribute_metadata_label_type> NewCustomAttribute(mdToken mdt, CustomAttributeProvider const &member) const;
         bool TryGetCustomAttribute(custom_attribute_metadata_label_type const &cas, custom_attribute_metadata_label_type *&pExistingCas) const;
@@ -276,7 +289,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetProcessorArchitectures(vector<ProcessorArchitecture> const &procArchs);
         static void FillAssemblyProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
         static void FillAssemblyRefProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
-        //static void FillAttributes(assembly_metadata_pimpl_label_type const *_this, vector<ICustomAttribute const *> &cas);
         static void FillPlatform(assembly_metadata_pimpl_label_type const *_this, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
         static void ResolveAssemblyPathByCurrentDirectory(assembly_metadata_pimpl_label_type const *_this, wstring const &name, path &asmPath);
         static void ResolveAssemblyPathByGAC(assembly_metadata_pimpl_label_type const *_this, unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > const &candidates, path &asmPath);
@@ -294,6 +306,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable unordered_map<ILocal const *, SIZE_T, ILocalHash, ILocalEqualTo> m_localToIndex;
         mutable unordered_map<IMethodBody const *, SIZE_T, IMethodBodyHash, IMethodBodyEqualTo> m_bodyToIndex;
         mutable unordered_map<IProperty const *, SIZE_T, IPropertyHash, IPropertyEqualTo> m_propToIndex;
+        mutable unordered_map<IField const *, SIZE_T, IFieldHash, IFieldEqualTo> m_fieldToIndex;
         mutable unordered_map<ICustomAttribute const *, SIZE_T, ICustomAttributeHash, ICustomAttributeEqualTo> m_casToIndex;        
         mutable mdToken m_mdt;
         mutable wstring m_fullName;

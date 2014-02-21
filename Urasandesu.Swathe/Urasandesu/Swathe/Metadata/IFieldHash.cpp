@@ -39,6 +39,10 @@
 #include <Urasandesu/Swathe/Metadata/IField.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYHASH_H
+#include <Urasandesu/Swathe/Metadata/IAssemblyHash.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IFieldHashDetail {
@@ -47,7 +51,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
         IFieldHashImpl::result_type IFieldHashImpl::operator()(param_type v) const
         {
-            return v->GetToken();
+            auto mdtTarget = v->GetToken();
+            auto const *pAsm = v->GetAssembly();
+            return mdtTarget ^ IAssemblyHash()(pAsm);
         }
 
     }   // namespace IFieldHashDetail {

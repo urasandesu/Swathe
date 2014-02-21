@@ -84,6 +84,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         mutable wstring m_name;
         mutable Platform m_platform;
         mutable ATL::CComPtr<IAssemblyName> m_pComAsmName;
+        int reserved;
         
     };
 

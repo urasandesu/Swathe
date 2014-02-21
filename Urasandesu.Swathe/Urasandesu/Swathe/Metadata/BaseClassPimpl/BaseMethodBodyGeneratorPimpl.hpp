@@ -44,10 +44,6 @@
 #include <Urasandesu/Swathe/Metadata/IType.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<class ApiHolder>    
@@ -67,7 +63,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
 #else
-        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), ==, sizeof(storage_type));
+        BOOST_MPL_ASSERT_RELATION(8, <=, sizeof(base_heap_provider_type));
+        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
 #endif
         new(BaseHeapProvider())base_heap_provider_type();
     }
@@ -108,21 +105,40 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseMethodBodyGeneratorPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+
             if (!m_pSrcBody)
             {
+                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcBody)");
+
                 auto const &locals = m_pClass->GetLocals();
                 if (locals.empty())
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (locals.empty())");
+                    CPPANONYM_D_LOGW(L"Getting Method Body Generator Token... 1: There are no locals.");
                     m_mdt = mdSignatureNil;
                 }
                 else
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (!locals.empty())");
+
                     auto const &sig = m_pClass->GetSignature();
                     auto const &blob = sig.GetBlob();
+                    CPPANONYM_D_LOGW(L"Getting Method Body Generator Token... 2: There are some locals.");
+                    if (CPPANONYM_D_LOG_ENABLED())
+                    {
+                        auto oss = std::wostringstream();
+                        oss << L"Signature:";
+                        for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                            oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                        CPPANONYM_D_LOGW(oss.str());
+                    }
                     auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                     auto hr = comMetaEmt.GetTokenFromSig(&blob[0], blob.size(), &m_mdt);
                     if (FAILED(hr))
@@ -278,11 +294,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     vector<BYTE> const &BaseMethodBodyGeneratorPimpl<ApiHolder>::GetRawBody() const
     {
+        BOOST_LOG_FUNCTION();
+
         using std::back_inserter;
         using std::copy;
 
         if (!m_rawBodyInit)
         {
+            BOOST_LOG_NAMED_SCOPE("if (!m_rawBodyInit)");
+
             auto rawBody = vector<BYTE>();
             auto const &insts = GetInstructions();
             rawBody.reserve(insts.size());
@@ -290,12 +310,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 copy((*i)->GetRawData().begin(), (*i)->GetRawData().end(), back_inserter(rawBody));
             rawBody.swap(m_rawBody);
             
-#ifdef OUTPUT_DEBUG
-            std::wcout << L"Method Body IL Stream:";
-            for (auto i = m_rawBody.begin(), i_end = m_rawBody.end(); i != i_end; ++i)
-                std::wcout << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-            std::wcout << std::endl;
-#endif
+            if (CPPANONYM_D_LOG_ENABLED())
+            {
+                auto oss = std::wostringstream();
+                oss << L"Method Body IL Stream:";
+                for (auto i = m_rawBody.begin(), i_end = m_rawBody.end(); i != i_end; ++i)
+                    oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                CPPANONYM_D_LOGW(oss.str());
+            }
 
             m_rawBodyInit = true;
         }
@@ -326,11 +348,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     UINT BaseMethodBodyGeneratorPimpl<ApiHolder>::GetRawBodyMaxStack() const
     {
+        BOOST_LOG_FUNCTION();
+
         using boost::adaptors::filtered;
         using boost::unordered_set;
         
         if (!m_rawBodyMaxStackInit)
         {
+            BOOST_LOG_NAMED_SCOPE("if (!m_rawBodyMaxStackInit)");
+
             auto const &exClauses = GetExceptionClauses();
             auto catchClauseStartSet = unordered_set<IInstructionPtrRange::iterator, IInstructionRangeIteratorHash, IInstructionRangeIteratorEqualTo>();
             auto catchClauses = exClauses | filtered([](ExceptionClause const &exClause) { return exClause.GetClauseKind() == ClauseKinds::CK_CATCH; });
@@ -350,7 +376,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     m_rawBodyMaxStack = current;
             }
 
-            D_WCOUT1(L"Method Body Max Stack: %|1$d|", m_rawBodyMaxStack);
+            CPPANONYM_D_LOGW1(L"Method Body Max Stack: %|1$d|", m_rawBodyMaxStack);
             
             m_rawBodyMaxStackInit = true;
         }
@@ -382,7 +408,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 if (clauseKind == ClauseKinds::CK_FILTER)
                     rawEHClause.SetFilterOffset((*exClause.GetFilterStart())->GetToken());
                 else if (clauseKind == ClauseKinds::CK_CATCH)
-                    rawEHClause.SetClassToken(MetadataResolver::Resolve(exClause.GetExceptionType())->GetToken());
+                    rawEHClause.SetClassToken(m_pAsmGen->Resolve(exClause.GetExceptionType())->GetToken());
                     
                 m_rawEHClauses.push_back(rawEHClause);
             }
@@ -442,7 +468,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (&opCode != &OpCodes::Ldloca_S &&
             &opCode != &OpCodes::Stloc_S && 
             &opCode != &OpCodes::Ldloc_S)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, ILocal const *)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -457,7 +487,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
         if (&opCode != &OpCodes::Ldstr)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, wstring const &)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -473,8 +507,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (&opCode != &OpCodes::Ldtoken &&
             &opCode != &OpCodes::Initobj &&
-            &opCode != &OpCodes::Newarr)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+            &opCode != &OpCodes::Newarr && 
+            &opCode != &OpCodes::Castclass && 
+            &opCode != &OpCodes::Isinst && 
+            &opCode != &OpCodes::Box && 
+            &opCode != &OpCodes::Ldelema)
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IType const *)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -491,7 +533,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (&opCode != &OpCodes::Brtrue_S &&
             &opCode != &OpCodes::Brfalse_S &&
             &opCode != &OpCodes::Leave)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, Label const &)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -509,7 +555,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             &opCode != &OpCodes::Newobj &&
             &opCode != &OpCodes::Call && 
             &opCode != &OpCodes::Callvirt)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IMethod const *)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -525,7 +575,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (&opCode != &OpCodes::Ldsfld && 
             &opCode != &OpCodes::Stsfld)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IField const *)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -540,8 +594,42 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
         if (&opCode != &OpCodes::Ldc_I4_S && 
-            &opCode != &OpCodes::Leave_S)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+            &opCode != &OpCodes::Leave_S && 
+            &opCode != &OpCodes::Blt_S && 
+            &opCode != &OpCodes::Ble_S && 
+            &opCode != &OpCodes::Bge_S && 
+            &opCode != &OpCodes::Brfalse_S && 
+            &opCode != &OpCodes::Brtrue_S && 
+            &opCode != &OpCodes::Br_S && 
+            &opCode != &OpCodes::Beq_S && 
+            &opCode != &OpCodes::Blt_Un_S && 
+            &opCode != &OpCodes::Bge_Un_S && 
+            &opCode != &OpCodes::Bgt_S && 
+            &opCode != &OpCodes::Bne_Un_S)
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, BYTE)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
+
+        auto *pInstGen = NewInstructionGeneratorCore();
+        pInstGen->SetOpCode(opCode);
+        pInstGen->SetOperand(arg);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodBodyGeneratorPimpl<ApiHolder>::Emit(OpCode const &opCode, DOUBLE arg)
+    {
+        using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
+
+        if (&opCode != &OpCodes::Ldc_R8)
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, DOUBLE)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -556,7 +644,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
         if (&opCode != &OpCodes::Ldloca)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, SHORT)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -570,8 +662,32 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Ldc_I4)
-            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
+        if (&opCode != &OpCodes::Ldc_I4 && 
+            &opCode != &OpCodes::Beq)
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, INT)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
+
+        auto *pInstGen = NewInstructionGeneratorCore();
+        pInstGen->SetOpCode(opCode);
+        pInstGen->SetOperand(arg);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodBodyGeneratorPimpl<ApiHolder>::Emit(OpCode const &opCode, LONGLONG arg)
+    {
+        using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
+
+        if (&opCode != &OpCodes::Ldc_I8)
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, LONGLONG)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
 
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
@@ -813,15 +929,51 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
 
         template<>
+        void operator ()<DOUBLE>(DOUBLE const &arg) const
+        {
+            m__this->Emit(m_opCode, arg);
+        }
+
+        template<>
+        void operator ()<INT>(INT const &arg) const
+        {
+            m__this->Emit(m_opCode, arg);
+        }
+
+        template<>
+        void operator ()<LONGLONG>(LONGLONG const &arg) const
+        {
+            m__this->Emit(m_opCode, arg);
+        }
+
+        template<>
         void operator ()<ILocal const *>(ILocal const *const &pLocal) const
         {
             m__this->Emit(m_opCode, pLocal);
         }
 
         template<>
+        void operator ()<wstring>(wstring const &s) const
+        {
+            m__this->Emit(m_opCode, s);
+        }
+
+        template<>
+        void operator ()<IField const *>(IField const *const &pField) const
+        {
+            m__this->Emit(m_opCode, pField);
+        }
+
+        template<>
         void operator ()<IMethod const *>(IMethod const *const &pMethod) const
         {
             m__this->Emit(m_opCode, pMethod);
+        }
+
+        template<>
+        void operator ()<IType const *>(IType const *const &pType) const
+        {
+            m__this->Emit(m_opCode, pType);
         }
 
         mutable method_body_generator_pimpl_label_type *m__this;

@@ -131,6 +131,35 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    bool BaseTypeMetadataPimpl<ApiHolder>::IsValueType() const
+    {
+        auto kind = GetKind();
+        switch (kind.Value())
+        {
+            case TypeKinds::TK_VOID:
+            case TypeKinds::TK_BOOLEAN:
+            case TypeKinds::TK_CHAR:
+            case TypeKinds::TK_I1:
+            case TypeKinds::TK_U1:
+            case TypeKinds::TK_I2:
+            case TypeKinds::TK_U2:
+            case TypeKinds::TK_I4:
+            case TypeKinds::TK_U4:
+            case TypeKinds::TK_I8:
+            case TypeKinds::TK_U8:
+            case TypeKinds::TK_R4:
+            case TypeKinds::TK_R8:
+            case TypeKinds::TK_I:
+            case TypeKinds::TK_VALUETYPE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+
+
+    template<class ApiHolder>    
     bool BaseTypeMetadataPimpl<ApiHolder>::IsGenericParameter() const
     {
         return TypeFromToken(GetToken()) == mdtGenericParam;
@@ -493,38 +522,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    IMethod const *BaseTypeMetadataPimpl<ApiHolder>::ResolveMethod(IMethod const *pMethod) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
-    IProperty const *BaseTypeMetadataPimpl<ApiHolder>::ResolveProperty(IProperty const *pProp) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
-    IField const *BaseTypeMetadataPimpl<ApiHolder>::ResolveField(IField const *pField) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
-    IType const *BaseTypeMetadataPimpl<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
     bool BaseTypeMetadataPimpl<ApiHolder>::IsDefined(IType const *pAttrType, bool inherit) const
     {
         using boost::empty;
@@ -625,58 +622,74 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseTypeMetadataPimpl<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseTypeMetadataPimpl<ApiHolder>::OutDebugInfo() const
     {
-#ifdef OUTPUT_DEBUG
+        BOOST_LOG_FUNCTION();
+
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        D_WCOUTI(indent, L"");
-        D_WCOUTI(indent, L"TypeMetadata -----------------------------------------------------");
-        D_WCOUTI1(indent, L"m_pClass: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pClass));
-        D_WCOUTI1(indent, L"m_pAsm: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pAsm));
-        D_WCOUTI1(indent, L"m_member: %|1$d|", m_member.which());
-        D_WCOUTI1(indent, L"m_mdt: 0x%|1$08X|", m_mdt);
-        D_WCOUTI1(indent, L"m_mdtResolutionScope: 0x%|1$08X|", m_mdtResolutionScope);
-        D_WCOUTI1(indent, L"m_mdtExt: 0x%|1$08X|", m_mdtExt);
-        D_WCOUTI1(indent, L"m_mdtOwner: 0x%|1$08X|", m_mdtOwner);
-        D_WCOUTI1(indent, L"m_fullName: %|1$s|", m_fullName);
-        D_WCOUTI1(indent, L"m_genericParamPos: %|1$d|", m_genericParamPos);
-        D_WCOUTI1(indent, L"m_genericArgsInit: %|1$d|", m_genericArgsInit);
-        D_WCOUTI1(indent, L"m_genericArgs.size(): %|1$d|", m_genericArgs.size());
-        for (auto i = m_genericArgs.begin(), i_end = m_genericArgs.end(); i != i_end; ++i)
-            (*i)->OutDebugInfo(indent + 4);
-        D_WCOUTI1(indent, L"m_interfacesInit: %|1$d|", m_interfacesInit);
-        D_WCOUTI1(indent, L"m_interfaces.size(): %|1$d|", m_interfaces.size());
-        D_WCOUTI1(indent, L"m_methodsInit: %|1$d|", m_methodsInit);
-        D_WCOUTI1(indent, L"m_methods.size(): %|1$d|", m_methods.size());
-        D_WCOUTI1(indent, L"m_propsInit: %|1$d|", m_propsInit);
-        D_WCOUTI1(indent, L"m_props.size(): %|1$d|", m_props.size());
-        D_WCOUTI1(indent, L"m_casInit: %|1$d|", m_casInit);
-        D_WCOUTI1(indent, L"m_cas.size(): %|1$d|", m_cas.size());
-        auto const &blob = m_sig.GetBlob();
-        std::wcout << std::wstring(indent, L' ') << L"m_sig:";
-        for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
-            std::wcout << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-        std::wcout << std::endl;
-        D_WCOUTI1(indent, L"m_kind: %|1$d|", m_kind.Value());
-        if (m_kind == TypeKinds::TK_BYREF)
+        CPPANONYM_D_LOGW(L"");
+        CPPANONYM_D_LOGW(L"TypeMetadata -----------------------------------------------------");
+        CPPANONYM_D_LOGW1(L"m_pClass: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pClass));
+        CPPANONYM_D_LOGW1(L"m_pAsm: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pAsm));
+        CPPANONYM_D_LOGW1(L"m_member: %|1$d|", m_member.which());
+        CPPANONYM_D_LOGW1(L"m_mdt: 0x%|1$08X|", m_mdt);
+        CPPANONYM_D_LOGW1(L"m_mdtResolutionScope: 0x%|1$08X|", m_mdtResolutionScope);
+        CPPANONYM_D_LOGW1(L"m_mdtExt: 0x%|1$08X|", m_mdtExt);
+        CPPANONYM_D_LOGW1(L"m_mdtOwner: 0x%|1$08X|", m_mdtOwner);
+        CPPANONYM_D_LOGW1(L"m_fullName: %|1$s|", m_fullName);
+        CPPANONYM_D_LOGW1(L"m_genericParamPos: %|1$d|", m_genericParamPos);
+        CPPANONYM_D_LOGW1(L"m_genericArgsInit: %|1$d|", m_genericArgsInit);
+        CPPANONYM_D_LOGW1(L"m_genericArgs.size(): %|1$d|", m_genericArgs.size());
+        if (CPPANONYM_D_LOG_ENABLED())
         {
-            _ASSERTE(!Empty(m_member));
-            GetDeclaringType()->OutDebugInfo(indent + 4);
+            for (auto i = m_genericArgs.begin(), i_end = m_genericArgs.end(); i != i_end; ++i)
+                (*i)->OutDebugInfo();
         }
-        D_WCOUTI1(indent, L"m_attr: %|1$d|", m_attr.Value());
-        D_WCOUTI1(indent, L"m_baseTypeInit: %|1$d|", m_baseTypeInit);
-        D_WCOUTI1(indent, L"m_pBaseType: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pBaseType));
-        if (m_pBaseType)
-            m_pBaseType->OutDebugInfo(indent + 4);
-        D_WCOUTI1(indent, L"m_srcTypeInit: %|1$d|", m_srcTypeInit);
-        D_WCOUTI1(indent, L"m_pSrcType: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pSrcType));
-        if (m_pSrcType && m_pSrcType != m_pClass)
-            m_pSrcType->OutDebugInfo(indent + 4);
-        D_WCOUTI(indent, L"------------------------------------------------------------------");
-        D_WCOUTI(indent, L"");
-#endif
+        CPPANONYM_D_LOGW1(L"m_interfacesInit: %|1$d|", m_interfacesInit);
+        CPPANONYM_D_LOGW1(L"m_interfaces.size(): %|1$d|", m_interfaces.size());
+        CPPANONYM_D_LOGW1(L"m_methodsInit: %|1$d|", m_methodsInit);
+        CPPANONYM_D_LOGW1(L"m_methods.size(): %|1$d|", m_methods.size());
+        CPPANONYM_D_LOGW1(L"m_propsInit: %|1$d|", m_propsInit);
+        CPPANONYM_D_LOGW1(L"m_props.size(): %|1$d|", m_props.size());
+        CPPANONYM_D_LOGW1(L"m_casInit: %|1$d|", m_casInit);
+        CPPANONYM_D_LOGW1(L"m_cas.size(): %|1$d|", m_cas.size());
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto const &blob = m_sig.GetBlob();
+            auto oss = std::wostringstream();
+            oss << L"m_sig:";
+            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"m_kind: %|1$d|", m_kind.Value());
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            if (m_kind == TypeKinds::TK_BYREF)
+            {
+                _ASSERTE(!Empty(m_member));
+                GetDeclaringType()->OutDebugInfo();
+            }
+        }
+        CPPANONYM_D_LOGW1(L"m_attr: %|1$d|", m_attr.Value());
+        CPPANONYM_D_LOGW1(L"m_baseTypeInit: %|1$d|", m_baseTypeInit);
+        CPPANONYM_D_LOGW1(L"m_pBaseType: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pBaseType));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            if (m_pBaseType)
+                m_pBaseType->OutDebugInfo();
+        }
+        CPPANONYM_D_LOGW1(L"m_srcTypeInit: %|1$d|", m_srcTypeInit);
+        CPPANONYM_D_LOGW1(L"m_pSrcType: 0x%|1$08X|", reinterpret_cast<DWORD>(m_pSrcType));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            if (m_pSrcType && m_pSrcType != m_pClass)
+                m_pSrcType->OutDebugInfo();
+        }
+        CPPANONYM_D_LOGW(L"------------------------------------------------------------------");
+        CPPANONYM_D_LOGW(L"");
     }
 
 
@@ -698,9 +711,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IType const *BaseTypeMetadataPimpl<ApiHolder>::MakePointerType() const
+    {
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PTR, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+    }
+
+
+
+    template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeByRefType() const
     {
         return m_pAsm->GetType(GetToken(), TypeKinds::TK_BYREF, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseTypeMetadataPimpl<ApiHolder>::MakePinnedType() const
+    {
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PINNED, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 

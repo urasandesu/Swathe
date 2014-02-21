@@ -115,12 +115,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    IType const *BaseModuleGenerator<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        return Pimpl()->ResolveType(pType);
-    }
-
-    template<class ApiHolder>    
     typename BaseModuleGenerator<ApiHolder>::type_generator_label_type *BaseModuleGenerator<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr)
     {
         return Pimpl()->DefineType(fullName, attr);

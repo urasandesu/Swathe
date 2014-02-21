@@ -86,12 +86,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetIndex(SIZE_T index);
         void Reset();
         static void PutInlineBrTarget(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
-        static void PutInlineField(Operand const &operand, SimpleBlob &blob);
+        static void PutInlineField(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
         static void PutInlineI(Operand const &operand, SimpleBlob &blob);
-        static void PutInlineMethod(Operand const &operand, SimpleBlob &blob);
+        static void PutInlineI8(Operand const &operand, SimpleBlob &blob);
+        static void PutInlineMethod(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
+        static void PutInlineR(Operand const &operand, SimpleBlob &blob);
         static void PutInlineString(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
-        static void PutInlineToken(Operand const &operand, SimpleBlob &blob);
-        static void PutInlineType(Operand const &operand, SimpleBlob &blob);
+        static void PutInlineToken(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
+        static void PutInlineType(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
         static void PutInlineVar(Operand const &operand, SimpleBlob &blob);
         static void PutShortInlineBrTarget(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
         static void PutShortInlineI(Operand const &operand, SimpleBlob &blob);

@@ -48,6 +48,10 @@
 #include <Urasandesu/Swathe/Metadata/IParameterFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYFWD_H
+#include <Urasandesu/Swathe/Metadata/IAssemblyFwd.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { 
     
     struct IParameter
@@ -61,8 +65,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IMethod const *GetMethod() const = 0;
         virtual IProperty const *GetProperty() const = 0;
         virtual ParameterProvider const &GetMember() const = 0;
+        virtual IAssembly const *GetAssembly() const = 0;
         virtual IParameter const *GetSourceParameter() const = 0;
-        virtual void OutDebugInfo(ULONG indent) const = 0;
+        virtual void OutDebugInfo() const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

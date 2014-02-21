@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -38,9 +38,6 @@
     <Filter Include="Header Files\Urasandesu\Swathe\ApiHolders">
       <UniqueIdentifier>{58c31d7a-2dcd-460f-bfea-40a082995233}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Urasandesu\Swathe\ApiHolders">
-      <UniqueIdentifier>{76f3665a-2c38-4980-ab26-02ba2df0da81}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Urasandesu\Swathe\Fusion">
       <UniqueIdentifier>{9f9da1cf-fc3f-4d17-8d37-954f7885963e}</UniqueIdentifier>
     </Filter>
@@ -49,9 +46,6 @@
     </Filter>
     <Filter Include="Header Files\Urasandesu\Swathe\AutoGen\Hosting">
       <UniqueIdentifier>{25D87A66-67BB-4CDC-AA49-76D56D3E056A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Urasandesu\Swathe\Hosting">
-      <UniqueIdentifier>{3CE0FC00-DD59-479C-B885-092B7B430EF1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Urasandesu\Swathe\AutoGen\Hosting">
       <UniqueIdentifier>{901FD04A-0C3D-46B9-A797-D510C2EC6D0A}</UniqueIdentifier>
@@ -74,9 +68,6 @@
     <Filter Include="Header Files\Urasandesu\Swathe\AutoGen\Profiling">
       <UniqueIdentifier>{5BFC1DF3-1EB6-4D3D-B3BB-43B3449C562D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Urasandesu\Swathe\Profiling">
-      <UniqueIdentifier>{3d59406c-cd89-4fa0-ad71-771bbeb12c0f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Urasandesu\Swathe\AutoGen\Profiling">
       <UniqueIdentifier>{169DA384-F63A-4EED-90B9-ADF2FB2F3BBE}</UniqueIdentifier>
     </Filter>
@@ -85,9 +76,6 @@
     </Filter>
     <Filter Include="Header Files\Urasandesu\Swathe\AutoGen\StrongNaming">
       <UniqueIdentifier>{69F1B342-CA1A-4C7D-8E1A-DFDEE28C8F24}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Urasandesu\Swathe\StrongNaming">
-      <UniqueIdentifier>{90A68379-1E8D-4467-ADCE-0F0B3DB84C0E}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Urasandesu\Swathe\AutoGen\StrongNaming">
       <UniqueIdentifier>{A9D6F338-5038-49C7-AF03-A1EFC0840B5A}</UniqueIdentifier>
@@ -359,6 +347,12 @@
     <Filter Include="Header Files\Urasandesu\Swathe\StrongNaming\BaseClassPimpl">
       <UniqueIdentifier>{dcd1237a-9ac8-49a5-a177-58cb30a10373}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Urasandesu\CppAnonym">
+      <UniqueIdentifier>{61266662-485a-4b4e-925b-b94956d28bd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Urasandesu\CppAnonym\Utilities">
+      <UniqueIdentifier>{3f277689-51e5-4ad4-876e-da8d52a96ff9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -372,12 +366,6 @@
     </ClCompile>
     <ClCompile Include="UrasandesuSwathe_i.c">
       <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Urasandesu\Swathe\ApiHolders\DefaultCppAnonymStorageApiHolder.cpp">
-      <Filter>Source Files\Urasandesu\Swathe\ApiHolders</Filter>
-    </ClCompile>
-    <ClCompile Include="Urasandesu\Swathe\Profiling\DefaultInfoProfilingApi.cpp">
-      <Filter>Source Files\Urasandesu\Swathe\Profiling</Filter>
     </ClCompile>
     <ClCompile Include="Urasandesu\Swathe\BaseSwatheStorage.cpp">
       <Filter>Source Files\Urasandesu\Swathe</Filter>
@@ -652,9 +640,6 @@
     <ClCompile Include="Urasandesu\Swathe\Metadata\IPropertyHash.cpp">
       <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
     </ClCompile>
-    <ClCompile Include="Urasandesu\Swathe\Metadata\MetadataResolver.cpp">
-      <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClCompile>
     <ClCompile Include="Urasandesu\Swathe\AutoGen\Metadata\BaseClass\BaseParameterMetadata.cpp">
       <Filter>Source Files\Urasandesu\Swathe\AutoGen\Metadata\BaseClass</Filter>
     </ClCompile>
@@ -834,6 +819,63 @@
     </ClCompile>
     <ClCompile Include="Urasandesu\Swathe\Metadata\ExceptionClause.cpp">
       <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymArgumentException.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymCOMException.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymException.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymInvalidOperationException.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymNotImplementedException.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymNotSupportedException.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymObjectDisposedException.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\CppAnonymSystemException.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Environment.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Log.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\SimpleDisposable.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\StackFrame.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\StackTrace.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Utilities\AutoPtr.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Utilities\SemiAutoPtr.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Utilities\TypeInfo.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\AutoGen\Metadata\BaseClass\BaseFieldMetadata.cpp">
+      <Filter>Source Files\Urasandesu\Swathe\AutoGen\Metadata\BaseClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\AutoGen\Metadata\BaseClassPersistedHandler\BaseFieldMetadataPersistedHandler.cpp">
+      <Filter>Source Files\Urasandesu\Swathe\AutoGen\Metadata\BaseClassPersistedHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\AutoGen\Metadata\BaseClassPimpl\BaseFieldMetadataPimpl.cpp">
+      <Filter>Source Files\Urasandesu\Swathe\AutoGen\Metadata\BaseClassPimpl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3525,12 +3567,6 @@
     <ClInclude Include="Urasandesu\Swathe\Metadata\IDispenserFwd.h">
       <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
     </ClInclude>
-    <ClInclude Include="Urasandesu\Swathe\Metadata\MetadataResolver.h">
-      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="Urasandesu\Swathe\Metadata\MetadataResolverFwd.h">
-      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClInclude>
     <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassApiAt\ParameterMetadataApiAt.h">
       <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassApiAt</Filter>
     </ClInclude>
@@ -5173,6 +5209,102 @@
       <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
     </ClInclude>
     <ClInclude Include="Urasandesu\Swathe\Metadata\ExceptionClauseFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassApiAt\FieldMetadataApiAt.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassApiAt</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassApiLabel\FieldMetadataApiLabel.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassApiLabel</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassFacade\FieldMetadataFacade.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassFacade</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassFacade\FieldMetadataFacadeFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassFacade</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassLabel\FieldMetadataLabel.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassLabel</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassPersistedHandlerFacade\FieldMetadataPersistedHandlerFacade.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassPersistedHandlerFacade</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassPersistedHandlerFacade\FieldMetadataPersistedHandlerFacadeFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassPersistedHandlerFacade</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassPersistedHandlerLabel\FieldMetadataPersistedHandlerLabel.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassPersistedHandlerLabel</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassPimplFacade\FieldMetadataPimplFacade.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassPimplFacade</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassPimplFacade\FieldMetadataPimplFacadeFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassPimplFacade</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\ClassPimplLabel\FieldMetadataPimplLabel.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\ClassPimplLabel</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\DefaultClassApiHolder\DefaultFieldMetadataApiHolder.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\DefaultClassApiHolder</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\DefaultClassApiHolder\DefaultFieldMetadataApiHolderFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\DefaultClassApiHolder</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\DefaultClassPersistedHandlerApiHolder\DefaultFieldMetadataPersistedHandlerApiHolder.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\DefaultClassPersistedHandlerApiHolder</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\DefaultClassPersistedHandlerApiHolder\DefaultFieldMetadataPersistedHandlerApiHolderFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\DefaultClassPersistedHandlerApiHolder</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\DefaultClassPimplApiHolder\DefaultFieldMetadataPimplApiHolder.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\DefaultClassPimplApiHolder</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\AutoGen\Metadata\DefaultClassPimplApiHolder\DefaultFieldMetadataPimplApiHolderFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\AutoGen\Metadata\DefaultClassPimplApiHolder</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClass\BaseFieldMetadata.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClass\BaseFieldMetadata.hpp">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClass\BaseFieldMetadataFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClassPersistedHandler\BaseFieldMetadataPersistedHandler.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClassPersistedHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClassPersistedHandler\BaseFieldMetadataPersistedHandler.hpp">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClassPersistedHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClassPersistedHandler\BaseFieldMetadataPersistedHandlerFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClassPersistedHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClassPimpl\BaseFieldMetadataPimpl.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClassPimpl</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClassPimpl\BaseFieldMetadataPimpl.hpp">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClassPimpl</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\BaseClassPimpl\BaseFieldMetadataPimplFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata\BaseClassPimpl</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\FieldMetadata.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\FieldMetadataFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\FieldMetadataPersistedHandler.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\FieldMetadataPersistedHandlerFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\FieldMetadataPimpl.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\FieldMetadataPimplFwd.h">
       <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
     </ClInclude>
   </ItemGroup>

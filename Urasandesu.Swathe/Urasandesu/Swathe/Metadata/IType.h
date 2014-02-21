@@ -84,6 +84,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IType() { }
         virtual mdToken GetToken() const = 0;
         virtual std::wstring const &GetFullName() const = 0;
+        virtual bool IsValueType() const = 0;
         virtual bool IsGenericParameter() const = 0;
         virtual bool IsGenericType() const = 0;
         virtual bool IsGenericTypeDefinition() const = 0;
@@ -94,7 +95,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual Signature const &GetSignature() const = 0;
         virtual IType const *MakeArrayType() const = 0;
         virtual IType const *MakeGenericType(std::vector<IType const *> const &genericArgs) const = 0;
+        virtual IType const *MakePointerType() const = 0;
         virtual IType const *MakeByRefType() const = 0;
+        virtual IType const *MakePinnedType() const = 0;
         virtual IMethod const *GetMethod(std::wstring const &name) const = 0;
         virtual IMethod const *GetMethod(std::wstring const &name, std::vector<IType const *> const &paramTypes) const = 0;
         virtual IMethod const *GetMethod(std::wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, std::vector<IType const *> const &paramTypes) const = 0;
@@ -115,15 +118,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual TypeProvider const &GetMember() const = 0;
         virtual IMethod const *GetMethod(mdToken mdt) const = 0;
         virtual IProperty const *GetProperty(mdToken mdt) const = 0;
-        virtual IMethod const *ResolveMethod(IMethod const *pMethod) const = 0;
-        virtual IProperty const *ResolveProperty(IProperty const *pProp) const = 0;
-        virtual IField const *ResolveField(IField const *pField) const = 0;
-        virtual IType const *ResolveType(IType const *pType) const = 0;
         virtual bool IsDefined(IType const *pAttrType, bool inherit) const = 0;
         virtual ICustomAttributePtrRange GetCustomAttributes(bool inherit) const = 0;
         virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const = 0;
         virtual IType const *GetSourceType() const = 0;
-        virtual void OutDebugInfo(ULONG indent) const = 0;
+        virtual void OutDebugInfo() const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

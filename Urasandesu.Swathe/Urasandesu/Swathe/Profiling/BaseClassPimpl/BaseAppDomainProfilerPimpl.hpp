@@ -45,38 +45,18 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         m_pMetaInfo(nullptr), 
         m_id(static_cast<UINT_PTR>(-1)), 
         m_pDisp(nullptr)
-    { 
-#ifdef _DEBUG
-        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
-#else
-        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), ==, sizeof(storage_type));
-#endif
-        new(BaseHeapProvider())base_heap_provider_type();
-    }
+    { }
 
     template<class ApiHolder>    
     BaseAppDomainProfilerPimpl<ApiHolder>::~BaseAppDomainProfilerPimpl()
     {
-        if (m_pDisp != nullptr)
+        if (m_pDisp)
         {
             m_pMetaInfo->UnloadDispenser(m_pDisp);
             m_pDisp = nullptr;
         }
-        BaseHeapProvider()->~base_heap_provider_type();
     }
 
-    template<class ApiHolder>    
-    typename BaseAppDomainProfilerPimpl<ApiHolder>::base_heap_provider_type *BaseAppDomainProfilerPimpl<ApiHolder>::BaseHeapProvider()
-    {
-        return reinterpret_cast<base_heap_provider_type *>(&m_storage);
-    }
-
-    template<class ApiHolder>    
-    typename BaseAppDomainProfilerPimpl<ApiHolder>::base_heap_provider_type const *BaseAppDomainProfilerPimpl<ApiHolder>::BaseHeapProvider() const
-    {
-        return const_cast<class_pimpl_type *>(this)->BaseHeapProvider();
-    }
-    
 #define SWATHE_DECLARE_BASE_APP_DOMAIN_PROFILER_PIMPL_ADDITIONAL_INSTANTIATION \
 
     

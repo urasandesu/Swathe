@@ -48,10 +48,6 @@
 #include <Urasandesu/Swathe/Metadata/IType.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_HOSTING_COMIMAGEFLAGS_H
 #include <Urasandesu/Swathe/Hosting/ComImageFlags.h>
 #endif
@@ -104,17 +100,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdAssembly BaseAssemblyGeneratorPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mda))
         {
-            if (m_pSrcAsm == nullptr)
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mda))");
+
+            if (!m_pSrcAsm)
             {
+                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcAsm)");
+
                 _ASSERTE(!m_name.empty());
                 _ASSERTE(m_pSnKey);
                 ::ZeroMemory(&m_amd, sizeof(ASSEMBLYMETADATA));
                 
-                D_WCOUT1(L"Getting Assembly Generator Token... 1: %|1$s|", m_name);
+                CPPANONYM_D_LOGW1(L"Getting Assembly Generator Token... 1: %|1$s|", m_name);
                 auto const &pubKeyBlob = m_pSnKey->GetPublicKeyBlob();
                 auto pubKeyBlobSize = m_pSnKey->GetPublicKeyBlobSize();
                 auto &comMetaAsmEmt = m_pClass->GetCOMMetaDataAssemblyEmit();
@@ -126,19 +128,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
+                BOOST_LOG_NAMED_SCOPE("if (m_pSrcAsm)");
+
                 auto const &pSnKey = m_pSrcAsm->GetStrongNameKey();
                 auto const &pubKeyToken = pSnKey->GetPublicKeyToken();
                 auto const &name = m_pSrcAsm->GetName();
                 auto const &amd = m_pSrcAsm->GetAssemblyMetadata();
                 auto asmFlags = m_pSrcAsm->GetFlags();
                 asmFlags &= ~AssemblyFlags::AF_PUBLIC_KEY;
-                D_WCOUT1(L"Getting Assembly Generator Token... 2: %|1$s|", name);
+                CPPANONYM_D_LOGW1(L"Getting Assembly Generator Token... 2: %|1$s|", name);
                 auto &comMetaAsmEmt = m_pClass->GetCOMMetaDataAssemblyEmit();   // TODO: この辺実装中。。。
                 auto hr = comMetaAsmEmt.DefineAssemblyRef(&pubKeyToken[0], pubKeyToken.size(), name.c_str(), &amd, NULL, 0, asmFlags.Value(), &m_mda);
                 if (FAILED(hr))
                     BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
             }
-            D_WCOUT1(L"Token: 0x%|1$08X|", m_mda);
+            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mda);
         }
         return m_mda;
     }
@@ -173,7 +177,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         else
         {
-            return MetadataResolver::Resolve(m_pSrcAsm->GetMainModule());
+            return m_pClass->Resolve(m_pSrcAsm->GetMainModule());
         }
     }
 
@@ -262,6 +266,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    IField const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetField(mdToken mdt) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IMethod const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetMethod(mdToken mdt) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
@@ -325,30 +337,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
 
-    template<class ApiHolder>    
-    IModule const *BaseAssemblyGeneratorPimpl<ApiHolder>::ResolveModule(IModule const *pMod) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<module_generator_label_type const *, SIZE_T> > ModGenToIndex;
-        typedef ModGenToIndex::value_type Value;
-
-        _ASSERTE(m_pClass->GetSourceAssembly() == pMod->GetAssembly()->GetSourceAssembly());
-        
-        auto const &modGenToIndex = m_pClass->GetModuleGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetAssembly() == m_pClass; };
-        auto myModGenToIndex = modGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceModule() == pMod->GetSourceModule(); };
-        auto result = FindIf(myModGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-
-        return m_pClass->DefineModule(pMod);
-    }
-    
-    
-    
     template<class ApiHolder>    
     ICustomAttribute const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetCustomAttribute(mdToken mdt) const
     {
@@ -485,17 +473,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     vector<IAssembly const *> const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetReferencedAssemblies() const
     {
+        BOOST_LOG_FUNCTION();
+
         if (!m_refAsmsInit)
         {
+            BOOST_LOG_NAMED_SCOPE("if (!m_refAsmsInit)");
+
             if (m_refAsmGens.empty())
                 FillDefaultReferencedAssemblies(this, m_refAsmGens);
-#ifdef OUTPUT_DEBUG
-            BOOST_FOREACH (auto const *pRefAsmGen, m_refAsmGens)
+            
+            if (CPPANONYM_D_LOG_ENABLED())
             {
-                auto const &fullName = pRefAsmGen->GetSourceAssembly()->GetFullName();
-                D_WCOUT1(L"Reference Assembly: %|1$s|)", fullName);
+                BOOST_FOREACH (auto const *pRefAsmGen, m_refAsmGens)
+                {
+                    auto const &fullName = pRefAsmGen->GetSourceAssembly()->GetFullName();
+                    CPPANONYM_D_LOGW1(L"Reference Assembly: %|1$s|)", fullName);
+                }
             }
-#endif
 
             m_refAsms = vector<IAssembly const *>();
             m_refAsms.reserve(m_refAsmGens.size());
@@ -1084,6 +1078,232 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     vector<pair<typename BaseAssemblyGeneratorPimpl<ApiHolder>::custom_attribute_generator_label_type const *, SIZE_T> > const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetCustomAttributeGeneratorToIndex() const
     {
         return m_caGenToIndex;
+    }
+
+
+
+    template<class ApiHolder>    
+    IModule const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IModule const *pMod) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<pair<module_generator_label_type const *, SIZE_T> > ModGenToIndex;
+        typedef ModGenToIndex::value_type Value;
+
+        {
+            auto const &modGenToIndex = m_pClass->GetModuleGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceModule() == pMod->GetSourceModule(); };
+            auto result = FindIf(modGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        }
+        {
+            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pMod->GetAssembly());
+            auto const &modGenToIndex = pRefAsmGen->GetModuleGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceModule() == pMod->GetSourceModule(); };
+            auto result = FindIf(modGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+
+            return pRefAsmGen->DefineModule(pMod);
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IType const *pType) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<pair<type_generator_label_type const *, SIZE_T> > TypeGenToIndex;
+        typedef TypeGenToIndex::value_type Value;
+
+        {
+            auto const &typeGenToIndex = m_pClass->GetTypeGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceType() == pType->GetSourceType(); };
+            auto result = FindIf(typeGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        }
+        {
+            auto *pResolvedAsmGen = m_pDisp->ResolveAssembly(pType->GetAssembly());
+            auto const &typeGenToIndex = pResolvedAsmGen->GetTypeGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceType() == pType->GetSourceType(); };
+            auto result = FindIf(typeGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        
+            return pResolvedAsmGen->DefineType(pType, TypeProvider());
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    IField const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IField const *pField) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<pair<field_generator_label_type const *, SIZE_T> > FieldGenToIndex;
+        typedef FieldGenToIndex::value_type Value;
+
+        {
+            auto const &fieldGenToIndex = m_pClass->GetFieldGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceField() == pField->GetSourceField(); };
+            auto result = FindIf(fieldGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        }
+        {
+            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pField->GetAssembly());
+            auto const &fieldGenToIndex = pRefAsmGen->GetFieldGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceField() == pField->GetSourceField(); };
+            auto result = FindIf(fieldGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        
+            return pRefAsmGen->DefineField(pField, PropertyProvider());
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    IProperty const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IProperty const *pProp) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<pair<property_generator_label_type const *, SIZE_T> > PropertyGenToIndex;
+        typedef PropertyGenToIndex::value_type Value;
+
+        {
+            auto const &propGenToIndex = m_pClass->GetPropertyGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceProperty() == pProp->GetSourceProperty(); };
+            auto result = FindIf(propGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        }
+        {
+            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pProp->GetAssembly());
+            auto const &propGenToIndex = pRefAsmGen->GetPropertyGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceProperty() == pProp->GetSourceProperty(); };
+            auto result = FindIf(propGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        
+            return pRefAsmGen->DefineProperty(pProp, PropertyProvider());
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    IMethod const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IMethod const *pMethod) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<pair<method_generator_label_type const *, SIZE_T> > MethodGenToIndex;
+        typedef MethodGenToIndex::value_type Value;
+
+        {
+            auto const &methodGenToIndex = m_pClass->GetMethodGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethod() == pMethod->GetSourceMethod(); };
+            auto result = FindIf(methodGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        }
+        {
+            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pMethod->GetAssembly());
+            auto const &methodGenToIndex = pRefAsmGen->GetMethodGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethod() == pMethod->GetSourceMethod(); };
+            auto result = FindIf(methodGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        
+            return pRefAsmGen->DefineMethod(pMethod, MethodProvider());
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    IMethodBody const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IMethodBody const *pBody) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<pair<method_body_generator_label_type const *, SIZE_T> > MethodBodyGenToIndex;
+        typedef MethodBodyGenToIndex::value_type Value;
+
+        {
+            auto const &bodyGenToIndex = m_pClass->GetMethodBodyGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethodBody() == pBody->GetSourceMethodBody(); };
+            auto result = FindIf(bodyGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        }
+        {
+            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pBody->GetAssembly());
+            auto const &bodyGenToIndex = pRefAsmGen->GetMethodBodyGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethodBody() == pBody->GetSourceMethodBody(); };
+            auto result = FindIf(bodyGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+
+            return pRefAsmGen->DefineMethodBody(pBody, nullptr);
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    IParameter const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IParameter const *pParam) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<pair<parameter_generator_label_type const *, SIZE_T> > ParamGenToIndex;
+        typedef ParamGenToIndex::value_type Value;
+
+        {
+            auto const &paramGenToIndex = m_pClass->GetParameterGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceParameter() == pParam->GetSourceParameter(); };
+            auto result = FindIf(paramGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+        }
+        {
+            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pParam->GetAssembly());
+            auto const &paramGenToIndex = pRefAsmGen->GetParameterGeneratorToIndex();
+            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceParameter() == pParam->GetSourceParameter(); };
+            auto result = FindIf(paramGenToIndex, isAlreadyExist);
+            if (result)
+                return (*result).first;
+
+            return pRefAsmGen->DefineParameter(pParam, ParameterProvider());
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    ILocal const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(ILocal const *pLocal) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    ICustomAttribute const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(ICustomAttribute const *pCa) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
 
 

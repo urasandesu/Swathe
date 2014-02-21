@@ -92,14 +92,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdAssembly BaseAssemblyMetadataPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+
+            CPPANONYM_D_LOGW(L"Getting Assembly Metadata Token... 1");
             auto &comMetaAsmImp = m_pClass->GetCOMMetaDataAssemblyImport();
             auto hr = comMetaAsmImp.GetAssemblyFromScope(&m_mdt);
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            
+            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
 
         return m_mdt;
@@ -265,6 +272,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    IField const *BaseAssemblyMetadataPimpl<ApiHolder>::GetField(mdToken mdt) const
+    {
+        return m_pClass->GetField(mdt, FieldProvider());
+    }
+
+
+
+    template<class ApiHolder>    
     IMethod const *BaseAssemblyMetadataPimpl<ApiHolder>::GetMethod(mdToken mdt) const
     {
         return m_pClass->GetMethod(mdt, CallingConventions::CC_UNREACHED, false, MetadataSpecialValues::EMPTY_TYPES, nullptr, MethodProvider());
@@ -324,14 +339,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IAssembly const *BaseAssemblyMetadataPimpl<ApiHolder>::GetAssemblyReference(mdAssemblyRef mdt) const
     {
         return m_pDisp->GetAssemblyRefCore(m_pClass, mdt);
-    }
-
-
-
-    template<class ApiHolder>    
-    IModule const *BaseAssemblyMetadataPimpl<ApiHolder>::ResolveModule(IModule const *pMod) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
     
 
@@ -965,6 +972,62 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    typename BaseAssemblyMetadataPimpl<ApiHolder>::field_metadata_label_type const *BaseAssemblyMetadataPimpl<ApiHolder>::GetField(mdToken mdt, FieldProvider const &member) const
+    {
+        auto pNewField = NewField(mdt, member);
+
+        auto *pExistingField = static_cast<field_metadata_label_type *>(nullptr);
+        if (!TryGetField(*pNewField, pExistingField))
+        {
+            pNewField.Persist();
+            return pNewField.Get();
+        }
+        else
+        {
+            return pExistingField;
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    TempPtr<typename BaseAssemblyMetadataPimpl<ApiHolder>::field_metadata_label_type> BaseAssemblyMetadataPimpl<ApiHolder>::NewField(mdToken mdt, FieldProvider const &member) const
+    {
+        auto pField = m_pMetaInfo->NewFieldCore(m_pClass);
+        pField->SetToken(mdt);
+        pField->SetMember(member);
+        return pField;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetField(field_metadata_label_type const &field, field_metadata_label_type *&pExistingField) const
+    {
+        if (m_fieldToIndex.find(&field) == m_fieldToIndex.end())
+        {
+            return false;
+        }
+        else
+        {
+            auto index = m_fieldToIndex[&field];
+            pExistingField = m_pMetaInfo->GetFieldCore(index);
+            return true;
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterField(TempPtr<field_metadata_label_type> &pField)
+    {
+        auto &field = *pField;
+        m_fieldToIndex[&field] = m_pMetaInfo->RegisterFieldCore(pField);
+    }
+
+
+
+    template<class ApiHolder>    
     typename BaseAssemblyMetadataPimpl<ApiHolder>::custom_attribute_metadata_label_type const *BaseAssemblyMetadataPimpl<ApiHolder>::GetCustomAttribute(mdToken mdt, CustomAttributeProvider const &member) const
     {
         auto pNewCas = NewCustomAttribute(mdt, member);
@@ -1168,9 +1231,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::Collections::ResizeIfAvailable;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
-        using Urasandesu::CppAnonym::Utilities::StackAllocator;
-
-        typedef vector<WCHAR, StackAllocator<WCHAR> > WCharVector;
 
         auto const *pSnInfo = _this->m_pSnInfo;
         auto &comMetaAsmImp = _this->GetCOMMetaDataAssemblyImport();
@@ -1178,7 +1238,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto hr = E_FAIL;
         auto *pPubKeyBlob = static_cast<void *>(nullptr);
         auto pubKeyBlobSize = 0ul;
-        auto wzname = WCharVector();
+        auto wzname = vector<WCHAR>();
         auto wznameSize = 0ul;
         ::ZeroMemory(&amd, sizeof(ASSEMBLYMETADATA));
         auto dwasmFlags = 0ul;
@@ -1208,9 +1268,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::Collections::ResizeIfAvailable;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
-        using Urasandesu::CppAnonym::Utilities::StackAllocator;
-
-        typedef vector<WCHAR, StackAllocator<WCHAR> > WCharVector;
 
         auto const *pSnInfo = _this->m_pSnInfo;
         auto &comMetaAsmImp = _this->GetCOMMetaDataAssemblyImport();
@@ -1218,7 +1275,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto hr = E_FAIL;
         auto *pPubKeyOrToken = static_cast<void *>(nullptr);
         auto pubKeyOrTokenSize = 0ul;
-        auto wzname = WCharVector();
+        auto wzname = vector<WCHAR>();
         auto wznameSize = 0ul;
         ::ZeroMemory(&amd, sizeof(ASSEMBLYMETADATA));
         auto *pHashValue = static_cast<void *>(nullptr);

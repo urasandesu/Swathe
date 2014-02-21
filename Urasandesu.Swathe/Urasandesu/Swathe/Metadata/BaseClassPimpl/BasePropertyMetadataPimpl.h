@@ -95,7 +95,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         PropertyProvider const &GetMember() const;
         IProperty const *GetSourceProperty() const;
         IAssembly const *GetAssembly() const;
-        IParameter const *ResolveParameter(IParameter const *pParam) const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         
     private:

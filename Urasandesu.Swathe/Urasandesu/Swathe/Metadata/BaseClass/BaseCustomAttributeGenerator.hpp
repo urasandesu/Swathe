@@ -146,6 +146,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    ICustomAttribute const *BaseCustomAttributeGenerator<ApiHolder>::GetSourceCustomAttribute() const
+    {
+        return Pimpl()->GetSourceCustomAttribute();
+    }
+
+    template<class ApiHolder>    
     void BaseCustomAttributeGenerator<ApiHolder>::SetConstructor(IMethod const *pCtor)
     {
         Pimpl()->SetConstructor(pCtor);

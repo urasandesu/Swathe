@@ -135,8 +135,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Emit(OpCode const &opCode, IMethod const *pMethod);
         void Emit(OpCode const &opCode, IField const *pField);
         void Emit(OpCode const &opCode, BYTE arg);
+        void Emit(OpCode const &opCode, DOUBLE arg);
         void Emit(OpCode const &opCode, SHORT arg);
         void Emit(OpCode const &opCode, INT arg);
+        void Emit(OpCode const &opCode, LONGLONG arg);
         void Emit(OpCode const &opCode);
         void Emit(IInstruction const *pInst);
         local_generator_label_type *DefineLocal(IType const *pLocalType);
@@ -163,7 +165,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
 #else
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 40;
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 16;
 #endif
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

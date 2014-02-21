@@ -123,7 +123,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssemblyFrom(path const &asmPath) const;
         bool TryGetAssemblyWithPartialName(wstring const &name, IAssembly const *&pAsm) const;
         assembly_generator_label_type *DefineAssemblyWithPartialName(wstring const &name) const;        
-        IAssembly const *ResolveAssembly(IAssembly const *pAsm) const;
         IAssembly const *GetAssembly(IMetaDataImport2 *pComMetaImp) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataImport2 *pModifiableComMetaImp) const;
         bool IsCOMMetaDataDispenserPrepared() const;
@@ -140,7 +139,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void RegisterAssembly(TempPtr<assembly_metadata_label_type> &pAsm);
 
         assembly_generator_label_type *DefineAssembly(IAssembly const *pSrcAsm) const;
-        assembly_generator_label_type *ResolveAssemblyCore(IAssembly const *pAsm) const;
+        assembly_generator_label_type *ResolveAssembly(IAssembly const *pAsm) const;
         assembly_generator_label_type *ResolveOrDefineAssembly(IAssembly const *pAsm) const;
         void UpdateReferencedAssemblyIfNecessary(assembly_generator_label_type *pResolvedAsm) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataEmit2 *pComMetaEmt, IAssembly const *pSrcAsm) const;
@@ -151,7 +150,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 48;
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

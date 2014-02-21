@@ -117,13 +117,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         MethodProvider const &GetMember() const;
         IMethod const *GetSourceMethod() const;
         IDispenser const *GetDispenser() const;
-        IMethod const *ResolveMethod(IMethod const *pMethod) const;
-        IType const *ResolveType(IType const *pType) const;
-        IMethodBody const *ResolveMethodBody(IMethodBody const *pBody) const;
-        IParameter const *ResolveParameter(IParameter const *pParam) const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         MethodAttributes GetAttribute() const;
-        void OutDebugInfo(ULONG indent) const;
+        void OutDebugInfo() const;
         method_body_generator_label_type *DefineMethodBody();
         parameter_generator_label_type *DefineParameter(ULONG position, IType const *pParamType);
         
@@ -140,6 +136,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         mutable method_generator_label_type *m_pClass;
         mutable assembly_generator_label_type *m_pAsmGen;
+        mutable bool m_declaringTypeInit;
+        mutable bool m_declaringMethodInit;
         mutable MethodProvider m_member;
         mutable mdToken m_mdt;
         mutable wstring m_name;        

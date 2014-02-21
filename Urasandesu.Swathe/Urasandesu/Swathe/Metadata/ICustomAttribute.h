@@ -68,6 +68,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual CustomAttributeProvider const &GetMember() const = 0;
         virtual IAssembly const *GetAssembly() const = 0;
         virtual IType const *GetAttributeType() const = 0;
+        virtual ICustomAttribute const *GetSourceCustomAttribute() const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

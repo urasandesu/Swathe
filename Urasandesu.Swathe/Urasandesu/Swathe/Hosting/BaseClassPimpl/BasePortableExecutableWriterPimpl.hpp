@@ -377,8 +377,10 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     void BasePortableExecutableWriterPimpl<ApiHolder>::EmitOptions(wstring const &modName)
     {
+        BOOST_LOG_FUNCTION();
+
         SetOutputFileName(modName);
-        std::wcout << L"Module Name: " << modName << std::endl;
+        CPPANONYM_D_LOGW1(L"Module Name: %|1$s|", modName);
         SetComImageFlags();
         SetSubsystem();
         SetDllSwitch();
@@ -389,6 +391,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     void BasePortableExecutableWriterPimpl<ApiHolder>::EmitMethodBody(IMethodBody const *pBody, HCEESECTION &textSection)
     {
+        BOOST_LOG_FUNCTION();
+
         auto const &header = pBody->GetRawHeader();
         auto const &body = pBody->GetRawBody();
         auto const &ehClauses = pBody->GetRawEHClauses();
@@ -400,20 +404,20 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         auto headerSize = COR_ILMETHOD::Size(&header, moreSections);
         auto ehSize = ehClauses.empty() ? 0 : COR_ILMETHOD_SECT_EH::Size(ehClauses.size(), &ehClauses[0]);
         auto totalSize = headerSize + codeSizeAligned + ehSize;
-        D_WCOUT1(L"Header IsFat?: %|1$d|", (headerSize != 1));
-        D_WCOUT1(L"Header Size: %|1$d|", headerSize);
-        D_WCOUT1(L"EH Clauses Count: %|1$d|", ehClauses.size());
-        D_WCOUT1(L"More Sections: %|1$d|", moreSections);
-        D_WCOUT1(L"EH Clauses Size: %|1$d|", ehSize);
-        D_WCOUT1(L"Local Variable Token: 0x%|1$08X|", header.GetLocalVarSigTok());
-        D_WCOUT1(L"Method Body Total Size: %|1$d|", totalSize);
+        CPPANONYM_D_LOGW1(L"Header IsFat?: %|1$d|", (headerSize != 1));
+        CPPANONYM_D_LOGW1(L"Header Size: %|1$d|", headerSize);
+        CPPANONYM_D_LOGW1(L"EH Clauses Count: %|1$d|", ehClauses.size());
+        CPPANONYM_D_LOGW1(L"More Sections: %|1$d|", moreSections);
+        CPPANONYM_D_LOGW1(L"EH Clauses Size: %|1$d|", ehSize);
+        CPPANONYM_D_LOGW1(L"Local Variable Token: 0x%|1$08X|", header.GetLocalVarSigTok());
+        CPPANONYM_D_LOGW1(L"Method Body Total Size: %|1$d|", totalSize);
 
         
         auto pBuffer = GetSectionBlock(textSection, totalSize, headerSize != 1 ? 4 : 1);
         auto offset = GetSectionDataLen(textSection);
         offset -= totalSize;
         auto codeRVA = GetCodeRVA(offset);
-        D_WCOUT1(L"Method RVA: 0x%|1$08X|", codeRVA);
+        CPPANONYM_D_LOGW1(L"Method RVA: 0x%|1$08X|", codeRVA);
 
         SetMethodProps(pBody->GetMethod(), codeRVA);
 
@@ -433,10 +437,12 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     void BasePortableExecutableWriterPimpl<ApiHolder>::EmitStrongNameReservedArea(AutoPtr<IStrongNameKey const> const &pSnKey, HCEESECTION &textSection)
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         auto reserveSize = pSnKey->GetSignatureSize();
-        std::cout << "Strong Name Reserve Size: " << reserveSize << std::endl;
+        CPPANONYM_D_LOGW1(L"Strong Name Reserve Size: %|1$d|", reserveSize);
 
         auto pBuffer = GetSectionBlock(textSection, reserveSize, 1);
         auto offset = GetSectionDataLen(textSection);

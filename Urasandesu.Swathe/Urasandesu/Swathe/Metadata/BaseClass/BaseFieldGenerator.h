@@ -85,6 +85,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IType const *GetFieldType() const;
         Signature const &GetSignature() const;
         IType const *GetDeclaringType() const;
+        IAssembly const *GetAssembly() const;
         IField const *GetSourceField() const;
         FieldAttributes GetAttribute() const;
     
@@ -100,7 +101,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 88;
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

@@ -71,7 +71,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         vector<IType const *> const &GetTypes() const;
         IAssembly const *GetAssembly() const;
         IModule const *GetSourceModule() const;
-        IType const *ResolveType(IType const *pType) const;
     
     private:
         module_metadata_pimpl_label_type *Pimpl();
@@ -81,7 +80,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 56;
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

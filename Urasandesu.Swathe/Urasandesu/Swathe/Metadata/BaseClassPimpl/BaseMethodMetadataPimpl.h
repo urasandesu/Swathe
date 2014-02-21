@@ -124,12 +124,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         MethodProvider const &GetMember() const;
         IMethod const *GetSourceMethod() const;
         IDispenser const *GetDispenser() const;
-        IMethod const *ResolveMethod(IMethod const *pMethod) const;
-        IType const *ResolveType(IType const *pType) const;
-        IMethodBody const *ResolveMethodBody(IMethodBody const *pBody) const;
-        IParameter const *ResolveParameter(IParameter const *pParam) const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
-        void OutDebugInfo(ULONG indent) const;
+        void OutDebugInfo() const;
         
     private:
         void SetILMethodBody(COR_ILMETHOD *pILBody);

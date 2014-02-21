@@ -89,12 +89,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual MethodProvider const &GetMember() const = 0;
         virtual IMethod const *GetSourceMethod() const = 0;
         virtual IDispenser const *GetDispenser() const = 0;
-        virtual IMethod const *ResolveMethod(IMethod const *pMethod) const = 0;
-        virtual IType const *ResolveType(IType const *pType) const = 0;
-        virtual IMethodBody const *ResolveMethodBody(IMethodBody const *pBody) const = 0;
-        virtual IParameter const *ResolveParameter(IParameter const *pParam) const = 0;
         virtual IParameter const *GetParameter(ULONG position, IType const *pParamType) const = 0;
-        virtual void OutDebugInfo(ULONG indent) const = 0;
+        virtual void OutDebugInfo() const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

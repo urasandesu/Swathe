@@ -103,12 +103,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    IAssembly const *BaseMetadataDispenser<ApiHolder>::ResolveAssembly(IAssembly const *pAsm) const
-    {
-        return Pimpl()->ResolveAssembly(pAsm);
-    }
-
-    template<class ApiHolder>    
     IAssembly const *BaseMetadataDispenser<ApiHolder>::GetAssembly(IMetaDataImport2 *pComMetaImp) const
     {
         return Pimpl()->GetAssembly(pComMetaImp);
@@ -169,9 +163,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataDispenser<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenser<ApiHolder>::ResolveAssemblyCore(IAssembly const *pAsm) const
+    typename BaseMetadataDispenser<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenser<ApiHolder>::ResolveAssembly(IAssembly const *pAsm) const
     {
-        return Pimpl()->ResolveAssemblyCore(pAsm);
+        return Pimpl()->ResolveAssembly(pAsm);
     }
 
     

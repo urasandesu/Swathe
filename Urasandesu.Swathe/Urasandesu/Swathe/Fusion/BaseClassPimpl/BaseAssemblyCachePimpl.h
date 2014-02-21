@@ -71,6 +71,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         mutable assembly_cache_label_type *m_pClass;
         fusion_info_label_type const *m_pFuInfo;
         mutable ATL::CComPtr<IAssemblyCache> m_pComAsmCache;
+        int reserved;
         
     };
 

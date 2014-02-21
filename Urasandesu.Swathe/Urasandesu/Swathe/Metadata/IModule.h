@@ -59,7 +59,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual std::vector<IType const *> const &GetTypes() const = 0;
         virtual IAssembly const *GetAssembly() const = 0;
         virtual IModule const *GetSourceModule() const = 0;
-        virtual IType const *ResolveType(IType const *pType) const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

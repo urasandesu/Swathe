@@ -133,15 +133,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IAssembly const *BaseParameterGenerator<ApiHolder>::GetAssembly() const
+    {
+        return Pimpl()->GetAssembly();
+    }
+
+    template<class ApiHolder>    
     IParameter const *BaseParameterGenerator<ApiHolder>::GetSourceParameter() const
     {
         return Pimpl()->GetSourceParameter();
     }
 
     template<class ApiHolder>    
-    void BaseParameterGenerator<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseParameterGenerator<ApiHolder>::OutDebugInfo() const
     {
-        Pimpl()->OutDebugInfo(indent);
+        Pimpl()->OutDebugInfo();
     }
 
     template<class ApiHolder>    

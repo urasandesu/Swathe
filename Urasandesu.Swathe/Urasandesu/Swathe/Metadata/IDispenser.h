@@ -47,7 +47,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IDispenser() { }
         virtual IAssembly const *GetAssembly(std::wstring const &fullName) const = 0;
         virtual IAssembly const *GetAssemblyFrom(boost::filesystem::path const &asmPath) const = 0;
-        virtual IAssembly const *ResolveAssembly(IAssembly const *pAsm) const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

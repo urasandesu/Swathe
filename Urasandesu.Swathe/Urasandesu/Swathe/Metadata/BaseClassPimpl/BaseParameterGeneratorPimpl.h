@@ -77,8 +77,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethod const *GetMethod() const;
         IProperty const *GetProperty() const;
         ParameterProvider const &GetMember() const;
+        IAssembly const *GetAssembly() const;
         IParameter const *GetSourceParameter() const;
-        void OutDebugInfo(ULONG indent) const;
+        void OutDebugInfo() const;
         
     private:
         struct get_token_visitor;
@@ -98,6 +99,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable ParameterAttributes m_attr;
         mutable bool m_paramTypeInit;
         mutable IType const *m_pParamType;
+        mutable bool m_methodInit;
         mutable ParameterProvider m_member;
         IParameter const *m_pSrcParam;
         

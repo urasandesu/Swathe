@@ -247,14 +247,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    IParameter const *BasePropertyMetadataPimpl<ApiHolder>::ResolveParameter(IParameter const *pParam) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
     IParameter const *BasePropertyMetadataPimpl<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());

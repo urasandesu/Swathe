@@ -157,12 +157,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    IParameter const *BasePropertyGenerator<ApiHolder>::ResolveParameter(IParameter const *pParam) const
-    {
-        return Pimpl()->ResolveParameter(pParam);
-    }
-
-    template<class ApiHolder>    
     IParameter const *BasePropertyGenerator<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         return Pimpl()->GetParameter(position, pParamType);

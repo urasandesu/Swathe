@@ -46,33 +46,8 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         m_appDomainId(static_cast<UINT_PTR>(-1)), 
         m_moduleId(static_cast<UINT_PTR>(-1)), 
         m_pAsmGen(nullptr)
-    { 
-#ifdef _DEBUG
-        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
-#else
-        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), ==, sizeof(storage_type));
-#endif
-        new(BaseHeapProvider())base_heap_provider_type();
-    }
+    { }
 
-    template<class ApiHolder>    
-    BaseAssemblyProfilerPimpl<ApiHolder>::~BaseAssemblyProfilerPimpl()
-    {
-        BaseHeapProvider()->~base_heap_provider_type();
-    }
-
-    template<class ApiHolder>    
-    typename BaseAssemblyProfilerPimpl<ApiHolder>::base_heap_provider_type *BaseAssemblyProfilerPimpl<ApiHolder>::BaseHeapProvider()
-    {
-        return reinterpret_cast<base_heap_provider_type *>(&m_storage);
-    }
-
-    template<class ApiHolder>    
-    typename BaseAssemblyProfilerPimpl<ApiHolder>::base_heap_provider_type const *BaseAssemblyProfilerPimpl<ApiHolder>::BaseHeapProvider() const
-    {
-        return const_cast<class_pimpl_type *>(this)->BaseHeapProvider();
-    }
-    
 #define SWATHE_DECLARE_BASE_ASSEMBLY_PROFILER_PIMPL_ADDITIONAL_INSTANTIATION \
 
     
@@ -110,16 +85,22 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     typename BaseAssemblyProfilerPimpl<ApiHolder>::assembly_generator_label_type *BaseAssemblyProfilerPimpl<ApiHolder>::GetAssemblyGenerator()
     {
+        BOOST_LOG_FUNCTION();
+
         using ATL::CComPtr;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (!m_pAsmGen)
         {
+            BOOST_LOG_NAMED_SCOPE("if (!m_pAsmGen)");
+
             if (m_moduleId == static_cast<UINT_PTR>(-1))
                 FillProperties(this, m_name, m_appDomainId, m_moduleId);
 
             auto &comProfInfo = m_pProcProf->GetCOMProfilerInfo();
             
+            CPPANONYM_D_LOGW(L"Getting modifiable IMetaDataImport2...");
+            CPPANONYM_D_LOGW1(L"ModuleID : 0x%|1$08X|", m_moduleId);
             auto pComMetaImp = CComPtr<IMetaDataImport2>();
             auto hr = comProfInfo.GetModuleMetaData(m_moduleId, ofRead | ofWrite, IID_IMetaDataImport2, reinterpret_cast<IUnknown **>(&pComMetaImp));
             if (hr != CORPROF_E_DATAINCOMPLETE && FAILED(hr))

@@ -40,10 +40,6 @@
 #include <Urasandesu/Swathe/Metadata/IMetadataVisitor.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<class ApiHolder>    
@@ -124,7 +120,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         else
         {
-            return MetadataResolver::Resolve(m_pSrcMod->GetType(fullName));
+            return m_pAsmGen->Resolve(m_pSrcMod->GetType(fullName));
         }
     }
 
@@ -150,30 +146,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IModule const *BaseModuleGeneratorPimpl<ApiHolder>::GetSourceModule() const
     {
         return m_pSrcMod == nullptr ? m_pClass : m_pSrcMod->GetSourceModule();
-    }
-
-
-
-    template<class ApiHolder>    
-    IType const *BaseModuleGeneratorPimpl<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<type_generator_label_type const *, SIZE_T> > TypeGenToIndex;
-        typedef TypeGenToIndex::value_type Value;
-
-        _ASSERTE(m_pClass->GetSourceModule() == pType->GetModule()->GetSourceModule());
-
-        auto const &typeGenToIndex = m_pAsmGen->GetTypeGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetModule() == m_pClass; };
-        auto myTypeGenToIndex = typeGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceType() == pType->GetSourceType(); };
-        auto result = FindIf(myTypeGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-        
-        return m_pAsmGen->DefineType(pType, static_cast<IModule const *>(m_pClass));
     }
 
 

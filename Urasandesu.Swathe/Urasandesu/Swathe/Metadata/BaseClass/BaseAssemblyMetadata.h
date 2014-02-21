@@ -116,6 +116,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetSourceAssembly() const;
         IAssembly const *GetTargetAssembly() const;
         IDispenser const *GetDispenser() const;
+        IField const *GetField(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const;
         IType const *GetType(mdToken mdt) const;
@@ -124,7 +125,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly(wstring const &fullName) const;
         IAssembly const *GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         IAssembly const *GetAssemblyReference(mdAssemblyRef mdt) const;
-        IModule const *ResolveModule(IModule const *pMod) const;
         ICustomAttribute const *GetCustomAttribute(mdToken mdt) const;
         ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
@@ -163,6 +163,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         property_metadata_label_type const *GetProperty(mdToken mdt, PropertyProvider const &member) const;
         void RegisterProperty(TempPtr<property_metadata_label_type> &pProp);
         
+        field_metadata_label_type const *GetField(mdToken mdt, FieldProvider const &member) const;
+        void RegisterField(TempPtr<field_metadata_label_type> &pField);
+        
         custom_attribute_metadata_label_type const *GetCustomAttribute(mdToken mdt, CustomAttributeProvider const &member) const;
         void RegisterCustomAttribute(TempPtr<custom_attribute_metadata_label_type> &pCas);
 
@@ -176,7 +179,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 440;
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

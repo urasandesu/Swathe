@@ -145,6 +145,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    IField const *BaseAssemblyMetadata<ApiHolder>::GetField(mdToken mdt) const
+    {
+        return Pimpl()->GetField(mdt);
+    }
+
+    template<class ApiHolder>    
     IMethod const *BaseAssemblyMetadata<ApiHolder>::GetMethod(mdToken mdt) const
     {
         return Pimpl()->GetMethod(mdt);
@@ -190,12 +196,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IAssembly const *BaseAssemblyMetadata<ApiHolder>::GetAssemblyReference(mdAssemblyRef mdt) const
     {
         return Pimpl()->GetAssemblyReference(mdt);
-    }
-
-    template<class ApiHolder>    
-    IModule const *BaseAssemblyMetadata<ApiHolder>::ResolveModule(IModule const *pMod) const
-    {
-        return Pimpl()->ResolveModule(pMod);
     }
 
     template<class ApiHolder>    
@@ -354,6 +354,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         Pimpl()->RegisterProperty(pProp);
     }
     
+    template<class ApiHolder>    
+    typename BaseAssemblyMetadata<ApiHolder>::field_metadata_label_type const *BaseAssemblyMetadata<ApiHolder>::GetField(mdToken mdt, FieldProvider const &member) const
+    {
+        return Pimpl()->GetField(mdt, member);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::RegisterField(TempPtr<field_metadata_label_type> &pField)
+    {
+        return Pimpl()->RegisterField(pField);
+    }
+
     template<class ApiHolder>    
     typename BaseAssemblyMetadata<ApiHolder>::custom_attribute_metadata_label_type const *BaseAssemblyMetadata<ApiHolder>::GetCustomAttribute(mdToken mdt, CustomAttributeProvider const &member) const
     {

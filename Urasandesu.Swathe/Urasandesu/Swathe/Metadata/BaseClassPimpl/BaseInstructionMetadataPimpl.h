@@ -79,7 +79,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetIndex(SIZE_T index);
         void Reset();
         ULONG TakeRawData(BYTE const *i, BYTE const *i_end);
+        static ULONG TakeInlineBrTarget(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
+        static ULONG TakeInlineField(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
+        static ULONG TakeInlineI8(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeInlineMethod(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
+        static ULONG TakeInlineR(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeInlineString(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeInlineType(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeShortInlineBrTarget(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);

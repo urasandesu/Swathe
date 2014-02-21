@@ -36,10 +36,6 @@
 #include <Urasandesu/Swathe/Metadata/BaseClassPimpl/BaseMethodGeneratorPimpl.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_METADATA_IPARAMETER_H
 #include <Urasandesu/Swathe/Metadata/IParameter.h>
 #endif
@@ -54,6 +50,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     BaseMethodGeneratorPimpl<ApiHolder>::BaseMethodGeneratorPimpl(method_generator_label_type *pClass) : 
         m_pClass(pClass),
         m_pAsmGen(nullptr), 
+        m_declaringTypeInit(false), 
+        m_declaringMethodInit(false), 
         m_mdt(mdTokenNil), 
         m_callingConvention(CallingConventions::CC_UNREACHED), 
         m_pRetType(nullptr), 
@@ -84,12 +82,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseMethodGeneratorPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+
             if (!m_pSrcMethod)
             {
+                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcMethod)");
+
                 auto isGenericMethodInstance = IsGenericMethod() && !IsGenericMethodDefinition();
                 if (isGenericMethodInstance)
                 {
@@ -98,12 +102,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
+
                     auto mdtTarget = GetDeclaringType()->GetToken();
                     auto const &name = m_pClass->GetName();
                     auto attr = m_pClass->GetAttribute();
                     auto const &sig = m_pClass->GetSignature();
                     auto const &blob = sig.GetBlob();
-                    D_WCOUT1(L"Getting Method Generator Token... 2: %|1$s|", name);
+                    CPPANONYM_D_LOGW1(L"Getting Method Generator Token... 2: %|1$s|", name);
                     auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                     auto hr = comMetaEmt.DefineMethod(mdtTarget, name.c_str(), attr.Value(), &blob[0], blob.size(), 0, 0, &m_mdt);
                     if (FAILED(hr))
@@ -112,12 +118,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
+                BOOST_LOG_NAMED_SCOPE("if (m_pSrcMethod)");
+
                 if (!m_pAsmGen->IsModifiable())
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
+
                     auto isGenericMethodInstance = IsGenericMethod() && !IsGenericMethodDefinition();
                     if (isGenericMethodInstance)
                     {
-                        D_WCOUT(L"Getting Method Generator Token... 3: Generic Method Instance");
+                        BOOST_LOG_NAMED_SCOPE("if (isGenericMethodInstance)");
+
+                        CPPANONYM_D_LOGW(L"Getting Method Generator Token... 3: Generic Method Instance");
                         auto mdtTarget = GetDeclaringMethod()->GetToken();
                         auto const &sig = m_pClass->GetSignature();
                         auto const &blob = sig.GetBlob();
@@ -128,17 +140,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     }
                     else
                     {
+                        BOOST_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
+
                         auto mdtTarget = GetDeclaringType()->GetToken();
                         auto const &name = GetName();
                         auto const &sig = m_pClass->GetSignature();
                         auto const &blob = sig.GetBlob();
-                        D_WCOUT1(L"Getting Method Generator Token... 4: %|1$s|", name);
-#ifdef OUTPUT_DEBUG
-                        std::wcout << L"Signature:";
-                        for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
-                            std::wcout << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-                        std::wcout << std::endl;
-#endif
+                        CPPANONYM_D_LOGW1(L"Getting Method Generator Token... 4: %|1$s|", name);
+                        if (CPPANONYM_D_LOG_ENABLED())
+                        {
+                            auto oss = std::wostringstream();
+                            oss << L"Signature:";
+                            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                            CPPANONYM_D_LOGW(oss.str());
+                        }
                         auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                         auto hr = comMetaEmt.DefineMemberRef(mdtTarget, name.c_str(), &blob[0], blob.size(), &m_mdt);
                         if (FAILED(hr))
@@ -147,10 +163,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
+
+                    CPPANONYM_D_LOGW(L"Getting Method Generator Token... 5: Modifiable Method");
                     m_mdt = m_pSrcMethod->GetToken();
                 }
             }
-            D_WCOUT1(L"Token: 0x%|1$08X|", m_mdt);
+            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
         return m_mdt;
     }
@@ -231,12 +250,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    m_pRetType = MetadataResolver::Resolve(m_pSrcMethod->GetReturnType());
+                    m_pRetType = m_pAsmGen->Resolve(m_pSrcMethod->GetReturnType());
                 }
             }
             else
             {
-                m_pRetType = MetadataResolver::Resolve(m_pRetType);
+                m_pRetType = m_pAsmGen->Resolve(m_pRetType);
             }
             m_retTypeInit = true;
         }
@@ -258,7 +277,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 auto const &params = m_pSrcMethod->GetParameters();
                 for (auto i = params.begin(), i_end = params.end(); i != i_end; ++i)
-                    m_params.push_back(m_pClass->ResolveParameter(*i));
+                    m_params.push_back(m_pAsmGen->Resolve(*i));
             }
 
             m_paramsInit = true;
@@ -279,7 +298,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
-                m_pBody = MetadataResolver::Resolve(m_pSrcMethod->GetMethodBody());
+                m_pBody = m_pAsmGen->Resolve(m_pSrcMethod->GetMethodBody());
             }
         }
         return m_pBody;
@@ -353,7 +372,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 auto const &genericArgs = m_pSrcMethod->GetGenericArguments();
                 for (auto i = genericArgs.begin(), i_end = genericArgs.end(); i != i_end; ++i)
-                    m_genericArgs.push_back(MetadataResolver::Resolve(*i));
+                    m_genericArgs.push_back(m_pAsmGen->Resolve(*i));
             }
             m_genericArgsInit = true;
         }
@@ -402,12 +421,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
+        if (!m_declaringTypeInit)
         {
-            _ASSERTE(m_pSrcMethod);
-            auto const *pDeclaringType = m_pSrcMethod->GetDeclaringType();
-            if (pDeclaringType)
-                m_member = MetadataResolver::Resolve(pDeclaringType);
+            if (Empty(m_member))
+            {
+                _ASSERTE(m_pSrcMethod);
+                auto const *pDeclaringType = m_pSrcMethod->GetDeclaringType();
+                if (pDeclaringType)
+                    m_member = m_pAsmGen->Resolve(pDeclaringType);
+            }
+
+            m_declaringTypeInit = true;
         }
 
         auto const *const *ppDeclaringType = get<IType const *>(&m_member);
@@ -422,29 +446,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
+        if (!m_declaringMethodInit)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (Empty(m_member))
+            {
+                _ASSERTE(m_pSrcMethod);
+                auto const *pDeclaringMethod = m_pSrcMethod->GetDeclaringMethod();
+                if (pDeclaringMethod)
+                    m_member = m_pAsmGen->Resolve(pDeclaringMethod);
+            }
+
+            m_declaringMethodInit = true;
         }
 
         auto const *const *ppDeclaringMethod = get<IMethod const *>(&m_member);
         return !ppDeclaringMethod ? nullptr : *ppDeclaringMethod;
-
-        //if (!m_declaringMethodInit)   // TODO: m_member へ統合。
-        //{
-        //    if (!m_pSrcMethod)
-        //    {
-        //        // nop
-        //    }
-        //    else
-        //    {
-        //        auto const *pDeclaringMethod = m_pSrcMethod->GetDeclaringMethod();
-        //        if (pDeclaringMethod)
-        //            m_pDeclaringMethod = MetadataResolver::Resolve(pDeclaringMethod);
-        //    }
-        //    m_declaringMethodInit = true;
-        //}
-        //return m_pDeclaringMethod;
     }
 
 
@@ -476,98 +492,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    IMethod const *BaseMethodGeneratorPimpl<ApiHolder>::ResolveMethod(IMethod const *pMethod) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<method_generator_label_type const *, SIZE_T> > MethodGenToIndex;
-        typedef MethodGenToIndex::value_type Value;
-        
-        _ASSERTE(m_pClass->GetSourceMethod() == pMethod->GetDeclaringMethod()->GetSourceMethod());
-
-        auto const &methodGenToIndex = m_pAsmGen->GetMethodGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetDeclaringMethod() == m_pClass; };
-        auto myMethodGenToIndex = methodGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethod() == pMethod->GetSourceMethod(); };
-        auto result = FindIf(myMethodGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-        
-        return m_pAsmGen->DefineMethod(pMethod, static_cast<IMethod const *>(m_pClass));
-    }
-
-
-
-    template<class ApiHolder>    
-    IType const *BaseMethodGeneratorPimpl<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<type_generator_label_type const *, SIZE_T> > TypeGenToIndex;
-        typedef TypeGenToIndex::value_type Value;
-        
-        _ASSERTE(m_pClass->GetSourceMethod() == pType->GetDeclaringMethod()->GetSourceMethod());
-
-        auto const &typeGenToIndex = m_pAsmGen->GetTypeGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetDeclaringMethod() == m_pClass; };
-        auto myTypeGenToIndex = typeGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceType() == pType->GetSourceType(); };
-        auto result = FindIf(myTypeGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-
-        return m_pAsmGen->DefineType(pType, static_cast<IMethod const *>(m_pClass));
-    }
-
-
-
-    template<class ApiHolder>    
-    IMethodBody const *BaseMethodGeneratorPimpl<ApiHolder>::ResolveMethodBody(IMethodBody const *pBody) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<method_body_generator_label_type const *, SIZE_T> > MethodBodyGenToIndex;
-        typedef MethodBodyGenToIndex::value_type Value;
-
-        auto const &bodyGenToIndex = m_pAsmGen->GetMethodBodyGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetMethod() == m_pClass; };
-        auto myBodyGenToIndex = bodyGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethodBody() == pBody->GetSourceMethodBody(); };
-        auto result = FindIf(myBodyGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-
-        return m_pAsmGen->DefineMethodBody(pBody, m_pClass);
-    }
-
-
-
-    template<class ApiHolder>    
-    IParameter const *BaseMethodGeneratorPimpl<ApiHolder>::ResolveParameter(IParameter const *pParam) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<parameter_generator_label_type const *, SIZE_T> > ParamGenToIndex;
-        typedef ParamGenToIndex::value_type Value;
-
-        auto const &paramGenToIndex = m_pAsmGen->GetParameterGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetMethod() == m_pClass; };
-        auto myParamGenToIndex = paramGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceParameter() == pParam->GetSourceParameter(); };
-        auto result = FindIf(myParamGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-
-        return m_pAsmGen->DefineParameter(pParam, static_cast<IMethod const *>(m_pClass));
-    }
-
-
-
-    template<class ApiHolder>    
     IParameter const *BaseMethodGeneratorPimpl<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         using boost::adaptors::filtered;
@@ -593,14 +517,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         else
         {
-            return MetadataResolver::Resolve(m_pSrcMethod->GetParameter(position, pParamType));
+            return m_pAsmGen->Resolve(m_pSrcMethod->GetParameter(position, pParamType));
         }
     }
 
 
 
     template<class ApiHolder>    
-    void BaseMethodGeneratorPimpl<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseMethodGeneratorPimpl<ApiHolder>::OutDebugInfo() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -620,11 +544,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     typename BaseMethodGeneratorPimpl<ApiHolder>::parameter_generator_label_type *BaseMethodGeneratorPimpl<ApiHolder>::DefineParameter(ULONG position, IType const *pParamType)
     {
+        _ASSERTE(0ul < position);
         m_paramsInit = false;
         auto *pParamGen = m_pAsmGen->DefineParameter(position, pParamType, static_cast<IMethod const *>(m_pClass));
-        if (m_params.size() <= position)
-            m_params.resize(position + 1);
-        m_params.at(position) = pParamGen;
+        if (m_params.size() < position)
+            m_params.resize(position);
+        m_params.at(position - 1ul) = pParamGen;
         return pParamGen;
     }
 

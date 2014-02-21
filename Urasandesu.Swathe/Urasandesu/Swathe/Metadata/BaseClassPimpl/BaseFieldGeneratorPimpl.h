@@ -87,6 +87,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IType const *GetFieldType() const;
         Signature const &GetSignature() const;
         IType const *GetDeclaringType() const;
+        IAssembly const *GetAssembly() const;
         IField const *GetSourceField() const;
         FieldAttributes GetAttribute() const;
         
@@ -100,6 +101,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         mutable field_generator_label_type *m_pClass;
         assembly_generator_label_type *m_pAsmGen;
+        mutable bool m_declaringTypeInit;
         mutable FieldProvider m_member;
         mutable mdToken m_mdt;
         wstring m_name;

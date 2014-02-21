@@ -130,6 +130,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Initialize(assembly_generator_label_type *pAsmGen);
         mdToken GetToken() const;
         wstring const &GetFullName() const;
+        bool IsValueType() const;
         bool IsGenericParameter() const;
         bool IsGenericType() const;
         bool IsGenericTypeDefinition() const;
@@ -140,7 +141,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         Signature const &GetSignature() const;
         IType const *MakeArrayType() const;
         IType const *MakeGenericType(vector<IType const *> const &genericArgs) const;
+        IType const *MakePointerType() const;
         IType const *MakeByRefType() const;
+        IType const *MakePinnedType() const;
         IMethod const *GetMethod(wstring const &name) const;
         IMethod const *GetMethod(wstring const &name, vector<IType const *> const &paramTypes) const;
         IMethod const *GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes) const;
@@ -161,15 +164,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         TypeProvider const &GetMember() const;
         IMethod const *GetMethod(mdToken mdt) const;
         IProperty const *GetProperty(mdToken mdt) const;
-        IMethod const *ResolveMethod(IMethod const *pMethod) const;
-        IProperty const *ResolveProperty(IProperty const *pProp) const;
-        IField const *ResolveField(IField const *pField) const;
-        IType const *ResolveType(IType const *pType) const;
         bool IsDefined(IType const *pAttrType, bool inherit) const;
         ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
         IType const *GetSourceType() const;
-        void OutDebugInfo(ULONG indent) const;
+        void OutDebugInfo() const;
         type_generator_label_type *DefineNestedType(wstring const &fullName, TypeAttributes const &attr);
         field_generator_label_type *DefineField(wstring const &name, IType const *pFieldType, FieldAttributes const &attr);
         method_generator_label_type *DefineMethod(wstring const &name, MethodAttributes const &attr, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes);
@@ -187,6 +186,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         mutable type_generator_label_type *m_pClass;
         assembly_generator_label_type *m_pAsmGen;
+        mutable bool m_moduleInit;
+        mutable bool m_declaringTypeInit;
+        mutable bool m_declaringMethodInit;
         mutable TypeProvider m_member;
         mutable mdToken m_mdt;
         mutable wstring m_fullName;

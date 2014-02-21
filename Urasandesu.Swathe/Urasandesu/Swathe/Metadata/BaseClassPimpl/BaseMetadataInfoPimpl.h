@@ -102,6 +102,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         property_metadata_label_type *GetPropertyCore(SIZE_T index) const;
         SIZE_T RegisterPropertyCore(TempPtr<property_metadata_label_type> &pProp);
 
+        TempPtr<field_metadata_label_type> NewFieldCore(assembly_metadata_label_type *pAsm) const;
+        field_metadata_label_type *GetFieldCore(SIZE_T index) const;
+        SIZE_T RegisterFieldCore(TempPtr<field_metadata_label_type> &pField);
+
         TempPtr<custom_attribute_metadata_label_type> NewCustomAttributeCore(assembly_metadata_label_type *pAsm) const;
         custom_attribute_metadata_label_type *GetCustomAttributeCore(SIZE_T index) const;
         SIZE_T RegisterCustomAttributeCore(TempPtr<custom_attribute_metadata_label_type> &pCa);
@@ -149,7 +153,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 1024;
 #else
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 40;
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 672;
 #endif
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

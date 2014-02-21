@@ -40,10 +40,6 @@
 #include <Urasandesu/Swathe/Metadata/MetadataSpecialValues.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_METADATA_IMETADATAVISITOR_H
 #include <Urasandesu/Swathe/Metadata/IMetadataVisitor.h>
 #endif
@@ -54,6 +50,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     BaseTypeGeneratorPimpl<ApiHolder>::BaseTypeGeneratorPimpl(type_generator_label_type *pClass) : 
         m_pClass(pClass), 
         m_pAsmGen(nullptr), 
+        m_moduleInit(false), 
+        m_declaringTypeInit(false), 
+        m_declaringMethodInit(false), 
         m_mdt(mdTokenNil), 
         m_attr(TypeAttributes::TA_UNREACHED), 
         m_genericParamPos(static_cast<ULONG>(-1)), 
@@ -83,17 +82,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseTypeGeneratorPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+
             if (!m_pSrcType)
             {
+                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcType)");
+
                 auto const *pDeclaringType = GetDeclaringType();
                 if (!pDeclaringType)
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (!pDeclaringType)");
+
                     auto const &fullName = GetFullName();
-                    D_WCOUT1(L"Getting Type Generator Token... 1: %|1$s|", fullName);
+                    CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 1: %|1$s|", fullName);
                     auto attr = GetAttribute();
                     auto mdExtends = GetBaseType()->GetToken();
                     auto const &interfaces = GetInterfaces();
@@ -109,8 +116,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (pDeclaringType)");
+
                     auto const &fullName = GetFullName();
-                    D_WCOUT1(L"Getting Type Generator Token... 4: %|1$s|", fullName);
+                    CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 4: %|1$s|", fullName);
                     auto attr = GetAttribute();
                     auto mdExtends = GetBaseType()->GetToken();
                     auto const &interfaces = GetInterfaces();
@@ -127,20 +136,28 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
+                BOOST_LOG_NAMED_SCOPE("if (m_pSrcType)");
+
                 if (!m_pAsmGen->IsModifiable())
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
+
                     auto isGenericTypeInstance = IsGenericType() && !IsGenericTypeDefinition();
                     if (isGenericTypeInstance)
                     {
-                        D_WCOUT(L"Getting Type Generator Token... 2: Generic Type Instance");
+                        BOOST_LOG_NAMED_SCOPE("if (isGenericTypeInstance)");
+
+                        CPPANONYM_D_LOGW(L"Getting Type Generator Token... 2: Generic Type Instance");
                         auto const &sig = m_pClass->GetSignature();
                         auto const &blob = sig.GetBlob();
-#ifdef OUTPUT_DEBUG
-                        std::wcout << L"Signature:";
-                        for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
-                            std::wcout << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-                        std::wcout << std::endl;
-#endif
+                        if (CPPANONYM_D_LOG_ENABLED())
+                        {
+                            auto oss = std::wostringstream();
+                            oss << L"Signature:";
+                            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                            CPPANONYM_D_LOGW(oss.str());
+                        }
                         auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                         auto hr = comMetaEmt.GetTokenFromTypeSpec(&blob[0], blob.size(), &m_mdt);
                         if (FAILED(hr))
@@ -148,9 +165,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     }
                     else
                     {
+                        BOOST_LOG_NAMED_SCOPE("if (!isGenericTypeInstance)");
+
                         auto mdResolutionScope = m_pAsmGen->GetToken();
                         auto const &fullName = m_pSrcType->GetFullName();
-                        D_WCOUT1(L"Getting Type Generator Token... 3: %|1$s|", fullName);
+                        CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 3: %|1$s|", fullName);
                         auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                         auto hr = comMetaEmt.DefineTypeRefByName(mdResolutionScope, fullName.c_str(), &m_mdt);
                         if (FAILED(hr))
@@ -159,10 +178,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
+                    BOOST_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
+                    CPPANONYM_D_LOGW(L"Getting Type Generator Token... 4: Modifiable Type");
                     m_mdt = m_pSrcType->GetToken();
                 }
             }
-            D_WCOUT1(L"Token: 0x%|1$08X|", m_mdt);
+            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
         return m_mdt;
     }
@@ -184,6 +205,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
         }
         return m_fullName;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseTypeGeneratorPimpl<ApiHolder>::IsValueType() const
+    {
+        if (!m_pSrcType)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        else
+        {
+            return m_pSrcType->IsValueType();
+        }
     }
 
 
@@ -282,7 +318,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 auto const &genericArgs = m_pSrcType->GetGenericArguments();
                 for (auto i = genericArgs.begin(), i_end = genericArgs.end(); i != i_end; ++i)
-                    m_genericArgs.push_back(MetadataResolver::Resolve(*i));
+                    m_genericArgs.push_back(m_pAsmGen->Resolve(*i));
             }
             m_genericArgsInit = true;
         }
@@ -319,7 +355,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IType const *BaseTypeGeneratorPimpl<ApiHolder>::MakePointerType() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IType const *BaseTypeGeneratorPimpl<ApiHolder>::MakeByRefType() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseTypeGeneratorPimpl<ApiHolder>::MakePinnedType() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -359,7 +411,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         else
         {
-            return MetadataResolver::Resolve(m_pSrcType->GetConstructor(paramTypes));
+            return m_pAsmGen->Resolve(m_pSrcType->GetConstructor(paramTypes));
         }
     }
 
@@ -386,9 +438,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto const &methodGenToIndex = m_pAsmGen->GetMethodGeneratorToIndex();
             auto isMine = [&](Value const &v) { return v.first->GetDeclaringType() == m_pClass; };
-            auto toMethod = function<IMethod const *(Value const &)>();
-            toMethod = [](Value const &v) { return static_cast<IMethod const *>(v.first); };
-            return methodGenToIndex | transformed(toMethod);
+            auto toUpper = function<IMethod const *(Value const &)>();
+            toUpper = [](Value const &v) { return static_cast<IMethod const *>(v.first); };
+            return methodGenToIndex | transformed(toUpper);
         }
         else
         {
@@ -533,12 +585,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    m_pBaseType = MetadataResolver::Resolve(m_pSrcType->GetBaseType());
+                    m_pBaseType = m_pAsmGen->Resolve(m_pSrcType->GetBaseType());
                 }
             }
             else
             {
-                m_pBaseType = MetadataResolver::Resolve(m_pBaseType);
+                m_pBaseType = m_pAsmGen->Resolve(m_pBaseType);
             }
             m_baseTypeInit = true;
         }
@@ -567,7 +619,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 auto const &interfaces = m_pSrcType->GetInterfaces();
                 for (auto i = interfaces.begin(), i_end = interfaces.end(); i != i_end; ++i)
-                    m_interfaces.push_back(MetadataResolver::Resolve(*i));
+                    m_interfaces.push_back(m_pAsmGen->Resolve(*i));
             }
             m_interfacesInit = true;
         }
@@ -583,13 +635,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
+        if (!m_moduleInit)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (Empty(m_member))
+            {
+                _ASSERTE(m_pSrcType);
+                auto const *pMod = m_pSrcType->GetModule();
+                if (pMod)
+                    m_member = m_pAsmGen->Resolve(pMod);
+            }
+
+            m_moduleInit = true;
         }
 
-        auto const *const *ppModule = get<IModule const *>(&m_member);
-        return !ppModule ? nullptr : *ppModule;
+        auto const *const *ppMod = get<IModule const *>(&m_member);
+        return !ppMod ? nullptr : *ppMod;
     }
 
 
@@ -598,7 +658,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IAssembly const *BaseTypeGeneratorPimpl<ApiHolder>::GetAssembly() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        return m_pAsmGen;
     }
 
 
@@ -609,30 +669,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
+        if (!m_declaringTypeInit)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (Empty(m_member))
+            {
+                _ASSERTE(m_pSrcType);
+                auto const *pDeclaringType = m_pSrcType->GetDeclaringType();
+                if (pDeclaringType)
+                    m_member = m_pAsmGen->Resolve(pDeclaringType);
+            }
+
+            m_declaringTypeInit = true;
         }
 
         auto const *const *ppDeclaringType = get<IType const *>(&m_member);
         return !ppDeclaringType ? nullptr : *ppDeclaringType;
-
-        //if (!m_declaringTypeInit) // TODO: m_member に統合。
-        //{
-        //    if (!m_pSrcType)
-        //    {
-        //        // nop
-        //    }
-        //    else
-        //    {
-        //        auto const *pDeclaringType = m_pSrcType->GetDeclaringType();
-        //        if (pDeclaringType)
-        //            m_pDeclaringType = MetadataResolver::Resolve(pDeclaringType);
-        //    }
-
-        //    m_declaringTypeInit = true;
-        //}
-        //return m_pDeclaringType;
     }
 
 
@@ -643,30 +694,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
+        if (!m_declaringMethodInit)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (Empty(m_member))
+            {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
+            
+            m_declaringMethodInit = true;
         }
 
         auto const *const *ppDeclaringMethod = get<IMethod const *>(&m_member);
         return !ppDeclaringMethod ? nullptr : *ppDeclaringMethod;
-
-        //if (!m_declaringMethodInit)   // TODO: m_member に載せ換え。
-        //{
-        //    if (!m_pSrcType)
-        //    {
-        //        // nop
-        //    }
-        //    else
-        //    {
-        //        auto const *pDeclaringMethod = m_pSrcType->GetDeclaringMethod();
-        //        if (pDeclaringMethod)
-        //            m_pDeclaringMethod = MetadataResolver::Resolve(pDeclaringMethod);
-        //    }
-
-        //    m_declaringMethodInit = true;
-        //}
-        //return m_pDeclaringMethod;
     }
 
 
@@ -691,102 +730,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IProperty const *BaseTypeGeneratorPimpl<ApiHolder>::GetProperty(mdToken mdt) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
-    IMethod const *BaseTypeGeneratorPimpl<ApiHolder>::ResolveMethod(IMethod const *pMethod) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<method_generator_label_type const *, SIZE_T> > MethodGenToIndex;
-        typedef MethodGenToIndex::value_type Value;
-        
-        _ASSERTE(m_pClass->GetSourceType() == pMethod->GetDeclaringType()->GetSourceType());
-
-        auto const &methodGenToIndex = m_pAsmGen->GetMethodGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetDeclaringType() == m_pClass; };
-        auto myMethodGenToIndex = methodGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethod() == pMethod->GetSourceMethod(); };
-        auto result = FindIf(myMethodGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-        
-        return m_pAsmGen->DefineMethod(pMethod, static_cast<IType const *>(m_pClass));
-    }
-
-
-
-    template<class ApiHolder>    
-    IProperty const *BaseTypeGeneratorPimpl<ApiHolder>::ResolveProperty(IProperty const *pProp) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<property_generator_label_type const *, SIZE_T> > PropertyGenToIndex;
-        typedef PropertyGenToIndex::value_type Value;
-        
-        _ASSERTE(m_pClass->GetSourceType() == pProp->GetDeclaringType()->GetSourceType());
-
-        auto const &propGenToIndex = m_pAsmGen->GetPropertyGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetDeclaringType() == m_pClass; };
-        auto myPropGenToIndex = propGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceProperty() == pProp->GetSourceProperty(); };
-        auto result = FindIf(myPropGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-        
-        return m_pAsmGen->DefineProperty(pProp, static_cast<IType const *>(m_pClass));
-    }
-
-
-
-    template<class ApiHolder>    
-    IField const *BaseTypeGeneratorPimpl<ApiHolder>::ResolveField(IField const *pField) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<field_generator_label_type const *, SIZE_T> > FieldGenToIndex;
-        typedef FieldGenToIndex::value_type Value;
-
-        _ASSERTE(m_pClass->GetSourceType() == pField->GetDeclaringType()->GetSourceType());
-
-        auto const &fieldGenToIndex = m_pAsmGen->GetFieldGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetDeclaringType() == m_pClass; };
-        auto myFieldGenToIndex = fieldGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceField() == pField->GetSourceField(); };
-        auto result = FindIf(myFieldGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-        
-        return m_pAsmGen->DefineField(pField, static_cast<IType const *>(m_pClass));
-    }
-
-
-
-    template<class ApiHolder>    
-    IType const *BaseTypeGeneratorPimpl<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<pair<type_generator_label_type const *, SIZE_T> > TypeGenToIndex;
-        typedef TypeGenToIndex::value_type Value;
-
-        _ASSERTE(m_pClass->GetSourceType() == pType->GetDeclaringType()->GetSourceType());
-
-        auto const &typeGenToIndex = m_pAsmGen->GetTypeGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v.first->GetDeclaringType() == m_pClass; };
-        auto myTypeGenToIndex = typeGenToIndex | filtered(isMine);
-        auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceType() == pType->GetSourceType(); };
-        auto result = FindIf(myTypeGenToIndex, isAlreadyExist);
-        if (result)
-            return (*result).first;
-        
-        return m_pAsmGen->DefineType(pType, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -824,7 +767,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseTypeGeneratorPimpl<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseTypeGeneratorPimpl<ApiHolder>::OutDebugInfo() const
     {
         if (!m_pSrcType)
         {
@@ -832,7 +775,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         else
         {
-            m_pSrcType->OutDebugInfo(indent);
+            m_pSrcType->OutDebugInfo();
         }
     }
 
@@ -859,7 +802,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         auto *pMethodGen = m_pAsmGen->DefineMethod(name, attr, callingConvention, pRetType, false, MetadataSpecialValues::EMPTY_PARAMETERS, static_cast<IType const *>(m_pClass));
         for (auto i = 0ul; i < paramTypes.size(); ++i)
-            pMethodGen->DefineParameter(i, paramTypes[i]);
+            pMethodGen->DefineParameter(i + 1ul, paramTypes[i]);
         return pMethodGen;
     }
 

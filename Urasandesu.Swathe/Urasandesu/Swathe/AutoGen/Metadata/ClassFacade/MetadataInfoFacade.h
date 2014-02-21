@@ -80,6 +80,10 @@
 #include <Urasandesu/Swathe/Metadata/PropertyMetadataPimplFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_FIELDMETADATAPIMPLFWD_H
+#include <Urasandesu/Swathe/Metadata/FieldMetadataPimplFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSPIMPLLABEL_ASSEMBLYGENERATORPIMPLLABEL_H
 #include <Urasandesu/Swathe/AutoGen/Metadata/ClassPimplLabel/AssemblyGeneratorPimplLabel.h>
 #endif
@@ -212,6 +216,14 @@
 #include <Urasandesu/Swathe/Metadata/PropertyMetadataPersistedHandlerFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_FIELDMETADATAFWD_H
+#include <Urasandesu/Swathe/Metadata/FieldMetadataFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_FIELDMETADATAPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Metadata/FieldMetadataPersistedHandlerFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_CUSTOMATTRIBUTEMETADATAFWD_H
 #include <Urasandesu/Swathe/Metadata/CustomAttributeMetadataFwd.h>
 #endif
@@ -319,6 +331,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
         using Urasandesu::Swathe::Metadata::MethodBodyMetadataPimpl;
         using Urasandesu::Swathe::Metadata::ParameterMetadataPimpl;
         using Urasandesu::Swathe::Metadata::PropertyMetadataPimpl;
+        using Urasandesu::Swathe::Metadata::FieldMetadataPimpl;
         using Urasandesu::Swathe::AutoGen::Metadata::ClassPimplLabel::AssemblyGeneratorPimplLabel;
         using Urasandesu::Swathe::Metadata::ModuleGeneratorPimpl;
         using Urasandesu::Swathe::Metadata::TypeGeneratorPimpl;
@@ -352,6 +365,8 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
         using Urasandesu::Swathe::Metadata::LocalMetadataPersistedHandler;
         using Urasandesu::Swathe::Metadata::PropertyMetadata;
         using Urasandesu::Swathe::Metadata::PropertyMetadataPersistedHandler;
+        using Urasandesu::Swathe::Metadata::FieldMetadata;
+        using Urasandesu::Swathe::Metadata::FieldMetadataPersistedHandler;
         using Urasandesu::Swathe::Metadata::CustomAttributeMetadata;
         using Urasandesu::Swathe::Metadata::CustomAttributeMetadataPersistedHandler;
         using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::AssemblyGeneratorLabel;
@@ -407,6 +422,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
             typedef MethodBodyMetadataPimpl method_body_metadata_pimpl_label_type;
             typedef ParameterMetadataPimpl parameter_metadata_pimpl_label_type;
             typedef PropertyMetadataPimpl property_metadata_pimpl_label_type;
+            typedef FieldMetadataPimpl field_metadata_pimpl_label_type;
             typedef ModuleGeneratorPimpl module_generator_pimpl_label_type;
             typedef TypeGeneratorPimpl type_generator_pimpl_label_type;
             typedef MethodGeneratorPimpl method_generator_pimpl_label_type;
@@ -431,6 +447,8 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
             typedef LocalMetadataPersistedHandler local_metadata_persisted_handler_label_type;
             typedef PropertyMetadata property_metadata_label_type;
             typedef PropertyMetadataPersistedHandler property_metadata_persisted_handler_label_type;
+            typedef FieldMetadata field_metadata_label_type;
+            typedef FieldMetadataPersistedHandler field_metadata_persisted_handler_label_type;
             typedef CustomAttributeMetadata custom_attribute_metadata_label_type;
             typedef CustomAttributeMetadataPersistedHandler custom_attribute_metadata_persisted_handler_label_type;
             typedef ModuleGenerator module_generator_label_type;
@@ -472,6 +490,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
             typedef ParameterMetadata parameter_metadata_label_6307effc_type;
             typedef LocalMetadata local_metadata_label_6307effc_type;
             typedef PropertyMetadata property_metadata_label_6307effc_type;
+            typedef FieldMetadata field_metadata_label_6307effc_type;
             typedef CustomAttributeMetadata custom_attribute_metadata_label_6307effc_type;
             typedef ModuleGenerator module_generator_label_6307effc_type;
             typedef TypeGenerator type_generator_label_6307effc_type;
@@ -490,6 +509,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
             typedef ParameterMetadataPersistedHandler parameter_metadata_persisted_handler_label_type;
             typedef LocalMetadataPersistedHandler local_metadata_persisted_handler_label_type;
             typedef PropertyMetadataPersistedHandler property_metadata_persisted_handler_label_type;
+            typedef FieldMetadataPersistedHandler field_metadata_persisted_handler_label_type;
             typedef CustomAttributeMetadataPersistedHandler custom_attribute_metadata_persisted_handler_label_type;
             typedef ModuleGeneratorPersistedHandler module_generator_persisted_handler_label_type;
             typedef TypeGeneratorPersistedHandler type_generator_persisted_handler_label_type;
@@ -508,6 +528,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
             typedef DisposingInfo<parameter_metadata_label_6307effc_type, parameter_metadata_persisted_handler_label_type> parameter_metadata_label_disposing_info_type;
             typedef DisposingInfo<local_metadata_label_6307effc_type, local_metadata_persisted_handler_label_type> local_metadata_label_disposing_info_type;
             typedef DisposingInfo<property_metadata_label_6307effc_type, property_metadata_persisted_handler_label_type> property_metadata_label_disposing_info_type;
+            typedef DisposingInfo<field_metadata_label_6307effc_type, field_metadata_persisted_handler_label_type> field_metadata_label_disposing_info_type;
             typedef DisposingInfo<custom_attribute_metadata_label_6307effc_type, custom_attribute_metadata_persisted_handler_label_type> custom_attribute_metadata_label_disposing_info_type;
             typedef DisposingInfo<module_generator_label_6307effc_type, module_generator_persisted_handler_label_type> module_generator_label_disposing_info_type;
             typedef DisposingInfo<type_generator_label_6307effc_type, type_generator_persisted_handler_label_type> type_generator_label_disposing_info_type;
@@ -527,6 +548,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
                 parameter_metadata_label_disposing_info_type,
                 local_metadata_label_disposing_info_type,
                 property_metadata_label_disposing_info_type,
+                field_metadata_label_disposing_info_type,
                 custom_attribute_metadata_label_disposing_info_type,
                 module_generator_label_disposing_info_type,
                 type_generator_label_disposing_info_type,
@@ -564,6 +586,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
                 typedef typename facade::parameter_metadata_persisted_handler_label_type parameter_metadata_persisted_handler_label_type; \
                 typedef typename facade::local_metadata_persisted_handler_label_type local_metadata_persisted_handler_label_type; \
                 typedef typename facade::property_metadata_persisted_handler_label_type property_metadata_persisted_handler_label_type; \
+                typedef typename facade::field_metadata_persisted_handler_label_type field_metadata_persisted_handler_label_type; \
                 typedef typename facade::custom_attribute_metadata_persisted_handler_label_type custom_attribute_metadata_persisted_handler_label_type; \
                 typedef typename facade::module_generator_persisted_handler_label_type module_generator_persisted_handler_label_type; \
                 typedef typename facade::type_generator_persisted_handler_label_type type_generator_persisted_handler_label_type; \
@@ -581,6 +604,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
                 friend typename parameter_metadata_persisted_handler_label_type; \
                 friend typename local_metadata_persisted_handler_label_type; \
                 friend typename property_metadata_persisted_handler_label_type; \
+                friend typename field_metadata_persisted_handler_label_type; \
                 friend typename custom_attribute_metadata_persisted_handler_label_type; \
                 friend typename module_generator_persisted_handler_label_type; \
                 friend typename type_generator_persisted_handler_label_type; \
@@ -598,6 +622,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
                 typedef typename facade::parameter_metadata_label_disposing_info_type parameter_metadata_label_disposing_info_type; \
                 typedef typename facade::local_metadata_label_disposing_info_type local_metadata_label_disposing_info_type; \
                 typedef typename facade::property_metadata_label_disposing_info_type property_metadata_label_disposing_info_type; \
+                typedef typename facade::field_metadata_label_disposing_info_type field_metadata_label_disposing_info_type; \
                 typedef typename facade::custom_attribute_metadata_label_disposing_info_type custom_attribute_metadata_label_disposing_info_type; \
                 typedef typename facade::module_generator_label_disposing_info_type module_generator_label_disposing_info_type; \
                 typedef typename facade::type_generator_label_disposing_info_type type_generator_label_disposing_info_type; \
@@ -615,6 +640,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
                 friend typename parameter_metadata_label_disposing_info_type; \
                 friend typename local_metadata_label_disposing_info_type; \
                 friend typename property_metadata_label_disposing_info_type; \
+                friend typename field_metadata_label_disposing_info_type; \
                 friend typename custom_attribute_metadata_label_disposing_info_type; \
                 friend typename module_generator_label_disposing_info_type; \
                 friend typename type_generator_label_disposing_info_type; \
@@ -684,6 +710,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
     typedef typename facade::method_body_metadata_pimpl_label_type method_body_metadata_pimpl_label_type; \
     typedef typename facade::parameter_metadata_pimpl_label_type parameter_metadata_pimpl_label_type; \
     typedef typename facade::property_metadata_pimpl_label_type property_metadata_pimpl_label_type; \
+    typedef typename facade::field_metadata_pimpl_label_type field_metadata_pimpl_label_type; \
     typedef typename facade::module_generator_pimpl_label_type module_generator_pimpl_label_type; \
     typedef typename facade::type_generator_pimpl_label_type type_generator_pimpl_label_type; \
     typedef typename facade::method_generator_pimpl_label_type method_generator_pimpl_label_type; \
@@ -708,6 +735,8 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
     typedef typename facade::local_metadata_persisted_handler_label_type local_metadata_persisted_handler_label_type; \
     typedef typename facade::property_metadata_label_type property_metadata_label_type; \
     typedef typename facade::property_metadata_persisted_handler_label_type property_metadata_persisted_handler_label_type; \
+    typedef typename facade::field_metadata_label_type field_metadata_label_type; \
+    typedef typename facade::field_metadata_persisted_handler_label_type field_metadata_persisted_handler_label_type; \
     typedef typename facade::custom_attribute_metadata_label_type custom_attribute_metadata_label_type; \
     typedef typename facade::custom_attribute_metadata_persisted_handler_label_type custom_attribute_metadata_persisted_handler_label_type; \
     typedef typename facade::module_generator_label_type module_generator_label_type; \
@@ -736,6 +765,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
     friend typename method_body_metadata_pimpl_label_type; \
     friend typename parameter_metadata_pimpl_label_type; \
     friend typename property_metadata_pimpl_label_type; \
+    friend typename field_metadata_pimpl_label_type; \
     friend typename module_generator_pimpl_label_type; \
     friend typename type_generator_pimpl_label_type; \
     friend typename method_generator_pimpl_label_type; \
@@ -760,6 +790,8 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Metadata
     friend typename local_metadata_persisted_handler_label_type; \
     friend typename property_metadata_label_type; \
     friend typename property_metadata_persisted_handler_label_type; \
+    friend typename field_metadata_label_type; \
+    friend typename field_metadata_persisted_handler_label_type; \
     friend typename custom_attribute_metadata_label_type; \
     friend typename custom_attribute_metadata_persisted_handler_label_type; \
     friend typename module_generator_label_type; \

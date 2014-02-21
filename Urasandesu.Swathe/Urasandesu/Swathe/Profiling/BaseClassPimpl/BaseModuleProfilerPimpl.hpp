@@ -44,33 +44,8 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         m_pProcProf(nullptr), 
         m_id(static_cast<UINT_PTR>(-1)), 
         m_assemblyId(static_cast<UINT_PTR>(-1))
-    { 
-#ifdef _DEBUG
-        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
-#else
-        BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), ==, sizeof(storage_type));
-#endif
-        new(BaseHeapProvider())base_heap_provider_type();
-    }
+    { }
 
-    template<class ApiHolder>    
-    BaseModuleProfilerPimpl<ApiHolder>::~BaseModuleProfilerPimpl()
-    {
-        BaseHeapProvider()->~base_heap_provider_type();
-    }
-
-    template<class ApiHolder>    
-    typename BaseModuleProfilerPimpl<ApiHolder>::base_heap_provider_type *BaseModuleProfilerPimpl<ApiHolder>::BaseHeapProvider()
-    {
-        return reinterpret_cast<base_heap_provider_type *>(&m_storage);
-    }
-
-    template<class ApiHolder>    
-    typename BaseModuleProfilerPimpl<ApiHolder>::base_heap_provider_type const *BaseModuleProfilerPimpl<ApiHolder>::BaseHeapProvider() const
-    {
-        return const_cast<class_pimpl_type *>(this)->BaseHeapProvider();
-    }
-    
 #define SWATHE_DECLARE_BASE_MODULE_PROFILER_PIMPL_ADDITIONAL_INSTANTIATION \
 
     

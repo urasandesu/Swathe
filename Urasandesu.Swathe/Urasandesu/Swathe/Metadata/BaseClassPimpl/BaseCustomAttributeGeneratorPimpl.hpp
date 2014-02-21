@@ -36,10 +36,6 @@
 #include <Urasandesu/Swathe/Metadata/BaseClassPimpl/BaseCustomAttributeGeneratorPimpl.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_METADATA_ITYPE_H
 #include <Urasandesu/Swathe/Metadata/IType.h>
 #endif
@@ -66,7 +62,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_namedPropsInit(false), 
         m_propValuesInit(false), 
         m_namedFieldsInit(false), 
-        m_fieldValuesInit(false)
+        m_fieldValuesInit(false), 
+        m_pSrcCas(nullptr)
     { }
     
 #define SWATHE_DECLARE_BASE_CUSTOM_ATTRIBUTE_GENERATOR_PIMPL_ADDITIONAL_INSTANTIATION \
@@ -87,18 +84,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseCustomAttributeGeneratorPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
-            D_WCOUT(L"Getting Custom Attribute Generator Token... 1");
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+
+            CPPANONYM_D_LOGW(L"Getting Custom Attribute Generator Token... 1");
             auto const &sig = m_pClass->GetSignature();
             auto const &blob = sig.GetBlob();
             auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
             auto hr = comMetaEmt.DefineCustomAttribute(GetTargetToken(), GetConstructor()->GetToken(), &blob[0], blob.size(), &m_mdt);
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-            D_WCOUT1(L"Token: 0x%|1$08X|", m_mdt);
+            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
         return m_mdt;
     }
@@ -127,7 +128,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
-                m_pCtor = MetadataResolver::Resolve(m_pCtor);
+                m_pCtor = m_pAsmGen->Resolve(m_pCtor);
             }
             m_ctorInit = true;
         }
@@ -144,7 +145,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!m_constructorArgsInit)
         {
             for (auto i = m_constructorArgs.begin(), i_end = m_constructorArgs.end(); i != i_end; ++i)
-                *i = apply_visitor(resolve_argument_visitor(), *i);
+                *i = apply_visitor(resolve_argument_visitor(m_pAsmGen), *i);
             m_constructorArgsInit = true;
         }
         return m_constructorArgs;
@@ -159,7 +160,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!m_namedPropsInit)
         {
             for (auto i = m_namedProps.begin(), i_end = m_namedProps.end(); i != i_end; ++i)
-                *i = MetadataResolver::Resolve(*i);
+                *i = m_pAsmGen->Resolve(*i);
             m_namedPropsInit = true;
         }
         return m_namedProps;
@@ -175,7 +176,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!m_propValuesInit)
         {
             for (auto i = m_propValues.begin(), i_end = m_propValues.end(); i != i_end; ++i)
-                *i = apply_visitor(resolve_argument_visitor(), *i);
+                *i = apply_visitor(resolve_argument_visitor(m_pAsmGen), *i);
             m_propValuesInit = true;
         }
         return m_propValues;
@@ -189,7 +190,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!m_namedFieldsInit)
         {
             for (auto i = m_namedFields.begin(), i_end = m_namedFields.end(); i != i_end; ++i)
-                *i = MetadataResolver::Resolve(*i);
+                *i = m_pAsmGen->Resolve(*i);
             m_namedFieldsInit = true;
         }
         return m_namedFields;
@@ -203,7 +204,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!m_fieldValuesInit)
         {
             for (auto i = m_fieldValues.begin(), i_end = m_fieldValues.end(); i != i_end; ++i)
-                *i = apply_visitor(resolve_argument_visitor(), *i);
+                *i = apply_visitor(resolve_argument_visitor(m_pAsmGen), *i);
             m_fieldValuesInit = true;
         }
         return m_fieldValues;
@@ -215,13 +216,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     CustomAttributeProvider const &BaseCustomAttributeGeneratorPimpl<ApiHolder>::GetMember() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-        //using boost::apply_visitor;
-        //using Urasandesu::CppAnonym::Utilities::Empty;
-
-        //if (Empty(m_member))
-        //    apply_visitor(assign_member_visitor(m_member), m_caGenProvider);
-        //_ASSERTE(!Empty(m_member));
-        //return m_member;
     }
 
 
@@ -230,6 +224,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IAssembly const *BaseCustomAttributeGeneratorPimpl<ApiHolder>::GetAssembly() const
     {
         return m_pAsmGen;
+    }
+
+
+
+    template<class ApiHolder>    
+    ICustomAttribute const *BaseCustomAttributeGeneratorPimpl<ApiHolder>::GetSourceCustomAttribute() const
+    {
+        return !m_pSrcCas ? m_pClass : m_pSrcCas->GetSourceCustomAttribute();
     }
 
 
@@ -288,6 +290,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     struct BaseCustomAttributeGeneratorPimpl<ApiHolder>::resolve_argument_visitor : 
         static_visitor<CustomAttributeArgument>
     {
+        resolve_argument_visitor(assembly_generator_label_type const *pAsmGen) : 
+            m_pAsmGen(pAsmGen)
+        { }
+
         template<class T>
         CustomAttributeArgument operator ()(T const &v) const
         {
@@ -297,8 +303,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         template<>
         CustomAttributeArgument operator ()<IType const *>(IType const *const &v) const
         {
-            return MetadataResolver::Resolve(v);
+            return m_pAsmGen->Resolve(v);
         }
+
+        assembly_generator_label_type const *m_pAsmGen;
     };
 
 

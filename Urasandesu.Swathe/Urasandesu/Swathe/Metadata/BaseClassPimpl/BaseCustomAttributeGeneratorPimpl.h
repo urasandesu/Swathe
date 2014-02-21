@@ -87,6 +87,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         CustomAttributeProvider const &GetMember() const;
         IAssembly const *GetAssembly() const;
         IType const *GetAttributeType() const;
+        ICustomAttribute const *GetSourceCustomAttribute() const;
         
     private:
         struct get_token_visitor;
@@ -118,6 +119,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable vector<CustomAttributeArgument> m_fieldValues;
         mutable Signature m_sig;
         mutable CustomAttributeProvider m_member;
+        ICustomAttribute const *m_pSrcCas;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

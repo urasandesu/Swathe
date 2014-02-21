@@ -63,6 +63,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual Signature const &GetSignature() const = 0;
         virtual IMethodBody const *GetMethodBody() const = 0;
         virtual IAssembly const *GetAssembly() const = 0;
+        virtual ILocal const *GetSourceLocal() const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

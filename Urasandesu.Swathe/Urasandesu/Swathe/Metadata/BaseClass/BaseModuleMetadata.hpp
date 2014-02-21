@@ -113,12 +113,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         return Pimpl()->GetSourceModule();
     }
-    
-    template<class ApiHolder>    
-    IType const *BaseModuleMetadata<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        return Pimpl()->ResolveType(pType);
-    }
 
     template<class ApiHolder>    
     void BaseModuleMetadata<ApiHolder>::SetName(wstring const &name)

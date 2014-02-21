@@ -56,6 +56,10 @@
 #include <Urasandesu/Swathe/Metadata/IAssemblyFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_ILOCALFWD_H
+#include <Urasandesu/Swathe/Metadata/ILocalFwd.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     using boost::aligned_storage;
@@ -79,6 +83,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         Signature const &GetSignature() const;
         IMethodBody const *GetMethodBody() const;
         IAssembly const *GetAssembly() const;
+        ILocal const *GetSourceLocal() const;
         
     private:
         void SetMethodBody(IMethodBody const *pBody);

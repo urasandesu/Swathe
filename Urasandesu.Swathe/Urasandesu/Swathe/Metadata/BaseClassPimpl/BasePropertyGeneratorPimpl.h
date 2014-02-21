@@ -99,7 +99,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         PropertyProvider const &GetMember() const;
         IProperty const *GetSourceProperty() const;
         IAssembly const *GetAssembly() const;
-        IParameter const *ResolveParameter(IParameter const *pParam) const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         void SetGetMethod(IMethod const *pGetMethod);
         void SetSetMethod(IMethod const *pSetMethod);
@@ -116,6 +115,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         mutable property_generator_label_type *m_pClass;
         mutable assembly_generator_label_type *m_pAsmGen;
+        mutable bool m_declaringTypeInit;
         mutable PropertyProvider m_member;
         mutable mdToken m_mdt;
         mutable wstring m_name;

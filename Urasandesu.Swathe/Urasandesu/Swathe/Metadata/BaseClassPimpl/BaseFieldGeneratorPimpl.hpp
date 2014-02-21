@@ -36,10 +36,6 @@
 #include <Urasandesu/Swathe/Metadata/BaseClassPimpl/BaseFieldGeneratorPimpl.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_METADATA_IMETADATAVISITOR_H
 #include <Urasandesu/Swathe/Metadata/IMetadataVisitor.h>
 #endif
@@ -54,6 +50,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     BaseFieldGeneratorPimpl<ApiHolder>::BaseFieldGeneratorPimpl(field_generator_label_type *pClass) : 
         m_pClass(pClass),
         m_pAsmGen(nullptr),
+        m_declaringTypeInit(false), 
         m_mdt(mdTokenNil),
         m_pFieldType(nullptr), 
         m_fieldTypeInit(false), 
@@ -79,19 +76,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseFieldGeneratorPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+
             if (!m_pSrcField)
             {
+                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcField)");
+
                 auto mdtTarget = GetDeclaringType()->GetToken();
                 auto const &name = GetName();
                 auto const *pFieldType = GetFieldType();
                 auto attr = GetAttribute();
                 auto const &sig = m_pClass->GetSignature();
                 auto const &blob = sig.GetBlob();
-                D_WCOUT1(L"Getting Field Generator Token... 1: %|1$s|", name);
+                CPPANONYM_D_LOGW1(L"Getting Field Generator Token... 1: %|1$s|", name);
                 auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                 auto hr = comMetaEmt.DefineField(mdtTarget, name.c_str(), attr.Value(), &blob[0], blob.size(), ELEMENT_TYPE_END, nullptr, 0, &m_mdt);
                 if (FAILED(hr))
@@ -99,9 +102,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                BOOST_LOG_NAMED_SCOPE("if (m_pSrcField)");
+
+                if (!m_pAsmGen->IsModifiable())
+                {
+                    BOOST_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
+
+                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                }
+                else
+                {
+                    BOOST_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
+
+                    CPPANONYM_D_LOGW(L"Getting Field Generator Token... 2: Modifiable Field");
+                    m_mdt = m_pSrcField->GetToken();
+                }
             }
-            D_WCOUT1(L"Token: 0x%|1$08X|", m_mdt);
+            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
         return m_mdt;
     }
@@ -141,12 +158,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    m_pFieldType = MetadataResolver::Resolve(m_pSrcField->GetFieldType());
+                    m_pFieldType = m_pAsmGen->Resolve(m_pSrcField->GetFieldType());
                 }
             }
             else
             {
-                m_pFieldType = MetadataResolver::Resolve(m_pFieldType);
+                m_pFieldType = m_pAsmGen->Resolve(m_pFieldType);
             }
             m_fieldTypeInit = true;
         }
@@ -172,13 +189,26 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
+        if (!m_declaringTypeInit)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (Empty(m_member))
+            {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
+
+            m_declaringTypeInit = true;
         }
 
         auto const *const *ppDeclaringType = get<IType const *>(&m_member);
         return !ppDeclaringType ? nullptr : *ppDeclaringType;
+    }
+
+
+
+    template<class ApiHolder>    
+    IAssembly const *BaseFieldGeneratorPimpl<ApiHolder>::GetAssembly() const
+    {
+        return m_pAsmGen;
     }
 
 

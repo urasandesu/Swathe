@@ -82,6 +82,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         CustomAttributeProvider const &GetMember() const;
         IAssembly const *GetAssembly() const;
         IType const *GetAttributeType() const;
+        ICustomAttribute const *GetSourceCustomAttribute() const;
     
     private:
         custom_attribute_generator_pimpl_label_type *Pimpl();
@@ -96,7 +97,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 136;
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

@@ -55,6 +55,9 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     BaseHostInfoPimpl<ApiHolder>::~BaseHostInfoPimpl()
     {
         BaseHeapProvider()->~base_heap_provider_type();
+
+        // If we delegate releasing the resources to system, the result will become unintended consequences for Boost.Log.
+        boost::log::core::get()->remove_all_sinks();
     }
 
     template<class ApiHolder>    

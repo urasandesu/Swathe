@@ -1,5 +1,5 @@
 ﻿/* 
- * File: MetadataResolverFwd.h
+ * File: FieldMetadataPersistedHandlerFwd.h
  * 
  * Author: Akira Sugiura (urasandesu@gmail.com)
  * 
@@ -29,20 +29,18 @@
 
 
 #pragma once
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVERFWD_H
-#define URASANDESU_SWATHE_METADATA_METADATARESOLVERFWD_H
+#ifndef URASANDESU_SWATHE_METADATA_FIELDMETADATAPERSISTEDHANDLERFWD_H
+#define URASANDESU_SWATHE_METADATA_FIELDMETADATAPERSISTEDHANDLERFWD_H
+
+#ifndef URASANDESU_SWATHE_METADATA_BASECLASSPERSISTEDHANDLER_BASEFIELDMETADATAPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Metadata/BaseClassPersistedHandler/BaseFieldMetadataPersistedHandlerFwd.h>
+#endif
 
 namespace Urasandesu { namespace Swathe { namespace Metadata { 
-    
-    namespace MetadataResolverDetail {
-
-        struct MetadataResolverImpl;
-
-    }   // namespace MetadataResolverDetail {
-
-    struct MetadataResolver;
-    
+  
+  typedef Urasandesu::Swathe::Metadata::BaseClassPersistedHandler::BaseFieldMetadataPersistedHandler<> FieldMetadataPersistedHandler;
+  
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 
-#endif  // URASANDESU_SWATHE_METADATA_METADATARESOLVERFWD_H
+#endif  // URASANDESU_SWATHE_METADATA_FIELDMETADATAPERSISTEDHANDLERFWD_H
 

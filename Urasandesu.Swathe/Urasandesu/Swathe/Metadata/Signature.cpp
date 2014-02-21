@@ -1357,11 +1357,39 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     switch (kind.Value())
                     {
                         case TypeKinds::TK_BYREF:
-                            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                            {
+                                index += _index;
+                                auto const *pType = static_cast<IType *>(nullptr);
+
+                                (blob, index, provider) >> 
+                                    pType
+                                ;
+
+                                auto const *pLocal = apply_visitor(GetLocalVisitor(v.m_index, pType->MakeByRefType()), provider);
+                                v.m_pLocal = pLocal;
+                            }
                             break;
                         
                         case TypeKinds::TK_TYPEDBYREF:
                             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                            break;
+                        
+                        case TypeKinds::TK_SENTINEL:
+                            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                            break;
+                        
+                        case TypeKinds::TK_PINNED:
+                            {
+                                index += _index;
+                                auto const *pTmpLocal = static_cast<ILocal *>(nullptr);
+
+                                (blob, index, provider) >> 
+                                    Local(v.m_index, pTmpLocal)
+                                ;
+
+                                auto const *pLocal = apply_visitor(GetLocalVisitor(v.m_index, pTmpLocal->GetLocalType()->MakePinnedType()), provider);
+                                v.m_pLocal = pLocal;
+                            }
                             break;
 
                         default:
@@ -1432,6 +1460,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     index += ::CorSigUncompressElementType(&blob[index], reinterpret_cast<CorElementType *>(&kind));
                     switch (kind.Value())
                     {
+                        case TypeKinds::TK_VOID:
                         case TypeKinds::TK_BOOLEAN:
                         case TypeKinds::TK_CHAR:
                         case TypeKinds::TK_I4:
@@ -1448,6 +1477,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                                 auto const *pMSCorLib = pAsm->GetAssembly(MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB);
                                 auto const *pMSCorLibDll = pMSCorLib->GetMainModule();
                                 pType = pMSCorLibDll->GetType(MetadataSpecialValues::ToTypeName(kind));
+                            }
+                            break;
+
+                        case TypeKinds::TK_PTR:
+                            {
+                                auto const *pType_ = static_cast<IType *>(nullptr);
+                                
+                                (blob, index, provider) >> 
+                                    pType_
+                                ;
+
+                                pType = pType_->MakePointerType();
                             }
                             break;
 
@@ -1498,7 +1539,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                             break;
 
                         default:
-                            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                            {
+                                auto oss = std::wostringstream();
+                                oss << boost::wformat(L"kind.Value():  %|1$02X|") % kind.Value();
+                                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+                            }
                             break;
                     }
                 }
@@ -1533,7 +1578,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     case TypeKinds::TK_CHAR:
                     case TypeKinds::TK_I:
                     case TypeKinds::TK_I4:
-                    case TypeKinds::TK_U4:                    
+                    case TypeKinds::TK_U4:
+                    case TypeKinds::TK_I8:
+                    case TypeKinds::TK_R8:                    
                     case TypeKinds::TK_OBJECT:
                     case TypeKinds::TK_STRING:
                         sb <<
@@ -1582,7 +1629,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         break;
 
                     default:
-                        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                        {
+                            auto oss = std::wostringstream();
+                            oss << boost::wformat(L"kind.Value():  %|1$02X|") % kind.Value();
+                            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+                        }
                         break;
                 }
 

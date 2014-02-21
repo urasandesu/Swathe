@@ -151,6 +151,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IField const *BaseAssemblyGenerator<ApiHolder>::GetField(mdToken mdt) const
+    {
+        return Pimpl()->GetField(mdt);
+    }
+
+    template<class ApiHolder>    
     IMethod const *BaseAssemblyGenerator<ApiHolder>::GetMethod(mdToken mdt) const
     {
         return Pimpl()->GetMethod(mdt);
@@ -196,12 +202,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IAssembly const *BaseAssemblyGenerator<ApiHolder>::GetAssemblyReference(mdAssemblyRef mdt) const
     {
         return Pimpl()->GetAssemblyReference(mdt);
-    }
-
-    template<class ApiHolder>    
-    IModule const *BaseAssemblyGenerator<ApiHolder>::ResolveModule(IModule const *pMod) const
-    {
-        return Pimpl()->ResolveModule(pMod);
     }
 
     template<class ApiHolder>    
@@ -505,6 +505,61 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         return Pimpl()->GetCustomAttributeGeneratorToIndex();
     }
 
+    template<class ApiHolder>    
+    IModule const *BaseAssemblyGenerator<ApiHolder>::Resolve(IModule const *pMod) const
+    {
+        return Pimpl()->Resolve(pMod);
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyGenerator<ApiHolder>::Resolve(IType const *pType) const
+    {
+        return Pimpl()->Resolve(pType);
+    }
+
+    template<class ApiHolder>    
+    IField const *BaseAssemblyGenerator<ApiHolder>::Resolve(IField const *pField) const
+    {
+        return Pimpl()->Resolve(pField);
+    }
+
+    template<class ApiHolder>    
+    IProperty const *BaseAssemblyGenerator<ApiHolder>::Resolve(IProperty const *pProp) const
+    {
+        return Pimpl()->Resolve(pProp);
+    }
+
+    template<class ApiHolder>    
+    IMethod const *BaseAssemblyGenerator<ApiHolder>::Resolve(IMethod const *pMethod) const
+    {
+        return Pimpl()->Resolve(pMethod);
+    }
+
+    template<class ApiHolder>    
+    IMethodBody const *BaseAssemblyGenerator<ApiHolder>::Resolve(IMethodBody const *pBody) const
+    {
+        return Pimpl()->Resolve(pBody);
+    }
+
+    template<class ApiHolder>    
+    IParameter const *BaseAssemblyGenerator<ApiHolder>::Resolve(IParameter const *pParam) const
+    {
+        return Pimpl()->Resolve(pParam);
+    }
+
+    template<class ApiHolder>    
+    ILocal const *BaseAssemblyGenerator<ApiHolder>::Resolve(ILocal const *pLocal) const
+    {
+        return Pimpl()->Resolve(pLocal);
+    }
+
+    template<class ApiHolder>    
+    ICustomAttribute const *BaseAssemblyGenerator<ApiHolder>::Resolve(ICustomAttribute const *pCa) const
+    {
+        return Pimpl()->Resolve(pCa);
+    }
+
+    
     template<class ApiHolder>    
     IMetaDataAssemblyEmit &BaseAssemblyGenerator<ApiHolder>::GetCOMMetaDataAssemblyEmit()
     {

@@ -40,10 +40,6 @@
 #include <Urasandesu/Swathe/Metadata/IMethod.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_METADATA_IMETADATAVISITOR_H
 #include <Urasandesu/Swathe/Metadata/IMetadataVisitor.h>
 #endif
@@ -54,6 +50,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     BasePropertyGeneratorPimpl<ApiHolder>::BasePropertyGeneratorPimpl(property_generator_label_type *pClass) : 
         m_pClass(pClass), 
         m_pAsmGen(nullptr), 
+        m_declaringTypeInit(false), 
         m_mdt(mdTokenNil), 
         m_callingConvention(CallingConventions::CC_UNREACHED), 
         m_pPropType(nullptr), 
@@ -85,12 +82,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdProperty BasePropertyGeneratorPimpl<ApiHolder>::GetToken() const
     {
+        BOOST_LOG_FUNCTION();
+
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
+            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+
             if (!m_pSrcProp)
             {
+                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcProp)");
+
                 // TODO: 仮実装
                 auto mdtTarget = GetDeclaringType()->GetToken();
                 auto const &name = m_pClass->GetName();
@@ -99,7 +102,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto const &blob = sig.GetBlob();
                 auto mdtSetter = m_pClass->GetSetMethod() ? m_pClass->GetSetMethod()->GetToken() : mdTokenNil;
                 auto mdtGetter = m_pClass->GetGetMethod() ? m_pClass->GetGetMethod()->GetToken() : mdTokenNil;
-                D_WCOUT1(L"Getting Property Generator Token... 1: %|1$s|", name);
+                CPPANONYM_D_LOGW1(L"Getting Property Generator Token... 1: %|1$s|", name);
                 auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                 auto hr = comMetaEmt.DefineProperty(mdtTarget, name.c_str(), attr.Value(), &blob[0], blob.size(), ELEMENT_TYPE_VOID, NULL, 0, mdtSetter, mdtGetter, NULL, &m_mdt);
                 if (FAILED(hr))
@@ -107,12 +110,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
+                BOOST_LOG_NAMED_SCOPE("if (m_pSrcProp)");
+
                 // TODO: 仮実装
                 auto mdtSetter = m_pClass->GetSetMethod()->GetToken();
                 auto mdtGetter = m_pClass->GetGetMethod()->GetToken();
                 m_mdt = IsNilToken(mdtSetter) ? mdtGetter : mdtSetter;
             }
-            D_WCOUT1(L"Token: 0x%|1$08X|", m_mdt);
+            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
         return m_mdt;
     }
@@ -181,12 +186,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    m_pPropType = MetadataResolver::Resolve(m_pSrcProp->GetPropertyType());
+                    m_pPropType = m_pAsmGen->Resolve(m_pSrcProp->GetPropertyType());
                 }
             }
             else
             {
-                m_pPropType = MetadataResolver::Resolve(m_pPropType);
+                m_pPropType = m_pAsmGen->Resolve(m_pPropType);
             }
             m_propTypeInit = true;
         }
@@ -208,7 +213,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 auto const &params = m_pSrcProp->GetParameters();
                 for (auto i = params.begin(), i_end = params.end(); i != i_end; ++i)
-                    m_params.push_back(m_pClass->ResolveParameter(*i));
+                    m_params.push_back(m_pAsmGen->Resolve(*i));
             }
 
             m_paramsInit = true;
@@ -243,12 +248,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    m_pGetMethod = MetadataResolver::Resolve(m_pSrcProp->GetGetMethod());
+                    m_pGetMethod = m_pAsmGen->Resolve(m_pSrcProp->GetGetMethod());
                 }
             }
             else
             {
-                m_pGetMethod = MetadataResolver::Resolve(m_pGetMethod);
+                m_pGetMethod = m_pAsmGen->Resolve(m_pGetMethod);
             }
             m_getMethodInit = true;
         }
@@ -270,12 +275,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    m_pSetMethod = MetadataResolver::Resolve(m_pSrcProp->GetSetMethod());
+                    m_pSetMethod = m_pAsmGen->Resolve(m_pSrcProp->GetSetMethod());
                 }
             }
             else
             {
-                m_pSetMethod = MetadataResolver::Resolve(m_pSetMethod);
+                m_pSetMethod = m_pAsmGen->Resolve(m_pSetMethod);
             }
             m_setMethodInit = true;
         }
@@ -301,9 +306,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
+        if (!m_declaringTypeInit)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (Empty(m_member))
+            {
+                _ASSERTE(m_pSrcProp);
+                auto const *pDeclaringType = m_pSrcProp->GetDeclaringType();
+                if (pDeclaringType)
+                    m_member = m_pAsmGen->Resolve(pDeclaringType);
+            }
+
+            m_declaringTypeInit = true;
         }
 
         auto const *const *ppDeclaringType = get<IType const *>(&m_member);
@@ -324,14 +337,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IProperty const *BasePropertyGeneratorPimpl<ApiHolder>::GetSourceProperty() const
     {
         return m_pSrcProp == nullptr ? m_pClass : m_pSrcProp->GetSourceProperty();
-    }
-
-
-
-    template<class ApiHolder>    
-    IParameter const *BasePropertyGeneratorPimpl<ApiHolder>::ResolveParameter(IParameter const *pParam) const
-    {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
 
 

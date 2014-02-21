@@ -76,6 +76,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Initialize(assembly_metadata_label_type *pAsm);
         mdToken GetToken() const;
         wstring const &GetFullName() const;
+        bool IsValueType() const;
         bool IsGenericParameter() const;
         bool IsGenericType() const;
         bool IsGenericTypeDefinition() const;
@@ -95,18 +96,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         TypeProvider const &GetMember() const;
         IMethod const *GetMethod(mdToken mdt) const;
         IProperty const *GetProperty(mdToken mdt) const;
-        IMethod const *ResolveMethod(IMethod const *pMethod) const;
-        IProperty const *ResolveProperty(IProperty const *pProp) const;
-        IField const *ResolveField(IField const *pField) const;
-        IType const *ResolveType(IType const *pType) const;
         bool IsDefined(IType const *pAttrType, bool inherit) const;
         ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
         IType const *GetSourceType() const;
-        void OutDebugInfo(ULONG indent) const;
+        void OutDebugInfo() const;
         IType const *MakeArrayType() const;
         IType const *MakeGenericType(vector<IType const *> const &genericArgs) const;
+        IType const *MakePointerType() const;
         IType const *MakeByRefType() const;
+        IType const *MakePinnedType() const;
         IMethod const *GetMethod(wstring const &name) const;
         IMethod const *GetMethod(wstring const &name, vector<IType const *> const &paramTypes) const;
         IMethod const *GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes) const;
@@ -129,7 +128,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 184;
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

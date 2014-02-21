@@ -39,6 +39,10 @@
 #include <Urasandesu/Swathe/Metadata/IField.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYEQUALTO_H
+#include <Urasandesu/Swathe/Metadata/IAssemblyEqualTo.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IFieldEqualToDetail {
@@ -47,7 +51,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
         IFieldEqualToImpl::result_type IFieldEqualToImpl::operator()(param_type x, param_type y) const
         {
-            return x->GetToken() == y->GetToken();
+            auto mdtTargetX = x->GetToken();
+            auto mdtTargetY = y->GetToken();
+            auto const *pAsmX = x->GetAssembly();
+            auto const *pAsmY = y->GetAssembly();
+
+            return mdtTargetX == mdtTargetY && IAssemblyEqualTo()(pAsmX, pAsmY);
         }
 
     }   // namespace IFieldEqualToDetail {

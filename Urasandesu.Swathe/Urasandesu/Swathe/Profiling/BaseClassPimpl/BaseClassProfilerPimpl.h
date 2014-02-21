@@ -56,29 +56,21 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         SWATHE_END_CLASS_PROFILER_PIMPL_FACADE_TYPEDEF_ALIAS
 
         BaseClassProfilerPimpl(class_profiler_label_type *pClass);
-        ~BaseClassProfilerPimpl();
 
         UINT_PTR GetID() const;
         TempPtr<module_profiler_label_type> AttachToModule();
         
     private:
-        base_heap_provider_type *BaseHeapProvider();
-        base_heap_provider_type const *BaseHeapProvider() const;
         void Initialize(process_profiler_label_type *pProcProf);
         void SetID(UINT_PTR id);
         static void FillProperties(class_profiler_pimpl_label_type const *_this, ModuleID &moduleId, mdToken &mdt);
-#ifdef _DEBUG
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
-#else
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 40;
-#endif
-        typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
-        storage_type m_storage;
+
         mutable class_profiler_label_type *m_pClass;
         process_profiler_label_type *m_pProcProf;
         UINT_PTR m_id;
         ModuleID m_moduleId;
         mdToken m_mdt;
+        int reserved;
         
     };
 

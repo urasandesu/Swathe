@@ -91,6 +91,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    bool BaseTypeGenerator<ApiHolder>::IsValueType() const
+    {
+        return Pimpl()->IsValueType();
+    }
+
+    template<class ApiHolder>    
     bool BaseTypeGenerator<ApiHolder>::IsGenericParameter() const
     {
         return Pimpl()->IsGenericParameter();
@@ -151,9 +157,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    IType const *BaseTypeGenerator<ApiHolder>::MakePointerType() const
+    {
+        return Pimpl()->MakePointerType();
+    }
+
+    template<class ApiHolder>    
     IType const *BaseTypeGenerator<ApiHolder>::MakeByRefType() const
     {
         return Pimpl()->MakeByRefType();
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseTypeGenerator<ApiHolder>::MakePinnedType() const
+    {
+        return Pimpl()->MakePinnedType();
     }
 
     template<class ApiHolder>    
@@ -277,30 +295,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    IMethod const *BaseTypeGenerator<ApiHolder>::ResolveMethod(IMethod const *pMethod) const
-    {
-        return Pimpl()->ResolveMethod(pMethod);
-    }
-    
-    template<class ApiHolder>    
-    IProperty const *BaseTypeGenerator<ApiHolder>::ResolveProperty(IProperty const *pProp) const
-    {
-        return Pimpl()->ResolveProperty(pProp);
-    }
-    
-    template<class ApiHolder>    
-    IField const *BaseTypeGenerator<ApiHolder>::ResolveField(IField const *pField) const
-    {
-        return Pimpl()->ResolveField(pField);
-    }
-
-    template<class ApiHolder>    
-    IType const *BaseTypeGenerator<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        return Pimpl()->ResolveType(pType);
-    }
-
-    template<class ApiHolder>    
     bool BaseTypeGenerator<ApiHolder>::IsDefined(IType const *pAttrType, bool inherit) const
     {
         return Pimpl()->IsDefined(pAttrType, inherit);
@@ -325,9 +319,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    void BaseTypeGenerator<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseTypeGenerator<ApiHolder>::OutDebugInfo() const
     {
-        Pimpl()->OutDebugInfo(indent);
+        Pimpl()->OutDebugInfo();
     }
 
     template<class ApiHolder>    

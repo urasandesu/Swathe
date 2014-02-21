@@ -90,7 +90,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         vector<IType const *> const &GetTypes() const;
         IAssembly const *GetAssembly() const;
         IModule const *GetSourceModule() const;
-        IType const *ResolveType(IType const *pType) const;
         type_generator_label_type *DefineType(wstring const &fullName, TypeAttributes const &attr);
     
     private:

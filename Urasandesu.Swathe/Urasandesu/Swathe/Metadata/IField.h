@@ -48,6 +48,10 @@
 #include <Urasandesu/Swathe/Metadata/CallingConventions.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYFWD_H
+#include <Urasandesu/Swathe/Metadata/IAssemblyFwd.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { 
     
     struct IField
@@ -59,6 +63,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IType const *GetFieldType() const = 0;
         virtual Signature const &GetSignature() const = 0;
         virtual IType const *GetDeclaringType() const = 0;
+        virtual IAssembly const *GetAssembly() const = 0;
         virtual IField const *GetSourceField() const = 0;
     };
     

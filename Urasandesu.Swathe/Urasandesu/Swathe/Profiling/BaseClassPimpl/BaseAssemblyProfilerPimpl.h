@@ -57,7 +57,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         SWATHE_END_ASSEMBLY_PROFILER_PIMPL_FACADE_TYPEDEF_ALIAS
 
         BaseAssemblyProfilerPimpl(assembly_profiler_label_type *pClass);
-        ~BaseAssemblyProfilerPimpl();
 
         UINT_PTR GetID() const;
         wstring const &GetName() const;
@@ -65,19 +64,11 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         assembly_generator_label_type *GetAssemblyGenerator();
         
     private:
-        base_heap_provider_type *BaseHeapProvider();
-        base_heap_provider_type const *BaseHeapProvider() const;
         void Initialize(process_profiler_label_type *pProcProf);
         void SetID(UINT_PTR id);
         static void FillProperties(assembly_profiler_pimpl_label_type const *_this, wstring &name, AppDomainID &appDomainId, ModuleID &moduleId);
         IMethodMalloc &GetCOMMethodMalloc();
-#ifdef _DEBUG
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
-#else
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 40;
-#endif
-        typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
-        storage_type m_storage;
+
         mutable assembly_profiler_label_type *m_pClass;
         process_profiler_label_type *m_pProcProf;
         UINT_PTR m_id;
@@ -86,6 +77,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         mutable ModuleID m_moduleId;
         mutable assembly_generator_label_type *m_pAsmGen;
         ATL::CComPtr<IMethodMalloc> m_pComMethodMalloc;
+        int reserved;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseClassPimpl { 

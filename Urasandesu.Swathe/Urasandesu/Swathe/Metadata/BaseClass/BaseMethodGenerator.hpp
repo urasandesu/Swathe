@@ -199,39 +199,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    IMethod const *BaseMethodGenerator<ApiHolder>::ResolveMethod(IMethod const *pMethod) const
-    {
-        return Pimpl()->ResolveMethod(pMethod);
-    }
-
-    template<class ApiHolder>    
-    IType const *BaseMethodGenerator<ApiHolder>::ResolveType(IType const *pType) const
-    {
-        return Pimpl()->ResolveType(pType);
-    }
-
-    template<class ApiHolder>    
-    IMethodBody const *BaseMethodGenerator<ApiHolder>::ResolveMethodBody(IMethodBody const *pBody) const
-    {
-        return Pimpl()->ResolveMethodBody(pBody);
-    }
-
-    template<class ApiHolder>    
-    IParameter const *BaseMethodGenerator<ApiHolder>::ResolveParameter(IParameter const *pParam) const
-    {
-        return Pimpl()->ResolveParameter(pParam);
-    }
-
-    template<class ApiHolder>    
     IParameter const *BaseMethodGenerator<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         return Pimpl()->GetParameter(position, pParamType);
     }
 
     template<class ApiHolder>    
-    void BaseMethodGenerator<ApiHolder>::OutDebugInfo(ULONG indent) const
+    void BaseMethodGenerator<ApiHolder>::OutDebugInfo() const
     {
-        return Pimpl()->OutDebugInfo(indent);
+        return Pimpl()->OutDebugInfo();
     }
 
     template<class ApiHolder>    

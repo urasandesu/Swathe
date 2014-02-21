@@ -40,6 +40,10 @@
 #include <Urasandesu/Swathe/Metadata/ITypeFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IFIELDFWD_H
+#include <Urasandesu/Swathe/Metadata/IFieldFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_IMETHODFWD_H
 #include <Urasandesu/Swathe/Metadata/IMethodFwd.h>
 #endif
@@ -88,6 +92,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IAssembly const *GetSourceAssembly() const = 0;
         virtual IAssembly const *GetTargetAssembly() const = 0;
         virtual IDispenser const *GetDispenser() const = 0;
+        virtual IField const *GetField(mdToken mdt) const = 0;
         virtual IMethod const *GetMethod(mdToken mdt) const = 0;
         virtual IMethod const *GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const = 0;
         virtual IType const *GetType(mdToken mdt) const = 0;
@@ -96,7 +101,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IAssembly const *GetAssembly(std::wstring const &fullName) const = 0;
         virtual IAssembly const *GetAssembly(std::wstring const &fullName, std::vector<ProcessorArchitecture> const &procArchs) const = 0;
         virtual IAssembly const *GetAssemblyReference(mdAssemblyRef mdt) const = 0;
-        virtual IModule const *ResolveModule(IModule const *pMod) const = 0;
         virtual ICustomAttribute const *GetCustomAttribute(mdToken mdt) const = 0;
         virtual ICustomAttributePtrRange GetCustomAttributes(bool inherit) const = 0;
         virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const = 0;

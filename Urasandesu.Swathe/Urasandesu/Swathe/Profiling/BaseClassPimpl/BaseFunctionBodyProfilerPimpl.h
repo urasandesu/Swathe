@@ -71,6 +71,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         UINT_PTR m_id;
         FunctionID m_functionId;
         method_body_generator_label_type *m_pBodyGen;
+        int reserved;
         
     };
 

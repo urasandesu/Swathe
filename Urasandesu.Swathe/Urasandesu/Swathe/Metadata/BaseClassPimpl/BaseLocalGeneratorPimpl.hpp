@@ -44,10 +44,6 @@
 #include <Urasandesu/Swathe/Metadata/IMetadataVisitor.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_METADATARESOLVER_H
-#include <Urasandesu/Swathe/Metadata/MetadataResolver.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<class ApiHolder>    
@@ -58,7 +54,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_mdt(mdTokenNil), 
         m_index(static_cast<SIZE_T>(-1)),
         m_localTypeInit(false), 
-        m_pLocalType(nullptr)
+        m_pLocalType(nullptr), 
+        m_pSrcLocal(nullptr)
     { }
     
 #define SWATHE_DECLARE_BASE_LOCAL_GENERATOR_PIMPL_ADDITIONAL_INSTANTIATION \
@@ -108,7 +105,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
-                m_pLocalType = MetadataResolver::Resolve(m_pLocalType);
+                m_pLocalType = m_pAsmGen->Resolve(m_pLocalType);
             }
             m_localTypeInit = true;
         }
@@ -129,6 +126,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IMethodBody const *BaseLocalGeneratorPimpl<ApiHolder>::GetMethodBody() const
     {
         return m_pBody;
+    }
+
+
+
+    template<class ApiHolder>    
+    ILocal const *BaseLocalGeneratorPimpl<ApiHolder>::GetSourceLocal() const
+    {
+        return !m_pSrcLocal ? m_pClass : m_pSrcLocal->GetSourceLocal();
     }
 
 

@@ -103,6 +103,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethodBody const *BaseLocalMetadataPimpl<ApiHolder>::GetMethodBody() const
     {
+        return m_pBody;
+    }
+
+
+
+    template<class ApiHolder>    
+    ILocal const *BaseLocalMetadataPimpl<ApiHolder>::GetSourceLocal() const
+    {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
 

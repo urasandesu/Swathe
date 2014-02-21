@@ -39,19 +39,20 @@
 #include <Urasandesu/Swathe/Metadata/ILocal.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYHASH_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyHash.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace ILocalHashDetail {
 
         ILocalHashImpl::result_type ILocalHashImpl::operator()(param_type v) const
         {
+            using Urasandesu::CppAnonym::Utilities::HashValue;
+
+            if (!v)
+                return 0;
+            
             auto mdtTarget = v->GetToken();
-            auto const *pAsm = v->GetAssembly();
-            return mdtTarget ^ IAssemblyHash()(pAsm);
+            auto const *pBody = v->GetMethodBody();
+            return mdtTarget ^ HashValue(pBody);
         }
 
     }   // namespace ILocalHashDetail {

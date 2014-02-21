@@ -134,7 +134,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssemblyFrom(path const &asmPath) const;
         bool TryGetAssemblyWithPartialName(wstring const &name, IAssembly const *&pAsm) const;
         assembly_generator_label_type *DefineAssemblyWithPartialName(wstring const &name) const;
-        IAssembly const *ResolveAssembly(IAssembly const *pAsm) const;
         IAssembly const *GetAssembly(IMetaDataImport2 *pComMetaImp) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataImport2 *pModifiableComMetaImp) const;
         bool IsCOMMetaDataDispenserPrepared() const;
@@ -155,7 +154,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool TryGetAssembly(assembly_metadata_label_type const &asm_, assembly_metadata_label_type *&pExistingAsm) const;
         
         assembly_generator_label_type *DefineAssembly(IAssembly const *pSrcAsm) const;
-        assembly_generator_label_type *ResolveAssemblyCore(IAssembly const *pAsm) const;
+        assembly_generator_label_type *ResolveAssembly(IAssembly const *pAsm) const;
         assembly_generator_label_type *ResolveOrDefineAssembly(IAssembly const *pAsm) const;
         void UpdateReferencedAssemblyIfNecessary(assembly_generator_label_type *pResolvedAsm) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataEmit2 *pComMetaEmt, IAssembly const *pSrcAsm) const;

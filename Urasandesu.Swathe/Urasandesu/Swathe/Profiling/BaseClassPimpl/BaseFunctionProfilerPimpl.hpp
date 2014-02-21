@@ -150,13 +150,13 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         auto headerSize = COR_ILMETHOD::Size(&header, moreSections);
         auto ehSize = ehClauses.empty() ? 0 : COR_ILMETHOD_SECT_EH::Size(ehClauses.size(), &ehClauses[0]);
         auto totalSize = headerSize + codeSizeAligned + ehSize;
-        D_WCOUT1(L"Header IsFat?: %|1$d|", (headerSize != 1));
-        D_WCOUT1(L"Header Size: %|1$d|", headerSize);
-        D_WCOUT1(L"EH Clauses Count: %|1$d|", ehClauses.size());
-        D_WCOUT1(L"More Sections: %|1$d|", moreSections);
-        D_WCOUT1(L"EH Clauses Size: %|1$d|", ehSize);
-        D_WCOUT1(L"Local Variable Token: 0x%|1$08X|", header.GetLocalVarSigTok());
-        D_WCOUT1(L"Method Body Total Size: %|1$d|", totalSize);
+        CPPANONYM_D_LOGW1(L"Header IsFat?: %|1$d|", (headerSize != 1));
+        CPPANONYM_D_LOGW1(L"Header Size: %|1$d|", headerSize);
+        CPPANONYM_D_LOGW1(L"EH Clauses Count: %|1$d|", ehClauses.size());
+        CPPANONYM_D_LOGW1(L"More Sections: %|1$d|", moreSections);
+        CPPANONYM_D_LOGW1(L"EH Clauses Size: %|1$d|", ehSize);
+        CPPANONYM_D_LOGW1(L"Local Variable Token: 0x%|1$08X|", header.GetLocalVarSigTok());
+        CPPANONYM_D_LOGW1(L"Method Body Total Size: %|1$d|", totalSize);
 
 
         auto &comMethodMalloc = pAsmProf->GetCOMMethodMalloc();

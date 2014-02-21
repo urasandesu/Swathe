@@ -43,30 +43,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IParameterHashDetail {
         
-        using boost::apply_visitor;
-        using boost::blank;
-        using boost::static_visitor;
-        using Urasandesu::CppAnonym::Utilities::HashValue;
-
-        struct ToPointerVisitor : 
-            static_visitor<void const *>
-        {
-            template<class T>
-            void const *operator ()(T const &p) const
-            {
-                return reinterpret_cast<void const *>(p);
-            }
-
-            template<>
-            void const *operator ()<blank>(blank const &) const
-            {
-                return nullptr;
-            }
-        };
-
         IParameterHashImpl::result_type IParameterHashImpl::operator()(param_type v) const
         {
-            return v->GetPosition() ^ HashValue(apply_visitor(ToPointerVisitor(), v->GetMember()));
+            using Urasandesu::CppAnonym::Utilities::HashValue;
+            using Urasandesu::CppAnonym::Utilities::GetPointer;
+            
+            return v->GetPosition() ^ HashValue(GetPointer(v->GetMember()));
         }
 
     }   // namespace IParameterHashDetail {
