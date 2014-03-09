@@ -336,7 +336,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IProperty const *BasePropertyGeneratorPimpl<ApiHolder>::GetSourceProperty() const
     {
-        return m_pSrcProp == nullptr ? m_pClass : m_pSrcProp->GetSourceProperty();
+        return !m_pSrcProp ? m_pClass : m_pSrcProp;
     }
 
 
@@ -345,6 +345,33 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IParameter const *BasePropertyGeneratorPimpl<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BasePropertyGeneratorPimpl<ApiHolder>::Equals(IProperty const *pProp) const
+    {
+        if (m_pClass == pProp)
+            return true;
+
+        if (!pProp)
+            return false;
+
+        auto const *pOtherPropGen = dynamic_cast<class_type const *>(pProp);
+        if (!pOtherPropGen)
+            return pProp->Equals(m_pSrcProp);
+        
+        return GetSourceProperty() == pOtherPropGen->GetSourceProperty();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BasePropertyGeneratorPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcProp ? HashValue(m_pClass) : m_pSrcProp->GetHashCode();
     }
 
 

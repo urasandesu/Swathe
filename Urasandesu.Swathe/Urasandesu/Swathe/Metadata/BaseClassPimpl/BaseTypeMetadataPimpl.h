@@ -135,7 +135,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ULONG GetGenericParameterPosition() const;
         vector<IType const *> const &GetGenericArguments() const;
         Signature const &GetSignature() const;
-        IType const *GetGenericTypeDefinition() const;
         TypeAttributes GetAttribute() const;
         IType const *GetBaseType() const;
         vector<IType const *> const &GetInterfaces() const;
@@ -144,26 +143,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IType const *GetDeclaringType() const;
         IMethod const *GetDeclaringMethod() const;
         TypeProvider const &GetMember() const;
+        IType const *GetNestedType(mdToken mdt) const;
+        ICustomAttribute const *GetCustomAttribute(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt) const;
+        IType const *GetGenericParameter(mdToken mdt) const;
         IProperty const *GetProperty(mdToken mdt) const;
-        bool IsDefined(IType const *pAttrType, bool inherit) const;
-        ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
-        ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
+        bool IsDefined(IType const *pAttrType) const;
+        ICustomAttributePtrRange GetCustomAttributes() const;
+        ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         IType const *GetSourceType() const;
+        bool Equals(IType const *pType) const;
+        ULONG GetHashCode() const;
         void OutDebugInfo() const;
         IType const *MakeArrayType() const;
         IType const *MakeGenericType(vector<IType const *> const &genericArgs) const;
         IType const *MakePointerType() const;
         IType const *MakeByRefType() const;
         IType const *MakePinnedType() const;
+        IType const *GetNestedType(wstring const &name) const;
         IMethod const *GetMethod(wstring const &name) const;
         IMethod const *GetMethod(wstring const &name, vector<IType const *> const &paramTypes) const;
         IMethod const *GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes) const;
+        IMethod const *GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params) const;
         IMethod const *GetConstructor(vector<IType const *> const &paramTypes) const;
         IProperty const *GetProperty(wstring const &name) const;
+        ITypePtrRange GetNestedTypes() const;
         IMethodPtrRange GetMethods() const;
         IMethodPtrRange GetConstructors() const;
-        vector<IProperty const *> const &GetProperties() const;
+        IPropertyPtrRange GetProperties() const;
         TypeKinds GetKind() const;
     
     private:
@@ -171,13 +178,20 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetFullName(wstring const &fullName);
         void SetMember(TypeProvider const &member);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
+        void SetGenericParameterPosition(ULONG genericParamPos);
         void SetKind(TypeKinds const &kind);
+        static void FillTypeDefToken(IMetaDataImport2 *pComMetaImp, wstring const &fullName, mdToken &mdt);
         static void FillTypeDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt);
         static void FillTypeDefBaseType(IType const *pType, mdToken mdtExt, bool &baseTypeInit, IType const *&pBaseType);
+        static void FillTypeDefGenericParams(IMetaDataImport2 *pComMetaImp, IType const *pType, mdToken mdtTarget, bool &genericArgsInit, vector<IType const *> &genericArgs);
+        static void FillTypeDefCustomAttributes(IMetaDataImport2 *pComMetaImp, IType const *pType, mdToken mdtTarget, bool &casInit, vector<ICustomAttribute const *> &cas);
+        static void FillTypeDefMethods(IMetaDataImport2 *pComMetaImp, IType const *pType, mdToken mdtTarget, bool &methodsInit, vector<IMethod const *> &methods);
+        static void FillTypeDefProperties(IMetaDataImport2 *pComMetaImp, IType const *pType, mdToken mdtTarget, bool &propsInit, vector<IProperty const *> &props);
+        static void FillNestedTypeOwner(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner);
         static void FillTypeRefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope);
-        static void FillTypeRefSourceType(IType const *pType, mdToken mdtResolutionScope, wstring const &fullName, bool &srcTypeInit, IType const *&pSrcType);
+        static void FillTypeRefSourceType(IType const *pType, mdToken mdtResolutionScope, wstring const &fullName, IType const *&pSrcType);
         static void FillGenericParamProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, ULONG &genericParamPos, mdToken &mdtOwner, wstring &fullName);
-        static void FillGenericParamOwner(IType const *pType, mdToken mdtOwner, TypeProvider &member);
+        static void FillTypeMember(IType const *pType, mdToken mdtOwner, TypeProvider &member);
         static void FillTypeSpecSignature(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, Signature &sig);
         static void FillTypeSpecProperties(IType const *pType, Signature const &sig, TypeKinds &kind, TypeProvider &member, bool &genericArgsInit, vector<IType const *> &genericArgs);
         //static void FillAttributes(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, IType const *pOwner, bool &casInit, vector<ICustomAttribute const *> &cas);
@@ -208,7 +222,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable TypeAttributes m_attr;
         mutable bool m_baseTypeInit;
         mutable IType const *m_pBaseType;
-        mutable bool m_srcTypeInit;
         mutable IType const *m_pSrcType;
         
     };

@@ -39,34 +39,13 @@
 #include <Urasandesu/Swathe/Metadata/IType.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYHASH_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyHash.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace ITypeHashDetail {
         
-        using Urasandesu::CppAnonym::Collections::SequenceHashValue;
-
         ITypeHashImpl::result_type ITypeHashImpl::operator()(param_type v) const
         {
-            if (!v)
-                return 0;
-            
-            auto isGenericDefinition = !v->IsGenericType() || v->IsGenericTypeDefinition();
-            auto mdtTarget = v->GetToken();
-            auto isByRef = static_cast<INT>(v->IsByRef());
-            auto isArray = static_cast<INT>(v->IsArray());
-            auto const *pAsm = v->GetAssembly();
-            return isGenericDefinition ? 
-                        (mdtTarget ^ isByRef ^ isArray ^ IAssemblyHash()(pAsm)) : 
-                        (mdtTarget ^ isByRef ^ isArray ^ IAssemblyHash()(pAsm) ^ HashValue(v->GetGenericArguments()));
-        }
-
-        ITypeHashImpl::result_type ITypeHashImpl::HashValue(vector<IType const *> const &v)
-        {
-            return SequenceHashValue(v.begin(), v.end());
+            return !v ? 0 : v->GetHashCode();
         }
 
     }   // namespace ITypeHashDetail {

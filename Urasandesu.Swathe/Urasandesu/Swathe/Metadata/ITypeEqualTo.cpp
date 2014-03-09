@@ -39,44 +39,13 @@
 #include <Urasandesu/Swathe/Metadata/IType.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYEQUALTO_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyEqualTo.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace ITypeEqualToDetail {
 
-        using Urasandesu::CppAnonym::Collections::SequenceEqual;
-
         ITypeEqualToImpl::result_type ITypeEqualToImpl::operator()(param_type x, param_type y) const
         {
-            if (!x && !y)
-                return true;
-            else if (!x || !y)
-                return false;
-
-            auto isXDefinition = !x->IsGenericType() || x->IsGenericTypeDefinition();
-            auto isYDefinition = !y->IsGenericType() || y->IsGenericTypeDefinition();
-            auto mdtTargetX = x->GetToken();
-            auto mdtTargetY = y->GetToken();
-            auto isByRefX = static_cast<INT>(x->IsByRef());
-            auto isByRefY = static_cast<INT>(y->IsByRef());
-            auto isArrayX = static_cast<INT>(x->IsArray());
-            auto isArrayY = static_cast<INT>(y->IsArray());
-            auto const *pAsmX = x->GetAssembly();
-            auto const *pAsmY = y->GetAssembly();
-
-            return (isXDefinition && isYDefinition) ? 
-                        mdtTargetX == mdtTargetY && isByRefX == isByRefY && isArrayX == isArrayY && IAssemblyEqualTo()(pAsmX, pAsmY) : 
-                        (isXDefinition || isYDefinition) ? 
-                            false : 
-                            (mdtTargetX == mdtTargetY && isByRefX == isByRefY && isArrayX == isArrayY && IAssemblyEqualTo()(pAsmX, pAsmY) && EqualTo(x->GetGenericArguments(), y->GetGenericArguments()));
-        }
-
-        ITypeEqualToImpl::result_type ITypeEqualToImpl::EqualTo(vector<IType const *> const &x, vector<IType const *> const &y)
-        {
-            return SequenceEqual(x.begin(), x.end(), y.begin(), y.end());
+            return !x && !y ? true : !x || !y ? false : x->Equals(y);
         }
 
     }   // namespace ITypeEqualToDetail {

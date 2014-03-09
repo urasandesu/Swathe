@@ -39,21 +39,13 @@
 #include <Urasandesu/Swathe/Metadata/IField.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYHASH_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyHash.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IFieldHashDetail {
-        
-        using Urasandesu::CppAnonym::Collections::SequenceHashValue;
 
         IFieldHashImpl::result_type IFieldHashImpl::operator()(param_type v) const
         {
-            auto mdtTarget = v->GetToken();
-            auto const *pAsm = v->GetAssembly();
-            return mdtTarget ^ IAssemblyHash()(pAsm);
+            return !v ? 0 : v->GetHashCode();
         }
 
     }   // namespace IFieldHashDetail {

@@ -154,13 +154,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethod const *GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const;
         IType const *GetType(mdToken mdt) const;
         IType const *GetType(wstring const &fullName) const;
+        IType const *GetGenericTypeParameter(ULONG genericParamPos) const;
+        IType const *GetGenericMethodParameter(ULONG genericParamPos) const;
         vector<ProcessorArchitecture> const &GetProcessorArchitectures() const;
         IAssembly const *GetAssembly(wstring const &fullName) const;
         IAssembly const *GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         IAssembly const *GetAssemblyReference(mdAssemblyRef mdt) const;
         ICustomAttribute const *GetCustomAttribute(mdToken mdt) const;
-        ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
-        ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
+        ICustomAttributePtrRange GetCustomAttributes() const;
+        ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
+        ITypePtrRange GetTypes() const;
         iterator_range<BYTE const *> GetAssemblyStorage() const;
         vector<IAssembly const *> const &GetReferencedAssemblies() const;
         module_generator_label_type *DefineModule(wstring const &name);

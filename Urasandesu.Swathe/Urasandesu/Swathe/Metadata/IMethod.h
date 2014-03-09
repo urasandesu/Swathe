@@ -88,7 +88,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IMethod const *GetDeclaringMethod() const = 0;
         virtual MethodProvider const &GetMember() const = 0;
         virtual IMethod const *GetSourceMethod() const = 0;
-        virtual IDispenser const *GetDispenser() const = 0;
+        virtual bool Equals(IMethod const *pMethod) const = 0;
+        virtual ULONG GetHashCode() const = 0;
         virtual IParameter const *GetParameter(ULONG position, IType const *pParamType) const = 0;
         virtual void OutDebugInfo() const = 0;
     };

@@ -39,29 +39,13 @@
 #include <Urasandesu/Swathe/Metadata/IMethod.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_ITYPEHASH_H
-#include <Urasandesu/Swathe/Metadata/ITypeHash.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYHASH_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyHash.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IMethodHashDetail {
         
-        using Urasandesu::CppAnonym::Collections::SequenceHashValue;
-
         IMethodHashImpl::result_type IMethodHashImpl::operator()(param_type v) const
         {
-            auto isDefinition = !v->IsGenericMethod() || v->IsGenericMethodDefinition();
-            auto mdtTarget = v->GetToken();
-            auto const *pDeclaringType = v->GetDeclaringType();
-            auto const *pAsm = v->GetAssembly();
-            return isDefinition ? 
-                        (mdtTarget ^ IAssemblyHash()(pAsm) ^ ITypeHash()(pDeclaringType)) : 
-                        (mdtTarget ^ IAssemblyHash()(pAsm) ^ ITypeHash()(pDeclaringType) ^ ITypeHash::HashValue(v->GetGenericArguments()));
+            return !v ? 0 : v->GetHashCode();
         }
 
     }   // namespace IMethodHashDetail {

@@ -57,6 +57,10 @@
 #include <Urasandesu/Swathe/Metadata/IMethodFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IPARAMETERFWD_H
+#include <Urasandesu/Swathe/Metadata/IParameterFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_IPROPERTYFWD_H
 #include <Urasandesu/Swathe/Metadata/IPropertyFwd.h>
 #endif
@@ -98,16 +102,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IType const *MakePointerType() const = 0;
         virtual IType const *MakeByRefType() const = 0;
         virtual IType const *MakePinnedType() const = 0;
+        virtual IType const *GetNestedType(std::wstring const &name) const = 0;
         virtual IMethod const *GetMethod(std::wstring const &name) const = 0;
         virtual IMethod const *GetMethod(std::wstring const &name, std::vector<IType const *> const &paramTypes) const = 0;
         virtual IMethod const *GetMethod(std::wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, std::vector<IType const *> const &paramTypes) const = 0;
+        virtual IMethod const *GetMethod(std::wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, std::vector<IParameter const *> const &params) const = 0;
         virtual IMethod const *GetConstructor(std::vector<IType const *> const &paramTypes) const = 0;
         virtual IProperty const *GetProperty(std::wstring const &name) const = 0;
+        virtual ITypePtrRange GetNestedTypes() const = 0;
         virtual IMethodPtrRange GetMethods() const = 0;
         virtual IMethodPtrRange GetConstructors() const = 0;
-        virtual std::vector<IProperty const *> const &GetProperties() const = 0;
+        virtual IPropertyPtrRange GetProperties() const = 0;
         virtual TypeKinds GetKind() const = 0;
-        virtual IType const *GetGenericTypeDefinition() const = 0;
         virtual TypeAttributes GetAttribute() const = 0;
         virtual IType const *GetBaseType() const = 0;
         virtual std::vector<IType const *> const &GetInterfaces() const = 0;
@@ -116,12 +122,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IType const *GetDeclaringType() const = 0;
         virtual IMethod const *GetDeclaringMethod() const = 0;
         virtual TypeProvider const &GetMember() const = 0;
+        virtual IType const *GetNestedType(mdToken mdt) const = 0;
+        virtual IType const *GetGenericParameter(mdToken mdt) const = 0;
+        virtual ICustomAttribute const *GetCustomAttribute(mdToken mdt) const = 0;
         virtual IMethod const *GetMethod(mdToken mdt) const = 0;
         virtual IProperty const *GetProperty(mdToken mdt) const = 0;
-        virtual bool IsDefined(IType const *pAttrType, bool inherit) const = 0;
-        virtual ICustomAttributePtrRange GetCustomAttributes(bool inherit) const = 0;
-        virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const = 0;
+        virtual bool IsDefined(IType const *pAttrType) const = 0;
+        virtual ICustomAttributePtrRange GetCustomAttributes() const = 0;
+        virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const = 0;
         virtual IType const *GetSourceType() const = 0;
+        virtual bool Equals(IType const *pType) const = 0;
+        virtual ULONG GetHashCode() const = 0;
         virtual void OutDebugInfo() const = 0;
     };
     

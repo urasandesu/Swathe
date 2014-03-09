@@ -97,13 +97,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IMethod const *GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const = 0;
         virtual IType const *GetType(mdToken mdt) const = 0;
         virtual IType const *GetType(std::wstring const &fullName) const = 0;
+        virtual IType const *GetGenericTypeParameter(ULONG genericParamPos) const = 0;
+        virtual IType const *GetGenericMethodParameter(ULONG genericParamPos) const = 0;
         virtual std::vector<ProcessorArchitecture> const &GetProcessorArchitectures() const = 0;
         virtual IAssembly const *GetAssembly(std::wstring const &fullName) const = 0;
         virtual IAssembly const *GetAssembly(std::wstring const &fullName, std::vector<ProcessorArchitecture> const &procArchs) const = 0;
         virtual IAssembly const *GetAssemblyReference(mdAssemblyRef mdt) const = 0;
         virtual ICustomAttribute const *GetCustomAttribute(mdToken mdt) const = 0;
-        virtual ICustomAttributePtrRange GetCustomAttributes(bool inherit) const = 0;
-        virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const = 0;
+        virtual ICustomAttributePtrRange GetCustomAttributes() const = 0;
+        virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const = 0;
+        virtual ITypePtrRange GetTypes() const = 0;
         virtual boost::iterator_range<BYTE const *> GetAssemblyStorage() const = 0;
     };
     

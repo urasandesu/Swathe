@@ -60,6 +60,10 @@
 #include <Urasandesu/Swathe/Metadata/IFieldFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_FIELDATTRIBUTES_HPP
+#include <Urasandesu/Swathe/Metadata/FieldAttributes.hpp>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     using std::wstring;
@@ -83,8 +87,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IType const *GetFieldType() const;
         Signature const &GetSignature() const;
         IType const *GetDeclaringType() const;
+        FieldProvider const &GetMember() const;
         IAssembly const *GetAssembly() const;
         IField const *GetSourceField() const;
+        bool Equals(IField const *pField) const;
+        ULONG GetHashCode() const;
         
     private:
         void SetToken(mdToken mdt);
@@ -92,14 +99,20 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetCallingConvention(CallingConventions const &callingConvention);
         void SetFieldType(IType const *pFieldType);
         void SetMember(FieldProvider const &member);
+        static void FillFieldDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, wstring &name, FieldAttributes &attr, Signature &sig);
+        static void FillFieldMember(IField const *pField, mdToken mdtOwner, FieldProvider &member);
 
         mutable field_metadata_label_type *m_pClass;
         assembly_metadata_label_type *m_pAsm;
         mutable FieldProvider m_member;
         mutable mdToken m_mdt;
-        mutable bool m_srcFieldInit;
+        mutable mdToken m_mdtOwner;
+        mutable wstring m_name;
+        mutable CallingConventions m_callingConvention;
+        mutable FieldAttributes m_attr;
+        mutable IType const *m_pFieldType;
+        mutable Signature m_sig;
         mutable IField const *m_pSrcField;
-        int reserved;
         
     };
 

@@ -199,7 +199,43 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IParameter const *BaseParameterMetadataPimpl<ApiHolder>::GetSourceParameter() const
     {
-        return m_pSrcParam == nullptr ? m_pClass : m_pSrcParam->GetSourceParameter();
+        return !m_pSrcParam ? m_pClass : m_pSrcParam;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseParameterMetadataPimpl<ApiHolder>::Equals(IParameter const *pParam) const
+    {
+        if (m_pClass == pParam)
+            return true;
+
+        if (!pParam)
+            return false;
+
+        auto const *pOtherParam = dynamic_cast<class_type const *>(pParam);
+        if (!pOtherParam)
+            return m_pClass == pParam->GetSourceParameter();
+
+        return GetPosition() == pOtherParam->GetPosition() &&
+               GetParameterType() == pOtherParam->GetParameterType() &&     // to determine whether this parameter is ByRef
+               GetMember() == pOtherParam->GetMember() &&
+               GetAssembly() == pOtherParam->GetAssembly();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseParameterMetadataPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        using Urasandesu::CppAnonym::Utilities::GetPointer;
+
+        auto position = GetPosition();
+        auto paramTypeHash = HashValue(GetParameterType());     // to determine whether this parameter is ByRef
+        auto memberHash = HashValue(GetPointer(GetMember()));
+        auto asmHash = HashValue(GetAssembly());
+        return position ^ paramTypeHash ^ memberHash ^ asmHash;
     }
 
 

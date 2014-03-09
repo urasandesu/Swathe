@@ -206,6 +206,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    FieldProvider const &BaseFieldGeneratorPimpl<ApiHolder>::GetMember() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IAssembly const *BaseFieldGeneratorPimpl<ApiHolder>::GetAssembly() const
     {
         return m_pAsmGen;
@@ -216,7 +224,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IField const *BaseFieldGeneratorPimpl<ApiHolder>::GetSourceField() const
     {
-        return m_pSrcField == nullptr ? m_pClass : m_pSrcField->GetSourceField();
+        return !m_pSrcField ? m_pClass : m_pSrcField;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseFieldGeneratorPimpl<ApiHolder>::Equals(IField const *pField) const
+    {
+        if (m_pClass == pField)
+            return true;
+
+        if (!pField)
+            return false;
+
+        auto const *pOtherFieldGen = dynamic_cast<class_type const *>(pField);
+        if (!pOtherFieldGen)
+            return pField->Equals(m_pSrcField);
+        
+        return GetSourceField() == pOtherFieldGen->GetSourceField();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseFieldGeneratorPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcField ? HashValue(m_pClass) : m_pSrcField->GetHashCode();
     }
 
 

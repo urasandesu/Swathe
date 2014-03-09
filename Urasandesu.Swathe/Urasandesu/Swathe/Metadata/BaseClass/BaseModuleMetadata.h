@@ -68,9 +68,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mdModule GetToken() const;
         wstring const &GetName() const;
         IType const *GetType(wstring const &fullName) const;
-        vector<IType const *> const &GetTypes() const;
+        ITypePtrRange GetTypes() const;
         IAssembly const *GetAssembly() const;
         IModule const *GetSourceModule() const;
+        bool Equals(IModule const *pMod) const;
+        ULONG GetHashCode() const;
     
     private:
         module_metadata_pimpl_label_type *Pimpl();

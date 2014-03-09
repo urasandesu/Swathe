@@ -45,10 +45,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         
         IParameterHashImpl::result_type IParameterHashImpl::operator()(param_type v) const
         {
-            using Urasandesu::CppAnonym::Utilities::HashValue;
-            using Urasandesu::CppAnonym::Utilities::GetPointer;
-            
-            return v->GetPosition() ^ HashValue(GetPointer(v->GetMember()));
+            return !v ? 0 : v->GetHashCode();
         }
 
     }   // namespace IParameterHashDetail {

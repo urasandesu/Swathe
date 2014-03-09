@@ -306,6 +306,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IType const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetGenericTypeParameter(ULONG genericParamPos) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetGenericMethodParameter(ULONG genericParamPos) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     vector<ProcessorArchitecture> const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetProcessorArchitectures() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
@@ -346,7 +362,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseAssemblyGeneratorPimpl<ApiHolder>::GetCustomAttributes(bool inherit) const
+    ICustomAttributePtrRange BaseAssemblyGeneratorPimpl<ApiHolder>::GetCustomAttributes() const
     {
         if (!m_casInit)
         {
@@ -369,16 +385,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             m_casInit = true;
         }
 
-        if (inherit)
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-
         return m_cas;
     }
 
 
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseAssemblyGeneratorPimpl<ApiHolder>::GetCustomAttributes(IType const *pAttributeType, bool inherit) const
+    ICustomAttributePtrRange BaseAssemblyGeneratorPimpl<ApiHolder>::GetCustomAttributes(IType const *pAttributeType) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -462,6 +475,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     
+    template<class ApiHolder>    
+    ITypePtrRange BaseAssemblyGeneratorPimpl<ApiHolder>::GetTypes() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
     template<class ApiHolder>    
     iterator_range<BYTE const *> BaseAssemblyGeneratorPimpl<ApiHolder>::GetAssemblyStorage() const
     {
@@ -570,7 +591,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         pVisitor->Visit(m_pClass);
 
-        m_pClass->GetCustomAttributes(false);   // resolves default custom attributes of this Assembly.
+        m_pClass->GetCustomAttributes();   // resolves default custom attributes of this Assembly.
         auto const &caGenToIndex = m_pClass->GetCustomAttributeGeneratorToIndex();
         for (auto i = 0ul; i < caGenToIndex.size(); ++i)
             if (caGenToIndex[i].first->GetAssembly() == m_pClass)
@@ -1091,23 +1112,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<pair<module_generator_label_type const *, SIZE_T> > ModGenToIndex;
         typedef ModGenToIndex::value_type Value;
 
-        {
-            auto const &modGenToIndex = m_pClass->GetModuleGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceModule() == pMod->GetSourceModule(); };
-            auto result = FindIf(modGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        }
-        {
-            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pMod->GetAssembly());
-            auto const &modGenToIndex = pRefAsmGen->GetModuleGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceModule() == pMod->GetSourceModule(); };
-            auto result = FindIf(modGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
+        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pMod->GetAssembly());
+        auto const &modGenToIndex = pRefAsmGen->GetModuleGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v.first->Equals(pMod); };
+        auto result = FindIf(modGenToIndex, isAlreadyExist);
+        if (result)
+            return (*result).first;
 
-            return pRefAsmGen->DefineModule(pMod);
-        }
+        return pRefAsmGen->DefineModule(pMod);
     }
 
 
@@ -1121,23 +1133,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<pair<type_generator_label_type const *, SIZE_T> > TypeGenToIndex;
         typedef TypeGenToIndex::value_type Value;
 
-        {
-            auto const &typeGenToIndex = m_pClass->GetTypeGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceType() == pType->GetSourceType(); };
-            auto result = FindIf(typeGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        }
-        {
-            auto *pResolvedAsmGen = m_pDisp->ResolveAssembly(pType->GetAssembly());
-            auto const &typeGenToIndex = pResolvedAsmGen->GetTypeGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceType() == pType->GetSourceType(); };
-            auto result = FindIf(typeGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        
-            return pResolvedAsmGen->DefineType(pType, TypeProvider());
-        }
+        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pType->GetAssembly());
+        auto const &typeGenToIndex = pRefAsmGen->GetTypeGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v.first->Equals(pType); };
+        auto result = FindIf(typeGenToIndex, isAlreadyExist);
+        if (result)
+            return (*result).first;
+
+        return pRefAsmGen->DefineType(pType, TypeProvider());
     }
 
 
@@ -1151,23 +1154,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<pair<field_generator_label_type const *, SIZE_T> > FieldGenToIndex;
         typedef FieldGenToIndex::value_type Value;
 
-        {
-            auto const &fieldGenToIndex = m_pClass->GetFieldGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceField() == pField->GetSourceField(); };
-            auto result = FindIf(fieldGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        }
-        {
-            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pField->GetAssembly());
-            auto const &fieldGenToIndex = pRefAsmGen->GetFieldGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceField() == pField->GetSourceField(); };
-            auto result = FindIf(fieldGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        
-            return pRefAsmGen->DefineField(pField, PropertyProvider());
-        }
+        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pField->GetAssembly());
+        auto const &fieldGenToIndex = pRefAsmGen->GetFieldGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v.first->Equals(pField); };
+        auto result = FindIf(fieldGenToIndex, isAlreadyExist);
+        if (result)
+            return (*result).first;
+
+        return pRefAsmGen->DefineField(pField, FieldProvider());
     }
 
 
@@ -1181,23 +1175,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<pair<property_generator_label_type const *, SIZE_T> > PropertyGenToIndex;
         typedef PropertyGenToIndex::value_type Value;
 
-        {
-            auto const &propGenToIndex = m_pClass->GetPropertyGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceProperty() == pProp->GetSourceProperty(); };
-            auto result = FindIf(propGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        }
-        {
-            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pProp->GetAssembly());
-            auto const &propGenToIndex = pRefAsmGen->GetPropertyGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceProperty() == pProp->GetSourceProperty(); };
-            auto result = FindIf(propGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        
-            return pRefAsmGen->DefineProperty(pProp, PropertyProvider());
-        }
+        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pProp->GetAssembly());
+        auto const &propGenToIndex = pRefAsmGen->GetPropertyGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v.first->Equals(pProp); };
+        auto result = FindIf(propGenToIndex, isAlreadyExist);
+        if (result)
+            return (*result).first;
+
+        return pRefAsmGen->DefineProperty(pProp, PropertyProvider());
     }
 
 
@@ -1211,23 +1196,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<pair<method_generator_label_type const *, SIZE_T> > MethodGenToIndex;
         typedef MethodGenToIndex::value_type Value;
 
-        {
-            auto const &methodGenToIndex = m_pClass->GetMethodGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethod() == pMethod->GetSourceMethod(); };
-            auto result = FindIf(methodGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        }
-        {
-            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pMethod->GetAssembly());
-            auto const &methodGenToIndex = pRefAsmGen->GetMethodGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethod() == pMethod->GetSourceMethod(); };
-            auto result = FindIf(methodGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        
-            return pRefAsmGen->DefineMethod(pMethod, MethodProvider());
-        }
+        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pMethod->GetAssembly());
+        auto const &methodGenToIndex = pRefAsmGen->GetMethodGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v.first->Equals(pMethod); };
+        auto result = FindIf(methodGenToIndex, isAlreadyExist);
+        if (result)
+            return (*result).first;
+
+        return pRefAsmGen->DefineMethod(pMethod, MethodProvider());
     }
 
 
@@ -1241,23 +1217,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<pair<method_body_generator_label_type const *, SIZE_T> > MethodBodyGenToIndex;
         typedef MethodBodyGenToIndex::value_type Value;
 
-        {
-            auto const &bodyGenToIndex = m_pClass->GetMethodBodyGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethodBody() == pBody->GetSourceMethodBody(); };
-            auto result = FindIf(bodyGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        }
-        {
-            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pBody->GetAssembly());
-            auto const &bodyGenToIndex = pRefAsmGen->GetMethodBodyGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceMethodBody() == pBody->GetSourceMethodBody(); };
-            auto result = FindIf(bodyGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
+        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pBody->GetAssembly());
+        auto const &bodyGenToIndex = pRefAsmGen->GetMethodBodyGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v.first->Equals(pBody); };
+        auto result = FindIf(bodyGenToIndex, isAlreadyExist);
+        if (result)
+            return (*result).first;
 
-            return pRefAsmGen->DefineMethodBody(pBody, nullptr);
-        }
+        return pRefAsmGen->DefineMethodBody(pBody, nullptr);
     }
 
 
@@ -1271,23 +1238,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<pair<parameter_generator_label_type const *, SIZE_T> > ParamGenToIndex;
         typedef ParamGenToIndex::value_type Value;
 
-        {
-            auto const &paramGenToIndex = m_pClass->GetParameterGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceParameter() == pParam->GetSourceParameter(); };
-            auto result = FindIf(paramGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
-        }
-        {
-            auto *pRefAsmGen = m_pDisp->ResolveAssembly(pParam->GetAssembly());
-            auto const &paramGenToIndex = pRefAsmGen->GetParameterGeneratorToIndex();
-            auto isAlreadyExist = [&](Value const &v) { return v.first->GetSourceParameter() == pParam->GetSourceParameter(); };
-            auto result = FindIf(paramGenToIndex, isAlreadyExist);
-            if (result)
-                return (*result).first;
+        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pParam->GetAssembly());
+        auto const &paramGenToIndex = pRefAsmGen->GetParameterGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v.first->Equals(pParam); };
+        auto result = FindIf(paramGenToIndex, isAlreadyExist);
+        if (result)
+            return (*result).first;
 
-            return pRefAsmGen->DefineParameter(pParam, ParameterProvider());
-        }
+        return pRefAsmGen->DefineParameter(pParam, ParameterProvider());
     }
 
 

@@ -115,6 +115,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    FieldProvider const &BaseFieldGenerator<ApiHolder>::GetMember() const
+    {
+        return Pimpl()->GetMember();
+    }
+
+    template<class ApiHolder>    
     IAssembly const *BaseFieldGenerator<ApiHolder>::GetAssembly() const
     {
         return Pimpl()->GetAssembly();
@@ -124,6 +130,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IField const *BaseFieldGenerator<ApiHolder>::GetSourceField() const
     {
         return Pimpl()->GetSourceField();
+    }
+
+    template<class ApiHolder>    
+    bool BaseFieldGenerator<ApiHolder>::Equals(IField const *pField) const
+    {
+        return Pimpl()->Equals(pField);
+    }
+
+    template<class ApiHolder>    
+    ULONG BaseFieldGenerator<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
     }
 
     template<class ApiHolder>    

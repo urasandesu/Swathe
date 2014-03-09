@@ -100,6 +100,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             void Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<IType const *> &genericArgs) const;
             void Decode(IMethod const *pMethod, CallingConventions &callingConvention, vector<IType const *> &genericArgs, IType const *&pRetType, vector<IParameter const *> &params) const;
             void Decode(IMethod const *pMethod, CallingConventions &callingConvention, IType const *&pRetType, vector<IParameter const *> &params) const;
+            void Decode(IMethod const *pMethod, CallingConventions &callingConvention, vector<IType const *> &genericArgs) const;
             void Decode(IMethodBody const *pBody, CallingConventions &callingConvention, vector<ILocal const *> &locals) const;
             void Decode(IProperty const *pProp, CallingConventions &callingConvention, IType const *&pPropType, vector<IParameter const *> &params) const;
             void Decode(ICustomAttribute const *pCa, vector<CustomAttributeArgument> &constructorArgs, vector<IProperty const *> &namedProps, vector<CustomAttributeArgument> &propValues, vector<IField const *> &namedFields, vector<CustomAttributeArgument> &fieldValues) const;

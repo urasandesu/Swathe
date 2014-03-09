@@ -124,8 +124,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         UINT GetRawBodyMaxStack() const;
         vector<COR_ILMETHOD_SECT_EH_CLAUSE_FAT> const &GetRawEHClauses() const;
         IAssembly const *GetAssembly() const;
-        IDispenser const *GetDispenser() const;
         IMethodBody const *GetSourceMethodBody() const;
+        bool Equals(IMethodBody const *pBody) const;
+        ULONG GetHashCode() const;
         ILocal const *GetLocal(ULONG index, IType const *pLocalType) const;
         IInstructionPtrRange::iterator GetInstructionIterator(ULONG offset) const;
         void Emit(OpCode const &opCode, ILocal const *pLocal);

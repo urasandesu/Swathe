@@ -476,18 +476,45 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethod const *BaseMethodGeneratorPimpl<ApiHolder>::GetSourceMethod() const
     {
-        return m_pSrcMethod == nullptr ? m_pClass : m_pSrcMethod->GetSourceMethod();
+        return !m_pSrcMethod ? m_pClass : m_pSrcMethod;
     }
 
 
 
     template<class ApiHolder>    
-    IDispenser const *BaseMethodGeneratorPimpl<ApiHolder>::GetDispenser() const
+    bool BaseMethodGeneratorPimpl<ApiHolder>::Equals(IMethod const *pMethod) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-        //return m_pDisp;
-        // TODO: この I/F は削除。
+        if (m_pClass == pMethod)
+            return true;
+
+        if (!pMethod)
+            return false;
+
+        auto const *pOtherMethodGen = dynamic_cast<class_type const *>(pMethod);
+        if (!pOtherMethodGen)
+            return pMethod->Equals(m_pSrcMethod);
+        
+        return GetSourceMethod() == pOtherMethodGen->GetSourceMethod();
     }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseMethodGeneratorPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcMethod ? HashValue(m_pClass) : m_pSrcMethod->GetHashCode();
+    }
+
+
+
+    //template<class ApiHolder>    
+    //IDispenser const *BaseMethodGeneratorPimpl<ApiHolder>::GetDispenser() const
+    //{
+    //    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    //    //return m_pDisp;
+    //    // TODO: この I/F は削除。
+    //}
 
 
 

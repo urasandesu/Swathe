@@ -55,6 +55,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_genericArgsInit(false), 
         m_pILBody(nullptr), 
         m_pBody(nullptr), 
+        m_srcMethodInit(false), 
         m_pSrcMethod(nullptr), 
         m_attr(MethodAttributes::MA_UNREACHED), 
         m_codeRva(static_cast<ULONG>(-1))
@@ -145,16 +146,20 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 if (m_sig.GetBlob().empty())
                     FillMethodDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_attr, m_sig, m_codeRva, m_implFlags);
+                FillMethodSigProperties(m_pClass, m_sig, m_callingConvention, m_retTypeInit, m_pRetType, m_paramsInit, m_params);
             }
             else if (TypeFromToken(mdtTarget) == mdtMemberRef)
             {
                 if (m_sig.GetBlob().empty())
                     FillMethodRefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_sig);
+                FillMethodSigProperties(m_pClass, m_sig, m_callingConvention, m_retTypeInit, m_pRetType, m_paramsInit, m_params);
+            }
+            else if (TypeFromToken(mdtTarget) == mdtMethodSpec)
+            {
+                m_callingConvention = GetDeclaringMethod()->GetCallingConvention() | CallingConventions::CC_GENERIC_INST;
             }
             else
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-
-            FillMethodSigProperties(m_pClass, m_sig, m_callingConvention, m_retTypeInit, m_pRetType, m_paramsInit, m_params);
         }
         return m_callingConvention;
     }
@@ -212,16 +217,30 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 if (m_sig.GetBlob().empty())
                     FillMethodDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_attr, m_sig, m_codeRva, m_implFlags);
+            
+                FillMethodSigProperties(m_pClass, m_sig, m_callingConvention, m_retTypeInit, m_pRetType, m_paramsInit, m_params);
             }
             else if (TypeFromToken(mdtTarget) == mdtMemberRef)
             {
                 if (m_sig.GetBlob().empty())
                     FillMethodRefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_sig);
+            
+                FillMethodSigProperties(m_pClass, m_sig, m_callingConvention, m_retTypeInit, m_pRetType, m_paramsInit, m_params);
+            }
+            else if (TypeFromToken(mdtTarget) == mdtMethodSpec)
+            {
+                auto const *pDeclaringMethod = GetDeclaringMethod();
+                auto const &params = pDeclaringMethod->GetParameters();
+                m_params.reserve(params.size());
+                BOOST_FOREACH (auto const &pParam, params)
+                    m_params.push_back(GetParameter(pParam->GetPosition(), pParam->GetParameterType()));
             }
             else
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            
-            FillMethodSigProperties(m_pClass, m_sig, m_callingConvention, m_retTypeInit, m_pRetType, m_paramsInit, m_params);
+            {
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+            }
         }
         return m_params;
     }
@@ -303,32 +322,50 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (!m_genericArgsInit)
         {
-            auto &comMetaImp = m_pAsm->GetCOMMetaDataImport();
-
-            auto hEnum = static_cast<HCORENUM>(nullptr);
-                BOOST_SCOPE_EXIT((&hEnum)(&comMetaImp))
-                {
-                    if (hEnum)
-                        comMetaImp.CloseEnum(hEnum);
-                }
-                BOOST_SCOPE_EXIT_END
-            auto mdgps = array<mdGenericParam, 16>();
-            auto count = 0ul;
-            auto hr = E_FAIL;
             auto mdtTarget = GetToken();
-            do
+            if (TypeFromToken(mdtTarget) == mdtMethodDef)
             {
-                hr = comMetaImp.EnumGenericParams(&hEnum, mdtTarget, mdgps.c_array(), mdgps.size(), &count);
-                if (FAILED(hr))
-                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                auto &comMetaImp = m_pAsm->GetCOMMetaDataImport();
 
-                m_genericArgs.reserve(m_genericArgs.size() + count);
-                for (auto i = 0u; i < count; ++i)
+                auto hEnum = static_cast<HCORENUM>(nullptr);
+                    BOOST_SCOPE_EXIT((&hEnum)(&comMetaImp))
+                    {
+                        if (hEnum)
+                            comMetaImp.CloseEnum(hEnum);
+                    }
+                    BOOST_SCOPE_EXIT_END
+                auto mdgps = array<mdGenericParam, 16>();
+                auto count = 0ul;
+                auto hr = E_FAIL;
+                do
                 {
-                    auto pGenericArg = m_pAsm->GetType(mdgps[i], TypeKinds::TK_MVAR, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IMethod const *>(m_pClass));
-                    m_genericArgs.push_back(pGenericArg);
-                }
-            } while (0 < count);
+                    hr = comMetaImp.EnumGenericParams(&hEnum, mdtTarget, mdgps.c_array(), mdgps.size(), &count);
+                    if (FAILED(hr))
+                        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+                    m_genericArgs.reserve(m_genericArgs.size() + count);
+                    for (auto i = 0u; i < count; ++i)
+                    {
+                        auto pGenericArg = m_pAsm->GetType(mdgps[i], TypeKinds::TK_MVAR, m_genericArgs.size(), false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IMethod const *>(m_pClass));
+                        m_genericArgs.push_back(pGenericArg);
+                    }
+                } while (0 < count);
+            }
+            else if (TypeFromToken(mdtTarget) == mdtMethodSpec)
+            {
+                GetDeclaringMethod();
+                FillMethodSpecProperties(m_pClass, m_sig, m_callingConvention, m_genericArgsInit, m_genericArgs);
+            }
+            else if (TypeFromToken(mdtTarget) == mdtMemberRef)
+            {
+                m_genericArgs = GetSourceMethod()->GetGenericArguments();
+            }
+            else
+            {
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+            }
 
             m_genericArgsInit = true;
         }
@@ -377,13 +414,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 if (m_sig.GetBlob().empty())
                     FillMethodDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_attr, m_sig, m_codeRva, m_implFlags);
-                FillMethodDefMember(m_pClass, m_mdtOwner, m_member);
+                FillMethodMember(m_pClass, m_mdtOwner, m_member);
             }
             else if (TypeFromToken(mdtTarget) == mdtMemberRef)
             {
                 if (m_sig.GetBlob().empty())
                     FillMethodRefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_sig);
-                FillMethodRefMember(m_pClass, m_mdtOwner, m_member);
+                FillMethodMember(m_pClass, m_mdtOwner, m_member);
+            }
+            else if (TypeFromToken(mdtTarget) == mdtMethodSpec)
+            {
+                if (m_sig.GetBlob().empty())
+                    FillMethodSpecSignature(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_sig);
+                FillMethodMember(m_pClass, m_mdtOwner, m_member);
             }
             else
             {
@@ -405,7 +448,29 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (Empty(m_member))
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            auto mdtTarget = GetToken();
+            if (TypeFromToken(mdtTarget) == mdtMethodDef)
+            {
+                if (m_sig.GetBlob().empty())
+                    FillMethodDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_attr, m_sig, m_codeRva, m_implFlags);
+                FillMethodMember(m_pClass, m_mdtOwner, m_member);
+            }
+            else if (TypeFromToken(mdtTarget) == mdtMemberRef)
+            {
+                if (m_sig.GetBlob().empty())
+                    FillMethodRefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_sig);
+                FillMethodMember(m_pClass, m_mdtOwner, m_member);
+            }
+            else if (TypeFromToken(mdtTarget) == mdtMethodSpec)
+            {
+                if (m_sig.GetBlob().empty())
+                    FillMethodSpecSignature(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_sig);
+                FillMethodMember(m_pClass, m_mdtOwner, m_member);
+            }
+            else
+            {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
         }
 
         auto const *const *ppDeclaringMethod = get<IMethod const *>(&m_member);
@@ -425,17 +490,105 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethod const *BaseMethodMetadataPimpl<ApiHolder>::GetSourceMethod() const
     {
-        return m_pSrcMethod == nullptr ? m_pClass : m_pSrcMethod->GetSourceMethod();
+        if (!m_srcMethodInit)
+        {
+            auto mdtTarget = GetToken();
+            if (TypeFromToken(mdtTarget) == mdtMemberRef)
+            {
+                if (m_sig.GetBlob().empty())
+                    FillMethodRefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_sig);
+                FillMethodSigProperties(m_pClass, m_sig, m_callingConvention, m_retTypeInit, m_pRetType, m_paramsInit, m_params);
+                FillMethodRefSourceMethod(m_pClass, m_mdtOwner, m_name, m_callingConvention, m_pRetType, m_params, m_srcMethodInit, m_pSrcMethod);
+            }
+            else
+            {
+                if (TypeFromToken(mdtTarget) == mdtMethodDef)
+                    m_pSrcMethod = m_pClass;
+                else if (TypeFromToken(mdtTarget) == mdtMethodSpec)
+                    m_pSrcMethod = GetDeclaringMethod()->GetSourceMethod();
+                else
+                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                m_srcMethodInit = true;
+            }
+        }
+        _ASSERTE(m_pSrcMethod);
+        return m_pSrcMethod;
     }
 
 
 
     template<class ApiHolder>    
-    IDispenser const *BaseMethodMetadataPimpl<ApiHolder>::GetDispenser() const
+    bool BaseMethodMetadataPimpl<ApiHolder>::Equals(IMethod const *pMethod) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-        //return m_pDisp;
+        using Urasandesu::CppAnonym::Collections::SequenceEqual;
+
+        if (m_pClass == pMethod)
+            return true;
+
+        if (!pMethod)
+            return false;
+
+        auto const *pOtherMethod = dynamic_cast<class_type const *>(pMethod);
+        if (!pOtherMethod)
+            return m_pClass == pMethod->GetSourceMethod();
+
+        auto isThisDefinition = !IsGenericMethod() || IsGenericMethodDefinition();
+        auto isOtherDefinition = !pMethod->IsGenericMethod() || pMethod->IsGenericMethodDefinition();
+        if (isThisDefinition != isOtherDefinition)
+            return false;
+        
+        if (isThisDefinition && isOtherDefinition)
+            return GetToken() == pOtherMethod->GetToken() &&
+                   GetDeclaringType() == pOtherMethod->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+                   GetAssembly() == pOtherMethod->GetAssembly();
+        
+        auto mdtTarget = GetToken();
+        switch (TypeFromToken(mdtTarget))
+        {
+            case mdtMethodDef:
+            case mdtMemberRef:
+                return GetToken() == pOtherMethod->GetToken() &&
+                       GetDeclaringType() == pOtherMethod->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+                       GetAssembly() == pOtherMethod->GetAssembly() &&
+                       SequenceEqual(GetGenericArguments(), pOtherMethod->GetGenericArguments());
+                
+            case mdtMethodSpec:
+                return GetToken() == pOtherMethod->GetToken() &&
+                       GetAssembly() == pOtherMethod->GetAssembly();
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
     }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseMethodMetadataPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Collections::SequenceHashValue;
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+
+        auto isDefinition = !IsGenericMethod() || IsGenericMethodDefinition();
+        auto mdtTarget = GetToken();
+        auto declaringTypeHash = HashValue(GetDeclaringType());    // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+        auto asmHash = HashValue(GetAssembly());
+
+        return isDefinition ? 
+                    (mdtTarget ^ declaringTypeHash ^ asmHash) : 
+                    (mdtTarget ^ declaringTypeHash ^ asmHash ^ SequenceHashValue(GetGenericArguments()));
+    }
+
+
+
+    //template<class ApiHolder>    
+    //IDispenser const *BaseMethodMetadataPimpl<ApiHolder>::GetDispenser() const
+    //{
+    //    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    //    //return m_pDisp;
+    //}
 
 
 
@@ -613,7 +766,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseMethodMetadataPimpl<ApiHolder>::FillMethodDefMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member)
+    void BaseMethodMetadataPimpl<ApiHolder>::FillMethodMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member)
     {
         using Urasandesu::CppAnonym::Utilities::Empty;
         
@@ -625,8 +778,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto const *pAsm = pMethod->GetAssembly();
         if (IsNilToken(mdtOwner))
             member = pAsm->GetMainModule();
-        else
+        else if (TypeFromToken(mdtOwner) == mdtTypeDef)
             member = pAsm->GetType(mdtOwner);
+        else if (TypeFromToken(mdtOwner) == mdtTypeRef)
+            member = pAsm->GetType(mdtOwner);
+        else if (TypeFromToken(mdtOwner) == mdtMethodDef)
+            member = pAsm->GetMethod(mdtOwner);
+        else if (TypeFromToken(mdtOwner) == mdtMemberRef)
+            member = pAsm->GetMethod(mdtOwner);
+        else
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
 
 
@@ -655,21 +816,106 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
 
+    //template<class ApiHolder>    
+    //void BaseMethodMetadataPimpl<ApiHolder>::FillMethodRefMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member)
+    //{
+    //    using Urasandesu::CppAnonym::Utilities::Empty;
+    //    
+    //    _ASSERTE(pMethod);
+    //    
+    //    if (!Empty(member))
+    //        return;
+    //    
+    //    auto const *pAsm = pMethod->GetAssembly();
+    //    if (IsNilToken(mdtOwner))
+    //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    //    else if (TypeFromToken(mdtOwner) == mdtTypeDef)
+    //        member = pAsm->GetType(mdtOwner);
+    //    else if (TypeFromToken(mdtOwner) == mdtTypeRef)
+    //        member = pAsm->GetType(mdtOwner);
+    //    else if (TypeFromToken(mdtOwner) == mdtMethodDef)
+    //        member = pAsm->GetMethod(mdtOwner);
+    //    else if (TypeFromToken(mdtOwner) == mdtMemberRef)
+    //        member = pAsm->GetMethod(mdtOwner);
+    //    else
+    //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    //}
+
+
+
     template<class ApiHolder>    
-    void BaseMethodMetadataPimpl<ApiHolder>::FillMethodRefMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member)
+    void BaseMethodMetadataPimpl<ApiHolder>::FillMethodRefSourceMethod(IMethod const *pMethod, mdToken mdtOwner, wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params, bool &srcMethodInit, IMethod const *&pSrcMethod)
     {
-        using Urasandesu::CppAnonym::Utilities::Empty;
-        
         _ASSERTE(pMethod);
+        _ASSERTE(!IsNilToken(mdtOwner));
+        _ASSERTE(!name.empty());
         
-        if (!Empty(member))
+        if (srcMethodInit)
             return;
-        
-        auto const *pAsm = pMethod->GetAssembly();
-        if (IsNilToken(mdtOwner))
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+
+        if (TypeFromToken(mdtOwner) == mdtTypeRef)
+        {
+            auto const *pAsm = pMethod->GetAssembly();
+            auto const *pRefType = pAsm->GetType(mdtOwner);
+            auto const *pRefSrcType = pRefType->GetSourceType();
+            pSrcMethod = pRefSrcType->GetMethod(name, callingConvention, pRetType, params);
+        }
         else
-            member = pAsm->GetType(mdtOwner);
+        {
+            auto oss = std::wostringstream();
+            oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtOwner;
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+        srcMethodInit = true;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodMetadataPimpl<ApiHolder>::FillMethodSpecSignature(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, Signature &sig)
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(pComMetaImp);
+        _ASSERTE(!IsNilToken(mdtTarget));
+        _ASSERTE(sig.GetBlob().empty());
+
+        auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+        auto sigLength = 0ul;
+        auto hr = pComMetaImp->GetMethodSpecProps(mdtTarget, &mdtOwner, &pSig, &sigLength);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        sig.SetBlob(pSig, sigLength);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodMetadataPimpl<ApiHolder>::FillMethodSpecProperties(IMethod const *pMethod, Signature const &sig, CallingConventions &callingConvention, bool &genericArgsInit, vector<IType const *> &genericArgs)
+    {
+        _ASSERTE(pMethod);
+        _ASSERTE(!sig.GetBlob().empty());
+        
+        auto const &blob = sig.GetBlob();
+        auto _callingConvention = CallingConventions(blob[0]);
+        if (_callingConvention & CallingConventions::CC_GENERIC_INST)
+        {
+            auto _genericArgs = vector<IType const *>();
+            sig.Decode(pMethod, _callingConvention, _genericArgs);
+            if (!genericArgsInit)
+            {
+                genericArgs = _genericArgs;
+                genericArgsInit = true;
+            }
+        }
+        else
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+
+        if (callingConvention == CallingConventions::CC_UNREACHED)
+            callingConvention = _callingConvention;
     }
 
 

@@ -56,9 +56,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual mdModule GetToken() const = 0;
         virtual std::wstring const &GetName() const = 0;
         virtual IType const *GetType(std::wstring const &fullName) const = 0;
-        virtual std::vector<IType const *> const &GetTypes() const = 0;
+        virtual ITypePtrRange GetTypes() const = 0;
         virtual IAssembly const *GetAssembly() const = 0;
         virtual IModule const *GetSourceModule() const = 0;
+        virtual bool Equals(IModule const *pMod) const = 0;
+        virtual ULONG GetHashCode() const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

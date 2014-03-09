@@ -39,19 +39,13 @@
 #include <Urasandesu/Swathe/Metadata/IMethodBody.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYHASH_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyHash.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IMethodBodyHashDetail {
 
         IMethodBodyHashImpl::result_type IMethodBodyHashImpl::operator()(param_type v) const
         {
-            auto mdtTarget = v->GetToken();
-            auto const *pAsm = v->GetAssembly();
-            return mdtTarget ^ IAssemblyHash()(pAsm);
+            return !v ? 0 : v->GetHashCode();
         }
 
     }   // namespace IMethodBodyHashDetail {

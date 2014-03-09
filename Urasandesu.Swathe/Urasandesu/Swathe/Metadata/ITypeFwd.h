@@ -47,7 +47,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IType const *, 
         IMethod const *
     > TypeProvider;
-    
+
+    typedef boost::any_range<IType const *, boost::forward_traversal_tag, IType const *, std::ptrdiff_t> ITypePtrRange;
+        
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 
 #endif  // URASANDESU_SWATHE_METADATA_ITYPEFWD_H

@@ -49,6 +49,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IModule const *, 
         IType const *
     > PropertyProvider;
+
+    typedef boost::any_range<IProperty const *, boost::forward_traversal_tag, IProperty const *, std::ptrdiff_t> IPropertyPtrRange;
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 

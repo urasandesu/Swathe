@@ -242,7 +242,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IParameter const *BaseParameterGeneratorPimpl<ApiHolder>::GetSourceParameter() const
     {
-        return m_pSrcParam == nullptr ? m_pClass : m_pSrcParam->GetSourceParameter();
+        return !m_pSrcParam ? m_pClass : m_pSrcParam;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseParameterGeneratorPimpl<ApiHolder>::Equals(IParameter const *pParam) const
+    {
+        if (m_pClass == pParam)
+            return true;
+
+        if (!pParam)
+            return false;
+
+        auto const *pOtherParamGen = dynamic_cast<class_type const *>(pParam);
+        if (!pOtherParamGen)
+            return pParam->Equals(m_pSrcParam);
+        
+        return GetSourceParameter() == pOtherParamGen->GetSourceParameter();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseParameterGeneratorPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcParam ? HashValue(m_pClass) : m_pSrcParam->GetHashCode();
     }
 
 

@@ -151,6 +151,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    bool BasePropertyMetadata<ApiHolder>::Equals(IProperty const *pProp) const
+    {
+        return Pimpl()->Equals(pProp);
+    }
+
+    template<class ApiHolder>    
+    ULONG BasePropertyMetadata<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
+    }
+
+    template<class ApiHolder>    
     IAssembly const *BasePropertyMetadata<ApiHolder>::GetAssembly() const
     {
         return Pimpl()->GetAssembly();

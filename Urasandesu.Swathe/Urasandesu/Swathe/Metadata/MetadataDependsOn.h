@@ -63,6 +63,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         }
     }
 
+    typedef mdToken mdTypeVar;              // ELEMENT_TYPE_VAR type token
+    typedef mdToken mdTypeMVar;             // ELEMENT_TYPE_MVAR type token
+
+    typedef enum CorTokenTypeEx
+    {
+        mdtTypeVar              = 0x1c000000,       // 
+        mdtTypeMVar             = 0x1d000000,       // 
+    } CorTokenTypeEx;
+
+    #define mdTypeVarNil                ((mdTypeVar)mdtTypeVar)
+    #define mdTypeMVarNil               ((mdTypeMVar)mdtTypeMVar)
+
 }}} // namespace Urasandesu { namespace Swathe { namespace Metadata {
 
 #endif  // #ifndef URASANDESU_SWATHE_METADATA_METADATADEPENDSON_H

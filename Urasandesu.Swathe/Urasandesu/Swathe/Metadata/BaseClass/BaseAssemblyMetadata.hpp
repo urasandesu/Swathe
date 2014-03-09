@@ -175,6 +175,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IType const *BaseAssemblyMetadata<ApiHolder>::GetGenericTypeParameter(ULONG genericParamPos) const
+    {
+        return Pimpl()->GetGenericTypeParameter(genericParamPos);
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyMetadata<ApiHolder>::GetGenericMethodParameter(ULONG genericParamPos) const
+    {
+        return Pimpl()->GetGenericMethodParameter(genericParamPos);
+    }
+
+    template<class ApiHolder>    
     vector<ProcessorArchitecture> const &BaseAssemblyMetadata<ApiHolder>::GetProcessorArchitectures() const
     {
         return Pimpl()->GetProcessorArchitectures();
@@ -205,15 +217,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseAssemblyMetadata<ApiHolder>::GetCustomAttributes(bool inherit) const
+    ICustomAttributePtrRange BaseAssemblyMetadata<ApiHolder>::GetCustomAttributes() const
     {
-        return Pimpl()->GetCustomAttributes(inherit);
+        return Pimpl()->GetCustomAttributes();
     }
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseAssemblyMetadata<ApiHolder>::GetCustomAttributes(IType const *pAttributeType, bool inherit) const
+    ICustomAttributePtrRange BaseAssemblyMetadata<ApiHolder>::GetCustomAttributes(IType const *pAttributeType) const
     {
-        return Pimpl()->GetCustomAttributes(pAttributeType, inherit);
+        return Pimpl()->GetCustomAttributes(pAttributeType);
+    }
+
+    template<class ApiHolder>    
+    ITypePtrRange BaseAssemblyMetadata<ApiHolder>::GetTypes() const
+    {
+        return Pimpl()->GetTypes();
     }
 
     template<class ApiHolder>    
@@ -277,9 +295,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseAssemblyMetadata<ApiHolder>::type_metadata_label_type const *BaseAssemblyMetadata<ApiHolder>::GetType(mdToken mdt, TypeKinds const &kind, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
+    typename BaseAssemblyMetadata<ApiHolder>::type_metadata_label_type const *BaseAssemblyMetadata<ApiHolder>::GetType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
     {
-        return Pimpl()->GetType(mdt, kind, genericArgsSpecified, genericArgs, member);
+        return Pimpl()->GetType(mdt, kind, genericParamPos, genericArgsSpecified, genericArgs, member);
     }
 
     template<class ApiHolder>    

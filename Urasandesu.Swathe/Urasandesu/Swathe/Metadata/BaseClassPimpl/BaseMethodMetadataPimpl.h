@@ -123,7 +123,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethod const *GetDeclaringMethod() const;
         MethodProvider const &GetMember() const;
         IMethod const *GetSourceMethod() const;
-        IDispenser const *GetDispenser() const;
+        bool Equals(IMethod const *pMethod) const;
+        ULONG GetHashCode() const;
+        //IDispenser const *GetDispenser() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         void OutDebugInfo() const;
         
@@ -137,9 +139,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetMember(MethodProvider const &member);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
         static void FillMethodDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, wstring &name, MethodAttributes &attr, Signature &sig, ULONG &codeRva, MethodImplAttributes &implFlags);
-        static void FillMethodDefMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member);
+        static void FillMethodMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member);
         static void FillMethodRefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, wstring &name, Signature &sig);
-        static void FillMethodRefMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member);
+        //static void FillMethodRefMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member);
+        static void FillMethodRefSourceMethod(IMethod const *pMethod, mdToken mdtOwner, wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params, bool &srcMethodInit, IMethod const *&pSrcMethod);
+        static void FillMethodSpecSignature(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, Signature &sig);
+        static void FillMethodSpecProperties(IMethod const *pMethod, Signature const &sig, CallingConventions &callingConvention, bool &genericArgsInit, vector<IType const *> &genericArgs);
         static void FillMethodSigProperties(IMethod const *pMethod, Signature const &sig, CallingConventions &callingConvention, bool &retTypeInit, IType const *&pRetType, bool &paramsInit, vector<IParameter const *> &params);
         
         mutable method_metadata_label_type *m_pClass;
@@ -158,7 +163,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable Signature m_sig;
         COR_ILMETHOD *m_pILBody;
         mutable method_body_metadata_label_type *m_pBody;
-        IMethod const *m_pSrcMethod;
+        mutable bool m_srcMethodInit;
+        mutable IMethod const *m_pSrcMethod;
         mutable MethodAttributes m_attr;
         mutable ULONG m_codeRva;
         mutable MethodImplAttributes m_implFlags;

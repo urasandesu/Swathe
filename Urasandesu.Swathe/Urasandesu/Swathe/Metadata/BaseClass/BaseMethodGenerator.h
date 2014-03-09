@@ -100,7 +100,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethod const *GetDeclaringMethod() const;
         MethodProvider const &GetMember() const;
         IMethod const *GetSourceMethod() const;
-        IDispenser const *GetDispenser() const;
+        bool Equals(IMethod const *pMethod) const;
+        ULONG GetHashCode() const;
+        //IDispenser const *GetDispenser() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         void OutDebugInfo() const;
         method_body_generator_label_type *DefineMethodBody();

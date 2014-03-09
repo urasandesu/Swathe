@@ -117,42 +117,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    vector<IType const *> const &BaseModuleMetadataPimpl<ApiHolder>::GetTypes() const
+    ITypePtrRange BaseModuleMetadataPimpl<ApiHolder>::GetTypes() const
     {
-        using boost::array;
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-
-        if (!m_typesInit)
-        {
-            auto &comMetaImp = m_pAsm->GetCOMMetaDataImport();
-
-            auto hEnum = static_cast<HCORENUM>(nullptr);
-                BOOST_SCOPE_EXIT((&hEnum)(&comMetaImp))
-                {
-                    if (hEnum)
-                        comMetaImp.CloseEnum(hEnum);
-                }
-                BOOST_SCOPE_EXIT_END
-            auto mdtds = array<mdTypeDef, 16>();
-            auto count = 0ul;
-            auto hr = E_FAIL;
-            do
-            {
-                hr = comMetaImp.EnumTypeDefs(&hEnum, mdtds.c_array(), mdtds.size(), &count);
-                if (FAILED(hr))
-                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-
-                m_types.reserve(m_types.size() + count);
-                for (auto i = 0u; i < count; ++i)
-                {
-                    auto const *pType = m_pAsm->GetType(mdtds[i]);
-                    m_types.push_back(pType);
-                }
-            } while (0 < count);
-
-            m_typesInit = true;
-        }
-        return m_types;
+        using boost::adaptors::filtered;
+        using std::function;
+        
+        auto types = m_pAsm->GetTypes();
+        auto const *pClass = static_cast<IModule const *>(m_pClass);
+        auto isTarget = function<bool (IType const *)>();
+        isTarget = [pClass](IType const *pType) { return pType->GetModule() == pClass; };
+        return types | filtered(isTarget);
     }
 
 
@@ -169,6 +143,37 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IModule const *BaseModuleMetadataPimpl<ApiHolder>::GetSourceModule() const
     {
         return m_pSrcMod == nullptr ? m_pClass : m_pSrcMod->GetSourceModule();
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseModuleMetadataPimpl<ApiHolder>::Equals(IModule const *pMod) const
+    {
+        if (m_pClass == pMod)
+            return true;
+
+        if (!pMod)
+            return false;
+
+        auto const *pOtherMod = dynamic_cast<class_type const *>(pMod);
+        if (!pOtherMod)
+            return m_pClass == pMod->GetSourceModule();
+
+        return GetName() == pOtherMod->GetName() &&
+               GetAssembly() == pOtherMod->GetAssembly();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseModuleMetadataPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+
+        auto nameHash = boost::hash_value(GetName());
+        auto asmHash = HashValue(GetAssembly());
+        return nameHash ^ asmHash;
     }
 
     

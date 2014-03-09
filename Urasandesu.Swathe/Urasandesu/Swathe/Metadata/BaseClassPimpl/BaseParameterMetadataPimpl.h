@@ -75,6 +75,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ParameterProvider const &GetMember() const;
         IAssembly const *GetAssembly() const;
         IParameter const *GetSourceParameter() const;
+        bool Equals(IParameter const *pParam) const;
+        ULONG GetHashCode() const;
         void OutDebugInfo() const;
 
     private:

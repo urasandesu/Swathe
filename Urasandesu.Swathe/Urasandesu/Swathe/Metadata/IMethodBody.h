@@ -89,8 +89,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual UINT GetRawBodyMaxStack() const = 0;
         virtual std::vector<COR_ILMETHOD_SECT_EH_CLAUSE_FAT> const &GetRawEHClauses() const = 0;
         virtual IAssembly const *GetAssembly() const = 0;
-        virtual IDispenser const *GetDispenser() const = 0;
         virtual IMethodBody const *GetSourceMethodBody() const = 0;
+        virtual bool Equals(IMethodBody const *pBody) const = 0;
+        virtual ULONG GetHashCode() const = 0;
         virtual ILocal const *GetLocal(ULONG index, IType const *pLocalType) const = 0;
         virtual IInstructionPtrRange::iterator GetInstructionIterator(ULONG offset) const = 0;
     };

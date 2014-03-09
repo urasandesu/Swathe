@@ -42,12 +42,10 @@
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IPropertyHashDetail {
-        
-        using Urasandesu::CppAnonym::Collections::SequenceHashValue;
 
         IPropertyHashImpl::result_type IPropertyHashImpl::operator()(param_type v) const
         {
-            return v->GetToken();
+            return !v ? 0 : v->GetHashCode();
         }
 
     }   // namespace IPropertyHashDetail {

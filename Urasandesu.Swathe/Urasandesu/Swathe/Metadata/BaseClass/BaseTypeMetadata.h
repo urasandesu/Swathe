@@ -85,7 +85,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ULONG GetGenericParameterPosition() const;
         vector<IType const *> const &GetGenericArguments() const;
         Signature const &GetSignature() const;
-        IType const *GetGenericTypeDefinition() const;
         TypeAttributes GetAttribute() const;
         IType const *GetBaseType() const;
         vector<IType const *> const &GetInterfaces() const;
@@ -94,26 +93,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IType const *GetDeclaringType() const;
         IMethod const *GetDeclaringMethod() const;
         TypeProvider const &GetMember() const;
+        IType const *GetNestedType(mdToken mdt) const;
+        IType const *GetGenericParameter(mdToken mdt) const;
+        ICustomAttribute const *GetCustomAttribute(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt) const;
         IProperty const *GetProperty(mdToken mdt) const;
-        bool IsDefined(IType const *pAttrType, bool inherit) const;
-        ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
-        ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
+        bool IsDefined(IType const *pAttrType) const;
+        ICustomAttributePtrRange GetCustomAttributes() const;
+        ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         IType const *GetSourceType() const;
+        bool Equals(IType const *pType) const;
+        ULONG GetHashCode() const;
         void OutDebugInfo() const;
         IType const *MakeArrayType() const;
         IType const *MakeGenericType(vector<IType const *> const &genericArgs) const;
         IType const *MakePointerType() const;
         IType const *MakeByRefType() const;
         IType const *MakePinnedType() const;
+        IType const *GetNestedType(wstring const &name) const;
         IMethod const *GetMethod(wstring const &name) const;
         IMethod const *GetMethod(wstring const &name, vector<IType const *> const &paramTypes) const;
         IMethod const *GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes) const;
+        IMethod const *GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params) const;
         IMethod const *GetConstructor(vector<IType const *> const &paramTypes) const;
         IProperty const *GetProperty(wstring const &name) const;
+        ITypePtrRange GetNestedTypes() const;
         IMethodPtrRange GetMethods() const;
         IMethodPtrRange GetConstructors() const;
-        vector<IProperty const *> const &GetProperties() const;
+        IPropertyPtrRange GetProperties() const;
         TypeKinds GetKind() const;
     
     private:
@@ -123,6 +130,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetFullName(wstring const &fullName);
         void SetMember(TypeProvider const &member);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
+        void SetGenericParameterPosition(ULONG genericParamPos);
         void SetKind(TypeKinds const &kind);
 
 #ifdef _DEBUG

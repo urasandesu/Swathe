@@ -127,7 +127,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    vector<IType const *> const &BaseModuleGeneratorPimpl<ApiHolder>::GetTypes() const
+    ITypePtrRange BaseModuleGeneratorPimpl<ApiHolder>::GetTypes() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -145,7 +145,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IModule const *BaseModuleGeneratorPimpl<ApiHolder>::GetSourceModule() const
     {
-        return m_pSrcMod == nullptr ? m_pClass : m_pSrcMod->GetSourceModule();
+        return !m_pSrcMod ? m_pClass : m_pSrcMod;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseModuleGeneratorPimpl<ApiHolder>::Equals(IModule const *pMod) const
+    {
+        if (m_pClass == pMod)
+            return true;
+
+        if (!pMod)
+            return false;
+
+        auto const *pOtherModGen = dynamic_cast<class_type const *>(pMod);
+        if (!pOtherModGen)
+            return pMod->Equals(m_pSrcMod);
+        
+        return GetSourceModule() == pOtherModGen->GetSourceModule();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseModuleGeneratorPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcMod ? HashValue(m_pClass) : m_pSrcMod->GetHashCode();
     }
 
 

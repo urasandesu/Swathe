@@ -181,6 +181,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IType const *BaseAssemblyGenerator<ApiHolder>::GetGenericTypeParameter(ULONG genericParamPos) const
+    {
+        return Pimpl()->GetGenericTypeParameter(genericParamPos);
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyGenerator<ApiHolder>::GetGenericMethodParameter(ULONG genericParamPos) const
+    {
+        return Pimpl()->GetGenericMethodParameter(genericParamPos);
+    }
+
+    template<class ApiHolder>    
     vector<ProcessorArchitecture> const &BaseAssemblyGenerator<ApiHolder>::GetProcessorArchitectures() const
     {
         return Pimpl()->GetProcessorArchitectures();
@@ -202,6 +214,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IAssembly const *BaseAssemblyGenerator<ApiHolder>::GetAssemblyReference(mdAssemblyRef mdt) const
     {
         return Pimpl()->GetAssemblyReference(mdt);
+    }
+
+    template<class ApiHolder>    
+    ITypePtrRange BaseAssemblyGenerator<ApiHolder>::GetTypes() const
+    {
+        return Pimpl()->GetTypes();
     }
 
     template<class ApiHolder>    
@@ -235,15 +253,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseAssemblyGenerator<ApiHolder>::GetCustomAttributes(bool inherit) const
+    ICustomAttributePtrRange BaseAssemblyGenerator<ApiHolder>::GetCustomAttributes() const
     {
-        return Pimpl()->GetCustomAttributes(inherit);
+        return Pimpl()->GetCustomAttributes();
     }
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseAssemblyGenerator<ApiHolder>::GetCustomAttributes(IType const *pAttributeType, bool inherit) const
+    ICustomAttributePtrRange BaseAssemblyGenerator<ApiHolder>::GetCustomAttributes(IType const *pAttributeType) const
     {
-        return Pimpl()->GetCustomAttributes(pAttributeType, inherit);
+        return Pimpl()->GetCustomAttributes(pAttributeType);
     }
 
     template<class ApiHolder>    

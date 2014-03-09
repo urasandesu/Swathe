@@ -429,17 +429,36 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    IDispenser const *BaseMethodBodyGeneratorPimpl<ApiHolder>::GetDispenser() const
+    IMethodBody const *BaseMethodBodyGeneratorPimpl<ApiHolder>::GetSourceMethodBody() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        return !m_pSrcBody ? m_pClass : m_pSrcBody;
     }
 
 
 
     template<class ApiHolder>    
-    IMethodBody const *BaseMethodBodyGeneratorPimpl<ApiHolder>::GetSourceMethodBody() const
+    bool BaseMethodBodyGeneratorPimpl<ApiHolder>::Equals(IMethodBody const *pBody) const
     {
-        return !m_pSrcBody ? m_pClass : m_pSrcBody->GetSourceMethodBody();
+        if (m_pClass == pBody)
+            return true;
+
+        if (!pBody)
+            return false;
+
+        auto const *pOtherBodyGen = dynamic_cast<class_type const *>(pBody);
+        if (!pOtherBodyGen)
+            return pBody->Equals(m_pSrcBody);
+        
+        return GetSourceMethodBody() == pOtherBodyGen->GetSourceMethodBody();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseMethodBodyGeneratorPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcBody ? HashValue(m_pClass) : m_pSrcBody->GetHashCode();
     }
 
 
@@ -593,19 +612,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Ldc_I4_S && 
-            &opCode != &OpCodes::Leave_S && 
-            &opCode != &OpCodes::Blt_S && 
-            &opCode != &OpCodes::Ble_S && 
+        if (&opCode != &OpCodes::Beq_S && 
             &opCode != &OpCodes::Bge_S && 
-            &opCode != &OpCodes::Brfalse_S && 
-            &opCode != &OpCodes::Brtrue_S && 
-            &opCode != &OpCodes::Br_S && 
-            &opCode != &OpCodes::Beq_S && 
-            &opCode != &OpCodes::Blt_Un_S && 
             &opCode != &OpCodes::Bge_Un_S && 
             &opCode != &OpCodes::Bgt_S && 
-            &opCode != &OpCodes::Bne_Un_S)
+            &opCode != &OpCodes::Bgt_Un_S && 
+            &opCode != &OpCodes::Ble_S && 
+            &opCode != &OpCodes::Ble_Un_S && 
+            &opCode != &OpCodes::Blt_S && 
+            &opCode != &OpCodes::Blt_Un_S && 
+            &opCode != &OpCodes::Bne_Un_S && 
+            &opCode != &OpCodes::Br_S && 
+            &opCode != &OpCodes::Brfalse_S && 
+            &opCode != &OpCodes::Brtrue_S && 
+            &opCode != &OpCodes::Ldarg_S && 
+            &opCode != &OpCodes::Ldc_I4_S && 
+            &opCode != &OpCodes::Ldloc_S && 
+            &opCode != &OpCodes::Ldloca_S && 
+            &opCode != &OpCodes::Leave_S && 
+            &opCode != &OpCodes::Stloc_S)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, BYTE)\".";

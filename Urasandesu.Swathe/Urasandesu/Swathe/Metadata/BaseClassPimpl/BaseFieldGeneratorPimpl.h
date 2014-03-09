@@ -87,8 +87,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IType const *GetFieldType() const;
         Signature const &GetSignature() const;
         IType const *GetDeclaringType() const;
+        FieldProvider const &GetMember() const;
         IAssembly const *GetAssembly() const;
         IField const *GetSourceField() const;
+        bool Equals(IField const *pField) const;
+        ULONG GetHashCode() const;
         FieldAttributes GetAttribute() const;
         
     private:

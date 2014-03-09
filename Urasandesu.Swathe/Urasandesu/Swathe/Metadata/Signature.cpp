@@ -763,40 +763,47 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 }
             };
 
-            struct GetGenericTypeDefinitionVisitor : 
-                static_visitor<IType const *>
-            {
-                template<class T>
-                IType const *operator ()(T const &v) const
-                {
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-                }
+            //struct GetGenericTypeDefinitionVisitor : 
+            //    static_visitor<IType const *>
+            //{
+            //    template<class T>
+            //    IType const *operator ()(T const &v) const
+            //    {
+            //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            //    }
 
-                template<>
-                IType const *operator ()<IMethod const *>(IMethod const *const &pMethod) const
-                {
-                    auto const *pType = pMethod->GetDeclaringType();
-                    auto isGenericTypeInstance = pType->IsGenericType() && !pType->IsGenericTypeDefinition();
-                    return isGenericTypeInstance ? pType->GetDeclaringType() : pType;
-                }
-            };
+            //    template<>
+            //    IType const *operator ()<IMethod const *>(IMethod const *const &pMethod) const
+            //    {
+            //        auto const *pType = pMethod->GetDeclaringType();
+            //        auto isGenericTypeInstance = pType->IsGenericType() && !pType->IsGenericTypeDefinition();
+            //        return isGenericTypeInstance ? pType->GetDeclaringType() : pType;
+            //    }
+            //};
 
-            struct GetGenericMethodDefinitionVisitor : 
-                static_visitor<IMethod const *>
-            {
-                template<class T>
-                IMethod const *operator ()(T const &v) const
-                {
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-                }
+            //struct GetGenericMethodDefinitionVisitor : 
+            //    static_visitor<IMethod const *>
+            //{
+            //    template<class T>
+            //    IMethod const *operator ()(T const &v) const
+            //    {
+            //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            //    }
 
-                template<>
-                IMethod const *operator ()<IMethod const *>(IMethod const *const &pMethod) const
-                {
-                    auto isGenericMethodInstance = pMethod->IsGenericMethod() && !pMethod->IsGenericMethodDefinition();
-                    return isGenericMethodInstance ? pMethod->GetDeclaringMethod() : pMethod;
-                }
-            };
+            //    template<>
+            //    IMethod const *operator ()<IType const *>(IType const *const &pType) const
+            //    {
+            //        pType->OutDebugInfo();
+            //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            //    }
+
+            //    template<>
+            //    IMethod const *operator ()<IMethod const *>(IMethod const *const &pMethod) const
+            //    {
+            //        auto isGenericMethodInstance = pMethod->IsGenericMethod() && !pMethod->IsGenericMethodDefinition();
+            //        return isGenericMethodInstance ? pMethod->GetDeclaringMethod() : pMethod;
+            //    }
+            //};
 
             struct GetParameterVisitor : 
                 static_visitor<IParameter const *>
@@ -1463,6 +1470,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         case TypeKinds::TK_VOID:
                         case TypeKinds::TK_BOOLEAN:
                         case TypeKinds::TK_CHAR:
+                        case TypeKinds::TK_U1:
                         case TypeKinds::TK_I4:
                         case TypeKinds::TK_U4:
                         case TypeKinds::TK_I8:
@@ -1494,7 +1502,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
                         case TypeKinds::TK_CLASS:
                         case TypeKinds::TK_VALUETYPE:
-                        case TypeKinds::TK_GENERICINST:
                             {
                                 auto const *pAsm = apply_visitor(GetTargetAssemblyVisitor(), provider);
                                 if (!pAsm)
@@ -1503,6 +1510,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                                 auto mdt = mdTokenNil;
                                 index += ::CorSigUncompressToken(&blob[index], &mdt);
                                 pType = pAsm->GetType(mdt);
+                            }
+                            break;
+
+                        case TypeKinds::TK_GENERICINST:
+                            {
+                                auto const *pType_ = static_cast<IType *>(nullptr);
+                                auto genericArgs_ = vector<IType const *>();
+                                
+                                (blob, index, provider) >> 
+                                    pType_ >> 
+                                    CompressCount(genericArgs_) >> 
+                                    genericArgs_
+                                ;
+
+                                pType = pType_->MakeGenericType(genericArgs_);
                             }
                             break;
 
@@ -1520,21 +1542,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
                         case TypeKinds::TK_VAR:
                             {
-                                auto const *pDeclaringType = apply_visitor(GetGenericTypeDefinitionVisitor(), provider);
+                                auto const *pAsm = apply_visitor(GetTargetAssemblyVisitor(), provider);
+                                if (!pAsm)
+                                    pAsm = apply_visitor(GetAssemblyVisitor(), provider);
+                                _ASSERTE(pAsm);
                                 auto pos = 0ul;
                                 index += ::CorSigUncompressData(&blob[index], &pos);
-                                auto const &genericArgs = pDeclaringType->GetGenericArguments();
-                                pType = genericArgs[pos];
+                                pType = pAsm->GetGenericTypeParameter(pos);
                             }
                             break;
 
                         case TypeKinds::TK_MVAR:
                             {
-                                auto const *pDeclaringMethod = apply_visitor(GetGenericMethodDefinitionVisitor(), provider);
+                                auto const *pAsm = apply_visitor(GetTargetAssemblyVisitor(), provider);
+                                if (!pAsm)
+                                    pAsm = apply_visitor(GetAssemblyVisitor(), provider);
+                                _ASSERTE(pAsm);
                                 auto pos = 0ul;
                                 index += ::CorSigUncompressData(&blob[index], &pos);
-                                auto const &genericArgs = pDeclaringMethod->GetGenericArguments();
-                                pType = genericArgs[pos];
+                                pType = pAsm->GetGenericMethodParameter(pos);
                             }
                             break;
 
@@ -1606,8 +1632,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     case TypeKinds::TK_GENERICINST:
                         sb <<
                             kind << 
-                            pType->GetGenericTypeDefinition()->GetKind() << 
-                            CompressToken(pType->GetGenericTypeDefinition()->GetToken()) << 
+                            pType->GetDeclaringType()->GetKind() << 
+                            CompressToken(pType->GetDeclaringType()->GetToken()) << 
                             CompressCount(pType->GetGenericArguments()) << 
                             pType->GetGenericArguments()
                         ;
@@ -1820,6 +1846,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
 
 
+            void Decode(IMethod const *pMethod, CallingConventions &callingConvention, vector<IType const *> &genericArgs) const
+            {
+                using namespace TakerDetail;
+
+                _ASSERTE(pMethod != nullptr);
+                _ASSERTE(!m_blob.empty());
+
+                (m_blob, pMethod) >> 
+                    callingConvention >>
+                    CompressCount(genericArgs) >> 
+                    genericArgs
+                ;
+            }
+
+
+
             void Decode(IMethodBody const *pBody, CallingConventions &callingConvention, vector<ILocal const *> &locals) const
             {
                 using namespace TakerDetail;
@@ -1969,6 +2011,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         void SignatureImpl::Decode(IMethod const *pMethod, CallingConventions &callingConvention, IType const *&pRetType, vector<IParameter const *> &params) const
         {
             Pimpl()->Decode(pMethod, callingConvention, pRetType, params);
+        }
+
+        void SignatureImpl::Decode(IMethod const *pMethod, CallingConventions &callingConvention, vector<IType const *> &genericArgs) const
+        {
+            Pimpl()->Decode(pMethod, callingConvention, genericArgs);
         }
 
         void SignatureImpl::Decode(IMethodBody const *pBody, CallingConventions &callingConvention, vector<ILocal const *> &locals) const

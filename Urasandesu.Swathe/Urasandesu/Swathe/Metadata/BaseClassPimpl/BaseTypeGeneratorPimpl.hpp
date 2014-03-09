@@ -102,7 +102,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     auto const &fullName = GetFullName();
                     CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 1: %|1$s|", fullName);
                     auto attr = GetAttribute();
-                    auto mdExtends = GetBaseType()->GetToken();
+                    auto const *pBaseType = GetBaseType();
+                    _ASSERTE(pBaseType);    // TODO: interface の場合に落ちる。
+                    auto mdExtends = pBaseType->GetToken();
                     auto const &interfaces = GetInterfaces();
                     auto mdImplements = vector<mdToken>();
                     mdImplements.reserve(interfaces.size() + 1);
@@ -121,7 +123,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     auto const &fullName = GetFullName();
                     CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 4: %|1$s|", fullName);
                     auto attr = GetAttribute();
-                    auto mdExtends = GetBaseType()->GetToken();
+                    auto const *pBaseType = GetBaseType();
+                    _ASSERTE(pBaseType);    // TODO: interface の場合に落ちる。
+                    auto mdExtends = pBaseType->GetToken();
                     auto const &interfaces = GetInterfaces();
                     auto mdImplements = vector<mdToken>();
                     mdImplements.reserve(interfaces.size() + 1);
@@ -179,7 +183,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 else
                 {
                     BOOST_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
-                    CPPANONYM_D_LOGW(L"Getting Type Generator Token... 4: Modifiable Type");
+                    CPPANONYM_D_LOGW(L"Getting Type Generator Token... 5: Modifiable Type");
                     m_mdt = m_pSrcType->GetToken();
                 }
             }
@@ -379,6 +383,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IType const *BaseTypeGeneratorPimpl<ApiHolder>::GetNestedType(wstring const &name) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IMethod const *BaseTypeGeneratorPimpl<ApiHolder>::GetMethod(wstring const &name) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
@@ -403,6 +415,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IMethod const *BaseTypeGeneratorPimpl<ApiHolder>::GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IMethod const *BaseTypeGeneratorPimpl<ApiHolder>::GetConstructor(vector<IType const *> const &paramTypes) const
     {
         if (!m_pSrcType)
@@ -419,6 +439,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
     template<class ApiHolder>    
     IProperty const *BaseTypeGeneratorPimpl<ApiHolder>::GetProperty(wstring const &name) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    ITypePtrRange BaseTypeGeneratorPimpl<ApiHolder>::GetNestedTypes() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -465,6 +493,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             if (empty(ctors))
             {
                 auto const *pBaseType = m_pClass->GetBaseType();
+                _ASSERTE(pBaseType);    // TODO: interface の場合とかに落ちる。
                 auto const *pBaseType_ctor = pBaseType->GetConstructor(MetadataSpecialValues::EMPTY_TYPES);
                 auto *pTypeGen_ctor = m_pClass->DefineDefaultConstructor(MethodAttributes::MA_PUBLIC | 
                                                                          MethodAttributes::MA_HIDE_BY_SIG | 
@@ -489,7 +518,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    vector<IProperty const *> const &BaseTypeGeneratorPimpl<ApiHolder>::GetProperties() const
+    IPropertyPtrRange BaseTypeGeneratorPimpl<ApiHolder>::GetProperties() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -509,7 +538,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     m_kind = MetadataSpecialValues::ToTypeKind(fullName);
                     if (m_kind == TypeKinds::TK_UNREACHED)
                     {
-                        auto const &baseTypeFullName = GetBaseType()->GetFullName();
+                        auto const *pBaseType = GetBaseType();
+                        _ASSERTE(pBaseType);    // TODO: interface の場合とかに落ちる。
+                        auto const &baseTypeFullName = pBaseType->GetFullName();
                         m_kind = MetadataSpecialValues::ToTypeKind(fullName, baseTypeFullName);
                     }
                 }
@@ -520,32 +551,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
         }
         return m_kind;
-    }
-
-
-
-    template<class ApiHolder>    
-    IType const *BaseTypeGeneratorPimpl<ApiHolder>::GetGenericTypeDefinition() const
-    {
-        return GetDeclaringType();
-        //if (m_pSrcType == nullptr)
-        //{
-        //    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-        //}
-        //else
-        //{
-        //    auto isGenericTypeInstance = m_pSrcType->IsGenericType() && !m_pSrcType->IsGenericTypeDefinition();
-        //    if (isGenericTypeInstance)
-        //    {
-        //        auto const *pDeclaringTypeGen = m_pSrcType->GetDeclaringType(); // TODO: キャッシュ必要。
-        //        _ASSERTE(pDeclaringTypeGen != nullptr);
-        //        return MetadataResolver::Resolve(pDeclaringTypeGen);
-        //    }
-        //    else
-        //    {
-        //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-        //    }
-        //}
     }
 
 
@@ -719,6 +724,30 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IType const *BaseTypeGeneratorPimpl<ApiHolder>::GetNestedType(mdToken mdt) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseTypeGeneratorPimpl<ApiHolder>::GetGenericParameter(mdToken mdt) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    ICustomAttribute const *BaseTypeGeneratorPimpl<ApiHolder>::GetCustomAttribute(mdToken mdt) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IMethod const *BaseTypeGeneratorPimpl<ApiHolder>::GetMethod(mdToken mdt) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
@@ -735,7 +764,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseTypeGeneratorPimpl<ApiHolder>::IsDefined(IType const *pAttrType, bool inherit) const
+    bool BaseTypeGeneratorPimpl<ApiHolder>::IsDefined(IType const *pAttrType) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -743,7 +772,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseTypeGeneratorPimpl<ApiHolder>::GetCustomAttributes(bool inherit) const
+    ICustomAttributePtrRange BaseTypeGeneratorPimpl<ApiHolder>::GetCustomAttributes() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -751,7 +780,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseTypeGeneratorPimpl<ApiHolder>::GetCustomAttributes(IType const *pAttributeType, bool inherit) const
+    ICustomAttributePtrRange BaseTypeGeneratorPimpl<ApiHolder>::GetCustomAttributes(IType const *pAttributeType) const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -761,7 +790,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeGeneratorPimpl<ApiHolder>::GetSourceType() const
     {
-        return m_pSrcType == nullptr ? m_pClass : m_pSrcType->GetSourceType();
+        return !m_pSrcType ? m_pClass : m_pSrcType;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseTypeGeneratorPimpl<ApiHolder>::Equals(IType const *pType) const
+    {
+        if (m_pClass == pType)
+            return true;
+
+        if (!pType)
+            return false;
+
+        auto const *pOtherTypeGen = dynamic_cast<class_type const *>(pType);
+        if (!pOtherTypeGen)
+            return pType->Equals(m_pSrcType);
+        
+        return GetSourceType() == pOtherTypeGen->GetSourceType();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseTypeGeneratorPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcType ? HashValue(m_pClass) : m_pSrcType->GetHashCode();
     }
 
 
@@ -865,8 +921,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseTypeGeneratorPimpl<ApiHolder>::SetSourceType(IType const *pSrcType)
     {
-        _ASSERTE(pSrcType != nullptr);
-        _ASSERTE(m_pSrcType == nullptr);
+        _ASSERTE(pSrcType);
+        _ASSERTE(!dynamic_cast<class_type const *>(pSrcType));
+        _ASSERTE(!m_pSrcType);
         m_pSrcType = pSrcType;
     }
 

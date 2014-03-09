@@ -43,19 +43,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IPropertyEqualToDetail {
 
-        using Urasandesu::CppAnonym::Collections::SequenceEqual;
-
         IPropertyEqualToImpl::result_type IPropertyEqualToImpl::operator()(param_type x, param_type y) const
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            //auto isXDefinition = !x->IsGenericProperty() || x->IsGenericPropertyDefinition();
-            //auto isYDefinition = !y->IsGenericProperty() || y->IsGenericPropertyDefinition();
-
-            //return (isXDefinition && isYDefinition) ? 
-            //            x->GetToken() == y->GetToken() : 
-            //            (isXDefinition || isYDefinition) ? 
-            //                false : 
-            //                (x->GetToken() == y->GetToken() && ITypeEqualTo::EqualTo(x->GetGenericArguments(), y->GetGenericArguments()));
+            return !x && !y ? true : !x || !y ? false : x->Equals(y);
         }
 
     }   // namespace IPropertyEqualToDetail {

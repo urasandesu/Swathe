@@ -209,14 +209,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IType const *BasePropertyMetadataPimpl<ApiHolder>::GetDeclaringType() const
     {
         using boost::get;
-        using Urasandesu::CppAnonym::Utilities::Empty;
 
-        if (Empty(m_member))
-        {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-        }
-
-        auto const *const *ppDeclaringType = get<IType const *>(&m_member);
+        auto const &member = GetMember();
+        auto const *const *ppDeclaringType = get<IType const *>(&member);
         return !ppDeclaringType ? nullptr : *ppDeclaringType;
     }
     
@@ -225,7 +220,27 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     PropertyProvider const &BasePropertyMetadataPimpl<ApiHolder>::GetMember() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        using Urasandesu::CppAnonym::Utilities::Empty;
+
+        if (!Empty(m_member))
+            return m_member;
+
+        auto mdtTarget = GetToken();
+        switch (TypeFromToken(mdtTarget))
+        {
+            //case mdtFieldDef:
+            //    if (m_sig.GetBlob().empty())
+            //        FillFieldDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_attr, m_sig);
+            //    FillFieldMember(m_pClass, m_mdtOwner, m_member);
+            //    break;
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+        _ASSERTE(!Empty(m_member));
+        return m_member;
     }
 
 
@@ -233,7 +248,41 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IProperty const *BasePropertyMetadataPimpl<ApiHolder>::GetSourceProperty() const
     {
-        return m_pSrcProp == nullptr ? m_pClass : m_pSrcProp->GetSourceProperty();
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        //return m_pSrcProp == nullptr ? m_pClass : m_pSrcProp->GetSourceProperty();
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BasePropertyMetadataPimpl<ApiHolder>::Equals(IProperty const *pProp) const
+    {
+        if (m_pClass == pProp)
+            return true;
+
+        if (!pProp)
+            return false;
+
+        auto const *pOtherProp = dynamic_cast<class_type const *>(pProp);
+        if (!pOtherProp)
+            return m_pClass == pProp->GetSourceProperty();
+
+        return GetToken() == pOtherProp->GetToken() &&
+               GetDeclaringType() == pOtherProp->GetDeclaringType() &&     // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+               GetAssembly() == pOtherProp->GetAssembly();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BasePropertyMetadataPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+
+        auto mdtTarget = GetToken();
+        auto declaringTypeHash = HashValue(GetDeclaringType());    // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+        auto asmHash = HashValue(GetAssembly());
+        return mdtTarget ^ declaringTypeHash ^ asmHash;
     }
 
 

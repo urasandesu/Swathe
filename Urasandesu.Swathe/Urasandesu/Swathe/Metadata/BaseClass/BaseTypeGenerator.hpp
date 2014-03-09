@@ -175,6 +175,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IType const *BaseTypeGenerator<ApiHolder>::GetNestedType(wstring const &name) const
+    {
+        return Pimpl()->GetNestedType(name);
+    }
+
+    template<class ApiHolder>    
     IMethod const *BaseTypeGenerator<ApiHolder>::GetMethod(wstring const &name) const
     {
         return Pimpl()->GetMethod(name);
@@ -193,6 +199,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    IMethod const *BaseTypeGenerator<ApiHolder>::GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params) const
+    {
+        return Pimpl()->GetMethod(name, callingConvention, pRetType, params);
+    }
+
+    template<class ApiHolder>    
     IMethod const *BaseTypeGenerator<ApiHolder>::GetConstructor(vector<IType const *> const &paramTypes) const
     {
         return Pimpl()->GetConstructor(paramTypes);
@@ -204,6 +216,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         return Pimpl()->GetProperty(name);
     }
     
+    template<class ApiHolder>    
+    ITypePtrRange BaseTypeGenerator<ApiHolder>::GetNestedTypes() const
+    {
+        return Pimpl()->GetNestedTypes();
+    }
+
     template<class ApiHolder>    
     IMethodPtrRange BaseTypeGenerator<ApiHolder>::GetMethods() const
     {
@@ -217,7 +235,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    vector<IProperty const *> const &BaseTypeGenerator<ApiHolder>::GetProperties() const
+    IPropertyPtrRange BaseTypeGenerator<ApiHolder>::GetProperties() const
     {
         return Pimpl()->GetProperties();
     }
@@ -226,12 +244,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     TypeKinds BaseTypeGenerator<ApiHolder>::GetKind() const
     {
         return Pimpl()->GetKind();
-    }
-
-    template<class ApiHolder>    
-    IType const *BaseTypeGenerator<ApiHolder>::GetGenericTypeDefinition() const
-    {
-        return Pimpl()->GetGenericTypeDefinition();
     }
     
     template<class ApiHolder>    
@@ -283,6 +295,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IType const *BaseTypeGenerator<ApiHolder>::GetNestedType(mdToken mdt) const
+    {
+        return Pimpl()->GetNestedType(mdt);
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseTypeGenerator<ApiHolder>::GetGenericParameter(mdToken mdt) const
+    {
+        return Pimpl()->GetGenericParameter(mdt);
+    }
+
+    template<class ApiHolder>    
+    ICustomAttribute const *BaseTypeGenerator<ApiHolder>::GetCustomAttribute(mdToken mdt) const
+    {
+        return Pimpl()->GetCustomAttribute(mdt);
+    }
+
+    template<class ApiHolder>    
     IMethod const *BaseTypeGenerator<ApiHolder>::GetMethod(mdToken mdt) const
     {
         return Pimpl()->GetMethod(mdt);
@@ -295,27 +325,39 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    bool BaseTypeGenerator<ApiHolder>::IsDefined(IType const *pAttrType, bool inherit) const
+    bool BaseTypeGenerator<ApiHolder>::IsDefined(IType const *pAttrType) const
     {
-        return Pimpl()->IsDefined(pAttrType, inherit);
+        return Pimpl()->IsDefined(pAttrType);
     }
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseTypeGenerator<ApiHolder>::GetCustomAttributes(bool inherit) const
+    ICustomAttributePtrRange BaseTypeGenerator<ApiHolder>::GetCustomAttributes() const
     {
-        return Pimpl()->GetCustomAttributes(inherit);
+        return Pimpl()->GetCustomAttributes();
     }
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseTypeGenerator<ApiHolder>::GetCustomAttributes(IType const *pAttributeType, bool inherit) const
+    ICustomAttributePtrRange BaseTypeGenerator<ApiHolder>::GetCustomAttributes(IType const *pAttributeType) const
     {
-        return Pimpl()->GetCustomAttributes(pAttributeType, inherit);
+        return Pimpl()->GetCustomAttributes(pAttributeType);
     }
 
     template<class ApiHolder>    
     IType const *BaseTypeGenerator<ApiHolder>::GetSourceType() const
     {
         return Pimpl()->GetSourceType();
+    }
+
+    template<class ApiHolder>    
+    bool BaseTypeGenerator<ApiHolder>::Equals(IType const *pType) const
+    {
+        return Pimpl()->Equals(pType);
+    }
+
+    template<class ApiHolder>    
+    ULONG BaseTypeGenerator<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
     }
 
     template<class ApiHolder>    

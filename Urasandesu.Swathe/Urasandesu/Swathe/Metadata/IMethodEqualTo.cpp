@@ -39,36 +39,13 @@
 #include <Urasandesu/Swathe/Metadata/IMethod.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_ITYPEEQUALTO_H
-#include <Urasandesu/Swathe/Metadata/ITypeEqualTo.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYEQUALTO_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyEqualTo.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IMethodEqualToDetail {
 
-        using Urasandesu::CppAnonym::Collections::SequenceEqual;
-
         IMethodEqualToImpl::result_type IMethodEqualToImpl::operator()(param_type x, param_type y) const
         {
-            auto isXDefinition = !x->IsGenericMethod() || x->IsGenericMethodDefinition();
-            auto isYDefinition = !y->IsGenericMethod() || y->IsGenericMethodDefinition();
-            auto mdtTargetX = x->GetToken();
-            auto mdtTargetY = y->GetToken();
-            auto const *pDeclaringTypeX = x->GetDeclaringType();
-            auto const *pDeclaringTypeY = y->GetDeclaringType();
-            auto const *pAsmX = x->GetAssembly();
-            auto const *pAsmY = y->GetAssembly();
-
-            return (isXDefinition && isYDefinition) ? 
-                        mdtTargetX == mdtTargetY && IAssemblyEqualTo()(pAsmX, pAsmY) && ITypeEqualTo()(pDeclaringTypeX, pDeclaringTypeY) : 
-                        (isXDefinition || isYDefinition) ? 
-                            false : 
-                            (mdtTargetX == mdtTargetY && IAssemblyEqualTo()(pAsmX, pAsmY) && ITypeEqualTo()(pDeclaringTypeX, pDeclaringTypeY) && ITypeEqualTo::EqualTo(x->GetGenericArguments(), y->GetGenericArguments()));
+            return !x && !y ? true : !x || !y ? false : x->Equals(y);
         }
 
     }   // namespace IMethodEqualToDetail {

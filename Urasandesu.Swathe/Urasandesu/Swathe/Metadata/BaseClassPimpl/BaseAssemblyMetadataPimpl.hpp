@@ -52,6 +52,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pSnInfo(nullptr),
         m_mdt(mdTokenNil), 
         m_casInit(false), 
+        m_typesInit(false), 
         m_asmFlags(AssemblyFlags::AF_UNREACHED),
         m_asmStorageInit(false), 
         m_openFlags(ofRead), 
@@ -98,15 +99,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (IsNilToken(m_mdt))
         {
-            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
-
-            CPPANONYM_D_LOGW(L"Getting Assembly Metadata Token... 1");
             auto &comMetaAsmImp = m_pClass->GetCOMMetaDataAssemblyImport();
             auto hr = comMetaAsmImp.GetAssemblyFromScope(&m_mdt);
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-            
-            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
 
         return m_mdt;
@@ -298,7 +294,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetType(mdToken mdt) const
     {
-        return m_pClass->GetType(mdt, TypeKinds::TK_UNREACHED, false, MetadataSpecialValues::EMPTY_TYPES, TypeProvider());
+        return m_pClass->GetType(mdt, TypeKinds::TK_UNREACHED, static_cast<ULONG>(-1), false, MetadataSpecialValues::EMPTY_TYPES, TypeProvider());
     }
 
 
@@ -307,6 +303,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetType(wstring const &fullName) const
     {
         return m_pClass->GetType(fullName, TypeProvider());
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetGenericTypeParameter(ULONG genericParamPos) const
+    {
+        return m_pClass->GetType(TokenFromRid(genericParamPos + 1, mdtTypeVar), TypeKinds::TK_VAR, genericParamPos, false, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetGenericMethodParameter(ULONG genericParamPos) const
+    {
+        return m_pClass->GetType(TokenFromRid(genericParamPos + 1, mdtTypeMVar), TypeKinds::TK_MVAR, genericParamPos, false, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
     }
 
 
@@ -352,7 +364,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseAssemblyMetadataPimpl<ApiHolder>::GetCustomAttributes(bool inherit) const
+    ICustomAttributePtrRange BaseAssemblyMetadataPimpl<ApiHolder>::GetCustomAttributes() const
     {
         using boost::array;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
@@ -396,24 +408,70 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             m_casInit = true;
         }
 
-        if (inherit)
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-
         return m_cas;
     }
 
 
 
     template<class ApiHolder>    
-    ICustomAttributePtrRange BaseAssemblyMetadataPimpl<ApiHolder>::GetCustomAttributes(IType const *pAttributeType, bool inherit) const
+    ICustomAttributePtrRange BaseAssemblyMetadataPimpl<ApiHolder>::GetCustomAttributes(IType const *pAttributeType) const
     {
         using boost::adaptors::filtered;
         using std::function;
         
-        auto cas = GetCustomAttributes(inherit);
+        auto cas = GetCustomAttributes();
         auto isTarget = function<bool (ICustomAttribute const *)>();
         isTarget = [pAttributeType](ICustomAttribute const *pCas) { return pCas->GetAttributeType()->GetSourceType() == pAttributeType->GetSourceType(); };
         return cas | filtered(isTarget);
+    }
+
+
+
+    template<class ApiHolder>    
+    ITypePtrRange BaseAssemblyMetadataPimpl<ApiHolder>::GetTypes() const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (!m_typesInit)
+        {
+            if (!m_pSrcAsm)
+            {
+                auto &comMetaImp = m_pClass->GetCOMMetaDataImport();
+
+                auto hEnum = static_cast<HCORENUM>(nullptr);
+                    BOOST_SCOPE_EXIT((&hEnum)(&comMetaImp))
+                    {
+                        if (hEnum)
+                            comMetaImp.CloseEnum(hEnum);
+                    }
+                    BOOST_SCOPE_EXIT_END
+                auto mdtds = array<mdTypeDef, 16>();
+                auto count = 0ul;
+                auto hr = E_FAIL;
+                do
+                {
+                    hr = comMetaImp.EnumTypeDefs(&hEnum, mdtds.c_array(), mdtds.size(), &count);
+                    if (FAILED(hr))
+                        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+                    m_types.reserve(m_types.size() + count);
+                    for (auto i = 0u; i < count; ++i)
+                    {
+                        auto pType = m_pClass->GetType(mdtds[i]);
+                        m_types.push_back(pType);
+                    }
+                } while (0 < count);
+            }
+            else
+            {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
+
+            m_typesInit = true;
+        }
+
+        return m_types;
     }
 
 
@@ -580,9 +638,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseAssemblyMetadataPimpl<ApiHolder>::type_metadata_label_type const *BaseAssemblyMetadataPimpl<ApiHolder>::GetType(mdToken mdt, TypeKinds const &kind, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
+    typename BaseAssemblyMetadataPimpl<ApiHolder>::type_metadata_label_type const *BaseAssemblyMetadataPimpl<ApiHolder>::GetType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
     {
-        auto pNewType = NewType(mdt, kind, genericArgsSpecified, genericArgs, member);
+        auto pNewType = NewType(mdt, kind, genericParamPos, genericArgsSpecified, genericArgs, member);
 
         auto *pExistingType = static_cast<type_metadata_label_type *>(nullptr);
         if (!TryGetType(*pNewType, pExistingType))
@@ -610,12 +668,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    TempPtr<typename BaseAssemblyMetadataPimpl<ApiHolder>::type_metadata_label_type> BaseAssemblyMetadataPimpl<ApiHolder>::NewType(mdToken mdt, TypeKinds const &kind, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
+    TempPtr<typename BaseAssemblyMetadataPimpl<ApiHolder>::type_metadata_label_type> BaseAssemblyMetadataPimpl<ApiHolder>::NewType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
     {
         auto pType = m_pMetaInfo->NewTypeCore(m_pClass);
         _ASSERTE(!IsNilToken(mdt) || genericArgsSpecified || kind == TypeKinds::TK_GENERICINST || TypeKinds::TK_BYREF);
         pType->SetToken(mdt);
         pType->SetKind(kind);
+        pType->SetGenericParameterPosition(genericParamPos);
         if (genericArgsSpecified)
             pType->SetGenericArguments(genericArgs);
         pType->SetMember(member);

@@ -214,13 +214,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethod const *GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const;
         IType const *GetType(mdToken mdt) const;
         IType const *GetType(wstring const &fullName) const;
+        IType const *GetGenericTypeParameter(ULONG genericParamPos) const;
+        IType const *GetGenericMethodParameter(ULONG genericParamPos) const;
         vector<ProcessorArchitecture> const &GetProcessorArchitectures() const;
         IAssembly const *GetAssembly(wstring const &fullName) const;
         IAssembly const *GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         IAssembly const *GetAssemblyReference(mdAssemblyRef mdt) const;
         ICustomAttribute const *GetCustomAttribute(mdToken mdt) const;
-        ICustomAttributePtrRange GetCustomAttributes(bool inherit) const;
-        ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType, bool inherit) const;
+        ICustomAttributePtrRange GetCustomAttributes() const;
+        ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
+        ITypePtrRange GetTypes() const;
         iterator_range<BYTE const *> GetAssemblyStorage() const;
         bool Exists() const;
         
@@ -237,9 +240,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void RegisterModule(TempPtr<module_metadata_label_type> &pMod);
         
         type_metadata_label_type const *GetType(wstring const &fullName, TypeProvider const &member) const;
-        type_metadata_label_type const *GetType(mdToken mdt, TypeKinds const &kind, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
+        type_metadata_label_type const *GetType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
         TempPtr<type_metadata_label_type> NewType(wstring const &fullName, TypeProvider const &member) const;
-        TempPtr<type_metadata_label_type> NewType(mdToken mdt, TypeKinds const &kind, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
+        TempPtr<type_metadata_label_type> NewType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
         bool TryGetType(type_metadata_label_type const &type, type_metadata_label_type *&pExistingType) const;
         void RegisterType(TempPtr<type_metadata_label_type> &pType);
         
@@ -313,6 +316,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable AutoPtr<IStrongNameKey const> m_pSnKey;
         mutable bool m_casInit;
         mutable vector<ICustomAttribute const *> m_cas;
+        mutable bool m_typesInit;
+        mutable vector<IType const *> m_types;
         mutable wstring m_name;
         mutable ASSEMBLYMETADATA m_amd;
         mutable vector<WCHAR> m_locale;

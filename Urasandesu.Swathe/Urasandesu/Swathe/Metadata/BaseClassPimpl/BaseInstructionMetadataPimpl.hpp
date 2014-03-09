@@ -218,7 +218,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 i += TakeInlineField(this, i, i_end, m_operand);
                 break;
             case OperandParamTypes::OPT_INLINE_I:
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                i += TakeInlineI(this, i, i_end, m_operand);
                 break;
             case OperandParamTypes::OPT_INLINE_I8:
                 i += TakeInlineI8(this, i, i_end, m_operand);
@@ -294,6 +294,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         operand = pAsm->GetField(mdt);
 
         return sizeof(mdToken);
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseInstructionMetadataPimpl<ApiHolder>::TakeInlineI(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand)
+    {
+        auto *pBody = _this->m_pBody;
+
+        auto value = *reinterpret_cast<INT const *>(i);
+        _ASSERTE(i + sizeof(INT) <= i_end);
+
+        operand = value;
+
+        return sizeof(INT);
     }
 
 
@@ -421,10 +436,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto index = static_cast<BYTE>(*i);
         _ASSERTE(i + sizeof(BYTE) <= i_end);
 
-        auto const &locals = pBody->GetLocals();
-        _ASSERTE(index < locals.size());
-
-        operand = locals[index];
+        operand = index;
 
         return sizeof(BYTE);
     }

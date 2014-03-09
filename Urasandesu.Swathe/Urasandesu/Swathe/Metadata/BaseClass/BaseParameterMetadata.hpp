@@ -145,6 +145,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    bool BaseParameterMetadata<ApiHolder>::Equals(IParameter const *pParam) const
+    {
+        return Pimpl()->Equals(pParam);
+    }
+
+    template<class ApiHolder>    
+    ULONG BaseParameterMetadata<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
+    }
+
+    template<class ApiHolder>    
     void BaseParameterMetadata<ApiHolder>::OutDebugInfo() const
     {
         Pimpl()->OutDebugInfo();

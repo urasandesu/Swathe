@@ -281,18 +281,42 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    IDispenser const *BaseMethodBodyMetadataPimpl<ApiHolder>::GetDispenser() const
+    IMethodBody const *BaseMethodBodyMetadataPimpl<ApiHolder>::GetSourceMethodBody() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-        //return m_pDisp;
+        return !m_pSrcBody ? m_pClass : m_pSrcBody;
     }
 
 
 
     template<class ApiHolder>    
-    IMethodBody const *BaseMethodBodyMetadataPimpl<ApiHolder>::GetSourceMethodBody() const
+    bool BaseMethodBodyMetadataPimpl<ApiHolder>::Equals(IMethodBody const *pBody) const
     {
-        return !m_pSrcBody ? m_pClass : m_pSrcBody->GetSourceMethodBody();
+        if (m_pClass == pBody)
+            return true;
+
+        if (!pBody)
+            return false;
+
+        auto const *pOtherBody = dynamic_cast<class_type const *>(pBody);
+        if (!pOtherBody)
+            return m_pClass == pBody->GetSourceMethodBody();
+
+        return GetToken() == pOtherBody->GetToken() && 
+               GetMethod() == pOtherBody->GetMethod() &&
+               GetAssembly() == pOtherBody->GetAssembly();
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseMethodBodyMetadataPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+
+        auto mdtTarget = GetToken();
+        auto methodHash = HashValue(GetMethod());
+        auto asmHash = HashValue(GetAssembly());
+        return mdtTarget ^ methodHash ^ asmHash;
     }
 
 

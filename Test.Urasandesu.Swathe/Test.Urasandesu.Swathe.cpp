@@ -572,7 +572,7 @@ namespace {
             ASSERT_EQ(&OpCodes::Stloc_0, &insts[1]->GetOpCode());
 
             ASSERT_EQ(&OpCodes::Ldloca_S, &insts[2]->GetOpCode());
-            ASSERT_EQ(0, get<ILocal const *>(insts[2]->GetOperand())->GetLocalIndex());
+            ASSERT_EQ(0, get<BYTE>(insts[2]->GetOperand()));
 
             ASSERT_EQ(&OpCodes::Call, &insts[3]->GetOpCode());
             ASSERT_EQ(wstring(L"ToLocalTime"), get<IMethod const *>(insts[3]->GetOperand())->GetName());

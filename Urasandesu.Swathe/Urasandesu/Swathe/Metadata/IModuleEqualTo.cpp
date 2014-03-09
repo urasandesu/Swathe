@@ -43,11 +43,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     namespace IModuleEqualToDetail {
 
-        using Urasandesu::CppAnonym::Collections::SequenceEqual;
-
         IModuleEqualToImpl::result_type IModuleEqualToImpl::operator()(param_type x, param_type y) const
         {
-            return x->GetName() == y->GetName();
+            return !x && !y ? true : !x || !y ? false : x->Equals(y);
         }
 
     }   // namespace IModuleEqualToDetail {

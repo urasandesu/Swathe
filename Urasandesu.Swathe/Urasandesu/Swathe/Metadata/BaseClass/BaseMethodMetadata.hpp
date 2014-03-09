@@ -193,10 +193,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    IDispenser const *BaseMethodMetadata<ApiHolder>::GetDispenser() const
+    bool BaseMethodMetadata<ApiHolder>::Equals(IMethod const *pMethod) const
     {
-        return Pimpl()->GetDispenser();
+        return Pimpl()->Equals(pMethod);
     }
+
+    template<class ApiHolder>    
+    ULONG BaseMethodMetadata<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
+    }
+
+    //template<class ApiHolder>    
+    //IDispenser const *BaseMethodMetadata<ApiHolder>::GetDispenser() const
+    //{
+    //    return Pimpl()->GetDispenser();
+    //}
 
     template<class ApiHolder>    
     IParameter const *BaseMethodMetadata<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const

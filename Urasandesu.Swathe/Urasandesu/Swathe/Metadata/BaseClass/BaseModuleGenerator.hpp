@@ -97,7 +97,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    vector<IType const *> const &BaseModuleGenerator<ApiHolder>::GetTypes() const
+    ITypePtrRange BaseModuleGenerator<ApiHolder>::GetTypes() const
     {
         return Pimpl()->GetTypes();
     }
@@ -112,6 +112,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IModule const *BaseModuleGenerator<ApiHolder>::GetSourceModule() const
     {
         return Pimpl()->GetSourceModule();
+    }
+
+    template<class ApiHolder>    
+    bool BaseModuleGenerator<ApiHolder>::Equals(IModule const *pMod) const
+    {
+        return Pimpl()->Equals(pMod);
+    }
+
+    template<class ApiHolder>    
+    ULONG BaseModuleGenerator<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
     }
 
     template<class ApiHolder>    

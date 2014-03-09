@@ -45,7 +45,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
         IParameterEqualToImpl::result_type IParameterEqualToImpl::operator()(param_type x, param_type y) const
         {
-            return x->GetPosition() == y->GetPosition() && x->GetMember() == y->GetMember();
+            return !x && !y ? true : !x || !y ? false : x->Equals(y);
         }
 
     }   // namespace IParameterEqualToDetail {

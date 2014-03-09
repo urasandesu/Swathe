@@ -151,15 +151,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    IDispenser const *BaseMethodBodyGenerator<ApiHolder>::GetDispenser() const
-    {
-        return Pimpl()->GetDispenser();
-    }
-
-    template<class ApiHolder>    
     IMethodBody const *BaseMethodBodyGenerator<ApiHolder>::GetSourceMethodBody() const
     {
         return Pimpl()->GetSourceMethodBody();
+    }
+
+    template<class ApiHolder>    
+    bool BaseMethodBodyGenerator<ApiHolder>::Equals(IMethodBody const *pBody) const
+    {
+        return Pimpl()->Equals(pBody);
+    }
+
+    template<class ApiHolder>    
+    ULONG BaseMethodBodyGenerator<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
     }
 
     template<class ApiHolder>    
