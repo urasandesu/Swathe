@@ -87,7 +87,11 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
 #else
+#ifdef _M_IX86
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 80;
+#else
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 160;
+#endif
 #endif
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

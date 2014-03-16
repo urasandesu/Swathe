@@ -140,7 +140,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                         CPPANONYM_D_LOGW(oss.str());
                     }
                     auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                    auto hr = comMetaEmt.GetTokenFromSig(&blob[0], blob.size(), &m_mdt);
+                    auto hr = comMetaEmt.GetTokenFromSig(&blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
                     if (FAILED(hr))
                         BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
                 }
@@ -281,7 +281,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             ::ZeroMemory(&m_rawHeader, sizeof(COR_ILMETHOD_FAT));
             m_rawHeader.SetMaxStack(GetRawBodyMaxStack());
-            m_rawHeader.SetCodeSize(GetRawBody().size());
+            m_rawHeader.SetCodeSize(static_cast<DWORD>(GetRawBody().size()));
             m_rawHeader.SetLocalVarSigTok(IsNilToken(GetToken()) ? mdTokenNil : GetToken());
             m_rawHeader.SetFlags(IsNilToken(GetToken()) ? 0 : CorILMethod_InitLocals);
             m_rawHeaderInit = true;
@@ -455,7 +455,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseMethodBodyGeneratorPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseMethodBodyGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
         return !m_pSrcBody ? HashValue(m_pClass) : m_pSrcBody->GetHashCode();
@@ -815,7 +815,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (exClauseMarker.GetCurrentClauseKind() != ClauseKinds::CK_UNREACHED)
         {
             Emit(OpCodes::Leave, endLabel);
-            endIndex = GetSize();
+            endIndex = static_cast<ULONG>(GetSize());
         }
         MarkLabel(endLabel);
         
@@ -823,7 +823,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         exClauseMarker.SetFinallyEndLabel(finallyEndLabel);
         Emit(OpCodes::Leave, finallyEndLabel);
         if (endIndex == 0ul)
-            endIndex = GetSize();
+            endIndex = static_cast<ULONG>(GetSize());
         
         exClauseMarker.MarkFinallyClause(GetSize(), endIndex);
     }

@@ -117,7 +117,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         MethodProvider const &GetMember() const;
         IMethod const *GetSourceMethod() const;
         bool Equals(IMethod const *pMethod) const;
-        ULONG GetHashCode() const;
+        size_t GetHashCode() const;
         //IDispenser const *GetDispenser() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         MethodAttributes GetAttribute() const;

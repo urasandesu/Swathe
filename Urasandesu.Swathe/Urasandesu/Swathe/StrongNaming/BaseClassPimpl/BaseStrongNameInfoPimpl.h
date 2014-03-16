@@ -76,7 +76,11 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
 #else
+#ifdef _M_IX86
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 32;
+#else
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 64;
+#endif
 #endif
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

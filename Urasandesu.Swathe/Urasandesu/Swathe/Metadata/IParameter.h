@@ -68,7 +68,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IAssembly const *GetAssembly() const = 0;
         virtual IParameter const *GetSourceParameter() const = 0;
         virtual bool Equals(IParameter const *pParam) const = 0;
-        virtual ULONG GetHashCode() const = 0;
+        virtual size_t GetHashCode() const = 0;
         virtual void OutDebugInfo() const = 0;
     };
     

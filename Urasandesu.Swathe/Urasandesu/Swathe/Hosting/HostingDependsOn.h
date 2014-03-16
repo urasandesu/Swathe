@@ -63,9 +63,26 @@ namespace Urasandesu { namespace Swathe { namespace Hosting {
     
     
     template<class PEDataIterator>
-    PEDataIterator PEGetNTHeaders(PEDataIterator const &i, PEDataIterator const &i_end, IMAGE_NT_HEADERS &ntHeaders)
+    PEDataIterator PEGetNTHeadersPrerequisites(PEDataIterator i, PEDataIterator const &i_end, DWORD &signature, IMAGE_FILE_HEADER &fileHeader)
     {
-        return PEGetData(i, i_end, sizeof(IMAGE_NT_HEADERS), reinterpret_cast<BYTE *>(&ntHeaders));
+        i = PEGetData(i, i_end, sizeof(DWORD), reinterpret_cast<BYTE *>(&signature));
+        return PEGetData(i, i_end, sizeof(IMAGE_FILE_HEADER), reinterpret_cast<BYTE *>(&fileHeader));
+    }
+    
+    
+    
+    template<class PEDataIterator>
+    PEDataIterator PEGetNTHeaders(PEDataIterator const &i, PEDataIterator const &i_end, IMAGE_NT_HEADERS32 &ntHeaders)
+    {
+        return PEGetData(i, i_end, sizeof(IMAGE_NT_HEADERS32), reinterpret_cast<BYTE *>(&ntHeaders));
+    }
+    
+    
+    
+    template<class PEDataIterator>
+    PEDataIterator PEGetNTHeaders(PEDataIterator const &i, PEDataIterator const &i_end, IMAGE_NT_HEADERS64 &ntHeaders)
+    {
+        return PEGetData(i, i_end, sizeof(IMAGE_NT_HEADERS64), reinterpret_cast<BYTE *>(&ntHeaders));
     }
     
     

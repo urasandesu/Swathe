@@ -72,7 +72,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly() const;
         IModule const *GetSourceModule() const;
         bool Equals(IModule const *pMod) const;
-        ULONG GetHashCode() const;
+        size_t GetHashCode() const;
     
     private:
         module_metadata_pimpl_label_type *Pimpl();
@@ -82,7 +82,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
+#ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 56;
+#else
+        static INT const PIMPL_TYPE_SIZE = 96;
+#endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

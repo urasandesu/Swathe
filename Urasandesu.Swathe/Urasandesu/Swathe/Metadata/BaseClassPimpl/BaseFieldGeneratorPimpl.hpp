@@ -96,7 +96,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto const &blob = sig.GetBlob();
                 CPPANONYM_D_LOGW1(L"Getting Field Generator Token... 1: %|1$s|", name);
                 auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                auto hr = comMetaEmt.DefineField(mdtTarget, name.c_str(), attr.Value(), &blob[0], blob.size(), ELEMENT_TYPE_END, nullptr, 0, &m_mdt);
+                auto hr = comMetaEmt.DefineField(mdtTarget, name.c_str(), attr.Value(), &blob[0], static_cast<ULONG>(blob.size()), ELEMENT_TYPE_END, nullptr, 0, &m_mdt);
                 if (FAILED(hr))
                     BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
             }
@@ -248,7 +248,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseFieldGeneratorPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseFieldGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
         return !m_pSrcField ? HashValue(m_pClass) : m_pSrcField->GetHashCode();

@@ -140,14 +140,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto const &pubKeyToken = pSnKey->GetPublicKeyToken();
                 oss << SequenceToString(pubKeyToken.begin(), pubKeyToken.end());
             }
-            //if (!amd.rProcessor)
-            //{
-            //    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            //}
-            //else
-            //{
-            //    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            //}
             m_fullName = oss.str();
         }
         return m_fullName;
@@ -388,7 +380,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto mdtTarget = GetToken();
                 do
                 {
-                    hr = comMetaImp.EnumCustomAttributes(&hEnum, mdtTarget, 0, mdcas.c_array(), mdcas.size(), &count);
+                    hr = comMetaImp.EnumCustomAttributes(&hEnum, mdtTarget, 0, mdcas.c_array(), static_cast<ULONG>(mdcas.size()), &count);
                     if (FAILED(hr))
                         BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
@@ -451,7 +443,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto hr = E_FAIL;
                 do
                 {
-                    hr = comMetaImp.EnumTypeDefs(&hEnum, mdtds.c_array(), mdtds.size(), &count);
+                    hr = comMetaImp.EnumTypeDefs(&hEnum, mdtds.c_array(), static_cast<ULONG>(mdtds.size()), &count);
                     if (FAILED(hr))
                         BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
@@ -1242,6 +1234,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 ResolveAssemblyPathByCurrentDirectory(this, pCondition->GetName(), m_asmPath);
             else
                 ResolveAssemblyPathByGAC(this, candidates, m_asmPath);
+
+            _ASSERTE(!m_asmPath.empty());
+            m_fullName.clear(); // This means that m_fullName can be filled completely by next GetFullName call when the assembly has been resolved.
         }
         return m_asmPath;
     }
@@ -1507,7 +1502,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         else
         {
-            auto const &procArchs = _this->m_procArchs;
+            auto procArchs = _this->m_procArchs;
+            if (procArchs.empty())
+            {
+                procArchs.resize(2);
+#ifdef _M_IX86
+                procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
+                procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+#else
+                procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_AMD64);
+                procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+#endif
+            }
 
             _ASSERTE(!procArchs.empty());
             auto isTarget = [&](Platform const &platform) { return candidates.find(platform) != candidates.end(); };

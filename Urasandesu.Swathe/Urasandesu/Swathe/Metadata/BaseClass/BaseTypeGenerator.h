@@ -131,7 +131,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         IType const *GetSourceType() const;
         bool Equals(IType const *pType) const;
-        ULONG GetHashCode() const;
+        size_t GetHashCode() const;
         void OutDebugInfo() const;
         type_generator_label_type *DefineNestedType(wstring const &fullName, TypeAttributes const &attr);
         field_generator_label_type *DefineField(wstring const &name, IType const *pFieldType, FieldAttributes const &attr);
@@ -150,7 +150,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
+#ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 120;
+#else
+        static INT const PIMPL_TYPE_SIZE = 208;
+#endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

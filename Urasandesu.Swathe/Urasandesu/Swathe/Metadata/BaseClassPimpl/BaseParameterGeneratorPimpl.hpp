@@ -266,7 +266,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseParameterGeneratorPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseParameterGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
         return !m_pSrcParam ? HashValue(m_pClass) : m_pSrcParam->GetHashCode();

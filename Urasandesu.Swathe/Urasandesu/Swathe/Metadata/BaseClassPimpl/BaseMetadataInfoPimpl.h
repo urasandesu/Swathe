@@ -151,9 +151,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         SIZE_T RegisterCustomAttributeGeneratorCore(TempPtr<custom_attribute_generator_label_type> &pCaGen);
 
 #ifdef _DEBUG
+#ifdef _M_IX86
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 1024;
 #else
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 2048;
+#endif
+#else
+#ifdef _M_IX86
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 672;
+#else
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 1344;
+#endif
 #endif
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

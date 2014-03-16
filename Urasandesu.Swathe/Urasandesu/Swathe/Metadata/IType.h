@@ -132,7 +132,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const = 0;
         virtual IType const *GetSourceType() const = 0;
         virtual bool Equals(IType const *pType) const = 0;
-        virtual ULONG GetHashCode() const = 0;
+        virtual size_t GetHashCode() const = 0;
         virtual void OutDebugInfo() const = 0;
     };
     

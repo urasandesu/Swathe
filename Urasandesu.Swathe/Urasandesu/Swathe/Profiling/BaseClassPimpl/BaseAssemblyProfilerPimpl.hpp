@@ -148,7 +148,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         auto length = 0ul;
         auto _appDomainId = AppDomainID();
         auto _moduleId = ModuleID();
-        auto hr = comProfInfo.GetAssemblyInfo(assemblyId, wzname.size(), &length, wzname.c_array(), &_appDomainId, &_moduleId);
+        auto hr = comProfInfo.GetAssemblyInfo(assemblyId, static_cast<ULONG>(wzname.size()), &length, wzname.c_array(), &_appDomainId, &_moduleId);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 

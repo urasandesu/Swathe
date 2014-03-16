@@ -47,7 +47,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
         IAssemblyHashImpl::result_type IAssemblyHashImpl::operator()(param_type v) const
         {
-            if (!v)
+            if (!v) // TODO: この辺実装中。。。Assembly の一意性判定、もう少しいい方法ないの？？
                 return 0;
             else
                 return v->GetToken() ^ boost::hash_value(v->GetFullName()) ^ IAssemblyHash()(v->GetTargetAssembly());

@@ -81,7 +81,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 auto const &insts = m_pBody->GetInstructions();
                 auto const *pPrevInst = insts[m_index - 1ul];
-                m_mdt = pPrevInst->GetToken() + pPrevInst->GetSize();
+                m_mdt = static_cast<mdToken>(pPrevInst->GetToken() + pPrevInst->GetSize());
             }
         }
         return m_mdt;
@@ -372,7 +372,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto wzs = array<WCHAR, MAX_SYM_NAME>();
         auto wzsLength = 0ul;
         auto &comMetaImp = pAsm->GetCOMMetaDataImport();
-        auto hr = comMetaImp.GetUserString(mds, wzs.c_array(), wzs.size(), &wzsLength);
+        auto hr = comMetaImp.GetUserString(mds, wzs.c_array(), static_cast<ULONG>(wzs.size()), &wzsLength);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 

@@ -111,7 +111,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     auto const &blob = sig.GetBlob();
                     CPPANONYM_D_LOGW1(L"Getting Method Generator Token... 2: %|1$s|", name);
                     auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                    auto hr = comMetaEmt.DefineMethod(mdtTarget, name.c_str(), attr.Value(), &blob[0], blob.size(), 0, 0, &m_mdt);
+                    auto hr = comMetaEmt.DefineMethod(mdtTarget, name.c_str(), attr.Value(), &blob[0], static_cast<ULONG>(blob.size()), 0, 0, &m_mdt);
                     if (FAILED(hr))
                         BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
                 }
@@ -134,7 +134,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                         auto const &sig = m_pClass->GetSignature();
                         auto const &blob = sig.GetBlob();
                         auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                        auto hr = comMetaEmt.DefineMethodSpec(mdtTarget, &blob[0], blob.size(), &m_mdt);
+                        auto hr = comMetaEmt.DefineMethodSpec(mdtTarget, &blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
                         if (FAILED(hr))
                             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
                     }
@@ -156,7 +156,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                             CPPANONYM_D_LOGW(oss.str());
                         }
                         auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                        auto hr = comMetaEmt.DefineMemberRef(mdtTarget, name.c_str(), &blob[0], blob.size(), &m_mdt);
+                        auto hr = comMetaEmt.DefineMemberRef(mdtTarget, name.c_str(), &blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
                         if (FAILED(hr))
                             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
                     }
@@ -500,7 +500,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseMethodGeneratorPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseMethodGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
         return !m_pSrcMethod ? HashValue(m_pClass) : m_pSrcMethod->GetHashCode();

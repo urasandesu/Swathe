@@ -402,7 +402,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         if (moreSections)
             codeSizeAligned = (codeSizeAligned + 3) & ~3;
         auto headerSize = COR_ILMETHOD::Size(&header, moreSections);
-        auto ehSize = ehClauses.empty() ? 0 : COR_ILMETHOD_SECT_EH::Size(ehClauses.size(), &ehClauses[0]);
+        auto ehSize = ehClauses.empty() ? 0 : COR_ILMETHOD_SECT_EH::Size(static_cast<UINT>(ehClauses.size()), &ehClauses[0]);
         auto totalSize = headerSize + codeSizeAligned + ehSize;
         CPPANONYM_D_LOGW1(L"Header IsFat?: %|1$d|", (headerSize != 1));
         CPPANONYM_D_LOGW1(L"Header Size: %|1$d|", headerSize);
@@ -413,9 +413,9 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         CPPANONYM_D_LOGW1(L"Method Body Total Size: %|1$d|", totalSize);
 
         
-        auto pBuffer = GetSectionBlock(textSection, totalSize, headerSize != 1 ? 4 : 1);
+        auto pBuffer = GetSectionBlock(textSection, static_cast<ULONG>(totalSize), headerSize != 1 ? 4 : 1);
         auto offset = GetSectionDataLen(textSection);
-        offset -= totalSize;
+        offset -= static_cast<ULONG>(totalSize);
         auto codeRVA = GetCodeRVA(offset);
         CPPANONYM_D_LOGW1(L"Method RVA: 0x%|1$08X|", codeRVA);
 
@@ -429,7 +429,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         pBuffer += codeSizeAligned;
         
         if (!ehClauses.empty())
-            pBuffer += COR_ILMETHOD_SECT_EH::Emit(ehSize, ehClauses.size(), &ehClauses[0], false, pBuffer);
+            pBuffer += COR_ILMETHOD_SECT_EH::Emit(ehSize, static_cast<UINT>(ehClauses.size()), &ehClauses[0], false, pBuffer);
     }
 
 

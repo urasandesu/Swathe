@@ -138,7 +138,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 asmFlags &= ~AssemblyFlags::AF_PUBLIC_KEY;
                 CPPANONYM_D_LOGW1(L"Getting Assembly Generator Token... 2: %|1$s|", name);
                 auto &comMetaAsmEmt = m_pClass->GetCOMMetaDataAssemblyEmit();   // TODO: この辺実装中。。。
-                auto hr = comMetaAsmEmt.DefineAssemblyRef(&pubKeyToken[0], pubKeyToken.size(), name.c_str(), &amd, NULL, 0, asmFlags.Value(), &m_mda);
+                auto hr = comMetaAsmEmt.DefineAssemblyRef(&pubKeyToken[0], static_cast<ULONG>(pubKeyToken.size()), name.c_str(), &amd, NULL, 0, asmFlags.Value(), &m_mda);
                 if (FAILED(hr))
                     BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
             }

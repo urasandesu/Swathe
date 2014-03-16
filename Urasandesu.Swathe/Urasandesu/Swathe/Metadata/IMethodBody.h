@@ -91,7 +91,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IAssembly const *GetAssembly() const = 0;
         virtual IMethodBody const *GetSourceMethodBody() const = 0;
         virtual bool Equals(IMethodBody const *pBody) const = 0;
-        virtual ULONG GetHashCode() const = 0;
+        virtual size_t GetHashCode() const = 0;
         virtual ILocal const *GetLocal(ULONG index, IType const *pLocalType) const = 0;
         virtual IInstructionPtrRange::iterator GetInstructionIterator(ULONG offset) const = 0;
     };

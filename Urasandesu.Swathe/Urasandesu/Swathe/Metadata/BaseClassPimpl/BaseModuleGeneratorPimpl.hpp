@@ -169,7 +169,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseModuleGeneratorPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseModuleGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
         return !m_pSrcMod ? HashValue(m_pClass) : m_pSrcMod->GetHashCode();

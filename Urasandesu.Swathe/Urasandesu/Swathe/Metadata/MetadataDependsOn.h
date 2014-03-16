@@ -59,7 +59,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             pTmpData += ::CorSigUncompressData(pTmpData, pStrSize);
             *ppStr = reinterpret_cast<CHAR const*>(pTmpData);
             pTmpData += sizeof(CHAR) * *pStrSize;
-            return (pTmpData - pData) / sizeof(COR_SIGNATURE);
+            return static_cast<ULONG>((pTmpData - pData) / sizeof(COR_SIGNATURE));
         }
     }
 

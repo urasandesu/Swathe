@@ -67,12 +67,10 @@ namespace {
         auto *pMetaDisp = pMetaInfo->CreateDispenser();
         ASSERT_TRUE(pMetaDisp != nullptr);
 
-        auto const *pSystemCore = pMetaDisp->GetAssembly(L"System.Core, Version=3.5.0.0, Culture=neutral, " 
-                                                         L"PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL");
+        auto const *pSystemCore = pMetaDisp->GetAssembly(L"System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
         ASSERT_EQ(0x20000001, pSystemCore->GetToken());
 
-        auto const *pMSCorLib = pMetaDisp->GetAssembly(L"mscorlib, Version=2.0.0.0, Culture=neutral, " 
-                                                       L"PublicKeyToken=b77a5c561934e089, processorArchitecture=x86");
+        auto const *pMSCorLib = pMetaDisp->GetAssembly(L"mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
         ASSERT_TRUE(pMSCorLib != nullptr);
         ASSERT_EQ(0x20000001, pMSCorLib->GetToken());   // !! CAUTION: This is CORRECT !!
 
@@ -83,13 +81,21 @@ namespace {
         ASSERT_EQ(0x00000001, pMSCorLibDll->GetToken());
 
         auto const *pVoid = pMSCorLibDll->GetType(L"System.Void");
+#ifdef _M_IX86
         ASSERT_EQ(0x02000125, pVoid->GetToken());
-
+#else
+        ASSERT_EQ(0x0200013B, pVoid->GetToken());
+#endif
+        
         auto const *pObject = pMSCorLibDll->GetType(L"System.Object");
         ASSERT_EQ(0x02000002, pObject->GetToken());
 
         auto const *pIntPtr = pMSCorLibDll->GetType(L"System.IntPtr");
+#ifdef _M_IX86
         ASSERT_EQ(0x020000C5, pIntPtr->GetToken());
+#else
+        ASSERT_EQ(0x020000C7, pIntPtr->GetToken());
+#endif
 
         auto const *pDateTime = pMSCorLibDll->GetType(L"System.DateTime");
         ASSERT_EQ(0x02000032, pDateTime->GetToken());
@@ -149,20 +155,29 @@ namespace {
             pFunc1DateTime_ctor = pFunc1DateTime->GetMethod(L".ctor", CallingConventions::CC_HAS_THIS, pVoid, params);
         }
         ASSERT_EQ(0x06000232, pFunc1DateTime_ctor->GetToken());   // !! CAUTION: This is CORRECT !!
+                                                                  // User defined TypeSpec will be invalid until saving the assembly.
 
         auto const *pDateTime_get_UtcNow = static_cast<IMethod *>(nullptr);
         {
             auto params = vector<IType const *>();
             pDateTime_get_UtcNow = pDateTime->GetMethod(L"get_UtcNow", CallingConventions::CC_STANDARD, pDateTime, params);
         }
+#ifdef _M_IX86
         ASSERT_EQ(0x060002D3, pDateTime_get_UtcNow->GetToken());
+#else
+        ASSERT_EQ(0x060002D5, pDateTime_get_UtcNow->GetToken());
+#endif
 
         auto const *pDateTime_ToLocalTime = static_cast<IMethod *>(nullptr);
         {
             auto params = vector<IType const *>();
             pDateTime_ToLocalTime = pDateTime->GetMethod(L"ToLocalTime", CallingConventions::CC_HAS_THIS, pDateTime, params);
         }
+#ifdef _M_IX86
         ASSERT_EQ(0x060002E7, pDateTime_ToLocalTime->GetToken());
+#else
+        ASSERT_EQ(0x060002E9, pDateTime_ToLocalTime->GetToken());
+#endif
 
 
 
@@ -373,11 +388,8 @@ namespace {
         auto const *pMetaInfo = pRuntime->GetInfo<MetadataInfo>();
         auto *pMetaDisp = pMetaInfo->CreateDispenser();
 
-        auto const *pMSCorLib = pMetaDisp->GetAssembly(L"mscorlib, Version=2.0.0.0, Culture=neutral, " 
-                                                       L"PublicKeyToken=b77a5c561934e089, processorArchitecture=x86");
-
+        auto const *pMSCorLib = pMetaDisp->GetAssembly(L"mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
         auto const *pMSCorLibDll = pMSCorLib->GetModule(L"CommonLanguageRuntimeLibrary");
-
         auto const *pInt32 = pMSCorLibDll->GetType(L"System.Int32");
 
 #if 0
@@ -419,7 +431,11 @@ namespace {
         auto const *pInt32_ToString_string_IFormatProvider = static_cast<IMethod const *>(nullptr);
         {
             auto methods = pInt32->GetMethods();
+#ifdef _M_IX86
             pInt32_ToString_string_IFormatProvider = *(methods | filtered([](IMethod const *pMethod) { return pMethod->GetToken() == 0x06000B26; })).begin();
+#else
+            pInt32_ToString_string_IFormatProvider = *(methods | filtered([](IMethod const *pMethod) { return pMethod->GetToken() == 0x06000B28; })).begin();
+#endif
         }
 
         auto const &params = pInt32_ToString_string_IFormatProvider->GetParameters();

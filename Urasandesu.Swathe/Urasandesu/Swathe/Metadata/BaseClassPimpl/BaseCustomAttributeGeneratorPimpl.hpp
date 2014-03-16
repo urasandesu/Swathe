@@ -96,7 +96,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             auto const &sig = m_pClass->GetSignature();
             auto const &blob = sig.GetBlob();
             auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-            auto hr = comMetaEmt.DefineCustomAttribute(GetTargetToken(), GetConstructor()->GetToken(), &blob[0], blob.size(), &m_mdt);
+            auto hr = comMetaEmt.DefineCustomAttribute(GetTargetToken(), GetConstructor()->GetToken(), &blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
             CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);

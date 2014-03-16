@@ -60,7 +60,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual IAssembly const *GetAssembly() const = 0;
         virtual IModule const *GetSourceModule() const = 0;
         virtual bool Equals(IModule const *pMod) const = 0;
-        virtual ULONG GetHashCode() const = 0;
+        virtual size_t GetHashCode() const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

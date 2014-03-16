@@ -102,7 +102,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
 #pragma warning(push)
 #pragma warning(disable: 4996)
-            auto hr = ::GetCORVersion(buffer.c_array(), buffer.size(), &length);
+            auto hr = ::GetCORVersion(buffer.c_array(), static_cast<DWORD>(buffer.size()), &length);
 #pragma warning(pop)
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
@@ -130,7 +130,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
 #pragma warning(push)
 #pragma warning(disable: 4996)
-            auto hr = ::GetCORSystemDirectory(buffer.c_array(), buffer.size(), &length);
+            auto hr = ::GetCORSystemDirectory(buffer.c_array(), static_cast<DWORD>(buffer.size()), &length);
 #pragma warning(pop)
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));

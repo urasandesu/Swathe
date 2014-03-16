@@ -355,7 +355,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    ULONG BaseTypeGenerator<ApiHolder>::GetHashCode() const
+    size_t BaseTypeGenerator<ApiHolder>::GetHashCode() const
     {
         return Pimpl()->GetHashCode();
     }

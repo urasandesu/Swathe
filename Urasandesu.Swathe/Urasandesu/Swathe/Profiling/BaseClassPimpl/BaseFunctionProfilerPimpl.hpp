@@ -148,7 +148,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         if (moreSections)
             codeSizeAligned = (codeSizeAligned + 3) & ~3;
         auto headerSize = COR_ILMETHOD::Size(&header, moreSections);
-        auto ehSize = ehClauses.empty() ? 0 : COR_ILMETHOD_SECT_EH::Size(ehClauses.size(), &ehClauses[0]);
+        auto ehSize = ehClauses.empty() ? 0 : COR_ILMETHOD_SECT_EH::Size(static_cast<UINT>(ehClauses.size()), &ehClauses[0]);
         auto totalSize = headerSize + codeSizeAligned + ehSize;
         CPPANONYM_D_LOGW1(L"Header IsFat?: %|1$d|", (headerSize != 1));
         CPPANONYM_D_LOGW1(L"Header Size: %|1$d|", headerSize);
@@ -161,7 +161,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
         auto &comMethodMalloc = pAsmProf->GetCOMMethodMalloc();
         
-        auto *pILBody = reinterpret_cast<BYTE *>(comMethodMalloc.Alloc(totalSize));
+        auto *pILBody = reinterpret_cast<BYTE *>(comMethodMalloc.Alloc(static_cast<ULONG>(totalSize)));
         auto *pBuffer = pILBody;
         pBuffer += COR_ILMETHOD::Emit(headerSize, &header, moreSections, pBuffer);
         
@@ -170,7 +170,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         pBuffer += codeSizeAligned;
         
         if (!ehClauses.empty())
-            pBuffer += COR_ILMETHOD_SECT_EH::Emit(ehSize, ehClauses.size(), &ehClauses[0], false, pBuffer);
+            pBuffer += COR_ILMETHOD_SECT_EH::Emit(ehSize, static_cast<UINT>(ehClauses.size()), &ehClauses[0], false, pBuffer);
         
         
         auto &comProfInfo = m_pProcProf->GetCOMProfilerInfo();

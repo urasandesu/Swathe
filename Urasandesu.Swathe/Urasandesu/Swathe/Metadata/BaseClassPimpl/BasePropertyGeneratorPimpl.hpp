@@ -104,7 +104,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto mdtGetter = m_pClass->GetGetMethod() ? m_pClass->GetGetMethod()->GetToken() : mdTokenNil;
                 CPPANONYM_D_LOGW1(L"Getting Property Generator Token... 1: %|1$s|", name);
                 auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                auto hr = comMetaEmt.DefineProperty(mdtTarget, name.c_str(), attr.Value(), &blob[0], blob.size(), ELEMENT_TYPE_VOID, NULL, 0, mdtSetter, mdtGetter, NULL, &m_mdt);
+                auto hr = comMetaEmt.DefineProperty(mdtTarget, name.c_str(), attr.Value(), &blob[0], static_cast<ULONG>(blob.size()), ELEMENT_TYPE_VOID, NULL, 0, mdtSetter, mdtGetter, NULL, &m_mdt);
                 if (FAILED(hr))
                     BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
             }
@@ -368,7 +368,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BasePropertyGeneratorPimpl<ApiHolder>::GetHashCode() const
+    size_t BasePropertyGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
         return !m_pSrcProp ? HashValue(m_pClass) : m_pSrcProp->GetHashCode();

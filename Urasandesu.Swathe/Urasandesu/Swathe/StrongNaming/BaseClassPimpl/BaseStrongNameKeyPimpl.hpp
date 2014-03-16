@@ -183,7 +183,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
             auto pubKeyBlobSize = 0ul;
             if (!::StrongNameGetPublicKey(NULL, 
                                           const_cast<BYTE *>(&keyPair[0]), 
-                                          keyPair.size(), 
+                                          static_cast<ULONG>(keyPair.size()), 
                                           reinterpret_cast<BYTE **>(&pPubKeyBlob), 
                                           &pubKeyBlobSize))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(::StrongNameErrorInfo()));

@@ -103,7 +103,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 auto const &insts = m_pBodyGen->GetInstructions();
                 auto const *pPrevInst = insts[m_index - 1ul];
-                m_mdt = pPrevInst->GetToken() + pPrevInst->GetSize();
+                m_mdt = static_cast<mdToken>(pPrevInst->GetToken() + pPrevInst->GetSize());
             }
         }
         return m_mdt;
@@ -199,13 +199,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                             auto const &operand = GetOperand();
                             auto const *pMethod = get<IMethod const *>(operand);
                             m_popingCount += pMethod->IsStatic() ? 0 : 1;
-                            m_popingCount += pMethod->GetParameters().size();
+                            m_popingCount += static_cast<UINT>(pMethod->GetParameters().size());
                         }
                         else if (&GetOpCode() == &OpCodes::Newobj)
                         {
                             auto const &operand = GetOperand();
                             auto const *pMethod = get<IMethod const *>(operand);
-                            m_popingCount += pMethod->GetParameters().size();
+                            m_popingCount += static_cast<UINT>(pMethod->GetParameters().size());
                         }
                         else if (&GetOpCode() == &OpCodes::Ret)
                         {
@@ -517,7 +517,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         CPPANONYM_D_LOGW1(L"Getting User String Token... 1: %|1$s|", s);
         auto mds = mdStringNil;
         auto &comMetaEmt = pAsmGen->GetCOMMetaDataEmit();
-        auto hr = comMetaEmt.DefineUserString(s.c_str(), s.size(), &mds);
+        auto hr = comMetaEmt.DefineUserString(s.c_str(), static_cast<ULONG>(s.size()), &mds);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
         CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mds);

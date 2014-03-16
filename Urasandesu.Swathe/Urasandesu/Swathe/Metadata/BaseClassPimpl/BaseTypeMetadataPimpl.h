@@ -153,7 +153,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         IType const *GetSourceType() const;
         bool Equals(IType const *pType) const;
-        ULONG GetHashCode() const;
+        size_t GetHashCode() const;
         void OutDebugInfo() const;
         IType const *MakeArrayType() const;
         IType const *MakeGenericType(vector<IType const *> const &genericArgs) const;

@@ -67,7 +67,11 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
+#ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 40;
+#else
+        static INT const PIMPL_TYPE_SIZE = 48;
+#endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

@@ -125,7 +125,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly() const;  
         IMethodBody const *GetSourceMethodBody() const;
         bool Equals(IMethodBody const *pBody) const;
-        ULONG GetHashCode() const;
+        size_t GetHashCode() const;
         ILocal const *GetLocal(ULONG index, IType const *pLocalType) const;
         IInstructionPtrRange::iterator GetInstructionIterator(ULONG offset) const;
         

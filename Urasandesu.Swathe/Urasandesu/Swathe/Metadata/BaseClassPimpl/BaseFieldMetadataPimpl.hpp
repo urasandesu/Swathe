@@ -203,7 +203,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseFieldMetadataPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseFieldMetadataPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
 
@@ -278,7 +278,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto cplusTypeFlag = 0ul;
         auto const *pDefaultValue = static_cast<UVCP_CONSTANT>(nullptr);
         auto defaultValueLength = 0ul;
-        auto hr = pComMetaImp->GetFieldProps(mdtTarget, &mdtOwner, wzname.c_array(), wzname.size(), &wznameLength, &dwattr, &pSig, &sigLength, &cplusTypeFlag, &pDefaultValue, &defaultValueLength);
+        auto hr = pComMetaImp->GetFieldProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &cplusTypeFlag, &pDefaultValue, &defaultValueLength);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 

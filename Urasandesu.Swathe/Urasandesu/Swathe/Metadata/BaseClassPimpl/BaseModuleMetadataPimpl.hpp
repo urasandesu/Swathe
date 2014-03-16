@@ -94,7 +94,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             auto wzname = array<WCHAR, MAX_SYM_NAME>();
             auto length = 0ul;
             auto mvid = GUID();
-            auto hr = comMetaImp.GetScopeProps(wzname.c_array(), wzname.size(), &length, &mvid);
+            auto hr = comMetaImp.GetScopeProps(wzname.c_array(), static_cast<ULONG>(wzname.size()), &length, &mvid);
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
@@ -167,7 +167,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseModuleMetadataPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseModuleMetadataPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
 

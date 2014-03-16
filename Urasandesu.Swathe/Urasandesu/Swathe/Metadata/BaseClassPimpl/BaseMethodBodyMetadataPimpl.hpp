@@ -309,7 +309,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseMethodBodyMetadataPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseMethodBodyMetadataPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
 
@@ -404,18 +404,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 
             auto dosHeader = IMAGE_DOS_HEADER();
             i = PEGetDOSHeader(i, i_end, dosHeader);
+            _ASSERTE(dosHeader.e_magic == 0x5A4D);
             _ASSERTE(i != i_end);
                 
             auto dosStubBody = array<BYTE, 0x40>();
             i = PEGetData(i, i_end, dosStubBody.size(), dosStubBody.begin());
             _ASSERTE(i != i_end);
                 
-            auto ntHeaders = IMAGE_NT_HEADERS();
-            i = PEGetNTHeaders(i, i_end, ntHeaders);
-            _ASSERTE(i != i_end);
+            {
+                auto signature = DWORD();
+                auto fileHeader = IMAGE_FILE_HEADER();
+                PEGetNTHeadersPrerequisites(i, i_end, signature, fileHeader);
+                _ASSERTE(signature == 0x00004550);
+                if (fileHeader.Machine == IMAGE_FILE_MACHINE_I386)
+                {
+                    auto ntHeaders32 = IMAGE_NT_HEADERS32();
+                    i = PEGetNTHeaders(i, i_end, ntHeaders32);
+                }
+                else
+                {
+                    auto ntHeaders64 = IMAGE_NT_HEADERS64();
+                    i = PEGetNTHeaders(i, i_end, ntHeaders64);
+                }
+                _ASSERTE(i != i_end);
+            }
                 
             auto textSecHeader = IMAGE_SECTION_HEADER();
             i = PEGetSectionHeader(i, i_end, textSecHeader);
+            _ASSERTE(std::string(reinterpret_cast<CHAR *>(&textSecHeader.Name[0])) == std::string(".text"));
             _ASSERTE(i != i_end);
                 
             i = asmStorage.begin();

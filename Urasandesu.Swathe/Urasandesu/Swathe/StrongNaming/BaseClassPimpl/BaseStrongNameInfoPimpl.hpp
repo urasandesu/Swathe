@@ -116,7 +116,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         auto const &keyPair = pSnKey->GetKeyPair();
-        if (!::StrongNameSignatureGenerationEx(path.c_str(), NULL, const_cast<BYTE *>(&keyPair[0]), keyPair.size(), NULL, NULL, 0))
+        if (!::StrongNameSignatureGenerationEx(path.c_str(), NULL, const_cast<BYTE *>(&keyPair[0]), static_cast<ULONG>(keyPair.size()), NULL, NULL, 0))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(::StrongNameErrorInfo()));
     }
 

@@ -163,7 +163,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                             CPPANONYM_D_LOGW(oss.str());
                         }
                         auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                        auto hr = comMetaEmt.GetTokenFromTypeSpec(&blob[0], blob.size(), &m_mdt);
+                        auto hr = comMetaEmt.GetTokenFromTypeSpec(&blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
                         if (FAILED(hr))
                             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
                     }
@@ -814,7 +814,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseTypeGeneratorPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseTypeGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Utilities::HashValue;
         return !m_pSrcType ? HashValue(m_pClass) : m_pSrcType->GetHashCode();

@@ -367,7 +367,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 static void Put(SimpleBlob &sb, CompressedCount<T> const &c)
                 {
                     auto data = array<BYTE, 4>();
-                    auto length = ::CorSigCompressData(c.m_data.size(), data.c_array());
+                    auto length = ::CorSigCompressData(static_cast<ULONG>(c.m_data.size()), data.c_array());
                     _ASSERTE(length != static_cast<ULONG>(-1));
                     for (auto i = data.begin(), i_end = i + length; i != i_end; ++i)
                         sb.Put<COR_SIGNATURE>(*i);
@@ -525,7 +525,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     using std::string;
 
                     auto _s = string(CW2A(s.c_str()));
-                    sb.Put<BYTE>(_s.size());
+                    sb.Put<BYTE>(static_cast<BYTE>(_s.size()));
                     sb.Put(_s.c_str(), _s.size());
                 }
             };
@@ -762,48 +762,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     return pBody->GetAssembly();
                 }
             };
-
-            //struct GetGenericTypeDefinitionVisitor : 
-            //    static_visitor<IType const *>
-            //{
-            //    template<class T>
-            //    IType const *operator ()(T const &v) const
-            //    {
-            //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            //    }
-
-            //    template<>
-            //    IType const *operator ()<IMethod const *>(IMethod const *const &pMethod) const
-            //    {
-            //        auto const *pType = pMethod->GetDeclaringType();
-            //        auto isGenericTypeInstance = pType->IsGenericType() && !pType->IsGenericTypeDefinition();
-            //        return isGenericTypeInstance ? pType->GetDeclaringType() : pType;
-            //    }
-            //};
-
-            //struct GetGenericMethodDefinitionVisitor : 
-            //    static_visitor<IMethod const *>
-            //{
-            //    template<class T>
-            //    IMethod const *operator ()(T const &v) const
-            //    {
-            //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            //    }
-
-            //    template<>
-            //    IMethod const *operator ()<IType const *>(IType const *const &pType) const
-            //    {
-            //        pType->OutDebugInfo();
-            //        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            //    }
-
-            //    template<>
-            //    IMethod const *operator ()<IMethod const *>(IMethod const *const &pMethod) const
-            //    {
-            //        auto isGenericMethodInstance = pMethod->IsGenericMethod() && !pMethod->IsGenericMethodDefinition();
-            //        return isGenericMethodInstance ? pMethod->GetDeclaringMethod() : pMethod;
-            //    }
-            //};
 
             struct GetParameterVisitor : 
                 static_visitor<IParameter const *>
@@ -1324,7 +1282,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                             {
                                 index += _index;
                                 auto const *pAsm = apply_visitor(GetAssemblyVisitor(), provider);
-                                auto const *pMSCorLib = pAsm->GetAssembly(MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB);
+                                auto const *pMSCorLib = pAsm->GetAssembly(MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB, pAsm->GetProcessorArchitectures());
                                 auto const *pMSCorLibDll = pMSCorLib->GetMainModule();
                                 v.m_pRetType = pMSCorLibDll->GetType(MetadataSpecialValues::ToTypeName(kind));
                             }
@@ -1482,7 +1440,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         case TypeKinds::TK_OBJECT:
                             {
                                 auto const *pAsm = apply_visitor(GetAssemblyVisitor(), provider);
-                                auto const *pMSCorLib = pAsm->GetAssembly(MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB);
+                                auto const *pMSCorLib = pAsm->GetAssembly(MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB, pAsm->GetProcessorArchitectures());
                                 auto const *pMSCorLibDll = pMSCorLib->GetMainModule();
                                 pType = pMSCorLibDll->GetType(MetadataSpecialValues::ToTypeName(kind));
                             }

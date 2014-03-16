@@ -110,7 +110,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto const &sig = m_pClass->GetSignature();
                 auto const &blob = sig.GetBlob();
                 auto &comMetaImp = m_pAsm->GetCOMMetaDataImport();
-                auto hr = comMetaImp.FindMethod(GetDeclaringType()->GetToken(), m_name.c_str(), &blob[0], blob.size(), &m_mdt);
+                auto hr = comMetaImp.FindMethod(GetDeclaringType()->GetToken(), m_name.c_str(), &blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
                 if (FAILED(hr))
                     BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
             }
@@ -339,14 +339,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto hr = E_FAIL;
                 do
                 {
-                    hr = comMetaImp.EnumGenericParams(&hEnum, mdtTarget, mdgps.c_array(), mdgps.size(), &count);
+                    hr = comMetaImp.EnumGenericParams(&hEnum, mdtTarget, mdgps.c_array(), static_cast<ULONG>(mdgps.size()), &count);
                     if (FAILED(hr))
                         BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
                     m_genericArgs.reserve(m_genericArgs.size() + count);
                     for (auto i = 0u; i < count; ++i)
                     {
-                        auto pGenericArg = m_pAsm->GetType(mdgps[i], TypeKinds::TK_MVAR, m_genericArgs.size(), false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IMethod const *>(m_pClass));
+                        auto pGenericArg = m_pAsm->GetType(mdgps[i], TypeKinds::TK_MVAR, static_cast<ULONG>(m_genericArgs.size()), false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IMethod const *>(m_pClass));
                         m_genericArgs.push_back(pGenericArg);
                     }
                 } while (0 < count);
@@ -566,7 +566,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    ULONG BaseMethodMetadataPimpl<ApiHolder>::GetHashCode() const
+    size_t BaseMethodMetadataPimpl<ApiHolder>::GetHashCode() const
     {
         using Urasandesu::CppAnonym::Collections::SequenceHashValue;
         using Urasandesu::CppAnonym::Utilities::HashValue;
@@ -753,7 +753,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
         auto sigLength = 0ul;
         auto dwimplFlags = 0ul;
-        auto hr = pComMetaImp->GetMethodProps(mdtTarget, &mdtOwner, wzname.c_array(), wzname.size(), &wznameLength, &dwattr, &pSig, &sigLength, &codeRva, &dwimplFlags);
+        auto hr = pComMetaImp->GetMethodProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &codeRva, &dwimplFlags);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
@@ -806,7 +806,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto wznameLength = 0ul;
         auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
         auto sigLength = 0ul;
-        auto hr = pComMetaImp->GetMemberRefProps(mdtTarget, &mdtOwner, wzname.c_array(), wzname.size(), &wznameLength, &pSig, &sigLength);
+        auto hr = pComMetaImp->GetMemberRefProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &pSig, &sigLength);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 

@@ -78,7 +78,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual PropertyProvider const &GetMember() const = 0;
         virtual IProperty const *GetSourceProperty() const = 0;
         virtual bool Equals(IProperty const *pProp) const = 0;
-        virtual ULONG GetHashCode() const = 0;
+        virtual size_t GetHashCode() const = 0;
         virtual IAssembly const *GetAssembly() const = 0;
         virtual IParameter const *GetParameter(ULONG position, IType const *pParamType) const = 0;
     };

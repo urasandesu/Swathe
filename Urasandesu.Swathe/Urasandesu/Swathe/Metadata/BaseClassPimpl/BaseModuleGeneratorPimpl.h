@@ -91,7 +91,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly() const;
         IModule const *GetSourceModule() const;
         bool Equals(IModule const *pMod) const;
-        ULONG GetHashCode() const;
+        size_t GetHashCode() const;
         type_generator_label_type *DefineType(wstring const &fullName, TypeAttributes const &attr);
     
     private:

@@ -149,9 +149,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         SIZE_T RegisterCustomAttributeGeneratorCore(TempPtr<custom_attribute_generator_label_type> &pCaGen);
 
 #ifdef _DEBUG
+#ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 1280;
 #else
+        static INT const PIMPL_TYPE_SIZE = 2560;
+#endif
+#else
+#ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 704;
+#else
+        static INT const PIMPL_TYPE_SIZE = 1408;
+#endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;

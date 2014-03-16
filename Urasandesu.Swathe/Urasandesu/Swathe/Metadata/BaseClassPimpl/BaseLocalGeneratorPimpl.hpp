@@ -79,7 +79,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         // In this case, GetToken returns the index of local variables.
         if (IsNilToken(m_mdt))
         {
-            m_mdt = m_pClass->GetLocalIndex();
+            m_mdt = static_cast<mdToken>(m_pClass->GetLocalIndex());
         }
         return m_mdt;
     }

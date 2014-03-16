@@ -101,7 +101,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         MethodProvider const &GetMember() const;
         IMethod const *GetSourceMethod() const;
         bool Equals(IMethod const *pMethod) const;
-        ULONG GetHashCode() const;
+        size_t GetHashCode() const;
         //IDispenser const *GetDispenser() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         void OutDebugInfo() const;
@@ -124,7 +124,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
+#ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 128;
+#else
+        static INT const PIMPL_TYPE_SIZE = 216;
+#endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
