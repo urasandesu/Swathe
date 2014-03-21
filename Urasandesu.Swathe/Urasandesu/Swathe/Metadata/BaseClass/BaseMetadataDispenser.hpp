@@ -115,9 +115,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    bool BaseMetadataDispenser<ApiHolder>::IsCOMMetaDataDispenserPrepared() const
+    void BaseMetadataDispenser<ApiHolder>::SetCOMMetaDataDispenser(IMetaDataDispenserEx *pComMetaDisp)
     {
-        return Pimpl()->IsCOMMetaDataDispenserPrepared();
+        Pimpl()->SetCOMMetaDataDispenser(pComMetaDisp);
     }
 
     template<class ApiHolder>    

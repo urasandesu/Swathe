@@ -64,6 +64,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         BaseRuntimeHostPimpl(runtime_host_label_type *pClass);
         ~BaseRuntimeHostPimpl();
 
+        void Initialize(host_info_label_type *pHost);
+        wstring const &GetRequestedVersion() const;
         wstring const &GetCORVersion() const;
         path const &GetCORSystemDirectoryPath() const;
         template<class Info> Info *GetInfo() const;
@@ -71,10 +73,12 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     private:
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;
-        void Initialize(host_info_label_type const *pHost);
+        void SetRequestedVersion(wstring const &reqVersion);
         template<class Info> TempPtr<Info> NewInfo() const;
         template<class Info> void RegisterInfo(TempPtr<Info> &pInfo);
         template<class Info> bool TryGetInfo(Info *&pExistingInfo) const;
+
+        ICLRRuntimeInfo &GetCOMRuntimeInfo() const;
 
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
@@ -88,13 +92,14 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
         mutable runtime_host_label_type *m_pClass;
-        host_info_label_type const *m_pHost;
-        mutable bool m_corVersionInitialized;
+        host_info_label_type *m_pHost;
+        wstring m_reqVersion;
+        mutable bool m_corVersionInit;
         mutable wstring m_corVersion;
-        mutable bool m_corSysDirPathInitialized;
+        mutable bool m_corSysDirPathInit;
         mutable path m_corSysDirPath;
         mutable unordered_map<TypeInfo, SIZE_T, TypeInfoHash, TypeInfoEqualTo> m_infoToIndex;
-        
+        mutable ATL::CComPtr<ICLRRuntimeInfo> m_pComRuntimeInfo;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 

@@ -73,6 +73,12 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::Initialize(runtime_host_label_type *pRuntime)
+    {
+        Pimpl()->Initialize(pRuntime);
+    }
+
+    template<class ApiHolder>    
     TempPtr<typename BaseProfilingInfo<ApiHolder>::process_profiler_label_type> BaseProfilingInfo<ApiHolder>::AttachToCurrentProcess(IUnknown *pComProfInfoUnk)
     {
         return Pimpl()->AttachToCurrentProcess(pComProfInfoUnk);
@@ -94,12 +100,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     typename BaseProfilingInfo<ApiHolder>::runtime_host_label_type const *BaseProfilingInfo<ApiHolder>::GetRuntime() const
     {
         return Pimpl()->GetRuntime();
-    }
-
-    template<class ApiHolder>    
-    void BaseProfilingInfo<ApiHolder>::Initialize(runtime_host_label_type const *pRuntime)
-    {
-        Pimpl()->Initialize(pRuntime);
     }
 
     template<class ApiHolder>    

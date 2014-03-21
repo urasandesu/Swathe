@@ -38,7 +38,15 @@
 #include <Urasandesu/Swathe/AutoGen/StrongNaming/DefaultClassPimplApiHolder/DefaultStrongNameKeyPimplApiHolder.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_STRONGNAMING_DEFAULTCLASSAPIHOLDER_DEFAULTSTRONGNAMEINFOAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/StrongNaming/DefaultClassApiHolder/DefaultStrongNameInfoApiHolder.h>
+#endif
 
+#ifndef URASANDESU_SWATHE_STRONGNAMING_BASECLASS_BASESTRONGNAMEINFO_H
+#include <Urasandesu/Swathe/StrongNaming/BaseClass/BaseStrongNameInfo.h>
+#endif
+
+extern template class Urasandesu::Swathe::StrongNaming::BaseClass::BaseStrongNameInfo<>;
 template class Urasandesu::Swathe::StrongNaming::BaseClassPimpl::BaseStrongNameKeyPimpl<>;
 SWATHE_DECLARE_BASE_STRONG_NAME_KEY_PIMPL_ADDITIONAL_INSTANTIATION
 

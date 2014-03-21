@@ -73,6 +73,12 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     
     
     template<class ApiHolder>    
+    void BasePortableExecutableInfo<ApiHolder>::Initialize(runtime_host_label_type *pRuntime)
+    {
+        Pimpl()->Initialize(pRuntime);
+    }
+    
+    template<class ApiHolder>    
     AutoPtr<typename BasePortableExecutableInfo<ApiHolder>::portable_executable_writer_label_type> BasePortableExecutableInfo<ApiHolder>::CreateWriter(IMetaDataEmit2 *pComMetaEmt, ComImageFlags const &imageFlags, CeeCreateFlags const &createFlags) const
     {
         return Pimpl()->CreateWriter(pComMetaEmt, imageFlags, createFlags);
@@ -84,12 +90,6 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         return Pimpl()->CreateReader(pComMetaImp, asmPath);
     }
 
-    template<class ApiHolder>    
-    void BasePortableExecutableInfo<ApiHolder>::Initialize(runtime_host_label_type const *pRuntime)
-    {
-        Pimpl()->Initialize(pRuntime);
-    }
-    
     template<class ApiHolder>    
     ICeeFileGen &BasePortableExecutableInfo<ApiHolder>::GetCOMCeeFileGen()
     {

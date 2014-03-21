@@ -63,6 +63,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         BaseStrongNameInfoPimpl(strong_name_info_label_type *pClass);
         ~BaseStrongNameInfoPimpl();
 
+        void Initialize(runtime_host_label_type *pRuntime);
         AutoPtr<IStrongNameKey const> NewStrongNameKey(wstring const &path) const;
         AutoPtr<IStrongNameKey const> NewStrongNameKey(PublicKeyBlob const &pubKeyBlob, DWORD pubKeyBlobSize) const;
         AutoPtr<IStrongNameKey const> NewStrongNameKeyWithToken(void const *pToken, DWORD tokenSize) const;
@@ -71,7 +72,9 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     private:
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;
-        void Initialize(runtime_host_label_type const *pRuntime);
+        AutoPtr<strong_name_key_label_type> NewStrongNameKeyCore() const;
+
+        ICLRStrongName &GetCOMStrongName() const;
 
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
@@ -85,7 +88,8 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
         mutable strong_name_info_label_type *m_pClass;
-        runtime_host_label_type const *m_pRuntime;
+        runtime_host_label_type *m_pRuntime;
+        mutable ATL::CComPtr<ICLRStrongName> m_pComStrongName;
         
     };
 

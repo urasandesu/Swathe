@@ -61,23 +61,25 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         BaseHostInfo();
         ~BaseHostInfo();
 
+        void Initialize(host_info_label_type *pHost);
         static host_info_label_type *CreateHost();
         runtime_host_label_type const *GetRuntime(std::wstring const &version) const;
     
     private:
         host_info_pimpl_label_type *Pimpl();
         host_info_pimpl_label_type const *Pimpl() const;
-        void Initialize(host_info_label_type const *pHost);
         void RegisterHost(TempPtr<host_info_label_type> &pHost);
         void RegisterRuntime(TempPtr<runtime_host_label_type> &pRuntime);
+
+        ICLRMetaHost &GetCOMMetaHost() const;
 
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 96;
+        static INT const PIMPL_TYPE_SIZE = 104;
 #else
-        static INT const PIMPL_TYPE_SIZE = 192;
+        static INT const PIMPL_TYPE_SIZE = 200;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

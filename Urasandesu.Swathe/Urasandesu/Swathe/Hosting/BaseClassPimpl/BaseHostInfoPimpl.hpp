@@ -77,6 +77,16 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     
     
     
+    template<class ApiHolder>
+    void BaseHostInfoPimpl<ApiHolder>::Initialize(host_info_label_type *pHost)
+    {
+        _ASSERT(!m_pHost);
+        _ASSERT(pHost);
+        m_pHost = pHost;
+    }
+    
+    
+    
     template<class ApiHolder>    
     typename BaseHostInfoPimpl<ApiHolder>::host_info_label_type *BaseHostInfoPimpl<ApiHolder>::CreateHost()
     {
@@ -86,6 +96,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     }
 
 
+    
     template<class ApiHolder>
     typename BaseHostInfoPimpl<ApiHolder>::runtime_host_label_type const *BaseHostInfoPimpl<ApiHolder>::GetRuntime(wstring const &version) const
     {
@@ -94,22 +105,24 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         if (version.empty())
             BOOST_THROW_EXCEPTION(CppAnonymArgumentException(L"The parameter must be non-empty.", L"version"));
 
+        auto pNewRuntime = NewRuntime(version);
+
         auto *pExistingRuntime = static_cast<runtime_host_label_type *>(nullptr);
         if (!TryGetRuntime(version, pExistingRuntime))
         {
-            auto pNewRuntime = NewRuntime(version);
+            //auto pNewRuntime = NewRuntime(version);
 
-            auto const &corVersion = pNewRuntime->GetCORVersion();
-            if (corVersion != version)
-            {
-                auto what = wstring();
-                what += L"The version '";
-                what += version;
-                what += L"' is not supported. For your information, this process runs at version '";
-                what += corVersion;
-                what += L"'.";
-                BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(what));
-            }
+            //auto const &corVersion = pNewRuntime->GetCORVersion();
+            //if (corVersion != version)
+            //{
+            //    auto what = wstring();
+            //    what += L"The version '";
+            //    what += version;
+            //    what += L"' is not supported. For your information, this process runs at version '";
+            //    what += corVersion;
+            //    what += L"'.";
+            //    BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(what));
+            //}
 
             pNewRuntime.Persist();
             return pNewRuntime.Get();
@@ -121,16 +134,6 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     }
 
 
-    
-    template<class ApiHolder>
-    void BaseHostInfoPimpl<ApiHolder>::Initialize(host_info_label_type const *pHost)
-    {
-        _ASSERT(m_pHost == nullptr);
-        _ASSERT(pHost != nullptr);
-        m_pHost = pHost;
-    }
-    
-    
     
     template<class ApiHolder>    
     TempPtr<typename BaseHostInfoPimpl<ApiHolder>::host_info_label_type> typename BaseHostInfoPimpl<ApiHolder>::NewHost()
@@ -166,6 +169,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         pRuntime->Initialize(m_pClass);
         auto handler = runtime_host_persisted_handler_label_type(m_pClass);
         provider.AddPersistedHandler(pRuntime, handler);
+        pRuntime->SetRequestedVersion(version);
         return pRuntime;
     }
     
@@ -178,6 +182,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         auto &provider = pBaseProvider->FirstProviderOf<runtime_host_label_type>();
         m_versionToIndex[pRuntime->GetCORVersion()] = provider.RegisterObject(pRuntime);
     }
+
 
 
     template<class ApiHolder>    
@@ -195,6 +200,22 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
             pExistingRuntime = provider.GetObject(index);
             return true;
         }
+    }
+
+
+
+    template<class ApiHolder>    
+    ICLRMetaHost &BaseHostInfoPimpl<ApiHolder>::GetCOMMetaHost() const
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (!m_pComMetaHost.p)
+        {
+            auto hr = ::CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, reinterpret_cast<LPVOID *>(&m_pComMetaHost));
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        }
+        return *m_pComMetaHost;
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 

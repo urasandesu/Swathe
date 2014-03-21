@@ -75,9 +75,32 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    void BaseMetadataInfoPimpl<ApiHolder>::Initialize(runtime_host_label_type *pRuntime)
+    {
+        _ASSERTE(!m_pRuntime);
+        _ASSERTE(pRuntime);
+        m_pRuntime = pRuntime;
+    }
+
+
+
+    template<class ApiHolder>    
     typename BaseMetadataInfoPimpl<ApiHolder>::metadata_dispenser_label_type *BaseMetadataInfoPimpl<ApiHolder>::CreateDispenser() const
     {
+        using ATL::CComPtr;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
         auto pNewDisp = NewDispenser();
+        
+        auto &comRuntimeInfo = m_pRuntime->GetCOMRuntimeInfo();
+        
+        auto pComMetaDisp = CComPtr<IMetaDataDispenserEx>();
+        auto hr = comRuntimeInfo.GetInterface(CLSID_CorMetaDataDispenser, IID_IMetaDataDispenserEx, reinterpret_cast<LPVOID *>(&pComMetaDisp));
+        if (FAILED(hr)) 
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        
+        pNewDisp->SetCOMMetaDataDispenser(&*pComMetaDisp);
+        
         pNewDisp.Persist();
         return pNewDisp.Get();
     }
@@ -130,16 +153,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto &provider = pBaseProvider->FirstProviderOf<metadata_dispenser_label_type>();
         auto &disp = *pDisp;
         m_dispToIndex[&disp] = provider.RegisterObject(pDisp);
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseMetadataInfoPimpl<ApiHolder>::Initialize(runtime_host_label_type const *pRuntime)
-    {
-        _ASSERTE(m_pRuntime == nullptr);
-        _ASSERTE(pRuntime != nullptr);
-        m_pRuntime = pRuntime;
     }
 
 

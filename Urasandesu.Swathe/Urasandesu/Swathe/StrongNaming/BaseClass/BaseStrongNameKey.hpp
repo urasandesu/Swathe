@@ -73,6 +73,12 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     
     
     template<class ApiHolder>    
+    void BaseStrongNameKey<ApiHolder>::Initialize(strong_name_info_label_type *pSnInfo)
+    {
+        Pimpl()->Initialize(pSnInfo);
+    }
+
+    template<class ApiHolder>    
     vector<BYTE> const &BaseStrongNameKey<ApiHolder>::GetKeyPair() const
     {
         return Pimpl()->GetKeyPair();

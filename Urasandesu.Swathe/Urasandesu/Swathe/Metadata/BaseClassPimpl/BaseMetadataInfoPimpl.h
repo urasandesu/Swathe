@@ -59,6 +59,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BaseMetadataInfoPimpl(metadata_info_label_type *pClass);
         ~BaseMetadataInfoPimpl();
 
+        void Initialize(runtime_host_label_type *pRuntime);
         metadata_dispenser_label_type *CreateDispenser() const;
         void UnloadDispenser(metadata_dispenser_label_type *pDisp) const;
         runtime_host_label_type const *GetRuntime() const;
@@ -66,7 +67,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     private:
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;
-        void Initialize(runtime_host_label_type const *pRuntime);
         TempPtr<metadata_dispenser_label_type> NewDispenser() const;
         void RegisterDispenser(TempPtr<metadata_dispenser_label_type> &pDisp);
 
@@ -166,7 +166,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
         mutable metadata_info_label_type *m_pClass;
-        runtime_host_label_type const *m_pRuntime;
+        runtime_host_label_type *m_pRuntime;
         mutable unordered_map<metadata_dispenser_label_type *, SIZE_T> m_dispToIndex;
     };
 

@@ -63,6 +63,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         BaseRuntimeHost();
         ~BaseRuntimeHost();
 
+        void Initialize(host_info_label_type *pHost);
+        wstring const &GetRequestedVersion() const;
         wstring const &GetCORVersion() const;
         path const &GetCORSystemDirectoryPath() const;
         template<class Info> Info *GetInfo() const;
@@ -70,16 +72,18 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     private:
         runtime_host_pimpl_label_type *Pimpl();
         runtime_host_pimpl_label_type const *Pimpl() const;
-        void Initialize(host_info_label_type const *pHost);
+        void SetRequestedVersion(wstring const &reqVersion);
         template<class Info> void RegisterInfo(TempPtr<Info> &pInfo);
+
+        ICLRRuntimeInfo &GetCOMRuntimeInfo() const;
 
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 248;
+        static INT const PIMPL_TYPE_SIZE = 280;
 #else
-        static INT const PIMPL_TYPE_SIZE = 464;
+        static INT const PIMPL_TYPE_SIZE = 504;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

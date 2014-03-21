@@ -68,6 +68,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         BaseFusionInfoPimpl(fusion_info_label_type *pClass);
         ~BaseFusionInfoPimpl();
 
+        void Initialize(runtime_host_label_type *pRuntime);
         AutoPtr<assembly_cache_label_type> NewAssemblyCache() const;
         AutoPtr<assembly_name_label_type> NewAssemblyName(wstring const &displayName, NewAssemblyNameFlags const &flags) const;
         AutoPtr<assembly_name_range_label_type> EnumerateAssemblyName(AutoPtr<assembly_name_label_type> const &pCondition, AssemblyCacheFlags const &flags) const;
@@ -75,7 +76,6 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     private:
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;
-        void Initialize(runtime_host_label_type const *pRuntime);
         void Finalize();
         AutoPtr<assembly_cache_label_type> NewAssemblyCacheCore() const;
         AutoPtr<assembly_info_label_type> NewAssemblyInfo(ULONGLONG assemblySizeInKB, path const &assemblyPath) const;

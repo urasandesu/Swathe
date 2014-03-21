@@ -40,6 +40,14 @@
 #include <Urasandesu/Swathe/Hosting/RuntimeHostFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_CLASSPIMPLLABEL_RUNTIMEHOSTPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Hosting/ClassPimplLabel/RuntimeHostPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_HOSTING_RUNTIMEHOSTPIMPLFWD_H
+#include <Urasandesu/Swathe/Hosting/RuntimeHostPimplFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_CLASSPERSISTEDHANDLERLABEL_RUNTIMEHOSTPERSISTEDHANDLERLABEL_H
 #include <Urasandesu/Swathe/AutoGen/Hosting/ClassPersistedHandlerLabel/RuntimeHostPersistedHandlerLabel.h>
 #endif
@@ -56,6 +64,8 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
         using namespace Urasandesu::CppAnonym::Traits;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassLabel::RuntimeHostLabel;
         using Urasandesu::Swathe::Hosting::RuntimeHost;
+        using Urasandesu::Swathe::AutoGen::Hosting::ClassPimplLabel::RuntimeHostPimplLabel;
+        using Urasandesu::Swathe::Hosting::RuntimeHostPimpl;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassPersistedHandlerLabel::RuntimeHostPersistedHandlerLabel;
         using Urasandesu::Swathe::Hosting::RuntimeHostPersistedHandler;
         using mpl::map;
@@ -66,6 +76,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
             typedef map<
                 pair<Nil, Nil>,
                 pair<RuntimeHostLabel, RuntimeHost>,
+                pair<RuntimeHostPimplLabel, RuntimeHostPimpl>,
                 pair<RuntimeHostPersistedHandlerLabel, RuntimeHostPersistedHandler>
             > api_cartridges;
         };

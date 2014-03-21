@@ -46,8 +46,8 @@ struct OleCom
         ::_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); 
         //::_CrtSetBreakAlloc(4540);
 #endif
-        ::CoInitialize(NULL); 
     }
     ~OleCom() 
-    { ::CoUninitialize(); }
+    { 
+    }
 } olecom;

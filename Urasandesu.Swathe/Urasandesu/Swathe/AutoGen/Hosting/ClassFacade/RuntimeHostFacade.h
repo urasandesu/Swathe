@@ -48,6 +48,26 @@
 #include <Urasandesu/Swathe/Hosting/HostInfoPimplFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_CLASSPIMPLLABEL_PROFILINGINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Profiling/ClassPimplLabel/ProfilingInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSPIMPLLABEL_METADATAINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/ClassPimplLabel/MetadataInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_CLASSPIMPLLABEL_PORTABLEEXECUTABLEINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Hosting/ClassPimplLabel/PortableExecutableInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_FUSION_CLASSPIMPLLABEL_FUSIONINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Fusion/ClassPimplLabel/FusionInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_STRONGNAMING_CLASSPIMPLLABEL_STRONGNAMEINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/StrongNaming/ClassPimplLabel/StrongNameInfoPimplLabel.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_CLASSLABEL_PROFILINGINFOLABEL_H
 #include <Urasandesu/Swathe/AutoGen/Profiling/ClassLabel/ProfilingInfoLabel.h>
 #endif
@@ -107,6 +127,11 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
         using Urasandesu::Swathe::Hosting::RuntimeHostPimpl;
         using Urasandesu::Swathe::Hosting::RuntimeHost;
         using Urasandesu::Swathe::Hosting::HostInfoPimpl;
+        using Urasandesu::Swathe::AutoGen::Profiling::ClassPimplLabel::ProfilingInfoPimplLabel;
+        using Urasandesu::Swathe::AutoGen::Metadata::ClassPimplLabel::MetadataInfoPimplLabel;
+        using Urasandesu::Swathe::AutoGen::Hosting::ClassPimplLabel::PortableExecutableInfoPimplLabel;
+        using Urasandesu::Swathe::AutoGen::Fusion::ClassPimplLabel::FusionInfoPimplLabel;
+        using Urasandesu::Swathe::AutoGen::StrongNaming::ClassPimplLabel::StrongNameInfoPimplLabel;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassLabel::ProfilingInfoLabel;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassPersistedHandlerLabel::ProfilingInfoPersistedHandlerLabel;
         using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::MetadataInfoLabel;
@@ -129,6 +154,11 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
             typedef RuntimeHost class_type;
             typedef RuntimeHostPimpl class_pimpl_type;
             typedef RuntimeHostPimpl runtime_host_pimpl_label_type;
+            typedef typename RuntimeHostApiAt<ApiHolder, ProfilingInfoPimplLabel>::type profiling_info_pimpl_label_type;
+            typedef typename RuntimeHostApiAt<ApiHolder, MetadataInfoPimplLabel>::type metadata_info_pimpl_label_type;
+            typedef typename RuntimeHostApiAt<ApiHolder, PortableExecutableInfoPimplLabel>::type portable_executable_info_pimpl_label_type;
+            typedef typename RuntimeHostApiAt<ApiHolder, FusionInfoPimplLabel>::type fusion_info_pimpl_label_type;
+            typedef typename RuntimeHostApiAt<ApiHolder, StrongNameInfoPimplLabel>::type strong_name_info_pimpl_label_type;
             typedef typename RuntimeHostApiAt<ApiHolder, ProfilingInfoLabel>::type profiling_info_label_type;
             typedef typename RuntimeHostApiAt<ApiHolder, ProfilingInfoPersistedHandlerLabel>::type profiling_info_persisted_handler_label_type;
             typedef typename RuntimeHostApiAt<ApiHolder, MetadataInfoLabel>::type metadata_info_label_type;
@@ -235,6 +265,11 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
     friend typename class_pimpl_type; \
     typedef typename facade::runtime_host_pimpl_label_type runtime_host_pimpl_label_type; \
     friend typename runtime_host_pimpl_label_type; \
+    typedef typename facade::profiling_info_pimpl_label_type profiling_info_pimpl_label_type; \
+    typedef typename facade::metadata_info_pimpl_label_type metadata_info_pimpl_label_type; \
+    typedef typename facade::portable_executable_info_pimpl_label_type portable_executable_info_pimpl_label_type; \
+    typedef typename facade::fusion_info_pimpl_label_type fusion_info_pimpl_label_type; \
+    typedef typename facade::strong_name_info_pimpl_label_type strong_name_info_pimpl_label_type; \
     typedef typename facade::profiling_info_label_type profiling_info_label_type; \
     typedef typename facade::profiling_info_persisted_handler_label_type profiling_info_persisted_handler_label_type; \
     typedef typename facade::metadata_info_label_type metadata_info_label_type; \
@@ -245,6 +280,11 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
     typedef typename facade::fusion_info_persisted_handler_label_type fusion_info_persisted_handler_label_type; \
     typedef typename facade::strong_name_info_label_type strong_name_info_label_type; \
     typedef typename facade::strong_name_info_persisted_handler_label_type strong_name_info_persisted_handler_label_type; \
+    friend typename profiling_info_pimpl_label_type; \
+    friend typename metadata_info_pimpl_label_type; \
+    friend typename portable_executable_info_pimpl_label_type; \
+    friend typename fusion_info_pimpl_label_type; \
+    friend typename strong_name_info_pimpl_label_type; \
     friend typename profiling_info_label_type; \
     friend typename profiling_info_persisted_handler_label_type; \
     friend typename metadata_info_label_type; \

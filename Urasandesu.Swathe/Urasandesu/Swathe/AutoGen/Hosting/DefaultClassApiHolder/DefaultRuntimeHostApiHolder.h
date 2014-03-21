@@ -112,6 +112,46 @@
 #include <Urasandesu/Swathe/StrongNaming/StrongNameInfoPersistedHandlerFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_CLASSPIMPLLABEL_PROFILINGINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Profiling/ClassPimplLabel/ProfilingInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_PROFILINGINFOPIMPLFWD_H
+#include <Urasandesu/Swathe/Profiling/ProfilingInfoPimplFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSPIMPLLABEL_METADATAINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/ClassPimplLabel/MetadataInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METADATAINFOPIMPLFWD_H
+#include <Urasandesu/Swathe/Metadata/MetadataInfoPimplFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_CLASSPIMPLLABEL_PORTABLEEXECUTABLEINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Hosting/ClassPimplLabel/PortableExecutableInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_HOSTING_PORTABLEEXECUTABLEINFOPIMPLFWD_H
+#include <Urasandesu/Swathe/Hosting/PortableExecutableInfoPimplFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_FUSION_CLASSPIMPLLABEL_FUSIONINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Fusion/ClassPimplLabel/FusionInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_FUSION_FUSIONINFOPIMPLFWD_H
+#include <Urasandesu/Swathe/Fusion/FusionInfoPimplFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_STRONGNAMING_CLASSPIMPLLABEL_STRONGNAMEINFOPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/StrongNaming/ClassPimplLabel/StrongNameInfoPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_STRONGNAMING_STRONGNAMEINFOPIMPLFWD_H
+#include <Urasandesu/Swathe/StrongNaming/StrongNameInfoPimplFwd.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting { namespace DefaultClassApiHolder { 
 
     namespace DefaultRuntimeHostApiHolderDetail {
@@ -138,6 +178,16 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
         using Urasandesu::Swathe::StrongNaming::StrongNameInfo;
         using Urasandesu::Swathe::AutoGen::StrongNaming::ClassPersistedHandlerLabel::StrongNameInfoPersistedHandlerLabel;
         using Urasandesu::Swathe::StrongNaming::StrongNameInfoPersistedHandler;
+        using Urasandesu::Swathe::AutoGen::Profiling::ClassPimplLabel::ProfilingInfoPimplLabel;
+        using Urasandesu::Swathe::Profiling::ProfilingInfoPimpl;
+        using Urasandesu::Swathe::AutoGen::Metadata::ClassPimplLabel::MetadataInfoPimplLabel;
+        using Urasandesu::Swathe::Metadata::MetadataInfoPimpl;
+        using Urasandesu::Swathe::AutoGen::Hosting::ClassPimplLabel::PortableExecutableInfoPimplLabel;
+        using Urasandesu::Swathe::Hosting::PortableExecutableInfoPimpl;
+        using Urasandesu::Swathe::AutoGen::Fusion::ClassPimplLabel::FusionInfoPimplLabel;
+        using Urasandesu::Swathe::Fusion::FusionInfoPimpl;
+        using Urasandesu::Swathe::AutoGen::StrongNaming::ClassPimplLabel::StrongNameInfoPimplLabel;
+        using Urasandesu::Swathe::StrongNaming::StrongNameInfoPimpl;
         using mpl::map;
         using mpl::pair;
 
@@ -153,7 +203,12 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
                 pair<FusionInfoLabel, FusionInfo>,
                 pair<FusionInfoPersistedHandlerLabel, FusionInfoPersistedHandler>,
                 pair<StrongNameInfoLabel, StrongNameInfo>,
-                pair<StrongNameInfoPersistedHandlerLabel, StrongNameInfoPersistedHandler>
+                pair<StrongNameInfoPersistedHandlerLabel, StrongNameInfoPersistedHandler>,
+                pair<ProfilingInfoPimplLabel, ProfilingInfoPimpl>,
+                pair<MetadataInfoPimplLabel, MetadataInfoPimpl>,
+                pair<PortableExecutableInfoPimplLabel, PortableExecutableInfoPimpl>,
+                pair<FusionInfoPimplLabel, FusionInfoPimpl>,
+                pair<StrongNameInfoPimplLabel, StrongNameInfoPimpl>
             > api_cartridges;
         };
     

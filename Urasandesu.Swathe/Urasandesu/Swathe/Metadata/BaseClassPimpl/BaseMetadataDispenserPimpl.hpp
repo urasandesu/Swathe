@@ -152,17 +152,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseMetadataDispenserPimpl<ApiHolder>::IsCOMMetaDataDispenserPrepared() const
+    void BaseMetadataDispenserPimpl<ApiHolder>::SetCOMMetaDataDispenser(IMetaDataDispenserEx *pComMetaDisp)
     {
-        if (!m_pComMetaDisp.p)
-        {
-            auto hr = ::CoCreateInstance(CLSID_CorMetaDataDispenser, NULL, CLSCTX_INPROC_SERVER, 
-                                         IID_IMetaDataDispenserEx, 
-                                         reinterpret_cast<void **>(&m_pComMetaDisp));
-            if (FAILED(hr) || !m_pComMetaDisp.p)
-                return false;
-        }
-        return true;
+        _ASSERTE(!m_pComMetaDisp.p);
+        _ASSERTE(pComMetaDisp);
+        m_pComMetaDisp = pComMetaDisp;
     }
 
 
@@ -458,16 +452,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMetaDataDispenserEx &BaseMetadataDispenserPimpl<ApiHolder>::GetCOMMetaDataDispenser() const
     {
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-
-        if (m_pComMetaDisp.p == nullptr)
-        {
-            auto hr = ::CoCreateInstance(CLSID_CorMetaDataDispenser, NULL, CLSCTX_INPROC_SERVER, 
-                                         IID_IMetaDataDispenserEx, 
-                                         reinterpret_cast<void **>(&m_pComMetaDisp));
-            if (FAILED(hr))
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-        }
+        _ASSERTE(m_pComMetaDisp.p);
         return *m_pComMetaDisp;
     }
 

@@ -73,6 +73,12 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     
     
     template<class ApiHolder>    
+    void BaseStrongNameInfo<ApiHolder>::Initialize(runtime_host_label_type *pRuntime)
+    {
+        Pimpl()->Initialize(pRuntime);
+    }
+
+    template<class ApiHolder>    
     AutoPtr<IStrongNameKey const> BaseStrongNameInfo<ApiHolder>::NewStrongNameKey(wstring const &path) const
     {
         return Pimpl()->NewStrongNameKey(path);
@@ -97,9 +103,9 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     }
 
     template<class ApiHolder>    
-    void BaseStrongNameInfo<ApiHolder>::Initialize(runtime_host_label_type const *pRuntime)
+    ICLRStrongName &BaseStrongNameInfo<ApiHolder>::GetCOMStrongName() const
     {
-        Pimpl()->Initialize(pRuntime);
+        return Pimpl()->GetCOMStrongName();
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace BaseClass { 

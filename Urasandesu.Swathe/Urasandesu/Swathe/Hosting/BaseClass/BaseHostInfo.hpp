@@ -72,10 +72,11 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
     
     
-    
-    
-
-
+    template<class ApiHolder>
+    void BaseHostInfo<ApiHolder>::Initialize(host_info_label_type *pHost)
+    {
+        Pimpl()->Initialize(pHost);
+    }
 
     template<class ApiHolder>    
     typename BaseHostInfo<ApiHolder>::host_info_label_type *BaseHostInfo<ApiHolder>::CreateHost()
@@ -90,12 +91,6 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     }
 
     template<class ApiHolder>
-    void BaseHostInfo<ApiHolder>::Initialize(host_info_label_type const *pHost)
-    {
-        Pimpl()->Initialize(pHost);
-    }
-
-    template<class ApiHolder>
     void BaseHostInfo<ApiHolder>::RegisterHost(TempPtr<host_info_label_type> &pHost)
     {
         Pimpl()->RegisterHost(pHost);
@@ -105,6 +100,12 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     void BaseHostInfo<ApiHolder>::RegisterRuntime(TempPtr<runtime_host_label_type> &pRuntime)
     {
         Pimpl()->RegisterRuntime(pRuntime);
+    }
+
+    template<class ApiHolder>
+    ICLRMetaHost &BaseHostInfo<ApiHolder>::GetCOMMetaHost() const
+    {
+        return Pimpl()->GetCOMMetaHost();
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClass { 

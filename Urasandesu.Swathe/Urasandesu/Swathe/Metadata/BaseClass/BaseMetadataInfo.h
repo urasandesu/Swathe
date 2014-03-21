@@ -58,6 +58,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BaseMetadataInfo();
         ~BaseMetadataInfo();
 
+        void Initialize(runtime_host_label_type *pRuntime);
         metadata_dispenser_label_type *CreateDispenser() const;
         void UnloadDispenser(metadata_dispenser_label_type *pDisp) const;
         runtime_host_label_type const *GetRuntime() const;
@@ -65,7 +66,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     private:
         metadata_info_pimpl_label_type *Pimpl();
         metadata_info_pimpl_label_type const *Pimpl() const;
-        void Initialize(runtime_host_label_type const *pRuntime);
         void RegisterDispenser(TempPtr<metadata_dispenser_label_type> &pDisp);
 
         TempPtr<assembly_metadata_label_type> NewAssemblyCore(metadata_dispenser_label_type *pDisp) const;

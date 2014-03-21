@@ -62,6 +62,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         BaseStrongNameInfo();
         ~BaseStrongNameInfo();
 
+        void Initialize(runtime_host_label_type *pRuntime);
         AutoPtr<IStrongNameKey const> NewStrongNameKey(wstring const &path) const;
         AutoPtr<IStrongNameKey const> NewStrongNameKey(PublicKeyBlob const &pubKeyBlob, DWORD pubKeyBlobSize) const;
         AutoPtr<IStrongNameKey const> NewStrongNameKeyWithToken(void const *pToken, DWORD tokenSize) const;
@@ -70,15 +71,16 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     private:
         strong_name_info_pimpl_label_type *Pimpl();
         strong_name_info_pimpl_label_type const *Pimpl() const;
-        void Initialize(runtime_host_label_type const *pRuntime);
+
+        ICLRStrongName &GetCOMStrongName() const;
 
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 40;
+        static INT const PIMPL_TYPE_SIZE = 48;
 #else
-        static INT const PIMPL_TYPE_SIZE = 80;
+        static INT const PIMPL_TYPE_SIZE = 88;
 #endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

@@ -42,8 +42,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     BaseRuntimeHostPimpl<ApiHolder>::BaseRuntimeHostPimpl(runtime_host_label_type *pClass) : 
         m_pClass(pClass), 
         m_pHost(nullptr), 
-        m_corVersionInitialized(false), 
-        m_corSysDirPathInitialized(false)
+        m_corVersionInit(false), 
+        m_corSysDirPathInit(false)
     { 
 #ifdef _DEBUG
         BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
@@ -85,8 +85,24 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
 
     
+    template<class ApiHolder>
+    void BaseRuntimeHostPimpl<ApiHolder>::Initialize(host_info_label_type *pHost)
+    {
+        _ASSERTE(!m_pHost);
+        _ASSERTE(pHost);
+        m_pHost = pHost;
+    }
+
+
     
-    
+    template<class ApiHolder>
+    wstring const &BaseRuntimeHostPimpl<ApiHolder>::GetRequestedVersion() const
+    {
+        return m_reqVersion;
+    }
+
+
+
     template<class ApiHolder>
     wstring const &BaseRuntimeHostPimpl<ApiHolder>::GetCORVersion() const
     {
@@ -95,21 +111,20 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
         m_pClass->CheckDisposed();
 
-        if (!m_corVersionInitialized)
+        if (!m_corVersionInit)
         {
-            auto buffer = array<WCHAR, MAX_PATH>();
-            auto length = static_cast<DWORD>(0);
+            auto &comRuntimeInfo = m_pClass->GetCOMRuntimeInfo();
 
-#pragma warning(push)
-#pragma warning(disable: 4996)
-            auto hr = ::GetCORVersion(buffer.c_array(), static_cast<DWORD>(buffer.size()), &length);
-#pragma warning(pop)
+            auto buffer = array<WCHAR, MAX_PATH>();
+            auto length = static_cast<DWORD>(buffer.size());
+
+            auto hr = comRuntimeInfo.GetRuntimeDirectory(buffer.c_array(), &length);
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
                 
             m_corVersion = buffer.data();
 
-            m_corVersionInitialized = true;
+            m_corVersionInit = true;
         }
         return m_corVersion;
     }
@@ -123,21 +138,20 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
         m_pClass->CheckDisposed();
 
-        if (!m_corSysDirPathInitialized)
+        if (!m_corSysDirPathInit)
         {
-            auto buffer = array<WCHAR, MAX_PATH>();
-            auto length = static_cast<DWORD>(0);
+            auto &comRuntimeInfo = m_pClass->GetCOMRuntimeInfo();
 
-#pragma warning(push)
-#pragma warning(disable: 4996)
-            auto hr = ::GetCORSystemDirectory(buffer.c_array(), static_cast<DWORD>(buffer.size()), &length);
-#pragma warning(pop)
-            if (FAILED(hr))
+            auto buffer = array<WCHAR, MAX_PATH>();
+            auto length = static_cast<DWORD>(buffer.size());
+
+            auto hr = comRuntimeInfo.GetRuntimeDirectory(buffer.c_array(), &length);
+            if (FAILED(hr)) 
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
             m_corSysDirPath = buffer.data();
                 
-            m_corSysDirPathInitialized = true;
+            m_corSysDirPathInit = true;
         }
         return m_corSysDirPath;
     }
@@ -166,16 +180,6 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     
     
     template<class ApiHolder>
-    void BaseRuntimeHostPimpl<ApiHolder>::Initialize(host_info_label_type const *pHost)
-    {
-        _ASSERTE(m_pHost == nullptr);
-        _ASSERTE(pHost != nullptr);
-        m_pHost = pHost;
-    }
-
-
-    
-    template<class ApiHolder>
     template<class Info>
     TempPtr<Info> BaseRuntimeHostPimpl<ApiHolder>::NewInfo() const
     {
@@ -194,6 +198,16 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
 
     template<class ApiHolder>
+    void BaseRuntimeHostPimpl<ApiHolder>::SetRequestedVersion(wstring const &reqVersion)
+    {
+        _ASSERTE(m_reqVersion.empty());
+        _ASSERTE(!reqVersion.empty());
+        m_reqVersion = reqVersion;
+    }
+
+
+
+    template<class ApiHolder>
     template<class Info>
     void BaseRuntimeHostPimpl<ApiHolder>::RegisterInfo(TempPtr<Info> &pInfo)
     {
@@ -205,6 +219,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         m_infoToIndex[info] = provider.RegisterObject(pInfo);
     }
 
+    
     
     template<class ApiHolder>
     template<class Info>
@@ -227,6 +242,26 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
             pExistingInfo = provider.GetObject(index);
             return true;
         }
+    }
+    
+    
+    
+    template<class ApiHolder>
+    ICLRRuntimeInfo &BaseRuntimeHostPimpl<ApiHolder>::GetCOMRuntimeInfo() const
+    {
+        using boost::filesystem::path;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (!m_pComRuntimeInfo.p)
+        {
+            auto &comMetaHost = m_pHost->GetCOMMetaHost();
+
+            auto const &reqVersion = m_pClass->GetRequestedVersion();
+            auto hr = comMetaHost.GetRuntime(reqVersion.c_str(), IID_ICLRRuntimeInfo, reinterpret_cast<LPVOID *>(&m_pComRuntimeInfo));
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        }
+        return *m_pComRuntimeInfo.p;
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 

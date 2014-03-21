@@ -75,11 +75,19 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     
     
     template<class ApiHolder>    
+    void BaseStrongNameInfoPimpl<ApiHolder>::Initialize(runtime_host_label_type *pRuntime)
+    {
+        _ASSERTE(!m_pRuntime);
+        _ASSERTE(pRuntime);
+        m_pRuntime = pRuntime;
+    }
+
+
+
+    template<class ApiHolder>    
     AutoPtr<IStrongNameKey const> BaseStrongNameInfoPimpl<ApiHolder>::NewStrongNameKey(wstring const &path) const
     {
-        auto *pBaseProvider = BaseHeapProvider();
-        auto &provider = pBaseProvider->ProviderOf<strong_name_key_label_type>();
-        auto pSnKey = provider.NewObject();
+        auto pSnKey = NewStrongNameKeyCore();
         pSnKey->SetPath(path);
         return pSnKey;
     }
@@ -89,9 +97,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     template<class ApiHolder>    
     AutoPtr<IStrongNameKey const> BaseStrongNameInfoPimpl<ApiHolder>::NewStrongNameKey(PublicKeyBlob const &pubKeyBlob, DWORD pubKeyBlobSize) const
     {
-        auto *pBaseProvider = BaseHeapProvider();
-        auto &provider = pBaseProvider->ProviderOf<strong_name_key_label_type>();
-        auto pSnKey = provider.NewObject();
+        auto pSnKey = NewStrongNameKeyCore();
         pSnKey->SetPublicKeyBlob(pubKeyBlob, pubKeyBlobSize);
         return pSnKey;
     }
@@ -101,9 +107,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     template<class ApiHolder>    
     AutoPtr<IStrongNameKey const> BaseStrongNameInfoPimpl<ApiHolder>::NewStrongNameKeyWithToken(void const *pToken, DWORD tokenSize) const
     {
-        auto *pBaseProvider = BaseHeapProvider();
-        auto &provider = pBaseProvider->ProviderOf<strong_name_key_label_type>();
-        auto pSnKey = provider.NewObject();
+        auto pSnKey = NewStrongNameKeyCore();
         pSnKey->SetPublicKeyToken(pToken, tokenSize);
         return pSnKey;
     }
@@ -115,19 +119,43 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     {
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
+        auto &comStrongName = m_pClass->GetCOMStrongName();
+
         auto const &keyPair = pSnKey->GetKeyPair();
-        if (!::StrongNameSignatureGenerationEx(path.c_str(), NULL, const_cast<BYTE *>(&keyPair[0]), static_cast<ULONG>(keyPair.size()), NULL, NULL, 0))
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(::StrongNameErrorInfo()));
+
+        auto hr = comStrongName.StrongNameSignatureGenerationEx(path.c_str(), nullptr, const_cast<BYTE *>(&keyPair[0]), static_cast<ULONG>(keyPair.size()), nullptr, nullptr, 0);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
     }
 
 
 
     template<class ApiHolder>    
-    void BaseStrongNameInfoPimpl<ApiHolder>::Initialize(runtime_host_label_type const *pRuntime)
+    AutoPtr<typename BaseStrongNameInfoPimpl<ApiHolder>::strong_name_key_label_type> BaseStrongNameInfoPimpl<ApiHolder>::NewStrongNameKeyCore() const
     {
-        _ASSERTE(m_pRuntime == nullptr);
-        _ASSERTE(pRuntime != nullptr);
-        m_pRuntime = pRuntime;
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->ProviderOf<strong_name_key_label_type>();
+        auto pSnKey = provider.NewObject();
+        pSnKey->Initialize(m_pClass);
+        return pSnKey;
+    }
+
+
+
+    template<class ApiHolder>    
+    ICLRStrongName &BaseStrongNameInfoPimpl<ApiHolder>::GetCOMStrongName() const
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (!m_pComStrongName.p)
+        {
+            auto &comRuntimeInfo = m_pRuntime->GetCOMRuntimeInfo();
+
+            auto hr = comRuntimeInfo.GetInterface(CLSID_CLRStrongName, IID_ICLRStrongName, reinterpret_cast<LPVOID *>(&m_pComStrongName));
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        }
+        return *m_pComStrongName.p;
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace BaseClassPimpl { 

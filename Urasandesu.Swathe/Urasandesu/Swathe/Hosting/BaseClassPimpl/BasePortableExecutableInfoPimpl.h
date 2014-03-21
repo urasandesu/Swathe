@@ -72,6 +72,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         BasePortableExecutableInfoPimpl(portable_executable_info_label_type *pClass);
         ~BasePortableExecutableInfoPimpl();
 
+        void Initialize(runtime_host_label_type *pRuntime);
         AutoPtr<portable_executable_writer_label_type> CreateWriter(IMetaDataEmit2 *pComMetaEmt, ComImageFlags const &imageFlags, CeeCreateFlags const &createFlags) const;
         AutoPtr<portable_executable_reader_label_type> CreateReader(IMetaDataImport2 *pComMetaImp, path const &asmPath) const;
                 
@@ -80,7 +81,6 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         typedef HRESULT (__stdcall *destroy_cee_file_gen_ptr_type)(ICeeFileGen **ceeFileGen);
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;
-        void Initialize(runtime_host_label_type const *pRuntime);
         void Finalize();
         ICeeFileGen &GetCOMCeeFileGen();
 

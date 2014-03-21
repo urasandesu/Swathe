@@ -73,6 +73,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    void BaseMetadataInfo<ApiHolder>::Initialize(runtime_host_label_type *pRuntime)
+    {
+        Pimpl()->Initialize(pRuntime);
+    }
+    
+    template<class ApiHolder>    
     typename BaseMetadataInfo<ApiHolder>::metadata_dispenser_label_type *BaseMetadataInfo<ApiHolder>::CreateDispenser() const
     {
         return Pimpl()->CreateDispenser();
@@ -88,12 +94,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     typename BaseMetadataInfo<ApiHolder>::runtime_host_label_type const *BaseMetadataInfo<ApiHolder>::GetRuntime() const
     {
         return Pimpl()->GetRuntime();
-    }
-    
-    template<class ApiHolder>    
-    void BaseMetadataInfo<ApiHolder>::Initialize(runtime_host_label_type const *pRuntime)
-    {
-        Pimpl()->Initialize(pRuntime);
     }
     
     template<class ApiHolder>    

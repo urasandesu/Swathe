@@ -41,7 +41,8 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     template<class ApiHolder>    
     BaseStrongNameKeyPimpl<ApiHolder>::BaseStrongNameKeyPimpl(strong_name_key_label_type *pClass) : 
         m_pClass(pClass), 
-        m_pubKeyBlobSize(static_cast<DWORD>(-1)), 
+        m_pSnInfo(nullptr), 
+        m_pubKeyBlobSize(-1), 
         m_keyPairInit(false), 
         m_publicKeyInit(false), 
         m_publicKeyTokenInit(false), 
@@ -54,6 +55,16 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     
     
     template<class ApiHolder>    
+    void BaseStrongNameKeyPimpl<ApiHolder>::Initialize(strong_name_info_label_type *pSnInfo)
+    {
+        _ASSERTE(!m_pSnInfo);
+        _ASSERTE(pSnInfo);
+        m_pSnInfo = pSnInfo;
+    }
+
+
+
+    template<class ApiHolder>    
     vector<BYTE> const &BaseStrongNameKeyPimpl<ApiHolder>::GetKeyPair() const
     {
         using Urasandesu::CppAnonym::CppAnonymCOMException;
@@ -65,8 +76,8 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
 
             auto *pPubKeyBlob = static_cast<PublicKeyBlob *>(nullptr);
             auto pubKeyBlobSize = 0ul;
-            auto hSnk = ::CreateFileW(m_path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, 
-                                      OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+            auto hSnk = ::CreateFileW(m_path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, 
+                                      OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, nullptr);
             if (hSnk == INVALID_HANDLE_VALUE)
                 BOOST_THROW_EXCEPTION(CppAnonymSystemException(::GetLastError()));
             BOOST_SCOPE_EXIT((&hSnk))
@@ -75,14 +86,14 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
             }
             BOOST_SCOPE_EXIT_END
             
-            auto keyPairSize = ::GetFileSize(hSnk, NULL);
+            auto keyPairSize = ::GetFileSize(hSnk, nullptr);
             if (keyPairSize == -1)
                 BOOST_THROW_EXCEPTION(CppAnonymSystemException(::GetLastError()));
 
             if (keyPairSize != 0)
             {
                 m_keyPair.resize(keyPairSize);
-                if (::ReadFile(hSnk, &m_keyPair[0], keyPairSize, &keyPairSize, NULL) == FALSE)
+                if (::ReadFile(hSnk, &m_keyPair[0], keyPairSize, &keyPairSize, nullptr) == FALSE)
                     BOOST_THROW_EXCEPTION(CppAnonymSystemException(::GetLastError()));
             }
             
@@ -117,21 +128,22 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         
         if (!m_publicKeyTokenInit)
         {
+            auto &comStrongName = m_pSnInfo->GetCOMStrongName();
+
             auto const &pubKeyBlob = GetPublicKeyBlob();
             auto pubKeyBlobSize = GetPublicKeyBlobSize();
             auto *pPubKeyToken = static_cast<BYTE *>(nullptr);
             auto pubKeyTokenSize = 0ul;
-            if (!::StrongNameTokenFromPublicKey(reinterpret_cast<BYTE *>(const_cast<PublicKeyBlob *>(&pubKeyBlob)), 
-                                                pubKeyBlobSize, 
-                                                &pPubKeyToken, 
-                                                &pubKeyTokenSize))
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(::StrongNameErrorInfo()));
-            BOOST_SCOPE_EXIT((pPubKeyToken))
+
+            auto hr = comStrongName.StrongNameTokenFromPublicKey(reinterpret_cast<BYTE *>(const_cast<PublicKeyBlob *>(&pubKeyBlob)), pubKeyBlobSize, &pPubKeyToken, &pubKeyTokenSize);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            BOOST_SCOPE_EXIT((pPubKeyToken)(&comStrongName))
             {
-                ::StrongNameFreeBuffer(pPubKeyToken);
+                comStrongName.StrongNameFreeBuffer(pPubKeyToken);
             }
             BOOST_SCOPE_EXIT_END
-                    
+
             m_publicKeyToken.reserve(pubKeyTokenSize);
             m_publicKeyToken.assign(pPubKeyToken, pPubKeyToken + pubKeyTokenSize);
             
@@ -149,12 +161,14 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
 
         if (m_sigSize == 0ul)
         {
+            auto &comStrongName = m_pSnInfo->GetCOMStrongName();
+
             auto const &pubKeyBlob = GetPublicKeyBlob();
             auto pubKeyBlobSize = GetPublicKeyBlobSize();
-            if (!::StrongNameSignatureSize(reinterpret_cast<BYTE *>(const_cast<PublicKeyBlob *>(&pubKeyBlob)), 
-                                           pubKeyBlobSize, 
-                                           &m_sigSize))
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(::StrongNameErrorInfo()));
+
+            auto hr = comStrongName.StrongNameSignatureSize(reinterpret_cast<BYTE *>(const_cast<PublicKeyBlob *>(&pubKeyBlob)), pubKeyBlobSize, &m_sigSize);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
         }
         return m_sigSize;
     }
@@ -164,7 +178,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     template<class ApiHolder>    
     PublicKeyBlob const &BaseStrongNameKeyPimpl<ApiHolder>::GetPublicKeyBlob() const
     {
-        if (m_pubKeyBlobSize == static_cast<DWORD>(-1))
+        if (m_pubKeyBlobSize == -1)
             GetPublicKeyBlobSize();
         return *m_pPubKeyBlob.get();
     }
@@ -176,21 +190,21 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     {
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
-        if (m_pubKeyBlobSize == static_cast<DWORD>(-1))
+        if (m_pubKeyBlobSize == -1)
         {
+            auto &comStrongName = m_pSnInfo->GetCOMStrongName();
+
             auto const &keyPair = GetKeyPair();
             auto *pPubKeyBlob = static_cast<PublicKeyBlob *>(nullptr);
             auto pubKeyBlobSize = 0ul;
-            if (!::StrongNameGetPublicKey(NULL, 
-                                          const_cast<BYTE *>(&keyPair[0]), 
-                                          static_cast<ULONG>(keyPair.size()), 
-                                          reinterpret_cast<BYTE **>(&pPubKeyBlob), 
-                                          &pubKeyBlobSize))
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(::StrongNameErrorInfo()));
-            BOOST_SCOPE_EXIT((&pubKeyBlobSize)(&pPubKeyBlob))
+
+            auto hr = comStrongName.StrongNameGetPublicKey(nullptr, const_cast<BYTE *>(&keyPair[0]), static_cast<ULONG>(keyPair.size()), reinterpret_cast<BYTE **>(&pPubKeyBlob), &pubKeyBlobSize);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            BOOST_SCOPE_EXIT((&pubKeyBlobSize)(&pPubKeyBlob)(&comStrongName))
             {
                 if (pubKeyBlobSize)
-                    ::StrongNameFreeBuffer(reinterpret_cast<BYTE *>(pPubKeyBlob));
+                    comStrongName.StrongNameFreeBuffer(reinterpret_cast<BYTE *>(pPubKeyBlob));
             }
             BOOST_SCOPE_EXIT_END
 
@@ -217,8 +231,8 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         m_pPubKeyBlob = unique_ptr<PublicKeyBlob>(reinterpret_cast<PublicKeyBlob *>(new BYTE[pubKeyBlobSize]));
         ::memcpy_s(m_pPubKeyBlob.get(), pubKeyBlobSize, &pubKeyBlob, pubKeyBlobSize);
 
-        _ASSERTE(pubKeyBlobSize != static_cast<DWORD>(-1));
-        _ASSERTE(m_pubKeyBlobSize == static_cast<DWORD>(-1));
+        _ASSERTE(pubKeyBlobSize != -1);
+        _ASSERTE(m_pubKeyBlobSize == -1);
         m_pubKeyBlobSize = pubKeyBlobSize;
     }
 

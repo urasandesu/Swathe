@@ -54,8 +54,17 @@
 #include <Urasandesu/Swathe/StrongNaming/BaseClass/BaseStrongNameKey.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_DEFAULTCLASSAPIHOLDER_DEFAULTRUNTIMEHOSTAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Hosting/DefaultClassApiHolder/DefaultRuntimeHostApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_HOSTING_BASECLASS_BASERUNTIMEHOST_H
+#include <Urasandesu/Swathe/Hosting/BaseClass/BaseRuntimeHost.h>
+#endif
+
 extern template class Urasandesu::Swathe::StrongNaming::BaseClass::BaseStrongNameInfo<>;
 extern template class Urasandesu::Swathe::StrongNaming::BaseClass::BaseStrongNameKey<>;
+extern template class Urasandesu::Swathe::Hosting::BaseClass::BaseRuntimeHost<>;
 template class Urasandesu::Swathe::StrongNaming::BaseClassPimpl::BaseStrongNameInfoPimpl<>;
 SWATHE_DECLARE_BASE_STRONG_NAME_INFO_PIMPL_ADDITIONAL_INSTANTIATION
 

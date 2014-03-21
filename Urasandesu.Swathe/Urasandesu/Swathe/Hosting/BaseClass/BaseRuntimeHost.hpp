@@ -81,6 +81,17 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     
     
     
+    template<class ApiHolder>
+    void BaseRuntimeHost<ApiHolder>::Initialize(host_info_label_type *pHost)
+    {
+        Pimpl()->Initialize(pHost);
+    }
+
+    template<class ApiHolder>
+    wstring const &BaseRuntimeHost<ApiHolder>::GetRequestedVersion() const
+    {
+        return Pimpl()->GetRequestedVersion();
+    }
 
     template<class ApiHolder>
     wstring const &BaseRuntimeHost<ApiHolder>::GetCORVersion() const
@@ -102,9 +113,9 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     }
 
     template<class ApiHolder>
-    void BaseRuntimeHost<ApiHolder>::Initialize(host_info_label_type const *pHost)
+    void BaseRuntimeHost<ApiHolder>::SetRequestedVersion(wstring const &reqVersion)
     {
-        Pimpl()->Initialize(pHost);
+        Pimpl()->SetRequestedVersion(reqVersion);
     }
 
     template<class ApiHolder>
@@ -112,6 +123,12 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     void BaseRuntimeHost<ApiHolder>::RegisterInfo(TempPtr<Info> &pInfo)
     {
         Pimpl()->RegisterInfo(pInfo);
+    }
+
+    template<class ApiHolder>
+    ICLRRuntimeInfo &BaseRuntimeHost<ApiHolder>::GetCOMRuntimeInfo() const
+    {
+        return Pimpl()->GetCOMRuntimeInfo();
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClass { 

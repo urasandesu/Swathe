@@ -58,6 +58,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         BaseProfilingInfoPimpl(profiling_info_label_type *pClass);
         ~BaseProfilingInfoPimpl();
         
+        void Initialize(runtime_host_label_type *pRuntime);
         TempPtr<process_profiler_label_type> AttachToCurrentProcess(IUnknown *pComProfInfoUnk);
         process_profiler_label_type *GetCurrentProcessProfiler();
         void DetachFromCurrentProcess();
@@ -66,7 +67,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     private:
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;
-        void Initialize(runtime_host_label_type const *pRuntime);
         TempPtr<process_profiler_label_type> NewProcessProfiler(IUnknown *pComProfInfoUnk);
         TempPtr<process_profiler_label_type> NewProcessProfilerCore();
         void RegisterProcessProfiler(TempPtr<process_profiler_label_type> &pProcProf);

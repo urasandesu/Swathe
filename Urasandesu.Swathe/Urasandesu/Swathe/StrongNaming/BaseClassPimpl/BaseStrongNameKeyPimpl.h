@@ -58,6 +58,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
 
         BaseStrongNameKeyPimpl(strong_name_key_label_type *pClass);
 
+        void Initialize(strong_name_info_label_type *pSnInfo);
         vector<BYTE> const &GetKeyPair() const;
         vector<BYTE> const &GetPublicKey() const;
         vector<BYTE> const &GetPublicKeyToken() const;
@@ -71,6 +72,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         void SetPublicKeyToken(void const *pToken, DWORD tokenSize);
 
         mutable strong_name_key_label_type *m_pClass;
+        strong_name_info_label_type *m_pSnInfo;
         wstring m_path;
         mutable unique_ptr<PublicKeyBlob> m_pPubKeyBlob;
         mutable DWORD m_pubKeyBlobSize;
@@ -81,6 +83,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         mutable bool m_publicKeyTokenInit;
         mutable vector<BYTE> m_publicKeyToken;
         mutable DWORD m_sigSize;
+        int m_reserved;
         
     };
 

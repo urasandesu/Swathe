@@ -126,6 +126,14 @@
 #include <Urasandesu/Swathe/Profiling/BaseClassPersistedHandler/BaseProfilingInfoPersistedHandler.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_DEFAULTCLASSAPIHOLDER_DEFAULTHOSTINFOAPIHOLDER_H
+#include <Urasandesu/Swathe/AutoGen/Hosting/DefaultClassApiHolder/DefaultHostInfoApiHolder.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_HOSTING_BASECLASS_BASEHOSTINFO_H
+#include <Urasandesu/Swathe/Hosting/BaseClass/BaseHostInfo.h>
+#endif
+
 extern template class Urasandesu::Swathe::Hosting::BaseClass::BaseRuntimeHost<>;
 extern template class Urasandesu::Swathe::Fusion::BaseClass::BaseFusionInfo<>;
 extern template class Urasandesu::Swathe::Fusion::BaseClassPersistedHandler::BaseFusionInfoPersistedHandler<>;
@@ -137,6 +145,7 @@ extern template class Urasandesu::Swathe::Hosting::BaseClass::BasePortableExecut
 extern template class Urasandesu::Swathe::Hosting::BaseClassPersistedHandler::BasePortableExecutableInfoPersistedHandler<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseProfilingInfo<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClassPersistedHandler::BaseProfilingInfoPersistedHandler<>;
+extern template class Urasandesu::Swathe::Hosting::BaseClass::BaseHostInfo<>;
 template class Urasandesu::Swathe::Hosting::BaseClassPimpl::BaseRuntimeHostPimpl<>;
 SWATHE_DECLARE_BASE_RUNTIME_HOST_PIMPL_ADDITIONAL_INSTANTIATION
 

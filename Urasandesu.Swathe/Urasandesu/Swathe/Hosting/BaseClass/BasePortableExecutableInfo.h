@@ -71,13 +71,13 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         BasePortableExecutableInfo();
         ~BasePortableExecutableInfo();
 
+        void Initialize(runtime_host_label_type *pRuntime);
         AutoPtr<portable_executable_writer_label_type> CreateWriter(IMetaDataEmit2 *pComMetaEmt, ComImageFlags const &imageFlags, CeeCreateFlags const &createFlags) const;
         AutoPtr<portable_executable_reader_label_type> CreateReader(IMetaDataImport2 *pComMetaImp, path const &asmPath) const;
     
     private:
         portable_executable_info_pimpl_label_type *Pimpl();
         portable_executable_info_pimpl_label_type const *Pimpl() const;
-        void Initialize(runtime_host_label_type const *pRuntime);
         ICeeFileGen &GetCOMCeeFileGen();
 
 #ifdef _DEBUG

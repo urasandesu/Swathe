@@ -48,6 +48,10 @@
 #include <Urasandesu/Swathe/AutoGen/Hosting/ClassPimplLabel/RuntimeHostPimplLabel.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_STRONGNAMING_STRONGNAMEKEYPIMPLFWD_H
+#include <Urasandesu/Swathe/StrongNaming/StrongNameKeyPimplFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_AUTOGEN_STRONGNAMING_CLASSLABEL_STRONGNAMEKEYLABEL_H
 #include <Urasandesu/Swathe/AutoGen/StrongNaming/ClassLabel/StrongNameKeyLabel.h>
 #endif
@@ -71,6 +75,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace StrongNa
         using Urasandesu::Swathe::StrongNaming::StrongNameInfoPimpl;
         using Urasandesu::Swathe::StrongNaming::StrongNameInfo;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassPimplLabel::RuntimeHostPimplLabel;
+        using Urasandesu::Swathe::StrongNaming::StrongNameKeyPimpl;
         using Urasandesu::Swathe::AutoGen::StrongNaming::ClassLabel::StrongNameKeyLabel;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassLabel::RuntimeHostLabel;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassPersistedHandlerLabel::RuntimeHostPersistedHandlerLabel;
@@ -91,6 +96,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace StrongNa
 
             typedef StrongNameInfoPimpl strong_name_info_pimpl_label_type;
             typedef StrongNameInfo strong_name_info_label_type;
+            typedef StrongNameKeyPimpl strong_name_key_pimpl_label_type;
 
             
             typedef typename StrongNameInfoApiAt<ApiHolder, StrongNameKeyLabel>::type strong_name_key_label_2029a1f3_type;
@@ -148,8 +154,10 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace StrongNa
     friend typename runtime_host_persisted_handler_label_type; \
     typedef typename facade::strong_name_info_pimpl_label_type strong_name_info_pimpl_label_type; \
     typedef typename facade::strong_name_info_label_type strong_name_info_label_type; \
+    typedef typename facade::strong_name_key_pimpl_label_type strong_name_key_pimpl_label_type; \
     friend typename strong_name_info_pimpl_label_type; \
     friend typename strong_name_info_label_type; \
+    friend typename strong_name_key_pimpl_label_type; \
 
 #define SWATHE_END_STRONG_NAME_INFO_FACADE_TYPEDEF_ALIAS
 

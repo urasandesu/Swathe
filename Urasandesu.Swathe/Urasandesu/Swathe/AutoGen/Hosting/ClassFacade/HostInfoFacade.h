@@ -44,6 +44,10 @@
 #include <Urasandesu/Swathe/Hosting/HostInfoFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_CLASSPIMPLLABEL_RUNTIMEHOSTPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Hosting/ClassPimplLabel/RuntimeHostPimplLabel.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_HOSTING_HOSTINFOPERSISTEDHANDLERFWD_H
 #include <Urasandesu/Swathe/Hosting/HostInfoPersistedHandlerFwd.h>
 #endif
@@ -66,6 +70,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
         using Urasandesu::Swathe::AutoGen::Hosting::ClassApiAt::HostInfoApiAt;
         using Urasandesu::Swathe::Hosting::HostInfoPimpl;
         using Urasandesu::Swathe::Hosting::HostInfo;
+        using Urasandesu::Swathe::AutoGen::Hosting::ClassPimplLabel::RuntimeHostPimplLabel;
         using Urasandesu::Swathe::Hosting::HostInfoPersistedHandler;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassLabel::RuntimeHostLabel;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassPersistedHandlerLabel::RuntimeHostPersistedHandlerLabel;
@@ -79,6 +84,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
             typedef HostInfo class_type;
             typedef HostInfoPimpl class_pimpl_type;
             typedef HostInfoPimpl host_info_pimpl_label_type;
+            typedef typename HostInfoApiAt<ApiHolder, RuntimeHostPimplLabel>::type runtime_host_pimpl_label_type;
             typedef typename HostInfoApiAt<ApiHolder, RuntimeHostLabel>::type runtime_host_label_type;
             typedef typename HostInfoApiAt<ApiHolder, RuntimeHostPersistedHandlerLabel>::type runtime_host_persisted_handler_label_type;
 
@@ -100,8 +106,8 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
             typedef DisposingInfo<host_info_label_6baab14b_type, host_info_persisted_handler_label_type> host_info_label_disposing_info_type;
             
             typedef DisposableHeapProvider<
-                runtime_host_label_disposing_info_type,
-                host_info_label_disposing_info_type
+                host_info_label_disposing_info_type,
+                runtime_host_label_disposing_info_type
             > base_heap_provider_type;
             
             #define SWATHE_DECLARE_HOST_INFO_DISPOSABLE_HEAP_PROVIDER_TYPEDEF_ALIAS \
@@ -138,8 +144,10 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Hosting 
     friend typename class_pimpl_type; \
     typedef typename facade::host_info_pimpl_label_type host_info_pimpl_label_type; \
     friend typename host_info_pimpl_label_type; \
+    typedef typename facade::runtime_host_pimpl_label_type runtime_host_pimpl_label_type; \
     typedef typename facade::runtime_host_label_type runtime_host_label_type; \
     typedef typename facade::runtime_host_persisted_handler_label_type runtime_host_persisted_handler_label_type; \
+    friend typename runtime_host_pimpl_label_type; \
     friend typename runtime_host_label_type; \
     friend typename runtime_host_persisted_handler_label_type; \
     typedef typename facade::host_info_pimpl_label_type host_info_pimpl_label_type; \

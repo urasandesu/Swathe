@@ -77,6 +77,16 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     
     
     template<class ApiHolder>    
+    void BaseFusionInfoPimpl<ApiHolder>::Initialize(runtime_host_label_type *pRuntime)
+    {
+        _ASSERTE(!m_pRuntime);
+        _ASSERTE(pRuntime);
+        m_pRuntime = pRuntime;
+    }
+
+    
+
+    template<class ApiHolder>    
     AutoPtr<typename BaseFusionInfoPimpl<ApiHolder>::assembly_cache_label_type> BaseFusionInfoPimpl<ApiHolder>::NewAssemblyCache() const
     {
         auto pAsmCache = NewAssemblyCacheCore();
@@ -106,16 +116,6 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     }
 
 
-
-    template<class ApiHolder>    
-    void BaseFusionInfoPimpl<ApiHolder>::Initialize(runtime_host_label_type const *pRuntime)
-    {
-        _ASSERTE(pRuntime != nullptr);
-        _ASSERTE(m_pRuntime == nullptr);
-        m_pRuntime = pRuntime;
-    }
-
-    
 
     template<class ApiHolder>    
     void BaseFusionInfoPimpl<ApiHolder>::Finalize()

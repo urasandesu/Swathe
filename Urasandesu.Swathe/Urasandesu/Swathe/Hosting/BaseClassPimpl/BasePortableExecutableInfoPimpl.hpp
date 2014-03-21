@@ -80,6 +80,16 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     
     
     template<class ApiHolder>    
+    void BasePortableExecutableInfoPimpl<ApiHolder>::Initialize(runtime_host_label_type *pRuntime)
+    {
+        _ASSERTE(!m_pRuntime);
+        _ASSERTE(pRuntime);
+        m_pRuntime = pRuntime;
+    }
+
+
+
+    template<class ApiHolder>    
     AutoPtr<typename BasePortableExecutableInfoPimpl<ApiHolder>::portable_executable_writer_label_type> BasePortableExecutableInfoPimpl<ApiHolder>::CreateWriter(IMetaDataEmit2 *pComMetaEmt, ComImageFlags const &imageFlags, CeeCreateFlags const &createFlags) const
     {
         auto *pBaseProvider = BaseHeapProvider();
@@ -106,17 +116,6 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         pPEReader->SetCOMMetaDataImport(pComMetaImp);
         pPEReader->SetAssemblyPath(asmPath);
         return pPEReader;
-    }
-
-
-
-    template<class ApiHolder>    
-    void BasePortableExecutableInfoPimpl<ApiHolder>::Initialize(runtime_host_label_type const *pRuntime)
-    {
-        using boost::filesystem::path;
-        _ASSERTE(pRuntime != nullptr);
-        _ASSERTE(m_pRuntime == nullptr);
-        m_pRuntime = pRuntime;
     }
 
 

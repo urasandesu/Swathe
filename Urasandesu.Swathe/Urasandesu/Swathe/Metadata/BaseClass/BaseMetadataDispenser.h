@@ -125,11 +125,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         assembly_generator_label_type *DefineAssemblyWithPartialName(wstring const &name) const;        
         IAssembly const *GetAssembly(IMetaDataImport2 *pComMetaImp) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataImport2 *pModifiableComMetaImp) const;
-        bool IsCOMMetaDataDispenserPrepared() const;
     
     private:
         metadata_dispenser_pimpl_label_type *Pimpl();
         metadata_dispenser_pimpl_label_type const *Pimpl() const;
+        void SetCOMMetaDataDispenser(IMetaDataDispenserEx *pComMetaDisp);
 
         assembly_metadata_label_type const *GetAssemblyCore(wstring const &fullName) const;
         assembly_metadata_label_type const *GetAssemblyCore(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;

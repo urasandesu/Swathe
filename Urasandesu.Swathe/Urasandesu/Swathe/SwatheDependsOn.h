@@ -41,6 +41,7 @@
                         // In this time, I include it in stdafx.cpp.
 #include <fusion.h>
 #include <mscoree.h>
+#include <metahost.h>
 
 namespace Urasandesu { namespace Swathe {
 

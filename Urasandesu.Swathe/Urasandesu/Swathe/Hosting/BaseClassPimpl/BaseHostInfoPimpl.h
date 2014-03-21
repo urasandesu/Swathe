@@ -60,18 +60,20 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         BaseHostInfoPimpl(host_info_label_type *pClass);
         ~BaseHostInfoPimpl();
 
+        void Initialize(host_info_label_type *pHost);
         static host_info_label_type *CreateHost();
         runtime_host_label_type const *GetRuntime(wstring const &version) const;
         
     private:
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;
-        void Initialize(host_info_label_type const *pHost);
         static TempPtr<host_info_label_type> NewHost();
         void RegisterHost(TempPtr<host_info_label_type> &pHost);
         TempPtr<runtime_host_label_type> NewRuntime(wstring const &version) const;
         void RegisterRuntime(TempPtr<runtime_host_label_type> &pRuntime);
         bool TryGetRuntime(wstring const &version, runtime_host_label_type *&pExistingRuntime) const;
+
+        ICLRMetaHost &GetCOMMetaHost() const;
 
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
@@ -85,8 +87,9 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
         mutable host_info_label_type *m_pClass;
-        host_info_label_type const *m_pHost;
+        host_info_label_type *m_pHost;
         mutable unordered_map<wstring, SIZE_T> m_versionToIndex;
+        mutable ATL::CComPtr<ICLRMetaHost> m_pComMetaHost;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 
