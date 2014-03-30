@@ -136,6 +136,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool IsGenericTypeDefinition() const;
         bool IsByRef() const;
         bool IsArray() const;
+        bool IsNested() const;
         ULONG GetGenericParameterPosition() const;
         vector<IType const *> const &GetGenericArguments() const;
         Signature const &GetSignature() const;

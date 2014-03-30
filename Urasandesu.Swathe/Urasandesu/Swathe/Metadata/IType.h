@@ -94,6 +94,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual bool IsGenericTypeDefinition() const = 0;
         virtual bool IsByRef() const = 0;
         virtual bool IsArray() const = 0;
+        virtual bool IsNested() const = 0;
         virtual ULONG GetGenericParameterPosition() const = 0;
         virtual std::vector<IType const *> const &GetGenericArguments() const = 0;
         virtual Signature const &GetSignature() const = 0;

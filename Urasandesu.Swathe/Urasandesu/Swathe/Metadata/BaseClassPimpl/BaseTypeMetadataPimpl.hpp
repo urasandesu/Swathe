@@ -64,6 +64,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_methodsInit(false), 
         m_propsInit(false),
         m_casInit(false), 
+        m_isNestedInit(false), 
+        m_isNested(false), 
         m_kind(TypeKinds::TK_UNREACHED), 
         m_attr(TypeAttributes::TA_UNREACHED), 
         m_baseTypeInit(false), 
@@ -92,7 +94,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!IsNilToken(m_mdt))
             return m_mdt;
         
-        FillTypeDefToken(&m_pAsm->GetCOMMetaDataImport(), m_fullName, m_mdt);
+        switch (m_kind.Value())
+        {
+            case TypeKinds::TK_VAR:
+            case TypeKinds::TK_MVAR:
+                FillTypeVariableToken(&m_pAsm->GetCOMMetaDataImport(), m_kind, m_genericParamPos, m_mdt);
+                break;
+            
+            default:
+                FillTypeDefToken(&m_pAsm->GetCOMMetaDataImport(), m_fullName, m_mdt);
+                break;
+        }
         _ASSERTE(!IsNilToken(m_mdt));
         return m_mdt;
     }
@@ -109,11 +121,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         switch (TypeFromToken(mdtTarget))
         {
             case mdtTypeDef:
-                FillTypeDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_fullName, m_attr, m_mdtExt);
+                m_pAsm->FillTypeDefProperties(mdtTarget, m_fullName, m_attr, m_mdtExt);
                 break;
             
             case mdtTypeRef:
-                FillTypeRefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_fullName, m_mdtResolutionScope);
+                m_pAsm->FillTypeRefProperties(mdtTarget, m_fullName, m_mdtResolutionScope);
                 break;
             
             case mdtGenericParam:
@@ -223,6 +235,43 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    bool BaseTypeMetadataPimpl<ApiHolder>::IsNested() const
+    {
+        if (m_isNestedInit)
+            return m_isNested;
+        
+        auto mdtTarget = GetToken();
+        switch (TypeFromToken(mdtTarget))
+        {
+            case mdtTypeDef:
+                {
+                    if (IsNilToken(m_mdtExt))
+                        m_pAsm->FillTypeDefProperties(mdtTarget, m_fullName, m_attr, m_mdtExt);
+                    
+                    auto vis = m_attr & TypeAttributes::TA_VISIBILITY_MASK;
+                    m_isNested = TypeAttributes::TA_NESTED_PUBLIC <= vis && vis <= TypeAttributes::TA_NESTED_FAMOR_ASSEM;
+                }
+                break;
+            
+            case mdtTypeRef:
+                if (IsNilToken(m_mdtResolutionScope))
+                    m_pAsm->FillTypeRefProperties(mdtTarget, m_fullName, m_mdtResolutionScope);
+                
+                m_isNested = TypeFromToken(m_mdtResolutionScope) == mdtTypeRef;
+                break;
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+        m_isNestedInit = true;
+        return m_isNested;
+    }
+
+
+
+    template<class ApiHolder>    
     ULONG BaseTypeMetadataPimpl<ApiHolder>::GetGenericParameterPosition() const
     {
         if (m_genericParamPos != -1)
@@ -319,7 +368,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             case mdtTypeDef:
                 if (IsNilToken(m_mdtExt))
-                    FillTypeDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_fullName, m_attr, m_mdtExt);
+                    m_pAsm->FillTypeDefProperties(mdtTarget, m_fullName, m_attr, m_mdtExt);
                 FillTypeDefBaseType(m_pClass, m_mdtExt, m_baseTypeInit, m_pBaseType);
                 break;
             
@@ -448,7 +497,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             case mdtTypeDef:
                 {
                     if (IsNilToken(m_mdtExt))
-                        FillTypeDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_fullName, m_attr, m_mdtExt);
+                        m_pAsm->FillTypeDefProperties(mdtTarget, m_fullName, m_attr, m_mdtExt);
                 
                     auto visibility = m_attr & TypeAttributes::TA_VISIBILITY_MASK;
                     if (TypeAttributes::TA_NESTED_PUBLIC <= visibility && visibility <= TypeAttributes::TA_NESTED_FAMOR_ASSEM)
@@ -471,7 +520,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             case mdtTypeSpec:
                 if (m_sig.GetBlob().empty())
                     FillTypeSpecSignature(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_sig);
-                FillTypeSpecProperties(m_pClass, m_sig, m_kind, m_member, m_genericArgsInit, m_genericArgs);
+                FillTypeSpecProperties(m_pClass, m_sig, m_kind, m_member, m_genericArgsInit, m_genericArgs, m_genericParamPos);
                 break;
 
             default:
@@ -590,7 +639,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             
             case mdtTypeRef:
                 if (IsNilToken(m_mdtResolutionScope))
-                    FillTypeRefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_fullName, m_mdtResolutionScope);
+                    m_pAsm->FillTypeRefProperties(mdtTarget, m_fullName, m_mdtResolutionScope);
                 FillTypeRefSourceType(m_pClass, m_mdtResolutionScope, m_fullName, m_pSrcType);
                 break;
             
@@ -766,7 +815,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeArrayType() const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_SZARRAY, -1, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_SZARRAY, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -782,7 +831,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakePointerType() const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PTR, -1, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PTR, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -790,7 +839,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeByRefType() const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_BYREF, -1, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_BYREF, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -798,7 +847,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakePinnedType() const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PINNED, -1, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PINNED, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -1098,7 +1147,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             case mdtTypeDef:
                 {
                     if (IsNilToken(m_mdtExt))
-                        FillTypeDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_fullName, m_attr, m_mdtExt);
+                        m_pAsm->FillTypeDefProperties(mdtTarget, m_fullName, m_attr, m_mdtExt);
                     
                     if (TypeFromToken(m_mdtExt) == mdtTypeSpec) // This check is shortcut for CRTP. e.g. class A<T> : B<A<T>>.
                         return m_kind = TypeKinds::TK_CLASS;
@@ -1155,7 +1204,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseTypeMetadataPimpl<ApiHolder>::SetGenericArguments(vector<IType const *> const &genericArgs)
     {
-        _ASSERTE(!genericArgs.empty());
         _ASSERTE(!m_genericArgsInit);
         m_genericArgsInit = true;
         m_genericArgs = genericArgs;        
@@ -1197,26 +1245,26 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
 
-    template<class ApiHolder>    
-    void BaseTypeMetadataPimpl<ApiHolder>::FillTypeDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt)
-    {
-        using boost::array;
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
+    //template<class ApiHolder>    
+    //void BaseTypeMetadataPimpl<ApiHolder>::FillTypeDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt)
+    //{
+    //    using boost::array;
+    //    using Urasandesu::CppAnonym::CppAnonymCOMException;
 
-        _ASSERTE(pComMetaImp);
-        _ASSERTE(!IsNilToken(mdtTarget));
-        _ASSERTE(IsNilToken(mdtExt));
+    //    _ASSERTE(pComMetaImp);
+    //    _ASSERTE(!IsNilToken(mdtTarget));
+    //    _ASSERTE(IsNilToken(mdtExt));
 
-        auto wzname = array<WCHAR, MAX_SYM_NAME>();
-        auto dwattr = 0ul;
-        auto length = 0ul;
-        auto hr = pComMetaImp->GetTypeDefProps(mdtTarget, wzname.c_array(), static_cast<ULONG>(wzname.size()), &length, &dwattr, &mdtExt);
-        if (FAILED(hr))
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+    //    auto wzname = array<WCHAR, MAX_SYM_NAME>();
+    //    auto dwattr = 0ul;
+    //    auto length = 0ul;
+    //    auto hr = pComMetaImp->GetTypeDefProps(mdtTarget, wzname.c_array(), static_cast<ULONG>(wzname.size()), &length, &dwattr, &mdtExt);
+    //    if (FAILED(hr))
+    //        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
-        fullName = wzname.data();
-        attr = TypeAttributes(dwattr);
-    }
+    //    fullName = wzname.data();
+    //    attr = TypeAttributes(dwattr);
+    //}
 
 
 
@@ -1422,24 +1470,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
 
-    template<class ApiHolder>    
-    void BaseTypeMetadataPimpl<ApiHolder>::FillTypeRefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope)
-    {
-        using boost::array;
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-        
-        _ASSERTE(pComMetaImp);
-        _ASSERTE(!IsNilToken(mdtTarget));
-        _ASSERTE(IsNilToken(mdtResolutionScope));
+    //template<class ApiHolder>    
+    //void BaseTypeMetadataPimpl<ApiHolder>::FillTypeRefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope)
+    //{
+    //    using boost::array;
+    //    using Urasandesu::CppAnonym::CppAnonymCOMException;
+    //    
+    //    _ASSERTE(pComMetaImp);
+    //    _ASSERTE(!IsNilToken(mdtTarget));
+    //    _ASSERTE(IsNilToken(mdtResolutionScope));
 
-        auto wzname = array<WCHAR, MAX_SYM_NAME>();
-        auto length = 0ul;
-        auto hr = pComMetaImp->GetTypeRefProps(mdtTarget, &mdtResolutionScope, wzname.c_array(), static_cast<ULONG>(wzname.size()), &length);
-        if (FAILED(hr))
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+    //    auto wzname = array<WCHAR, MAX_SYM_NAME>();
+    //    auto length = 0ul;
+    //    auto hr = pComMetaImp->GetTypeRefProps(mdtTarget, &mdtResolutionScope, wzname.c_array(), static_cast<ULONG>(wzname.size()), &length);
+    //    if (FAILED(hr))
+    //        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
-        fullName = wzname.data();
-    }
+    //    fullName = wzname.data();
+    //}
 
 
 
@@ -1545,7 +1593,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseTypeMetadataPimpl<ApiHolder>::FillTypeSpecProperties(IType const *pType, Signature const &sig, TypeKinds &kind, TypeProvider &member, bool &genericArgsInit, vector<IType const *> &genericArgs)
+    void BaseTypeMetadataPimpl<ApiHolder>::FillTypeSpecProperties(IType const *pType, Signature const &sig, TypeKinds &kind, TypeProvider &member, bool &genericArgsInit, vector<IType const *> &genericArgs, ULONG &genericParamPos)
     {
         using Urasandesu::CppAnonym::CppAnonymCOMException;
         
@@ -1555,6 +1603,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         kind = TypeKinds(blob[0]);
         switch (kind.Value())
         {
+            case TypeKinds::TK_VAR:
+                {
+                    auto const *pAsm = pType->GetAssembly();
+                    sig.Decode(pType, kind, genericParamPos);
+                    member = pAsm->GetMainModule();
+                    genericArgsInit = true;
+                }
+                break;
+
             case TypeKinds::TK_GENERICINST:
                 {
                     auto const *pDeclaringType = static_cast<IType *>(nullptr);
@@ -1565,50 +1622,88 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 break;
 
             default:
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                {
+                    auto oss = std::wostringstream();
+                    oss << boost::wformat(L"kind.Value():  %|1$02X|") % kind.Value();
+                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+                }
                 break;
         }
     }
-    
-    
-    
-    //template<class ApiHolder>    
-    //void BaseTypeMetadataPimpl<ApiHolder>::FillAttributes(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, IType const *pOwner, bool &casInit, vector<ICustomAttribute const *> &cas)
-    //{
-    //    using boost::array;
-    //    using Urasandesu::CppAnonym::CppAnonymCOMException;
-    //    
-    //    _ASSERTE(pComMetaImp);
-    //    _ASSERTE(!IsNilToken(mdtTarget));
-    //    
-    //    auto const *pAsm = pOwner->GetAssembly();
 
-    //    auto hEnum = static_cast<HCORENUM>(nullptr);
-    //        BOOST_SCOPE_EXIT((&hEnum)(&pComMetaImp))
-    //        {
-    //            if (hEnum)
-    //                pComMetaImp->CloseEnum(hEnum);
-    //        }
-    //        BOOST_SCOPE_EXIT_END
-    //    auto mdcas = array<mdCustomAttribute, 16>();
-    //    auto count = 0ul;
-    //    auto hr = E_FAIL;
-    //    do
-    //    {
-    //        hr = pComMetaImp->EnumCustomAttributes(&hEnum, mdtTarget, 0, mdcas.c_array(), mdcas.size(), &count);
-    //        if (FAILED(hr))
-    //            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
-    //        cas.reserve(cas.size() + count);
-    //        for (auto i = 0u; i < count; ++i)
-    //        {
-    //            auto pCas = pAsm->GetCustomAttribute(mdcas[i]);
-    //            cas.push_back(pCas);
-    //        }
-    //    } while (0 < count);
-    //    
-    //    casInit = true;
-    //}
+
+    template<class ApiHolder>    
+    void BaseTypeMetadataPimpl<ApiHolder>::FillTypeVariableToken(IMetaDataImport2 *pComMetaImp, TypeKinds const &targetKind, ULONG targetPos, mdToken &mdt)
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
+
+        _ASSERTE(pComMetaImp);
+        _ASSERTE(targetKind != TypeKinds::TK_UNREACHED);
+        _ASSERTE(targetPos != -1);
+        _ASSERTE(IsNilToken(mdt));
+
+        auto hEnum = HCORENUM();
+        BOOST_SCOPE_EXIT((&hEnum)(&pComMetaImp))
+        {
+            if (hEnum)
+                pComMetaImp->CloseEnum(hEnum);
+        }
+        BOOST_SCOPE_EXIT_END
+        auto mdtss = array<mdTypeSpec, 16>();
+        auto count = 0ul;
+        auto hr = E_FAIL;
+        do
+        {
+            hr = pComMetaImp->EnumTypeSpecs(&hEnum, mdtss.c_array(), static_cast<ULONG>(mdtss.size()), &count);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            for (auto i = 0u; i < count; ++i)
+            {
+                auto sig = Signature();
+                FillTypeSpecSignature(pComMetaImp, mdtss[i], sig);
+                
+                auto const &blob = sig.GetBlob();
+                _ASSERTE(!blob.empty());
+                auto index = 0ul;
+                auto kind = TypeKinds(blob[index++]);
+                if (kind != targetKind)
+                    continue;
+                
+                auto pos = 0ul;
+                index += ::CorSigUncompressData(&blob[index], &pos);
+                if (pos != targetPos)
+                    continue;
+                
+                // In this case, the type is used by a method body.
+                mdt = mdtss[i];
+                return;
+            }
+        } while (0 < count);
+
+        // In this case, the type is only used by a signature(For convenience, a special value is specified as the metadata token).
+        switch (targetKind.Value())
+        {
+            case TypeKinds::TK_VAR:
+                mdt = TokenFromRid(targetPos + 1, mdtTypeVar);
+                break;
+
+            case TypeKinds::TK_MVAR:
+                mdt = TokenFromRid(targetPos + 1, mdtTypeMVar);
+                break;
+
+            default:
+                {
+                    auto oss = std::wostringstream();
+                    oss << boost::wformat(L"targetKind.Value():  %|1$02X|") % targetKind.Value();
+                    BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+                }
+                break;
+        }
+    }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 

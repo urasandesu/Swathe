@@ -283,6 +283,20 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool TryGetCustomAttribute(custom_attribute_metadata_label_type const &cas, custom_attribute_metadata_label_type *&pExistingCas) const;
         void RegisterCustomAttribute(TempPtr<custom_attribute_metadata_label_type> &pCas);
 
+        IAssemblyPtrRange GetAssemblyReferences() const;
+        IAssembly const *GetAssemblyReference(wstring const &fullName) const;
+        IType const *GetTypeReference(IType const *pType) const;
+        void FillAssemblyRefs(vector<mdAssemblyRef> &asmRefs) const;
+        void FillTypeRefs(vector<mdTypeRef> &typeRefs) const;
+        void FillTypeRefs(wstring const &fullName, vector<mdTypeRef> &typeRefs) const;
+        void FillTypeDefMethodDefs(mdTypeDef mdtTarget, wstring const &name, vector<mdMethodDef> &methodDefs) const;
+        void FillTypeDefProperties(mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt) const;
+        void FillTypeRefProperties(mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope) const;
+        void FillScopeMemberRefs(mdToken mdtTarget, vector<mdMemberRef> &memberRefs) const;
+        void FillScopeMemberRefs(mdToken mdtTarget, wstring const &name, vector<mdMemberRef> &memberRefs) const;
+        void FillMemberRefProperties(mdMemberRef mdtTarget, mdToken &mdtOwner, wstring &name, Signature &sig) const;
+        void FillCustomAttributeProperties(mdCustomAttribute mdtTarget, Signature &sig, mdToken &mdtOwner, mdToken &mdtCtor) const;
+        
         IMetaDataAssemblyImport &GetCOMMetaDataAssemblyImport() const;
         IMetaDataImport2 &GetCOMMetaDataImport() const;
         path const &GetAssemblyFilePath() const;
@@ -325,6 +339,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable vector<ProcessorArchitecture> m_procArchs;
         mutable AssemblyFlags m_asmFlags;
         mutable path m_asmPath;
+        mutable bool m_refAsmsInit;
+        mutable vector<IAssembly const *> m_refAsms;
         mutable bool m_asmStorageInit;
         mutable iterator_range<BYTE const *> m_asmStorage;
         DWORD m_openFlags;

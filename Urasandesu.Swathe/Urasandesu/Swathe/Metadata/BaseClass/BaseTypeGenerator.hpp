@@ -127,6 +127,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    bool BaseTypeGenerator<ApiHolder>::IsNested() const
+    {
+        return Pimpl()->IsNested();
+    }
+
+    template<class ApiHolder>    
     ULONG BaseTypeGenerator<ApiHolder>::GetGenericParameterPosition() const
     {
         return Pimpl()->GetGenericParameterPosition();

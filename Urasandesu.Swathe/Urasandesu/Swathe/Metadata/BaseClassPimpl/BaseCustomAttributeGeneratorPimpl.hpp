@@ -237,6 +237,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    bool BaseCustomAttributeGeneratorPimpl<ApiHolder>::Equals(IType const *pAttributeType) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IType const *BaseCustomAttributeGeneratorPimpl<ApiHolder>::GetAttributeType() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());

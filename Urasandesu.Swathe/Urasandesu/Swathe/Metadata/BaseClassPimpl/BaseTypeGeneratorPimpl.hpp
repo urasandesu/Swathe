@@ -291,6 +291,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    bool BaseTypeGeneratorPimpl<ApiHolder>::IsNested() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     ULONG BaseTypeGeneratorPimpl<ApiHolder>::GetGenericParameterPosition() const
     {
         if (m_genericParamPos == static_cast<ULONG>(-1))

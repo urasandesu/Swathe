@@ -97,6 +97,9 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     template<class ApiHolder>    
     AutoPtr<IStrongNameKey const> BaseStrongNameInfoPimpl<ApiHolder>::NewStrongNameKey(PublicKeyBlob const &pubKeyBlob, DWORD pubKeyBlobSize) const
     {
+        if (pubKeyBlobSize == 0)
+            return AutoPtr<IStrongNameKey const>();
+        
         auto pSnKey = NewStrongNameKeyCore();
         pSnKey->SetPublicKeyBlob(pubKeyBlob, pubKeyBlobSize);
         return pSnKey;
@@ -107,6 +110,9 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     template<class ApiHolder>    
     AutoPtr<IStrongNameKey const> BaseStrongNameInfoPimpl<ApiHolder>::NewStrongNameKeyWithToken(void const *pToken, DWORD tokenSize) const
     {
+        if (tokenSize == 0)
+            return AutoPtr<IStrongNameKey const>();
+        
         auto pSnKey = NewStrongNameKeyCore();
         pSnKey->SetPublicKeyToken(pToken, tokenSize);
         return pSnKey;

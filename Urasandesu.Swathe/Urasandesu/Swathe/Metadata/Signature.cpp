@@ -872,6 +872,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 mdToken m_mdt;
             };
 
+            struct CompressData
+            {
+                explicit CompressData(ULONG &data) : 
+                    m_data(data)
+                { }
+            
+                ULONG &m_data;
+            };
+
             template<class T>
             struct HeldData
             {
@@ -1182,6 +1191,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     index += ::CorSigUncompressData(&blob[index], &count);
                     if (0ul < count)
                         c.m_data.resize(count);
+                }
+            };
+
+            template<>
+            struct TakeImplForAnother<CompressData>
+            {
+                static void Take(SignatureProvider const &provider, vector<COR_SIGNATURE> const &blob, SIZE_T &index, CompressData &c)
+                {
+                    auto pos = 0ul;
+                    index += ::CorSigUncompressData(&blob[index], &pos);
+                    c.m_data = pos;
                 }
             };
 
@@ -1550,7 +1570,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             {
                 using namespace PutterDetail;
 
-                _ASSERTE(pType != nullptr);
+                _ASSERTE(pType);
 
                 auto sb = SimpleBlob();
 
@@ -1756,7 +1776,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             {
                 using namespace TakerDetail;
 
-                _ASSERTE(pType != nullptr);
+                _ASSERTE(pType);
                 _ASSERTE(!m_blob.empty());
 
                 (m_blob, pType) >> 
@@ -1764,6 +1784,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     pDeclaringType >> 
                     CompressCount(genericArgs) >> 
                     genericArgs
+                ;
+            }
+
+
+
+            void Decode(IType const *pType, TypeKinds &kind, ULONG &genericParamPos) const
+            {
+                using namespace TakerDetail;
+
+                _ASSERTE(pType);
+                _ASSERTE(!m_blob.empty());
+
+                (m_blob, pType) >> 
+                    kind >> 
+                    CompressData(genericParamPos)
                 ;
             }
 
@@ -1959,6 +1994,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         void SignatureImpl::Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<IType const *> &genericArgs) const
         {
             Pimpl()->Decode(pType, kind, pDeclaringType, genericArgs);
+        }
+
+        void SignatureImpl::Decode(IType const *pType, TypeKinds &kind, ULONG &genericParamPos) const
+        {
+            Pimpl()->Decode(pType, kind, genericParamPos);
         }
 
         void SignatureImpl::Decode(IMethod const *pMethod, CallingConventions &callingConvention, vector<IType const *> &genericArgs, IType const *&pRetType, vector<IParameter const *> &params) const

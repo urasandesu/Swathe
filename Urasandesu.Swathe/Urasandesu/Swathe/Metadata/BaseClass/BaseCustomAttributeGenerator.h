@@ -83,6 +83,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly() const;
         IType const *GetAttributeType() const;
         ICustomAttribute const *GetSourceCustomAttribute() const;
+        bool Equals(IType const *pAttributeType) const;
     
     private:
         custom_attribute_generator_pimpl_label_type *Pimpl();

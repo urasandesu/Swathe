@@ -152,6 +152,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    bool BaseCustomAttributeGenerator<ApiHolder>::Equals(IType const *pAttributeType) const
+    {
+        return Pimpl()->Equals(pAttributeType);
+    }
+
+    template<class ApiHolder>    
     void BaseCustomAttributeGenerator<ApiHolder>::SetConstructor(IMethod const *pCtor)
     {
         Pimpl()->SetConstructor(pCtor);

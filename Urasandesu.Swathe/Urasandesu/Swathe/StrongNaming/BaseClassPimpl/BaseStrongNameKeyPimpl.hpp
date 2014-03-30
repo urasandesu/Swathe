@@ -231,6 +231,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
         m_pPubKeyBlob = unique_ptr<PublicKeyBlob>(reinterpret_cast<PublicKeyBlob *>(new BYTE[pubKeyBlobSize]));
         ::memcpy_s(m_pPubKeyBlob.get(), pubKeyBlobSize, &pubKeyBlob, pubKeyBlobSize);
 
+        _ASSERTE(pubKeyBlobSize != 0);
         _ASSERTE(pubKeyBlobSize != -1);
         _ASSERTE(m_pubKeyBlobSize == -1);
         m_pubKeyBlobSize = pubKeyBlobSize;
@@ -241,6 +242,7 @@ namespace Urasandesu { namespace Swathe { namespace StrongNaming { namespace Bas
     template<class ApiHolder>    
     void BaseStrongNameKeyPimpl<ApiHolder>::SetPublicKeyToken(void const *pToken, DWORD tokenSize)
     {
+        _ASSERTE(tokenSize != 0);
         m_publicKeyToken.resize(tokenSize);
         auto const *pBuf = reinterpret_cast<BYTE const *>(pToken);
         m_publicKeyToken.assign(pBuf, pBuf + tokenSize);

@@ -35,6 +35,8 @@
 namespace Urasandesu { namespace Swathe { namespace Metadata { 
     
     struct IAssembly;
+
+    typedef boost::any_range<IAssembly const *, boost::forward_traversal_tag, IAssembly const *, std::ptrdiff_t> IAssemblyPtrRange;
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 

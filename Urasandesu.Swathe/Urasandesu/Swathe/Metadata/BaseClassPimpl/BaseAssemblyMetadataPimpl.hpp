@@ -54,6 +54,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_casInit(false), 
         m_typesInit(false), 
         m_asmFlags(AssemblyFlags::AF_UNREACHED),
+        m_refAsmsInit(false), 
         m_asmStorageInit(false), 
         m_openFlags(ofRead), 
         m_pOpeningAsm(nullptr), 
@@ -166,7 +167,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     AutoPtr<IStrongNameKey const> const &BaseAssemblyMetadataPimpl<ApiHolder>::GetStrongNameKey() const
     {
-        if (!m_pSnKey)
+        if (m_asmFlags == AssemblyFlags::AF_UNREACHED)  // StrongNameKey property has the potential to be incomplete, so we use the Flags property instead of it
         {
             auto mdtTarget = GetToken();
             if (TypeFromToken(mdtTarget) == mdtAssembly)
@@ -302,7 +303,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetGenericTypeParameter(ULONG genericParamPos) const
     {
-        return m_pClass->GetType(TokenFromRid(genericParamPos + 1, mdtTypeVar), TypeKinds::TK_VAR, genericParamPos, false, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
+        return m_pClass->GetType(mdTokenNil, TypeKinds::TK_VAR, genericParamPos, true, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
     }
 
 
@@ -310,7 +311,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetGenericMethodParameter(ULONG genericParamPos) const
     {
-        return m_pClass->GetType(TokenFromRid(genericParamPos + 1, mdtTypeMVar), TypeKinds::TK_MVAR, genericParamPos, false, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
+        return m_pClass->GetType(mdTokenNil, TypeKinds::TK_MVAR, genericParamPos, true, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
     }
 
 
@@ -413,7 +414,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         auto cas = GetCustomAttributes();
         auto isTarget = function<bool (ICustomAttribute const *)>();
-        isTarget = [pAttributeType](ICustomAttribute const *pCas) { return pCas->GetAttributeType()->GetSourceType() == pAttributeType->GetSourceType(); };
+        isTarget = [pAttributeType](ICustomAttribute const *pCas) { return pCas->Equals(pAttributeType); };
         return cas | filtered(isTarget);
     }
 
@@ -1130,6 +1131,372 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         auto &cas = *pCas;
         m_casToIndex[&cas] = m_pMetaInfo->RegisterCustomAttributeCore(pCas);
+    }
+
+
+
+    template<class ApiHolder>    
+    IAssemblyPtrRange BaseAssemblyMetadataPimpl<ApiHolder>::GetAssemblyReferences() const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (m_refAsmsInit)
+            return m_refAsms;
+        
+        auto mdtTarget = GetToken();
+        switch (TypeFromToken(mdtTarget))
+        {
+            case mdtAssembly:
+                {
+                    auto asmRefs = vector<mdAssemblyRef>();
+                    m_pClass->FillAssemblyRefs(asmRefs);
+                    
+                    m_refAsms.reserve(asmRefs.size());
+                    BOOST_FOREACH (auto const &mdar, asmRefs)
+                        m_refAsms.push_back(GetAssemblyReference(mdar));
+                }
+                break;
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+        m_refAsmsInit = true;
+        return m_refAsms;
+    }
+
+
+
+    template<class ApiHolder>    
+    IAssembly const *BaseAssemblyMetadataPimpl<ApiHolder>::GetAssemblyReference(wstring const &fullName) const
+    {
+        using boost::adaptors::filtered;
+        using boost::copy;
+        using std::back_inserter;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(!fullName.empty());
+        
+        auto refAsms = m_pClass->GetAssemblyReferences();
+        auto results = vector<IAssembly const *>();
+        auto isTarget = [&](IAssembly const *pAsm) { return pAsm->GetFullName() == fullName; };
+        copy(refAsms | filtered(isTarget), back_inserter(results));
+        
+        if (results.empty())
+            return nullptr;
+        
+        if (1 < results.size())
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_DUPLICATE));
+        
+        return results[0];
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetTypeReference(IType const *pType) const
+    {
+        if (!pType)
+            return nullptr;
+        
+        auto const *pTargetAsm = pType->GetAssembly();
+        if (pTargetAsm == m_pClass)
+            return pType;
+        
+        auto mdtTarget = mdTokenNil;
+        if (pType->IsNested())
+        {
+            auto const *pDeclaringType = pType->GetDeclaringType();
+            auto const *pRefType = GetTypeReference(pDeclaringType);
+            if (!pRefType)
+                return nullptr;
+            
+            mdtTarget = pRefType->GetToken();
+        }
+        else
+        {
+            auto const *pRefAsm = GetAssemblyReference(pTargetAsm->GetFullName());
+            if (!pRefAsm)
+                return nullptr;
+            
+            mdtTarget = pRefAsm->GetToken();
+        }
+        
+        auto typeRefs = vector<mdTypeRef>();
+        m_pClass->FillTypeRefs(pType->GetFullName(), typeRefs);
+        if (typeRefs.empty())
+            return nullptr;
+        
+        _ASSERTE(typeRefs.size() == 1);   // This validation will always pass because any types don't have the overloading.
+        return GetType(typeRefs[0]);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillAssemblyRefs(vector<mdAssemblyRef> &asmRefs) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(TypeFromToken(GetToken()) == mdtAssembly);
+        
+        auto &comMetaAsmImp = GetCOMMetaDataAssemblyImport();
+        
+        auto hEnum = HCORENUM();
+        BOOST_SCOPE_EXIT((&hEnum)(&comMetaAsmImp))
+        {
+            if (hEnum)
+                comMetaAsmImp.CloseEnum(hEnum);
+        }
+        BOOST_SCOPE_EXIT_END
+        auto mdars = array<mdAssemblyRef, 16>();
+        auto count = 0ul;
+        auto hr = E_FAIL;
+        do
+        {
+            hr = comMetaAsmImp.EnumAssemblyRefs(&hEnum, mdars.c_array(), static_cast<ULONG>(mdars.size()), &count);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            asmRefs.reserve(asmRefs.size() + count);
+            for (auto i = 0u; i < count; ++i)
+                asmRefs.push_back(mdars[i]);
+        } while (0 < count);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillTypeRefs(vector<mdTypeRef> &typeRefs) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        auto &comMetaImp = GetCOMMetaDataImport();
+        
+        auto hEnum = HCORENUM();
+        BOOST_SCOPE_EXIT((&hEnum)(&comMetaImp))
+        {
+            if (hEnum)
+                comMetaImp.CloseEnum(hEnum);
+        }
+        BOOST_SCOPE_EXIT_END
+        auto mdtrs = array<mdTypeRef, 16>();
+        auto count = 0ul;
+        auto hr = E_FAIL;
+        do
+        {
+            hr = comMetaImp.EnumTypeRefs(&hEnum, mdtrs.c_array(), static_cast<ULONG>(mdtrs.size()), &count);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            typeRefs.reserve(typeRefs.size() + count);
+            for (auto i = 0u; i < count; ++i)
+                typeRefs.push_back(mdtrs[i]);
+        } while (0 < count);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillTypeRefs(wstring const &fullName, vector<mdTypeRef> &typeRefs) const
+    {
+        auto _typeRefs = vector<mdTypeRef>();
+        FillTypeRefs(_typeRefs);
+        
+        BOOST_FOREACH (auto const &mdtr, _typeRefs)
+        {
+            auto _fullName = wstring();
+            auto mdtResolutionScope = mdTokenNil;
+            FillTypeRefProperties(mdtr, _fullName, mdtResolutionScope);
+            if (fullName == _fullName)
+                typeRefs.push_back(mdtr);
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillTypeDefMethodDefs(mdTypeDef mdtTarget, wstring const &name, vector<mdMethodDef> &methodDefs) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(!IsNilToken(mdtTarget));
+        
+        auto &comMetaImp = GetCOMMetaDataImport();
+        
+        auto hEnum = HCORENUM();
+        BOOST_SCOPE_EXIT((&hEnum)(&comMetaImp))
+        {
+            if (hEnum)
+                comMetaImp.CloseEnum(hEnum);
+        }
+        BOOST_SCOPE_EXIT_END
+        auto mdmds = array<mdMethodDef, 16>();
+        auto count = 0ul;
+        auto hr = E_FAIL;
+        do
+        {
+            hr = comMetaImp.EnumMethodsWithName(&hEnum, mdtTarget, name.c_str(), mdmds.c_array(), static_cast<ULONG>(mdmds.size()), &count);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            methodDefs.reserve(methodDefs.size() + count);
+            for (auto i = 0u; i < count; ++i)
+                methodDefs.push_back(mdmds[i]);
+        } while (0 < count);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillTypeDefProperties(mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        _ASSERTE(!IsNilToken(mdtTarget));
+        _ASSERTE(IsNilToken(mdtExt));
+        
+        auto &comMetaImp = GetCOMMetaDataImport();
+
+        auto wzname = array<WCHAR, MAX_SYM_NAME>();
+        auto dwattr = 0ul;
+        auto length = 0ul;
+        auto hr = comMetaImp.GetTypeDefProps(mdtTarget, wzname.c_array(), static_cast<ULONG>(wzname.size()), &length, &dwattr, &mdtExt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        fullName = wzname.data();
+        attr = TypeAttributes(dwattr);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillTypeRefProperties(mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(!IsNilToken(mdtTarget));
+        _ASSERTE(IsNilToken(mdtResolutionScope));
+        
+        auto &comMetaImp = GetCOMMetaDataImport();
+
+        auto wzname = array<WCHAR, MAX_SYM_NAME>();
+        auto length = 0ul;
+        auto hr = comMetaImp.GetTypeRefProps(mdtTarget, &mdtResolutionScope, wzname.c_array(), static_cast<ULONG>(wzname.size()), &length);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        fullName = wzname.data();
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillScopeMemberRefs(mdToken mdtTarget, vector<mdMemberRef> &memberRefs) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(!IsNilToken(mdtTarget));
+        
+        auto &comMetaImp = GetCOMMetaDataImport();
+        
+        auto hEnum = HCORENUM();
+        BOOST_SCOPE_EXIT((&hEnum)(&comMetaImp))
+        {
+            if (hEnum)
+                comMetaImp.CloseEnum(hEnum);
+        }
+        BOOST_SCOPE_EXIT_END
+        auto mdmrs = array<mdMemberRef, 16>();
+        auto count = 0ul;
+        auto hr = E_FAIL;
+        do
+        {
+            hr = comMetaImp.EnumMemberRefs(&hEnum, mdtTarget, mdmrs.c_array(), static_cast<ULONG>(mdmrs.size()), &count);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            memberRefs.reserve(memberRefs.size() + count);
+            for (auto i = 0u; i < count; ++i)
+                memberRefs.push_back(mdmrs[i]);
+        } while (0 < count);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillScopeMemberRefs(mdToken mdtTarget, wstring const &name, vector<mdMemberRef> &memberRefs) const
+    {
+        _ASSERTE(!IsNilToken(mdtTarget));
+        
+        auto _memberRefs = vector<mdMemberRef>();
+        FillScopeMemberRefs(mdtTarget, _memberRefs);
+        
+        BOOST_FOREACH (auto const &mdmr, _memberRefs)
+        {
+            auto mdtOwner = mdTokenNil;
+            auto _name = wstring();
+            auto sig = Signature();
+            FillMemberRefProperties(mdmr, mdtOwner, _name, sig);
+            if (name == _name)
+                memberRefs.push_back(mdmr);
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillMemberRefProperties(mdMemberRef mdtTarget, mdToken &mdtOwner, wstring &name, Signature &sig) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        _ASSERTE(!IsNilToken(mdtTarget));
+        _ASSERTE(sig.GetBlob().empty());
+        
+        auto &comMetaImp = GetCOMMetaDataImport();
+
+        auto wzname = array<WCHAR, MAX_SYM_NAME>();
+        auto wznameLength = 0ul;
+        auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+        auto sigLength = 0ul;
+        auto hr = comMetaImp.GetMemberRefProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &pSig, &sigLength);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        name = wzname.data();
+        sig.SetBlob(pSig, sigLength);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillCustomAttributeProperties(mdCustomAttribute mdtTarget, Signature &sig, mdToken &mdtOwner, mdToken &mdtCtor) const
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        _ASSERTE(!IsNilToken(mdtTarget));
+        _ASSERTE(IsNilToken(mdtOwner));
+        _ASSERTE(IsNilToken(mdtCtor));
+
+        auto &comMetaImp = GetCOMMetaDataImport();
+        
+        auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+        auto sigLength = 0ul;
+        auto hr = comMetaImp.GetCustomAttributeProps(mdtTarget, &mdtOwner, &mdtCtor, reinterpret_cast<void const **>(&pSig), &sigLength);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        sig.SetBlob(pSig, sigLength);
     }
 
 

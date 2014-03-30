@@ -98,6 +98,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             void Encode(ICustomAttribute const *pCa);
 
             void Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<IType const *> &genericArgs) const;
+            void Decode(IType const *pType, TypeKinds &kind, ULONG &genericParamPos) const;
             void Decode(IMethod const *pMethod, CallingConventions &callingConvention, vector<IType const *> &genericArgs, IType const *&pRetType, vector<IParameter const *> &params) const;
             void Decode(IMethod const *pMethod, CallingConventions &callingConvention, IType const *&pRetType, vector<IParameter const *> &params) const;
             void Decode(IMethod const *pMethod, CallingConventions &callingConvention, vector<IType const *> &genericArgs) const;

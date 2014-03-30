@@ -78,6 +78,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly() const;
         IType const *GetAttributeType() const;
         ICustomAttribute const *GetSourceCustomAttribute() const;
+        bool Equals(IType const *pAttributeType) const;
         
     private:
         void SetToken(mdToken mdt);

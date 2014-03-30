@@ -397,6 +397,84 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IAssemblyPtrRange BaseAssemblyMetadata<ApiHolder>::GetAssemblyReferences() const
+    {
+        return Pimpl()->GetAssemblyReferences();
+    }
+
+    template<class ApiHolder>    
+    IAssembly const *BaseAssemblyMetadata<ApiHolder>::GetAssemblyReference(wstring const &fullName) const
+    {
+        return Pimpl()->GetAssemblyReference(fullName);
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyMetadata<ApiHolder>::GetTypeReference(IType const *pType) const
+    {
+        return Pimpl()->GetTypeReference(pType);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillAssemblyRefs(vector<mdAssemblyRef> &asmRefs) const
+    {
+        Pimpl()->FillAssemblyRefs(asmRefs);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillTypeRefs(vector<mdTypeRef> &typeRefs) const
+    {
+        Pimpl()->FillTypeRefs(typeRefs);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillTypeRefs(wstring const &fullName, vector<mdTypeRef> &typeRefs) const
+    {
+        Pimpl()->FillTypeRefs(fullName, typeRefs);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillTypeDefMethodDefs(mdTypeDef mdtTarget, wstring const &name, vector<mdMethodDef> &methodDefs) const
+    {
+        Pimpl()->FillTypeDefMethodDefs(mdtTarget, name, methodDefs);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillTypeDefProperties(mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt) const
+    {
+        Pimpl()->FillTypeDefProperties(mdtTarget, fullName, attr, mdtExt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillTypeRefProperties(mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope) const
+    {
+        Pimpl()->FillTypeRefProperties(mdtTarget, fullName, mdtResolutionScope);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillScopeMemberRefs(mdToken mdtTarget, vector<mdMemberRef> &memberRefs) const
+    {
+        Pimpl()->FillScopeMemberRefs(mdtTarget, memberRefs);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillScopeMemberRefs(mdToken mdtTarget, wstring const &name, vector<mdMemberRef> &memberRefs) const
+    {
+        Pimpl()->FillScopeMemberRefs(mdtTarget, name, memberRefs);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillMemberRefProperties(mdMemberRef mdtTarget, mdToken &mdtOwner, wstring &name, Signature &sig) const
+    {
+        Pimpl()->FillMemberRefProperties(mdtTarget, mdtOwner, name, sig);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillCustomAttributeProperties(mdCustomAttribute mdtTarget, Signature &sig, mdToken &mdtOwner, mdToken &mdtCtor) const
+    {
+        Pimpl()->FillCustomAttributeProperties(mdtTarget, sig, mdtOwner, mdtCtor);
+    }
+
+    template<class ApiHolder>    
     IMetaDataAssemblyImport &BaseAssemblyMetadata<ApiHolder>::GetCOMMetaDataAssemblyImport() const
     {
         return Pimpl()->GetCOMMetaDataAssemblyImport();

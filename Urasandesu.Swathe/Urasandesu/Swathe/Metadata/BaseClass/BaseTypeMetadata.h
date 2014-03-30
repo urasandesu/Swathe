@@ -82,6 +82,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool IsGenericTypeDefinition() const;
         bool IsByRef() const;
         bool IsArray() const;
+        bool IsNested() const;
         ULONG GetGenericParameterPosition() const;
         vector<IType const *> const &GetGenericArguments() const;
         Signature const &GetSignature() const;
@@ -139,7 +140,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 184;
 #else
-        static INT const PIMPL_TYPE_SIZE = 304;
+        static INT const PIMPL_TYPE_SIZE = 312;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

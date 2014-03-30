@@ -144,6 +144,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    bool BaseCustomAttributeMetadata<ApiHolder>::Equals(IType const *pAttributeType) const
+    {
+        return Pimpl()->Equals(pAttributeType);
+    }
+
+    template<class ApiHolder>    
     IType const *BaseCustomAttributeMetadata<ApiHolder>::GetAttributeType() const
     {
         return Pimpl()->GetAttributeType();

@@ -95,6 +95,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethod const *BaseCustomAttributeMetadataPimpl<ApiHolder>::GetConstructor() const
     {
+        if (!m_pCtor)
+        {
+            auto mdtTarget = GetToken();
+            if (IsNilToken(m_mdtCtor))
+                FillCustomAttributeProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_sig, m_mdtOwner, m_mdtCtor);
+            FillCustomAttributeConstructor(m_pClass, m_mdtCtor, m_pCtor);
+        }
         return m_pCtor;
     }
 
@@ -107,7 +114,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto const &blob = m_sig.GetBlob();
             _ASSERTE(!blob.empty());
-            _ASSERTE(m_pCtor);
             m_sig.Decode(m_pClass, m_constructorArgs, m_namedProps, m_propValues, m_namedFields, m_fieldValues);
             m_constructorArgsInit = true;
             m_namedPropsInit = true;
@@ -173,20 +179,55 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
+    
+    
+    
+    template<class ApiHolder>    
+    bool BaseCustomAttributeMetadataPimpl<ApiHolder>::Equals(IType const *pAttributeType) const
+    {
+        using boost::range::find;
+        
+        if (!pAttributeType)
+            return false;
+        
+        if (m_pCtor)
+            return m_pCtor->GetDeclaringType()->GetSourceType() == pAttributeType->GetSourceType();
+        
+        if (IsNilToken(m_mdtCtor))
+            m_pAsm->FillCustomAttributeProperties(GetToken(), m_sig, m_mdtOwner, m_mdtCtor);
+        
+        if (pAttributeType->GetAssembly() == m_pAsm)
+        {
+            if (TypeFromToken(m_mdtCtor) != mdtMethodDef)
+                return false;
+            
+            auto methodDefs = vector<mdMethodDef>();
+            m_pAsm->FillTypeDefMethodDefs(pAttributeType->GetToken(), MetadataSpecialValues::METHOD_NAME_OF_CTOR, methodDefs);
+            
+            return find(methodDefs, m_mdtCtor) != methodDefs.end();
+        }
+        else
+        {
+            if (TypeFromToken(m_mdtCtor) != mdtMemberRef)
+                return false;
+            
+            pAttributeType = m_pAsm->GetTypeReference(pAttributeType);
+            if (!pAttributeType)
+                return false;
+            
+            auto memberRefs = vector<mdMemberRef>();
+            m_pAsm->FillScopeMemberRefs(pAttributeType->GetToken(), MetadataSpecialValues::METHOD_NAME_OF_CTOR, memberRefs);
+            
+            return find(memberRefs, m_mdtCtor) != memberRefs.end();
+        }
+    }
 
 
 
     template<class ApiHolder>    
     IType const *BaseCustomAttributeMetadataPimpl<ApiHolder>::GetAttributeType() const
     {
-        if (!m_pCtor)
-        {
-            auto mdtTarget = GetToken();
-            if (IsNilToken(m_mdtCtor))
-                FillCustomAttributeProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_sig, m_mdtOwner, m_mdtCtor);
-            FillCustomAttributeConstructor(m_pClass, m_mdtCtor, m_pCtor);
-        }
-        return m_pCtor->GetDeclaringType();
+        return GetConstructor()->GetDeclaringType();
     }
 
 
