@@ -1448,7 +1448,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         case TypeKinds::TK_VOID:
                         case TypeKinds::TK_BOOLEAN:
                         case TypeKinds::TK_CHAR:
+                        case TypeKinds::TK_I1:
                         case TypeKinds::TK_U1:
+                        case TypeKinds::TK_I2:
+                        case TypeKinds::TK_U2:
                         case TypeKinds::TK_I4:
                         case TypeKinds::TK_U4:
                         case TypeKinds::TK_I8:
@@ -1580,13 +1583,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     case TypeKinds::TK_VOID:
                     case TypeKinds::TK_BOOLEAN:
                     case TypeKinds::TK_CHAR:
-                    case TypeKinds::TK_I:
+                    case TypeKinds::TK_I1:
+                    case TypeKinds::TK_U1:
+                    case TypeKinds::TK_I2:
+                    case TypeKinds::TK_U2:
                     case TypeKinds::TK_I4:
                     case TypeKinds::TK_U4:
                     case TypeKinds::TK_I8:
-                    case TypeKinds::TK_R8:                    
-                    case TypeKinds::TK_OBJECT:
+                    case TypeKinds::TK_U8:
+                    case TypeKinds::TK_R4:
+                    case TypeKinds::TK_R8:
                     case TypeKinds::TK_STRING:
+                    case TypeKinds::TK_I:
+                    case TypeKinds::TK_OBJECT:
                         sb <<
                             kind
                         ;

@@ -530,7 +530,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             &opCode != &OpCodes::Castclass && 
             &opCode != &OpCodes::Isinst && 
             &opCode != &OpCodes::Box && 
-            &opCode != &OpCodes::Ldelema)
+            &opCode != &OpCodes::Ldelema &&
+            &opCode != &OpCodes::Ldobj)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IType const *)\".";
@@ -593,7 +594,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
         if (&opCode != &OpCodes::Ldsfld && 
-            &opCode != &OpCodes::Stsfld)
+            &opCode != &OpCodes::Stsfld &&
+            &opCode != &OpCodes::Stfld)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IField const *)\".";

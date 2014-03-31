@@ -377,7 +377,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeGeneratorPimpl<ApiHolder>::MakeByRefType() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_pSrcType)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        else
+        {
+            return m_pAsmGen->Resolve(m_pSrcType->MakeByRefType());
+        }
     }
 
 
