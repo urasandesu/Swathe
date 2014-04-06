@@ -122,6 +122,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Emit(OpCode const &opCode, BYTE arg);
         void Emit(OpCode const &opCode, SHORT arg);
         void Emit(OpCode const &opCode, INT arg);
+        void Emit(OpCode const &opCode, FLOAT arg);
         void Emit(OpCode const &opCode);
         void Emit(IInstruction const *pInst);
         local_generator_label_type *DefineLocal(IType const *pLocalType);

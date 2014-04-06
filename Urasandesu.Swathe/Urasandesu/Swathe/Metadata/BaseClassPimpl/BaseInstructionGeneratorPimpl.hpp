@@ -326,7 +326,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     PutInlineString(this, GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_SWITCH:
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                    PutInlineSwitch(this, GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_TOK:
                     PutInlineToken(this, GetOperand(), blob);
@@ -344,7 +344,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     PutShortInlineI(GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_SHORT_INLINE_R:
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                    PutShortInlineR(GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_SHORT_INLINE_VAR:
                     PutShortInlineVar(GetOperand(), blob);
@@ -528,6 +528,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineSwitch(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob)
+    {
+        using boost::get;
+
+        auto *pBodyGen = _this->m_pBodyGen;
+
+        if (auto *pOffsets = get<vector<INT> >(&operand))
+        {
+            blob.Put<INT>(static_cast<INT>(pOffsets->size()));
+            BOOST_FOREACH (auto const &offset, *pOffsets)
+                blob.Put<INT>(offset);
+        }
+        else
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineToken(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob)
     {
         using boost::get;
@@ -600,6 +619,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (auto *pArg = get<BYTE>(&operand))
             blob.Put<BYTE>(*pArg);
+        else
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutShortInlineR(Operand const &operand, SimpleBlob &blob)
+    {
+        using boost::get;
+
+        if (auto *pArg = get<FLOAT>(&operand))
+            blob.Put<FLOAT>(*pArg);
         else
             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }

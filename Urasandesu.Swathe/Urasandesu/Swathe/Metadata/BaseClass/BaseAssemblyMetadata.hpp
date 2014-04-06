@@ -451,6 +451,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillMethodDefProperties(mdMethodDef mdtTarget, mdTypeDef &mdtOwner, wstring &name, MethodAttributes &attr, Signature &sig, ULONG &codeRva, MethodImplAttributes &implFlags) const
+    {
+        Pimpl()->FillMethodDefProperties(mdtTarget, mdtOwner, name, attr, sig, codeRva, implFlags);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillMethodSpecProperties(mdMethodSpec mdtTarget, mdToken &mdtOwner, Signature &sig) const
+    {
+        Pimpl()->FillMethodSpecProperties(mdtTarget, mdtOwner, sig);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadata<ApiHolder>::FillFieldDefProperties(mdFieldDef mdtTarget, mdToken &mdtOwner, wstring &name, FieldAttributes &attr, Signature &sig) const
+    {
+        Pimpl()->FillFieldDefProperties(mdtTarget, mdtOwner, name, attr, sig);
+    }
+
+    template<class ApiHolder>    
     void BaseAssemblyMetadata<ApiHolder>::FillScopeMemberRefs(mdToken mdtTarget, vector<mdMemberRef> &memberRefs) const
     {
         Pimpl()->FillScopeMemberRefs(mdtTarget, memberRefs);

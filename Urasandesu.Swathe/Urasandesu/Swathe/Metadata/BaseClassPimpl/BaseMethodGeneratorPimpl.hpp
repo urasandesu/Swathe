@@ -109,6 +109,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     auto attr = m_pClass->GetAttribute();
                     auto const &sig = m_pClass->GetSignature();
                     auto const &blob = sig.GetBlob();
+                    if (CPPANONYM_D_LOG_ENABLED())
+                    {
+                        auto oss = std::wostringstream();
+                        oss << L"Signature:";
+                        for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                            oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                        CPPANONYM_D_LOGW(oss.str());
+                    }
                     CPPANONYM_D_LOGW1(L"Getting Method Generator Token... 2: %|1$s|", name);
                     auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                     auto hr = comMetaEmt.DefineMethod(mdtTarget, name.c_str(), attr.Value(), &blob[0], static_cast<ULONG>(blob.size()), 0, 0, &m_mdt);
@@ -133,6 +141,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                         auto mdtTarget = GetDeclaringMethod()->GetToken();
                         auto const &sig = m_pClass->GetSignature();
                         auto const &blob = sig.GetBlob();
+                        if (CPPANONYM_D_LOG_ENABLED())
+                        {
+                            auto oss = std::wostringstream();
+                            oss << L"Signature:";
+                            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                            CPPANONYM_D_LOGW(oss.str());
+                        }
                         auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
                         auto hr = comMetaEmt.DefineMethodSpec(mdtTarget, &blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
                         if (FAILED(hr))

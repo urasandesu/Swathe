@@ -1245,29 +1245,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
 
-    //template<class ApiHolder>    
-    //void BaseTypeMetadataPimpl<ApiHolder>::FillTypeDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt)
-    //{
-    //    using boost::array;
-    //    using Urasandesu::CppAnonym::CppAnonymCOMException;
-
-    //    _ASSERTE(pComMetaImp);
-    //    _ASSERTE(!IsNilToken(mdtTarget));
-    //    _ASSERTE(IsNilToken(mdtExt));
-
-    //    auto wzname = array<WCHAR, MAX_SYM_NAME>();
-    //    auto dwattr = 0ul;
-    //    auto length = 0ul;
-    //    auto hr = pComMetaImp->GetTypeDefProps(mdtTarget, wzname.c_array(), static_cast<ULONG>(wzname.size()), &length, &dwattr, &mdtExt);
-    //    if (FAILED(hr))
-    //        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-
-    //    fullName = wzname.data();
-    //    attr = TypeAttributes(dwattr);
-    //}
-
-
-
     template<class ApiHolder>    
     void BaseTypeMetadataPimpl<ApiHolder>::FillTypeDefBaseType(IType const *pType, mdToken mdtExt, bool &baseTypeInit, IType const *&pBaseType)
     {
@@ -1470,27 +1447,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
 
-    //template<class ApiHolder>    
-    //void BaseTypeMetadataPimpl<ApiHolder>::FillTypeRefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope)
-    //{
-    //    using boost::array;
-    //    using Urasandesu::CppAnonym::CppAnonymCOMException;
-    //    
-    //    _ASSERTE(pComMetaImp);
-    //    _ASSERTE(!IsNilToken(mdtTarget));
-    //    _ASSERTE(IsNilToken(mdtResolutionScope));
-
-    //    auto wzname = array<WCHAR, MAX_SYM_NAME>();
-    //    auto length = 0ul;
-    //    auto hr = pComMetaImp->GetTypeRefProps(mdtTarget, &mdtResolutionScope, wzname.c_array(), static_cast<ULONG>(wzname.size()), &length);
-    //    if (FAILED(hr))
-    //        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-
-    //    fullName = wzname.data();
-    //}
-
-
-
     template<class ApiHolder>    
     void BaseTypeMetadataPimpl<ApiHolder>::FillTypeRefSourceType(IType const *pType, mdToken mdtResolutionScope, wstring const &fullName, IType const *&pSrcType)
     {
@@ -1603,20 +1559,31 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         kind = TypeKinds(blob[0]);
         switch (kind.Value())
         {
-            case TypeKinds::TK_VAR:
+            case TypeKinds::TK_PTR:
+            case TypeKinds::TK_SZARRAY:
                 {
-                    auto const *pAsm = pType->GetAssembly();
-                    sig.Decode(pType, kind, genericParamPos);
-                    member = pAsm->GetMainModule();
+                    auto const *pDeclaringType = static_cast<IType *>(nullptr);
+                    sig.Decode(pType, kind, pDeclaringType);
+                    member = pDeclaringType;
                     genericArgsInit = true;
                 }
                 break;
-
+            
             case TypeKinds::TK_GENERICINST:
                 {
                     auto const *pDeclaringType = static_cast<IType *>(nullptr);
                     sig.Decode(pType, kind, pDeclaringType, genericArgs);
                     member = pDeclaringType;
+                    genericArgsInit = true;
+                }
+                break;
+
+            case TypeKinds::TK_VAR:
+            case TypeKinds::TK_MVAR:
+                {
+                    auto const *pAsm = pType->GetAssembly();
+                    sig.Decode(pType, kind, genericParamPos);
+                    member = pAsm->GetMainModule();
                     genericArgsInit = true;
                 }
                 break;

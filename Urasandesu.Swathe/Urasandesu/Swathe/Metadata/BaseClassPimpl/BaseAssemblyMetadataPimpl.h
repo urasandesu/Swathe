@@ -96,6 +96,10 @@
 #include <Urasandesu/Swathe/Metadata/IMethodEqualTo.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_METHODIMPLATTRIBUTES_HPP
+#include <Urasandesu/Swathe/Metadata/MethodImplAttributes.hpp>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_IMETHODBODYFWD_H
 #include <Urasandesu/Swathe/Metadata/IMethodBodyFwd.h>
 #endif
@@ -142,6 +146,10 @@
 
 #ifndef URASANDESU_SWATHE_METADATA_IFIELDEQUALTO_H
 #include <Urasandesu/Swathe/Metadata/IFieldEqualTo.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_FIELDATTRIBUTES_HPP
+#include <Urasandesu/Swathe/Metadata/FieldAttributes.hpp>
 #endif
 
 #ifndef URASANDESU_SWATHE_METADATA_IPROPERTYFWD_H
@@ -292,6 +300,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void FillTypeDefMethodDefs(mdTypeDef mdtTarget, wstring const &name, vector<mdMethodDef> &methodDefs) const;
         void FillTypeDefProperties(mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt) const;
         void FillTypeRefProperties(mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope) const;
+        void FillMethodDefProperties(mdMethodDef mdtTarget, mdTypeDef &mdtOwner, wstring &name, MethodAttributes &attr, Signature &sig, ULONG &codeRva, MethodImplAttributes &implFlags) const;
+        void FillMethodSpecProperties(mdMethodSpec mdtTarget, mdToken &mdtOwner, Signature &sig) const;
+        void FillFieldDefProperties(mdFieldDef mdtTarget, mdToken &mdtOwner, wstring &name, FieldAttributes &attr, Signature &sig) const;
         void FillScopeMemberRefs(mdToken mdtTarget, vector<mdMemberRef> &memberRefs) const;
         void FillScopeMemberRefs(mdToken mdtTarget, wstring const &name, vector<mdMemberRef> &memberRefs) const;
         void FillMemberRefProperties(mdMemberRef mdtTarget, mdToken &mdtOwner, wstring &name, Signature &sig) const;

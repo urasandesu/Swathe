@@ -1400,6 +1400,86 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillMethodDefProperties(mdMethodDef mdtTarget, mdTypeDef &mdtOwner, wstring &name, MethodAttributes &attr, Signature &sig, ULONG &codeRva, MethodImplAttributes &implFlags) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        _ASSERTE(!IsNilToken(mdtTarget));
+        _ASSERTE(sig.GetBlob().empty());
+
+        auto &comMetaImp = GetCOMMetaDataImport();
+
+        auto wzname = array<WCHAR, MAX_SYM_NAME>();
+        auto wznameLength = 0ul;
+        auto dwattr = 0ul;
+        auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+        auto sigLength = 0ul;
+        auto dwimplFlags = 0ul;
+        auto hr = comMetaImp.GetMethodProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &codeRva, &dwimplFlags);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        name = wzname.data();
+        attr = MethodAttributes(dwattr);
+        sig.SetBlob(pSig, sigLength);
+        implFlags = MethodImplAttributes(dwimplFlags);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillMethodSpecProperties(mdMethodSpec mdtTarget, mdToken &mdtOwner, Signature &sig) const
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(!IsNilToken(mdtTarget));
+        _ASSERTE(sig.GetBlob().empty());
+
+        auto &comMetaImp = GetCOMMetaDataImport();
+
+        auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+        auto sigLength = 0ul;
+        auto hr = comMetaImp.GetMethodSpecProps(mdtTarget, &mdtOwner, &pSig, &sigLength);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        sig.SetBlob(pSig, sigLength);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillFieldDefProperties(mdFieldDef mdtTarget, mdToken &mdtOwner, wstring &name, FieldAttributes &attr, Signature &sig) const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(!IsNilToken(mdtTarget));
+        _ASSERTE(sig.GetBlob().empty());
+
+        auto &comMetaImp = GetCOMMetaDataImport();
+
+        auto wzname = array<WCHAR, MAX_SYM_NAME>();
+        auto wznameLength = 0ul;
+        auto dwattr = 0ul;
+        auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+        auto sigLength = 0ul;
+        auto cplusTypeFlag = 0ul;
+        auto const *pDefaultValue = static_cast<UVCP_CONSTANT>(nullptr);
+        auto defaultValueLength = 0ul;
+        auto hr = comMetaImp.GetFieldProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &cplusTypeFlag, &pDefaultValue, &defaultValueLength);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        name = wzname.data();
+        attr = FieldAttributes(dwattr);
+        sig.SetBlob(pSig, sigLength);
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::FillScopeMemberRefs(mdToken mdtTarget, vector<mdMemberRef> &memberRefs) const
     {
         using boost::array;

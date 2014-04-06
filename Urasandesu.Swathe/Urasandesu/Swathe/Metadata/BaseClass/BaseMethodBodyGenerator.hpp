@@ -235,6 +235,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    void BaseMethodBodyGenerator<ApiHolder>::Emit(OpCode const &opCode, FLOAT arg)
+    {
+        Pimpl()->Emit(opCode, arg);
+    }
+
+    template<class ApiHolder>    
     void BaseMethodBodyGenerator<ApiHolder>::Emit(OpCode const &opCode)
     {
         Pimpl()->Emit(opCode);

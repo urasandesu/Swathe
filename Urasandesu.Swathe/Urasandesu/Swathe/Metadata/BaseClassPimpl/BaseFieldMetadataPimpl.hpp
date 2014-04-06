@@ -133,7 +133,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             case mdtFieldDef:
                 if (m_sig.GetBlob().empty())
-                    FillFieldDefProperties(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_mdtOwner, m_name, m_attr, m_sig);
+                    m_pAsm->FillFieldDefProperties(mdtTarget, m_mdtOwner, m_name, m_attr, m_sig);
+                FillFieldMember(m_pClass, m_mdtOwner, m_member);
+                break;
+
+            case mdtMemberRef:
+                if (m_sig.GetBlob().empty())
+                    m_pAsm->FillMemberRefProperties(mdtTarget, m_mdtOwner, m_name, m_sig);
                 FillFieldMember(m_pClass, m_mdtOwner, m_member);
                 break;
 
@@ -261,35 +267,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseFieldMetadataPimpl<ApiHolder>::FillFieldDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, wstring &name, FieldAttributes &attr, Signature &sig)
-    {
-        using boost::array;
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-        
-        _ASSERTE(pComMetaImp);
-        _ASSERTE(!IsNilToken(mdtTarget));
-        _ASSERTE(sig.GetBlob().empty());
-
-        auto wzname = array<WCHAR, MAX_SYM_NAME>();
-        auto wznameLength = 0ul;
-        auto dwattr = 0ul;
-        auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
-        auto sigLength = 0ul;
-        auto cplusTypeFlag = 0ul;
-        auto const *pDefaultValue = static_cast<UVCP_CONSTANT>(nullptr);
-        auto defaultValueLength = 0ul;
-        auto hr = pComMetaImp->GetFieldProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &cplusTypeFlag, &pDefaultValue, &defaultValueLength);
-        if (FAILED(hr))
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-
-        name = wzname.data();
-        attr = FieldAttributes(dwattr);
-        sig.SetBlob(pSig, sigLength);
-    }
-
-
-
-    template<class ApiHolder>    
     void BaseFieldMetadataPimpl<ApiHolder>::FillFieldMember(IField const *pField, mdToken mdtOwner, FieldProvider &member)
     {
         using Urasandesu::CppAnonym::Utilities::Empty;
@@ -305,6 +282,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         else if (TypeFromToken(mdtOwner) == mdtTypeDef)
             member = pAsm->GetType(mdtOwner);
         else if (TypeFromToken(mdtOwner) == mdtTypeRef)
+            member = pAsm->GetType(mdtOwner);
+        else if (TypeFromToken(mdtOwner) == mdtTypeSpec)
             member = pAsm->GetType(mdtOwner);
         else
             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());

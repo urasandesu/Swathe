@@ -70,9 +70,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         static std::wstring const TYPE_NAME_OF_SINGLE;
         static std::wstring const TYPE_NAME_OF_DOUBLE;
         static std::wstring const TYPE_NAME_OF_STRING;
+        static std::wstring const TYPE_NAME_OF_TYPEDBYREF;
         static std::wstring const TYPE_NAME_OF_INTPTR;
         static std::wstring const TYPE_NAME_OF_OBJECT;
         static std::wstring const TYPE_NAME_OF_VALUETYPE;
+        static std::wstring const TYPE_NAME_OF_ENUM;
         static std::wstring const TYPE_NAME_OF_UNREACHED;
         static std::wstring const TYPE_NAME_OF_COMPILATION_RELAXATIONS_ATTRIBUTE;
         static std::wstring const TYPE_NAME_OF_RUNTIME_COMPATIBILITY_ATTRIBUTE;
@@ -102,6 +104,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             else if (typeName == TYPE_NAME_OF_SINGLE) return TypeKinds::TK_R4;
             else if (typeName == TYPE_NAME_OF_DOUBLE) return TypeKinds::TK_R8;
             else if (typeName == TYPE_NAME_OF_STRING) return TypeKinds::TK_STRING;
+            else if (typeName == TYPE_NAME_OF_TYPEDBYREF) return TypeKinds::TK_TYPEDBYREF;
             else if (typeName == TYPE_NAME_OF_INTPTR) return TypeKinds::TK_I;
             else if (typeName == TYPE_NAME_OF_OBJECT) return TypeKinds::TK_OBJECT;
             else return TypeKinds::TK_UNREACHED;
@@ -110,7 +113,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         static TypeKinds ToTypeKind(std::wstring const &typeName, std::wstring const &baseTypeName)
         {
             _ASSERTE(ToTypeKind(typeName) == TypeKinds::TK_UNREACHED);
-            return baseTypeName == TYPE_NAME_OF_VALUETYPE ? TypeKinds::TK_VALUETYPE : TypeKinds::TK_CLASS;
+            return baseTypeName == TYPE_NAME_OF_VALUETYPE || baseTypeName == TYPE_NAME_OF_ENUM ? TypeKinds::TK_VALUETYPE : TypeKinds::TK_CLASS;
         }
 
         static std::wstring const &ToTypeName(TypeKinds const &kind)
@@ -131,6 +134,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 case TypeKinds::TK_R4: return TYPE_NAME_OF_SINGLE;
                 case TypeKinds::TK_R8: return TYPE_NAME_OF_DOUBLE;
                 case TypeKinds::TK_STRING: return TYPE_NAME_OF_STRING;
+                case TypeKinds::TK_TYPEDBYREF: return TYPE_NAME_OF_TYPEDBYREF;
                 case TypeKinds::TK_I: return TYPE_NAME_OF_INTPTR;
                 case TypeKinds::TK_OBJECT: return TYPE_NAME_OF_OBJECT;
                 default: return TYPE_NAME_OF_UNREACHED;

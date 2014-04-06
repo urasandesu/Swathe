@@ -72,7 +72,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         FLOAT, 
         std::wstring, 
         IType const *, 
-        Label
+        Label, 
+        std::vector<INT>, 
+        std::vector<Label>
     > Operand;
 
     typedef boost::any_range<IInstruction const *, boost::random_access_traversal_tag, IInstruction const *, std::ptrdiff_t> IInstructionPtrRange;

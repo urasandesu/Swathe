@@ -308,7 +308,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetGenericTypeParameter(ULONG genericParamPos) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_pSrcAsm)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        else
+        {
+            return m_pClass->Resolve(m_pSrcAsm->GetGenericTypeParameter(genericParamPos));
+        }
     }
 
 

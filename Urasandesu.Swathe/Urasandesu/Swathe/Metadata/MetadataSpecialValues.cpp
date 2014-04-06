@@ -51,9 +51,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_SINGLE = L"System.Single";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_DOUBLE = L"System.Double";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_STRING = L"System.String";
+    std::wstring const MetadataSpecialValues::TYPE_NAME_OF_TYPEDBYREF = L"System.TypedReference";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_INTPTR = L"System.IntPtr";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_OBJECT = L"System.Object";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_VALUETYPE = L"System.ValueType";
+    std::wstring const MetadataSpecialValues::TYPE_NAME_OF_ENUM = L"System.Enum";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_UNREACHED = L"-";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_COMPILATION_RELAXATIONS_ATTRIBUTE = L"System.Runtime.CompilerServices.CompilationRelaxationsAttribute";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_RUNTIME_COMPATIBILITY_ATTRIBUTE = L"System.Runtime.CompilerServices.RuntimeCompatibilityAttribute";

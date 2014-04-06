@@ -99,7 +99,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetCallingConvention(CallingConventions const &callingConvention);
         void SetFieldType(IType const *pFieldType);
         void SetMember(FieldProvider const &member);
-        static void FillFieldDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, wstring &name, FieldAttributes &attr, Signature &sig);
         static void FillFieldMember(IField const *pField, mdToken mdtOwner, FieldProvider &member);
 
         mutable field_metadata_label_type *m_pClass;

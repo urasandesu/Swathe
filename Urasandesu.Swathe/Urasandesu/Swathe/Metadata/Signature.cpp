@@ -1262,9 +1262,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                             break;
                         
                         case TypeKinds::TK_TYPEDBYREF:
-                            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-                            break;
-
                         default:
                             {
                                 auto const *pType = static_cast<IType *>(nullptr);
@@ -1459,6 +1456,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         case TypeKinds::TK_R4:
                         case TypeKinds::TK_R8:
                         case TypeKinds::TK_STRING:
+                        case TypeKinds::TK_TYPEDBYREF:
                         case TypeKinds::TK_I:
                         case TypeKinds::TK_OBJECT:
                             {
@@ -1602,6 +1600,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         break;
 
                     case TypeKinds::TK_BYREF:
+                    case TypeKinds::TK_SZARRAY:
                         sb <<
                             kind << 
                             pType->GetDeclaringType()
@@ -1623,13 +1622,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                             CompressToken(pType->GetDeclaringType()->GetToken()) << 
                             CompressCount(pType->GetGenericArguments()) << 
                             pType->GetGenericArguments()
-                        ;
-                        break;
-
-                    case TypeKinds::TK_SZARRAY:
-                        sb <<
-                            kind << 
-                            pType->GetDeclaringType()
                         ;
                         break;
 
@@ -1793,6 +1785,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     pDeclaringType >> 
                     CompressCount(genericArgs) >> 
                     genericArgs
+                ;
+            }
+
+
+
+            void Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType) const
+            {
+                using namespace TakerDetail;
+
+                _ASSERTE(pType);
+                _ASSERTE(!m_blob.empty());
+
+                (m_blob, pType) >> 
+                    kind >> 
+                    pDeclaringType
                 ;
             }
 
@@ -2003,6 +2010,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         void SignatureImpl::Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<IType const *> &genericArgs) const
         {
             Pimpl()->Decode(pType, kind, pDeclaringType, genericArgs);
+        }
+
+        void SignatureImpl::Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType) const
+        {
+            Pimpl()->Decode(pType, kind, pDeclaringType);
         }
 
         void SignatureImpl::Decode(IType const *pType, TypeKinds &kind, ULONG &genericParamPos) const

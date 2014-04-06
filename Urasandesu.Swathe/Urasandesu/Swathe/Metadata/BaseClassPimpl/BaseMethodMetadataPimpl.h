@@ -125,7 +125,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethod const *GetSourceMethod() const;
         bool Equals(IMethod const *pMethod) const;
         size_t GetHashCode() const;
-        //IDispenser const *GetDispenser() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         void OutDebugInfo() const;
         
@@ -138,12 +137,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetParameters(vector<IParameter const *> const &params);
         void SetMember(MethodProvider const &member);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
-        static void FillMethodDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, wstring &name, MethodAttributes &attr, Signature &sig, ULONG &codeRva, MethodImplAttributes &implFlags);
         static void FillMethodMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member);
-        static void FillMethodRefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, wstring &name, Signature &sig);
-        //static void FillMethodRefMember(IMethod const *pMethod, mdToken mdtOwner, MethodProvider &member);
         static void FillMethodRefSourceMethod(IMethod const *pMethod, mdToken mdtOwner, wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params, bool &srcMethodInit, IMethod const *&pSrcMethod);
-        static void FillMethodSpecSignature(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner, Signature &sig);
         static void FillMethodSpecProperties(IMethod const *pMethod, Signature const &sig, CallingConventions &callingConvention, bool &genericArgsInit, vector<IType const *> &genericArgs);
         static void FillMethodSigProperties(IMethod const *pMethod, Signature const &sig, CallingConventions &callingConvention, bool &retTypeInit, IType const *&pRetType, bool &paramsInit, vector<IParameter const *> &params);
         

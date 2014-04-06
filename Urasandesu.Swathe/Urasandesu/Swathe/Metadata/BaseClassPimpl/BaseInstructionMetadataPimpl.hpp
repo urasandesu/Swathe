@@ -236,7 +236,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 i += TakeInlineString(this, i, i_end, m_operand);
                 break;
             case OperandParamTypes::OPT_INLINE_SWITCH:
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                i += TakeInlineSwitch(this, i, i_end, m_operand);
                 break;
             case OperandParamTypes::OPT_INLINE_TOK:
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
@@ -254,7 +254,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 i += TakeShortInlineI(this, i, i_end, m_operand);
                 break;
             case OperandParamTypes::OPT_SHORT_INLINE_R:
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                i += TakeShortInlineR(this, i, i_end, m_operand);
                 break;
             case OperandParamTypes::OPT_SHORT_INLINE_VAR:
                 i += TakeShortInlineVar(this, i, i_end, m_operand);
@@ -384,6 +384,27 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    ULONG BaseInstructionMetadataPimpl<ApiHolder>::TakeInlineSwitch(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand)
+    {
+        auto *pBody = _this->m_pBody;
+
+        auto length = *reinterpret_cast<INT const *>(i);
+        _ASSERTE(i + sizeof(INT) + length * sizeof(INT) <= i_end);
+        
+        i += sizeof(INT);
+        
+        auto offsets = vector<INT>(length);
+        for (auto n = 0; n < length; ++n, i += sizeof(INT))
+            offsets[n] = *reinterpret_cast<INT const *>(i);
+        
+        operand = offsets;
+        
+        return sizeof(INT) + length * sizeof(INT);
+    }
+
+
+
+    template<class ApiHolder>    
     ULONG BaseInstructionMetadataPimpl<ApiHolder>::TakeInlineType(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand)
     {
         auto const *pAsm = _this->m_pAsm;
@@ -428,6 +449,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     
+    template<class ApiHolder>    
+    ULONG BaseInstructionMetadataPimpl<ApiHolder>::TakeShortInlineR(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand)
+    {
+        auto *pBody = _this->m_pBody;
+
+        auto value = *reinterpret_cast<FLOAT const *>(i);
+        _ASSERTE(i + sizeof(FLOAT) <= i_end);
+
+        operand = value;
+
+        return sizeof(FLOAT);
+    }
+
+
+
     template<class ApiHolder>    
     ULONG BaseInstructionMetadataPimpl<ApiHolder>::TakeShortInlineVar(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand)
     {
