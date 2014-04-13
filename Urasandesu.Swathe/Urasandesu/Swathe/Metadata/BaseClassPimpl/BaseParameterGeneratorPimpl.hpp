@@ -82,18 +82,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseParameterGeneratorPimpl<ApiHolder>::GetToken() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using boost::apply_visitor;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
-            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+            CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
 
             if (!m_pSrcParam)
             {
-                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcParam)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (!m_pSrcParam)");
 
                 auto mdtTarget = apply_visitor(get_token_visitor(), m_member);
                 auto pos = m_pClass->GetPosition();

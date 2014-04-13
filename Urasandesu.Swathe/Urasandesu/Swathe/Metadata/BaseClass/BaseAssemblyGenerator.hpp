@@ -470,55 +470,55 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::module_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetModuleGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::module_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetModuleGeneratorToIndex() const
     {
         return Pimpl()->GetModuleGeneratorToIndex();
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::type_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetTypeGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::type_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetTypeGeneratorToIndex() const
     {
         return Pimpl()->GetTypeGeneratorToIndex();
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::field_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetFieldGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::field_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetFieldGeneratorToIndex() const
     {
         return Pimpl()->GetFieldGeneratorToIndex();
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::method_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetMethodGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::method_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetMethodGeneratorToIndex() const
     {
         return Pimpl()->GetMethodGeneratorToIndex();
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::method_body_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetMethodBodyGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::method_body_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetMethodBodyGeneratorToIndex() const
     {
         return Pimpl()->GetMethodBodyGeneratorToIndex();
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::local_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetLocalGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::local_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetLocalGeneratorToIndex() const
     {
         return Pimpl()->GetLocalGeneratorToIndex();
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::parameter_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetParameterGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::parameter_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetParameterGeneratorToIndex() const
     {
         return Pimpl()->GetParameterGeneratorToIndex();
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::property_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetPropertyGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::property_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetPropertyGeneratorToIndex() const
     {
         return Pimpl()->GetPropertyGeneratorToIndex();
     }
 
     template<class ApiHolder>    
-    vector<pair<typename BaseAssemblyGenerator<ApiHolder>::custom_attribute_generator_label_type const *, SIZE_T> > const &BaseAssemblyGenerator<ApiHolder>::GetCustomAttributeGeneratorToIndex() const
+    vector<typename BaseAssemblyGenerator<ApiHolder>::custom_attribute_generator_label_type *> const &BaseAssemblyGenerator<ApiHolder>::GetCustomAttributeGeneratorToIndex() const
     {
         return Pimpl()->GetCustomAttributeGeneratorToIndex();
     }

@@ -46,28 +46,12 @@
 #include <Urasandesu/Swathe/Profiling/BaseClass/BaseProcessProfiler.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSPERSISTEDHANDLERAPIHOLDER_DEFAULTPROCESSPROFILERPERSISTEDHANDLERAPIHOLDER_H
-#include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassPersistedHandlerApiHolder/DefaultProcessProfilerPersistedHandlerApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_BASECLASSPERSISTEDHANDLER_BASEPROCESSPROFILERPERSISTEDHANDLER_H
-#include <Urasandesu/Swathe/Profiling/BaseClassPersistedHandler/BaseProcessProfilerPersistedHandler.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSAPIHOLDER_DEFAULTFUNCTIONPROFILERAPIHOLDER_H
 #include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassApiHolder/DefaultFunctionProfilerApiHolder.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_PROFILING_BASECLASS_BASEFUNCTIONPROFILER_H
 #include <Urasandesu/Swathe/Profiling/BaseClass/BaseFunctionProfiler.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSPERSISTEDHANDLERAPIHOLDER_DEFAULTFUNCTIONPROFILERPERSISTEDHANDLERAPIHOLDER_H
-#include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassPersistedHandlerApiHolder/DefaultFunctionProfilerPersistedHandlerApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_BASECLASSPERSISTEDHANDLER_BASEFUNCTIONPROFILERPERSISTEDHANDLER_H
-#include <Urasandesu/Swathe/Profiling/BaseClassPersistedHandler/BaseFunctionProfilerPersistedHandler.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSAPIHOLDER_DEFAULTFUNCTIONBODYPROFILERAPIHOLDER_H
@@ -78,28 +62,12 @@
 #include <Urasandesu/Swathe/Profiling/BaseClass/BaseFunctionBodyProfiler.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSPERSISTEDHANDLERAPIHOLDER_DEFAULTFUNCTIONBODYPROFILERPERSISTEDHANDLERAPIHOLDER_H
-#include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassPersistedHandlerApiHolder/DefaultFunctionBodyProfilerPersistedHandlerApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_BASECLASSPERSISTEDHANDLER_BASEFUNCTIONBODYPROFILERPERSISTEDHANDLER_H
-#include <Urasandesu/Swathe/Profiling/BaseClassPersistedHandler/BaseFunctionBodyProfilerPersistedHandler.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSAPIHOLDER_DEFAULTCLASSPROFILERAPIHOLDER_H
 #include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassApiHolder/DefaultClassProfilerApiHolder.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_PROFILING_BASECLASS_BASECLASSPROFILER_H
 #include <Urasandesu/Swathe/Profiling/BaseClass/BaseClassProfiler.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSPERSISTEDHANDLERAPIHOLDER_DEFAULTCLASSPROFILERPERSISTEDHANDLERAPIHOLDER_H
-#include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassPersistedHandlerApiHolder/DefaultClassProfilerPersistedHandlerApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_BASECLASSPERSISTEDHANDLER_BASECLASSPROFILERPERSISTEDHANDLER_H
-#include <Urasandesu/Swathe/Profiling/BaseClassPersistedHandler/BaseClassProfilerPersistedHandler.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSAPIHOLDER_DEFAULTMODULEPROFILERAPIHOLDER_H
@@ -110,28 +78,12 @@
 #include <Urasandesu/Swathe/Profiling/BaseClass/BaseModuleProfiler.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSPERSISTEDHANDLERAPIHOLDER_DEFAULTMODULEPROFILERPERSISTEDHANDLERAPIHOLDER_H
-#include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassPersistedHandlerApiHolder/DefaultModuleProfilerPersistedHandlerApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_BASECLASSPERSISTEDHANDLER_BASEMODULEPROFILERPERSISTEDHANDLER_H
-#include <Urasandesu/Swathe/Profiling/BaseClassPersistedHandler/BaseModuleProfilerPersistedHandler.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSAPIHOLDER_DEFAULTASSEMBLYPROFILERAPIHOLDER_H
 #include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassApiHolder/DefaultAssemblyProfilerApiHolder.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_PROFILING_BASECLASS_BASEASSEMBLYPROFILER_H
 #include <Urasandesu/Swathe/Profiling/BaseClass/BaseAssemblyProfiler.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSPERSISTEDHANDLERAPIHOLDER_DEFAULTASSEMBLYPROFILERPERSISTEDHANDLERAPIHOLDER_H
-#include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassPersistedHandlerApiHolder/DefaultAssemblyProfilerPersistedHandlerApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_BASECLASSPERSISTEDHANDLER_BASEASSEMBLYPROFILERPERSISTEDHANDLER_H
-#include <Urasandesu/Swathe/Profiling/BaseClassPersistedHandler/BaseAssemblyProfilerPersistedHandler.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSAPIHOLDER_DEFAULTAPPDOMAINPROFILERAPIHOLDER_H
@@ -142,14 +94,6 @@
 #include <Urasandesu/Swathe/Profiling/BaseClass/BaseAppDomainProfiler.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSPERSISTEDHANDLERAPIHOLDER_DEFAULTAPPDOMAINPROFILERPERSISTEDHANDLERAPIHOLDER_H
-#include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassPersistedHandlerApiHolder/DefaultAppDomainProfilerPersistedHandlerApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_BASECLASSPERSISTEDHANDLER_BASEAPPDOMAINPROFILERPERSISTEDHANDLER_H
-#include <Urasandesu/Swathe/Profiling/BaseClassPersistedHandler/BaseAppDomainProfilerPersistedHandler.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_DEFAULTCLASSAPIHOLDER_DEFAULTPROFILINGINFOAPIHOLDER_H
 #include <Urasandesu/Swathe/AutoGen/Profiling/DefaultClassApiHolder/DefaultProfilingInfoApiHolder.h>
 #endif
@@ -158,30 +102,14 @@
 #include <Urasandesu/Swathe/Profiling/BaseClass/BaseProfilingInfo.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_DEFAULTCLASSAPIHOLDER_DEFAULTRUNTIMEHOSTAPIHOLDER_H
-#include <Urasandesu/Swathe/AutoGen/Hosting/DefaultClassApiHolder/DefaultRuntimeHostApiHolder.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_HOSTING_BASECLASS_BASERUNTIMEHOST_H
-#include <Urasandesu/Swathe/Hosting/BaseClass/BaseRuntimeHost.h>
-#endif
-
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseProcessProfiler<>;
-extern template class Urasandesu::Swathe::Profiling::BaseClassPersistedHandler::BaseProcessProfilerPersistedHandler<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseFunctionProfiler<>;
-extern template class Urasandesu::Swathe::Profiling::BaseClassPersistedHandler::BaseFunctionProfilerPersistedHandler<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseFunctionBodyProfiler<>;
-extern template class Urasandesu::Swathe::Profiling::BaseClassPersistedHandler::BaseFunctionBodyProfilerPersistedHandler<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseClassProfiler<>;
-extern template class Urasandesu::Swathe::Profiling::BaseClassPersistedHandler::BaseClassProfilerPersistedHandler<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseModuleProfiler<>;
-extern template class Urasandesu::Swathe::Profiling::BaseClassPersistedHandler::BaseModuleProfilerPersistedHandler<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseAssemblyProfiler<>;
-extern template class Urasandesu::Swathe::Profiling::BaseClassPersistedHandler::BaseAssemblyProfilerPersistedHandler<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseAppDomainProfiler<>;
-extern template class Urasandesu::Swathe::Profiling::BaseClassPersistedHandler::BaseAppDomainProfilerPersistedHandler<>;
 extern template class Urasandesu::Swathe::Profiling::BaseClass::BaseProfilingInfo<>;
-extern template class Urasandesu::Swathe::Hosting::BaseClass::BaseRuntimeHost<>;
 template class Urasandesu::Swathe::Profiling::BaseClassPimpl::BaseProcessProfilerPimpl<>;
 SWATHE_DECLARE_BASE_PROCESS_PROFILER_PIMPL_ADDITIONAL_INSTANTIATION
 

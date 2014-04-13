@@ -84,13 +84,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseCustomAttributeGeneratorPimpl<ApiHolder>::GetToken() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
-            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+            CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
 
             CPPANONYM_D_LOGW(L"Getting Custom Attribute Generator Token... 1");
             auto const &sig = m_pClass->GetSignature();

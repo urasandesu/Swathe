@@ -82,22 +82,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseTypeGeneratorPimpl<ApiHolder>::GetToken() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
-            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+            CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
 
             if (!m_pSrcType)
             {
-                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcType)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (!m_pSrcType)");
 
                 auto const *pDeclaringType = GetDeclaringType();
                 if (!pDeclaringType)
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (!pDeclaringType)");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (!pDeclaringType)");
 
                     auto const &fullName = GetFullName();
                     CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 1: %|1$s|", fullName);
@@ -118,7 +118,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (pDeclaringType)");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (pDeclaringType)");
 
                     auto const &fullName = GetFullName();
                     CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 4: %|1$s|", fullName);
@@ -140,16 +140,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
-                BOOST_LOG_NAMED_SCOPE("if (m_pSrcType)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (m_pSrcType)");
 
                 if (!m_pAsmGen->IsModifiable())
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
 
                     auto isGenericTypeInstance = IsGenericType() && !IsGenericTypeDefinition();
                     if (isGenericTypeInstance)
                     {
-                        BOOST_LOG_NAMED_SCOPE("if (isGenericTypeInstance)");
+                        CPPANONYM_LOG_NAMED_SCOPE("if (isGenericTypeInstance)");
 
                         CPPANONYM_D_LOGW(L"Getting Type Generator Token... 2: Generic Type Instance");
                         auto const &sig = m_pClass->GetSignature();
@@ -169,7 +169,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     }
                     else
                     {
-                        BOOST_LOG_NAMED_SCOPE("if (!isGenericTypeInstance)");
+                        CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericTypeInstance)");
 
                         auto mdResolutionScope = m_pAsmGen->GetToken();
                         auto const &fullName = m_pSrcType->GetFullName();
@@ -182,7 +182,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
                     CPPANONYM_D_LOGW(L"Getting Type Generator Token... 5: Modifiable Type");
                     m_mdt = m_pSrcType->GetToken();
                 }
@@ -481,15 +481,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::adaptors::transformed;
         using std::function;
 
-        typedef vector<pair<method_generator_label_type const *, SIZE_T> > MethodGenToIndex;
-        typedef MethodGenToIndex::value_type Value;
+        typedef vector<method_generator_label_type const *> MethodGens;
+        typedef MethodGens::value_type Value;
 
         if (!m_pSrcType)
         {
             auto const &methodGenToIndex = m_pAsmGen->GetMethodGeneratorToIndex();
-            auto isMine = [&](Value const &v) { return v.first->GetDeclaringType() == m_pClass; };
+            auto isMine = [&](Value const &v) { return v->GetDeclaringType() == m_pClass; };
             auto toUpper = function<IMethod const *(Value const &)>();
-            toUpper = [](Value const &v) { return static_cast<IMethod const *>(v.first); };
+            toUpper = [](Value const &v) { return static_cast<IMethod const *>(v); };
             return methodGenToIndex | transformed(toUpper);
         }
         else
@@ -959,28 +959,28 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         // TODO: Type 向けのデフォルト Custom Attribute を実装。
         //m_pClass->GetCustomAttributes(false);   // resolves default custom attributes of this Assembly.
         //for (auto i = m_caGenToIndex.begin(), i_end = m_caGenToIndex.end(); i != i_end; ++i)
-        //    (*i).first->Accept(pVisitor);
+        //    (*i)->Accept(pVisitor);
 
         auto const &typeGenToIndex = m_pAsmGen->GetTypeGeneratorToIndex();
         for (auto i = 0ul; i < typeGenToIndex.size(); ++i)
-            if (typeGenToIndex[i].first->GetDeclaringType() == m_pClass)
-                typeGenToIndex[i].first->Accept(pVisitor);
+            if (typeGenToIndex[i]->GetDeclaringType() == m_pClass)
+                typeGenToIndex[i]->Accept(pVisitor);
 
         auto const &fieldGenToIndex = m_pAsmGen->GetFieldGeneratorToIndex();
         for (auto i = 0ul; i < fieldGenToIndex.size(); ++i)
-            if (fieldGenToIndex[i].first->GetDeclaringType() == m_pClass)
-                fieldGenToIndex[i].first->Accept(pVisitor);
+            if (fieldGenToIndex[i]->GetDeclaringType() == m_pClass)
+                fieldGenToIndex[i]->Accept(pVisitor);
 
         m_pClass->GetConstructors();
         auto const &methodGenToIndex = m_pAsmGen->GetMethodGeneratorToIndex();
         for (auto i = 0ul; i < methodGenToIndex.size(); ++i)
-            if (methodGenToIndex[i].first->GetDeclaringType() == m_pClass)
-                methodGenToIndex[i].first->Accept(pVisitor);
+            if (methodGenToIndex[i]->GetDeclaringType() == m_pClass)
+                methodGenToIndex[i]->Accept(pVisitor);
 
         auto const &propGenToIndex = m_pAsmGen->GetPropertyGeneratorToIndex();
         for (auto i = 0ul; i < propGenToIndex.size(); ++i)
-            if (propGenToIndex[i].first->GetDeclaringType() == m_pClass)
-                propGenToIndex[i].first->Accept(pVisitor);
+            if (propGenToIndex[i]->GetDeclaringType() == m_pClass)
+                propGenToIndex[i]->Accept(pVisitor);
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

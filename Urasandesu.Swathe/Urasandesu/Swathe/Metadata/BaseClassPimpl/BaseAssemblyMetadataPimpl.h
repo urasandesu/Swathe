@@ -183,6 +183,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using boost::forward_traversal_tag;
     using boost::iterator_range;
     using boost::unordered_map;
+    using boost::unordered_set;
     using Urasandesu::CppAnonym::Utilities::AutoPtr;
     using Urasandesu::CppAnonym::Utilities::Hash;
     using Urasandesu::CppAnonym::Utilities::EqualTo;
@@ -204,6 +205,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         SWATHE_END_ASSEMBLY_METADATA_PIMPL_FACADE_TYPEDEF_ALIAS
 
         BaseAssemblyMetadataPimpl(assembly_metadata_label_type *pClass);
+        ~BaseAssemblyMetadataPimpl();
 
         void Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, fusion_info_label_type const *pFuInfo, strong_name_info_label_type const *pSnInfo);
         mdAssembly GetToken() const;
@@ -244,51 +246,51 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         module_metadata_label_type const *GetModuleCore(wstring const &name) const;
         TempPtr<module_metadata_label_type> NewModule(wstring const &name) const;
-        bool TryGetModule(module_metadata_label_type const &mod, module_metadata_label_type *&pExistingMod) const;
+        bool TryGetModule(module_metadata_label_type &mod, module_metadata_label_type *&pExistingMod) const;
         void RegisterModule(TempPtr<module_metadata_label_type> &pMod);
         
         type_metadata_label_type const *GetType(wstring const &fullName, TypeProvider const &member) const;
         type_metadata_label_type const *GetType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
         TempPtr<type_metadata_label_type> NewType(wstring const &fullName, TypeProvider const &member) const;
         TempPtr<type_metadata_label_type> NewType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
-        bool TryGetType(type_metadata_label_type const &type, type_metadata_label_type *&pExistingType) const;
+        bool TryGetType(type_metadata_label_type &type, type_metadata_label_type *&pExistingType) const;
         void RegisterType(TempPtr<type_metadata_label_type> &pType);
         
         method_metadata_label_type const *GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, bool paramsSpecified, vector<IParameter const *> const &params, MethodProvider const &member) const;
         method_metadata_label_type const *GetMethod(mdToken mdt, CallingConventions const &callingConvention, bool genericArgsSpecified, vector<IType const *> const &genericArgs, COR_ILMETHOD *pILBody, MethodProvider const &member) const;
         TempPtr<method_metadata_label_type> NewMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, bool paramsSpecified, vector<IParameter const *> const &params, MethodProvider const &member) const;
         TempPtr<method_metadata_label_type> NewMethod(mdToken mdt, CallingConventions const &callingConvention, bool genericArgsSpecified, vector<IType const *> const &genericArgs, COR_ILMETHOD *pILBody, MethodProvider const &member) const;
-        bool TryGetMethod(method_metadata_label_type const &method, method_metadata_label_type *&pExistingMethod) const;
+        bool TryGetMethod(method_metadata_label_type &method, method_metadata_label_type *&pExistingMethod) const;
         void RegisterMethod(TempPtr<method_metadata_label_type> &pMethod);
         
         method_body_metadata_label_type *GetMethodBody(COR_ILMETHOD *pILBody, IMethod const *pMethod) const;
         TempPtr<method_body_metadata_label_type> NewMethodBody(COR_ILMETHOD *pILBody, IMethod const *pMethod) const;
-        bool TryGetMethodBody(method_body_metadata_label_type const &body, method_body_metadata_label_type *&pExistingBody) const;
+        bool TryGetMethodBody(method_body_metadata_label_type &body, method_body_metadata_label_type *&pExistingBody) const;
         void RegisterMethodBody(TempPtr<method_body_metadata_label_type> &pBody);
 
         parameter_metadata_label_type const *GetParameter(ULONG position, IType const *pParamType, ParameterProvider const &member) const;
         TempPtr<parameter_metadata_label_type> NewParameter(ULONG position, IType const *pParamType, ParameterProvider const &member) const;
-        bool TryGetParameter(parameter_metadata_label_type const &param, parameter_metadata_label_type *&pExistingParam) const;
+        bool TryGetParameter(parameter_metadata_label_type &param, parameter_metadata_label_type *&pExistingParam) const;
         void RegisterParameter(TempPtr<parameter_metadata_label_type> &pParam);
 
         local_metadata_label_type const *GetLocal(ULONG index, IType const *pLocalType, IMethodBody const *pBody) const;
         TempPtr<local_metadata_label_type> NewLocal(ULONG index, IType const *pLocalType, IMethodBody const *pBody) const;
-        bool TryGetLocal(local_metadata_label_type const &local, local_metadata_label_type *&pExistingLocal) const;
+        bool TryGetLocal(local_metadata_label_type &local, local_metadata_label_type *&pExistingLocal) const;
         void RegisterLocal(TempPtr<local_metadata_label_type> &pLocal);
         
         property_metadata_label_type const *GetProperty(mdToken mdt, PropertyProvider const &member) const;
         TempPtr<property_metadata_label_type> NewProperty(mdToken mdt, PropertyProvider const &member) const;
-        bool TryGetProperty(property_metadata_label_type const &prop, property_metadata_label_type *&pExistingProp) const;
+        bool TryGetProperty(property_metadata_label_type &prop, property_metadata_label_type *&pExistingProp) const;
         void RegisterProperty(TempPtr<property_metadata_label_type> &pProp);
         
         field_metadata_label_type const *GetField(mdToken mdt, FieldProvider const &member) const;
         TempPtr<field_metadata_label_type> NewField(mdToken mdt, FieldProvider const &member) const;
-        bool TryGetField(field_metadata_label_type const &field, field_metadata_label_type *&pExistingField) const;
+        bool TryGetField(field_metadata_label_type &field, field_metadata_label_type *&pExistingField) const;
         void RegisterField(TempPtr<field_metadata_label_type> &pField);
         
         custom_attribute_metadata_label_type const *GetCustomAttribute(mdToken mdt, CustomAttributeProvider const &member) const;
         TempPtr<custom_attribute_metadata_label_type> NewCustomAttribute(mdToken mdt, CustomAttributeProvider const &member) const;
-        bool TryGetCustomAttribute(custom_attribute_metadata_label_type const &cas, custom_attribute_metadata_label_type *&pExistingCas) const;
+        bool TryGetCustomAttribute(custom_attribute_metadata_label_type &cas, custom_attribute_metadata_label_type *&pExistingCas) const;
         void RegisterCustomAttribute(TempPtr<custom_attribute_metadata_label_type> &pCas);
 
         IAssemblyPtrRange GetAssemblyReferences() const;
@@ -327,22 +329,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         portable_executable_info_label_type const *m_pPEInfo;
         fusion_info_label_type const *m_pFuInfo;
         strong_name_info_label_type const *m_pSnInfo;
-        mutable unordered_map<IModule const *, SIZE_T, IModuleHash, IModuleEqualTo> m_modToIndex;
-        mutable unordered_map<IType const *, SIZE_T, ITypeHash, ITypeEqualTo> m_typeToIndex;
-        mutable unordered_map<IMethod const *, SIZE_T, IMethodHash, IMethodEqualTo> m_methodToIndex;
-        mutable unordered_map<IParameter const *, SIZE_T, IParameterHash, IParameterEqualTo> m_paramToIndex;
-        mutable unordered_map<ILocal const *, SIZE_T, ILocalHash, ILocalEqualTo> m_localToIndex;
-        mutable unordered_map<IMethodBody const *, SIZE_T, IMethodBodyHash, IMethodBodyEqualTo> m_bodyToIndex;
-        mutable unordered_map<IProperty const *, SIZE_T, IPropertyHash, IPropertyEqualTo> m_propToIndex;
-        mutable unordered_map<IField const *, SIZE_T, IFieldHash, IFieldEqualTo> m_fieldToIndex;
-        mutable unordered_map<ICustomAttribute const *, SIZE_T, ICustomAttributeHash, ICustomAttributeEqualTo> m_casToIndex;        
+        mutable unordered_set<module_metadata_label_type *, IModuleHash, IModuleEqualTo> m_mods;
+        mutable unordered_set<type_metadata_label_type *, ITypeHash, ITypeEqualTo> m_types;
+        mutable unordered_set<method_metadata_label_type *, IMethodHash, IMethodEqualTo> m_methods;
+        mutable unordered_set<method_body_metadata_label_type *, IMethodBodyHash, IMethodBodyEqualTo> m_bodies;
+        mutable unordered_set<parameter_metadata_label_type *, IParameterHash, IParameterEqualTo> m_params;
+        mutable unordered_set<local_metadata_label_type *, ILocalHash, ILocalEqualTo> m_locals;
+        mutable unordered_set<property_metadata_label_type *, IPropertyHash, IPropertyEqualTo> m_props;
+        mutable unordered_set<field_metadata_label_type *, IFieldHash, IFieldEqualTo> m_fields;
+        mutable unordered_set<custom_attribute_metadata_label_type *, ICustomAttributeHash, ICustomAttributeEqualTo> m_cass;
         mutable mdToken m_mdt;
         mutable wstring m_fullName;
         mutable AutoPtr<IStrongNameKey const> m_pSnKey;
         mutable bool m_casInit;
         mutable vector<ICustomAttribute const *> m_cas;
-        mutable bool m_typesInit;
-        mutable vector<IType const *> m_types;
+        mutable bool m_orderedTypesInit;
+        mutable vector<IType const *> m_orderedTypes;
         mutable wstring m_name;
         mutable ASSEMBLYMETADATA m_amd;
         mutable vector<WCHAR> m_locale;

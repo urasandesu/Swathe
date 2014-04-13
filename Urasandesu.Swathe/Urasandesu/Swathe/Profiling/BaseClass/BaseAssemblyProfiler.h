@@ -58,6 +58,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         BaseAssemblyProfiler();
         ~BaseAssemblyProfiler();
 
+        void Initialize(process_profiler_label_type *pProcProf);
         UINT_PTR GetID() const;
         wstring const &GetName() const;
         TempPtr<app_domain_profiler_label_type> AttachToAppDomain();
@@ -66,7 +67,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     private:
         assembly_profiler_pimpl_label_type *Pimpl();
         assembly_profiler_pimpl_label_type const *Pimpl() const;
-        void Initialize(process_profiler_label_type *pProcProf);
         void SetID(UINT_PTR id);
         IMethodMalloc &GetCOMMethodMalloc();
 #ifdef _DEBUG

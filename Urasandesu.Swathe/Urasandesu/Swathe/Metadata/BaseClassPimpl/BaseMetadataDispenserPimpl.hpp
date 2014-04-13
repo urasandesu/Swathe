@@ -44,6 +44,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pMetaInfo(nullptr)
     { }
 
+    
+    
+    template<class ApiHolder>    
+    BaseMetadataDispenserPimpl<ApiHolder>::~BaseMetadataDispenserPimpl()
+    { 
+        BOOST_FOREACH (auto const &pAsm, m_asms)
+            m_pMetaInfo->UnloadAssemblyCore(pAsm);
+
+        BOOST_FOREACH (auto const &pAsmGen, m_asmGens)
+            m_pMetaInfo->UnloadAssemblyGeneratorCore(pAsmGen);
+    }
+
 #define SWATHE_DECLARE_BASE_METADATA_DISPENSER_PIMPL_ADDITIONAL_INSTANTIATION \
 
     
@@ -320,23 +332,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMetadataDispenserPimpl<ApiHolder>::RegisterAssembly(TempPtr<assembly_metadata_label_type> &pAsm)
     {
-        auto &asm_ = *pAsm;
-        m_asmToIndex[&asm_] = m_pMetaInfo->RegisterAssemblyCore(pAsm);
+        m_pMetaInfo->RegisterAssemblyCore(pAsm);
+        m_asms.insert(pAsm.Get());
     }
 
 
     
     template<class ApiHolder>    
-    bool BaseMetadataDispenserPimpl<ApiHolder>::TryGetAssembly(assembly_metadata_label_type const &asm_, assembly_metadata_label_type *&pExistingAsm) const
+    bool BaseMetadataDispenserPimpl<ApiHolder>::TryGetAssembly(assembly_metadata_label_type &asm_, assembly_metadata_label_type *&pExistingAsm) const
     {
-        if (m_asmToIndex.find(&asm_) == m_asmToIndex.end())
+        auto result = m_asms.find(&asm_);
+        if (result == m_asms.end())
         {
             return false;
         }
         else
         {
-            auto index = m_asmToIndex[&asm_];
-            pExistingAsm = m_pMetaInfo->GetAssemblyCore(index);
+            pExistingAsm = *result;
             return true;
         }
     }
@@ -370,12 +382,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::Collections::FindIf;
 
-        typedef decltype(m_asmGenToIndex) AsmGenToIndex;
-        typedef AsmGenToIndex::value_type Value;
+        typedef decltype(m_asmGens) AsmGens;
+        typedef AsmGens::value_type Value;
 
-        auto result = FindIf(m_asmGenToIndex, [&](Value const &v) { return v.first->GetSourceAssembly() == pAsm->GetSourceAssembly(); });
+        auto result = FindIf(m_asmGens, [&](Value const &v) { return v->GetSourceAssembly() == pAsm->GetSourceAssembly(); });
         if (result)
-            return (*result).first;
+            return *result;
 
         return m_pClass->DefineAssembly(pAsm);
     }
@@ -387,12 +399,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::Collections::FindIf;
 
-        typedef decltype(m_asmGenToIndex) AsmGenToIndex;
-        typedef AsmGenToIndex::value_type Value;
+        typedef decltype(m_asmGens) AsmGens;
+        typedef AsmGens::value_type Value;
 
-        auto result = FindIf(m_asmGenToIndex, [&](Value const &v) { return v.first->IsSaving(); });
+        auto result = FindIf(m_asmGens, [&](Value const &v) { return v->IsSaving(); });
         if (result && !pResolvedAsm->GetTargetAssembly())
-            (*result).first->AddReferencedAssembly(pResolvedAsm);
+            (*result)->AddReferencedAssembly(pResolvedAsm);
     }
 
 
@@ -441,10 +453,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMetadataDispenserPimpl<ApiHolder>::RegisterAssemblyGenerator(TempPtr<assembly_generator_label_type> &pAsmGen)
     {
-        using std::make_pair;
-
-        auto &asmGen = *pAsmGen;
-        m_asmGenToIndex.push_back(make_pair(&asmGen, m_pMetaInfo->RegisterAssemblyGeneratorCore(pAsmGen)));
+        m_asmGens.push_back(pAsmGen.Get());
     }
     
 

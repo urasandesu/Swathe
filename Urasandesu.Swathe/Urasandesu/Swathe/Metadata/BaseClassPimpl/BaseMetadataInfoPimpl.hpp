@@ -54,6 +54,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     BaseMetadataInfoPimpl<ApiHolder>::~BaseMetadataInfoPimpl()
     {
+        if (!m_disps.empty())
+        {
+            auto *pBaseProvider = BaseHeapProvider();
+            auto &provider = pBaseProvider->FirstProviderOf<metadata_dispenser_label_type>();
+            BOOST_FOREACH (auto const &pDisp, m_disps)
+                provider.DeleteObject(pDisp);
+        }
+
         BaseHeapProvider()->~base_heap_provider_type();
     }
 
@@ -110,16 +118,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMetadataInfoPimpl<ApiHolder>::UnloadDispenser(metadata_dispenser_label_type *pDisp) const
     {
-        auto result = m_dispToIndex.find(pDisp);
-        if (result == m_dispToIndex.end())
+        auto result = m_disps.find(pDisp);
+        if (result == m_disps.end())
             return;
 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<metadata_dispenser_label_type>();
-        auto index = (*result).second;
-        provider.DeleteObject(index);
+        provider.DeleteObject(*result);
 
-        m_dispToIndex.erase(result);
+        m_disps.erase(result);
     }
 
 
@@ -151,8 +158,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<metadata_dispenser_label_type>();
-        auto &disp = *pDisp;
-        m_dispToIndex[&disp] = provider.RegisterObject(pDisp);
+        provider.RegisterObject(pDisp);
+        m_disps.insert(pDisp.Get());
     }
 
 
@@ -176,21 +183,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::assembly_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetAssemblyCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterAssemblyCore(TempPtr<assembly_metadata_label_type> &pAsm)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<assembly_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pAsm);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterAssemblyCore(TempPtr<assembly_metadata_label_type> &pAsm)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadAssemblyCore(assembly_metadata_label_type *pAsm)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<assembly_metadata_label_type>();
-        return provider.RegisterObject(pAsm);
+        provider.DeleteObject(pAsm);
     }
 
 
@@ -210,21 +217,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::module_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetModuleCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterModuleCore(TempPtr<module_metadata_label_type> &pMod)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<module_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pMod);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterModuleCore(TempPtr<module_metadata_label_type> &pMod)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadModuleCore(module_metadata_label_type *pMod)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<module_metadata_label_type>();
-        return provider.RegisterObject(pMod);
+        provider.DeleteObject(pMod);
     }
 
 
@@ -244,21 +251,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::type_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetTypeCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterTypeCore(TempPtr<type_metadata_label_type> &pType)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<type_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pType);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterTypeCore(TempPtr<type_metadata_label_type> &pType)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadTypeCore(type_metadata_label_type *pType)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<type_metadata_label_type>();
-        return provider.RegisterObject(pType);
+        provider.DeleteObject(pType);
     }
 
 
@@ -278,21 +285,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::method_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetMethodCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterMethodCore(TempPtr<method_metadata_label_type> &pMethod)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<method_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pMethod);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterMethodCore(TempPtr<method_metadata_label_type> &pMethod)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadMethodCore(method_metadata_label_type *pMethod)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<method_metadata_label_type>();
-        return provider.RegisterObject(pMethod);
+        provider.DeleteObject(pMethod);
     }
 
 
@@ -312,21 +319,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::method_body_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetMethodBodyCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterMethodBodyCore(TempPtr<method_body_metadata_label_type> &pBody)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<method_body_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pBody);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterMethodBodyCore(TempPtr<method_body_metadata_label_type> &pBody)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadMethodBodyCore(method_body_metadata_label_type *pBody)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<method_body_metadata_label_type>();
-        return provider.RegisterObject(pBody);
+        provider.DeleteObject(pBody);
     }
 
 
@@ -346,21 +353,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::parameter_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetParameterCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterParameterCore(TempPtr<parameter_metadata_label_type> &pParam)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<parameter_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pParam);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterParameterCore(TempPtr<parameter_metadata_label_type> &pParam)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadParameterCore(parameter_metadata_label_type *pParam)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<parameter_metadata_label_type>();
-        return provider.RegisterObject(pParam);
+        provider.DeleteObject(pParam);
     }
 
 
@@ -380,21 +387,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::local_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetLocalCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterLocalCore(TempPtr<local_metadata_label_type> &pLocal)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<local_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pLocal);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterLocalCore(TempPtr<local_metadata_label_type> &pLocal)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadLocalCore(local_metadata_label_type *pLocal)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<local_metadata_label_type>();
-        return provider.RegisterObject(pLocal);
+        provider.DeleteObject(pLocal);
     }
 
 
@@ -414,21 +421,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::property_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetPropertyCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterPropertyCore(TempPtr<property_metadata_label_type> &pProp)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<property_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pProp);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterPropertyCore(TempPtr<property_metadata_label_type> &pProp)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadPropertyCore(property_metadata_label_type *pProp)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<property_metadata_label_type>();
-        return provider.RegisterObject(pProp);
+        provider.DeleteObject(pProp);
     }
 
 
@@ -448,21 +455,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::field_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetFieldCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterFieldCore(TempPtr<field_metadata_label_type> &pField)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<field_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pField);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterFieldCore(TempPtr<field_metadata_label_type> &pField)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadFieldCore(field_metadata_label_type *pField)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<field_metadata_label_type>();
-        return provider.RegisterObject(pField);
+        provider.DeleteObject(pField);
     }
 
 
@@ -482,21 +489,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::custom_attribute_metadata_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetCustomAttributeCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterCustomAttributeCore(TempPtr<custom_attribute_metadata_label_type> &pCa)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<custom_attribute_metadata_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pCa);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterCustomAttributeCore(TempPtr<custom_attribute_metadata_label_type> &pCa)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadCustomAttributeCore(custom_attribute_metadata_label_type *pCa)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<custom_attribute_metadata_label_type>();
-        return provider.RegisterObject(pCa);
+        provider.DeleteObject(pCa);
     }
 
 
@@ -518,21 +525,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetAssemblyGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterAssemblyGeneratorCore(TempPtr<assembly_generator_label_type> &pAsmGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<assembly_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pAsmGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterAssemblyGeneratorCore(TempPtr<assembly_generator_label_type> &pAsmGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadAssemblyGeneratorCore(assembly_generator_label_type *pAsmGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<assembly_generator_label_type>();
-        return provider.RegisterObject(pAsmGen);
+        provider.DeleteObject(pAsmGen);
     }
 
 
@@ -552,21 +559,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::module_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetModuleGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterModuleGeneratorCore(TempPtr<module_generator_label_type> &pModGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<module_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pModGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterModuleGeneratorCore(TempPtr<module_generator_label_type> &pModGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadModuleGeneratorCore(module_generator_label_type *pModGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<module_generator_label_type>();
-        return provider.RegisterObject(pModGen);
+        provider.DeleteObject(pModGen);
     }
 
 
@@ -586,21 +593,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::type_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetTypeGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterTypeGeneratorCore(TempPtr<type_generator_label_type> &pTypeGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<type_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pTypeGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterTypeGeneratorCore(TempPtr<type_generator_label_type> &pTypeGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadTypeGeneratorCore(type_generator_label_type *pTypeGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<type_generator_label_type>();
-        return provider.RegisterObject(pTypeGen);
+        provider.DeleteObject(pTypeGen);
     }
 
 
@@ -620,21 +627,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::method_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetMethodGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterMethodGeneratorCore(TempPtr<method_generator_label_type> &pMethodGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<method_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pMethodGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterMethodGeneratorCore(TempPtr<method_generator_label_type> &pMethodGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadMethodGeneratorCore(method_generator_label_type *pMethodGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<method_generator_label_type>();
-        return provider.RegisterObject(pMethodGen);
+        provider.DeleteObject(pMethodGen);
     }
 
 
@@ -654,21 +661,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::parameter_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetParameterGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterParameterGeneratorCore(TempPtr<parameter_generator_label_type> &pParamGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<parameter_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pParamGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterParameterGeneratorCore(TempPtr<parameter_generator_label_type> &pParamGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadParameterGeneratorCore(parameter_generator_label_type *pParamGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<parameter_generator_label_type>();
-        return provider.RegisterObject(pParamGen);
+        provider.DeleteObject(pParamGen);
     }
 
 
@@ -688,21 +695,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::property_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetPropertyGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterPropertyGeneratorCore(TempPtr<property_generator_label_type> &pPropGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<property_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pPropGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterPropertyGeneratorCore(TempPtr<property_generator_label_type> &pPropGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadPropertyGeneratorCore(property_generator_label_type *pPropGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<property_generator_label_type>();
-        return provider.RegisterObject(pPropGen);
+        provider.DeleteObject(pPropGen);
     }
 
 
@@ -722,21 +729,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::field_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetFieldGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterFieldGeneratorCore(TempPtr<field_generator_label_type> &pFieldGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<field_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pFieldGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterFieldGeneratorCore(TempPtr<field_generator_label_type> &pFieldGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadFieldGeneratorCore(field_generator_label_type *pFieldGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<field_generator_label_type>();
-        return provider.RegisterObject(pFieldGen);
+        provider.DeleteObject(pFieldGen);
     }
 
 
@@ -756,21 +763,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::method_body_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetMethodBodyGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterMethodBodyGeneratorCore(TempPtr<method_body_generator_label_type> &pBodyGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<method_body_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pBodyGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterMethodBodyGeneratorCore(TempPtr<method_body_generator_label_type> &pBodyGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadMethodBodyGeneratorCore(method_body_generator_label_type *pBodyGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<method_body_generator_label_type>();
-        return provider.RegisterObject(pBodyGen);
+        provider.DeleteObject(pBodyGen);
     }
 
 
@@ -790,21 +797,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::local_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetLocalGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterLocalGeneratorCore(TempPtr<local_generator_label_type> &pLocalGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<local_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pLocalGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterLocalGeneratorCore(TempPtr<local_generator_label_type> &pLocalGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadLocalGeneratorCore(local_generator_label_type *pLocalGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<local_generator_label_type>();
-        return provider.RegisterObject(pLocalGen);
+        provider.DeleteObject(pLocalGen);
     }
 
 
@@ -824,21 +831,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataInfoPimpl<ApiHolder>::custom_attribute_generator_label_type *BaseMetadataInfoPimpl<ApiHolder>::GetCustomAttributeGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfoPimpl<ApiHolder>::RegisterCustomAttributeGeneratorCore(TempPtr<custom_attribute_generator_label_type> &pCaGen)
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<custom_attribute_generator_label_type>();
-        return provider.GetObject(index);
+        provider.RegisterObject(pCaGen);
     }
 
 
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfoPimpl<ApiHolder>::RegisterCustomAttributeGeneratorCore(TempPtr<custom_attribute_generator_label_type> &pCaGen)
-    {
+    void BaseMetadataInfoPimpl<ApiHolder>::UnloadCustomAttributeGeneratorCore(custom_attribute_generator_label_type *pCaGen)
+    { 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<custom_attribute_generator_label_type>();
-        return provider.RegisterObject(pCaGen);
+        provider.DeleteObject(pCaGen);
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

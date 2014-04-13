@@ -108,6 +108,115 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         Pimpl()->RegisterProcessProfiler(pProcProf);
     }
 
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfo<ApiHolder>::app_domain_profiler_label_type> BaseProfilingInfo<ApiHolder>::NewAppDomainProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        return Pimpl()->NewAppDomainProfilerCore(pProcProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::RegisterAppDomainProfilerCore(TempPtr<app_domain_profiler_label_type> &pDomainProf)
+    {
+        Pimpl()->RegisterAppDomainProfilerCore(pDomainProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::DetachFromAppDomainCore(app_domain_profiler_label_type *pDomainProf)
+    {
+        Pimpl()->DetachFromAppDomainCore(pDomainProf);
+    }
+
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfo<ApiHolder>::assembly_profiler_label_type> BaseProfilingInfo<ApiHolder>::NewAssemblyProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        return Pimpl()->NewAssemblyProfilerCore(pProcProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::RegisterAssemblyProfilerCore(TempPtr<assembly_profiler_label_type> &pAsmProf)
+    {
+        Pimpl()->RegisterAssemblyProfilerCore(pAsmProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::DetachFromAssemblyCore(assembly_profiler_label_type *pAsmProf)
+    {
+        Pimpl()->DetachFromAssemblyCore(pAsmProf);
+    }
+        
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfo<ApiHolder>::module_profiler_label_type> BaseProfilingInfo<ApiHolder>::NewModuleProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        return Pimpl()->NewModuleProfilerCore(pProcProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::RegisterModuleProfilerCore(TempPtr<module_profiler_label_type> &pModProf)
+    {
+        Pimpl()->RegisterModuleProfilerCore(pModProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::DetachFromModuleCore(module_profiler_label_type *pModProf)
+    {
+        Pimpl()->DetachFromModuleCore(pModProf);
+    }
+
+        
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfo<ApiHolder>::class_profiler_label_type> BaseProfilingInfo<ApiHolder>::NewClassProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        return Pimpl()->NewClassProfilerCore(pProcProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::RegisterClassProfilerCore(TempPtr<class_profiler_label_type> &pClsProf)
+    {
+        return Pimpl()->RegisterClassProfilerCore(pClsProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::DetachFromClassCore(class_profiler_label_type *pClsProf)
+    {
+        Pimpl()->DetachFromClassCore(pClsProf);
+    }
+        
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfo<ApiHolder>::function_profiler_label_type> BaseProfilingInfo<ApiHolder>::NewFunctionProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        return Pimpl()->NewFunctionProfilerCore(pProcProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::RegisterFunctionProfilerCore(TempPtr<function_profiler_label_type> &pFuncProf)
+    {
+        Pimpl()->RegisterFunctionProfilerCore(pFuncProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::DetachFromFunctionCore(function_profiler_label_type *pFuncProf)
+    {
+        Pimpl()->DetachFromFunctionCore(pFuncProf);
+    }
+        
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfo<ApiHolder>::function_body_profiler_label_type> BaseProfilingInfo<ApiHolder>::NewFunctionBodyProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        return Pimpl()->NewFunctionBodyProfilerCore(pProcProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::RegisterFunctionBodyProfilerCore(TempPtr<function_body_profiler_label_type> &pBodyProf)
+    {
+        Pimpl()->RegisterFunctionBodyProfilerCore(pBodyProf);
+    }
+
+    template<class ApiHolder>    
+    void BaseProfilingInfo<ApiHolder>::DetachFromFunctionBodyCore(function_body_profiler_label_type *pBodyProf)
+    {
+        Pimpl()->DetachFromFunctionBodyCore(pBodyProf);
+    }
+
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseClass { 
 
 #endif  // URASANDESU_SWATHE_PROFILING_BASECLASS_BASEPROFILINGINFO_HPP

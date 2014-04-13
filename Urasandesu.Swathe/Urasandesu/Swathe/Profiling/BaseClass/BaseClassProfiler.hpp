@@ -72,6 +72,12 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    void BaseClassProfiler<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
+    {
+        Pimpl()->Initialize(pProcProf);
+    }
+
+    template<class ApiHolder>    
     UINT_PTR BaseClassProfiler<ApiHolder>::GetID() const
     {
         return Pimpl()->GetID();
@@ -81,12 +87,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     TempPtr<typename BaseClassProfiler<ApiHolder>::module_profiler_label_type> BaseClassProfiler<ApiHolder>::AttachToModule()
     {
         return Pimpl()->AttachToModule();
-    }
-
-    template<class ApiHolder>    
-    void BaseClassProfiler<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
-    {
-        Pimpl()->Initialize(pProcProf);
     }
 
     template<class ApiHolder>    

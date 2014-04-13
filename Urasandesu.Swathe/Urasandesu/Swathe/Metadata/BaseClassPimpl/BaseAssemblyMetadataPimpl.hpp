@@ -52,7 +52,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pSnInfo(nullptr),
         m_mdt(mdTokenNil), 
         m_casInit(false), 
-        m_typesInit(false), 
+        m_orderedTypesInit(false), 
         m_asmFlags(AssemblyFlags::AF_UNREACHED),
         m_refAsmsInit(false), 
         m_asmStorageInit(false), 
@@ -60,6 +60,39 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pOpeningAsm(nullptr), 
         m_pSrcAsm(nullptr)
     { }
+
+    
+    
+    template<class ApiHolder>    
+    BaseAssemblyMetadataPimpl<ApiHolder>::~BaseAssemblyMetadataPimpl()
+    { 
+        BOOST_FOREACH (auto const &pMod, m_mods)
+            m_pMetaInfo->UnloadModuleCore(pMod);
+
+        BOOST_FOREACH (auto const &pType, m_types)
+            m_pMetaInfo->UnloadTypeCore(pType);
+
+        BOOST_FOREACH (auto const &pMethod, m_methods)
+            m_pMetaInfo->UnloadMethodCore(pMethod);
+
+        BOOST_FOREACH (auto const &pParam, m_params)
+            m_pMetaInfo->UnloadParameterCore(pParam);
+
+        BOOST_FOREACH (auto const &pLocal, m_locals)
+            m_pMetaInfo->UnloadLocalCore(pLocal);
+
+        BOOST_FOREACH (auto const &pBody, m_bodies)
+            m_pMetaInfo->UnloadMethodBodyCore(pBody);
+
+        BOOST_FOREACH (auto const &pProp, m_props)
+            m_pMetaInfo->UnloadPropertyCore(pProp);
+
+        BOOST_FOREACH (auto const &pField, m_fields)
+            m_pMetaInfo->UnloadFieldCore(pField);
+
+        BOOST_FOREACH (auto const &pCas, m_cass)
+            m_pMetaInfo->UnloadCustomAttributeCore(pCas);
+    }
     
 #define SWATHE_DECLARE_BASE_ASSEMBLY_METADATA_PIMPL_ADDITIONAL_INSTANTIATION \
     
@@ -94,7 +127,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdAssembly BaseAssemblyMetadataPimpl<ApiHolder>::GetToken() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
@@ -426,7 +459,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using boost::array;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
-        if (!m_typesInit)
+        if (!m_orderedTypesInit)
         {
             if (!m_pSrcAsm)
             {
@@ -448,11 +481,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     if (FAILED(hr))
                         BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
-                    m_types.reserve(m_types.size() + count);
+                    m_orderedTypes.reserve(m_orderedTypes.size() + count);
                     for (auto i = 0u; i < count; ++i)
                     {
                         auto pType = m_pClass->GetType(mdtds[i]);
-                        m_types.push_back(pType);
+                        m_orderedTypes.push_back(pType);
                     }
                 } while (0 < count);
             }
@@ -461,10 +494,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
             }
 
-            m_typesInit = true;
+            m_orderedTypesInit = true;
         }
 
-        return m_types;
+        return m_orderedTypes;
     }
 
 
@@ -586,16 +619,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetModule(module_metadata_label_type const &mod, module_metadata_label_type *&pExistingMod) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetModule(module_metadata_label_type &mod, module_metadata_label_type *&pExistingMod) const
     {
-        if (m_modToIndex.find(&mod) == m_modToIndex.end())
+        auto result = m_mods.find(&mod);
+        if (result == m_mods.end())
         {
             return false;
         }
         else
         {
-            auto index = m_modToIndex[&mod];
-            pExistingMod = m_pMetaInfo->GetModuleCore(index);
+            pExistingMod = *result;
             return true;
         }
     }
@@ -605,8 +638,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterModule(TempPtr<module_metadata_label_type> &pMod)
     {
-        auto &mod = *pMod;
-        m_modToIndex[&mod] = m_pMetaInfo->RegisterModuleCore(pMod);
+        m_pMetaInfo->RegisterModuleCore(pMod);
+        m_mods.insert(pMod.Get());
     }
 
 
@@ -677,16 +710,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetType(type_metadata_label_type const &type, type_metadata_label_type *&pExistingType) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetType(type_metadata_label_type &type, type_metadata_label_type *&pExistingType) const
     {
-        if (m_typeToIndex.find(&type) == m_typeToIndex.end())
+        auto result = m_types.find(&type);
+        if (result == m_types.end())
         {
             return false;
         }
         else
         {
-            auto index = m_typeToIndex[&type];
-            pExistingType = m_pMetaInfo->GetTypeCore(index);
+            pExistingType = *result;
             return true;
         }
     }
@@ -696,8 +729,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterType(TempPtr<type_metadata_label_type> &pType)
     {
-        auto &type = *pType;
-        m_typeToIndex[&type] = m_pMetaInfo->RegisterTypeCore(pType);
+        m_pMetaInfo->RegisterTypeCore(pType);
+        m_types.insert(pType.Get());
     }
     
 
@@ -772,16 +805,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetMethod(method_metadata_label_type const &method, method_metadata_label_type *&pExistingMethod) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetMethod(method_metadata_label_type &method, method_metadata_label_type *&pExistingMethod) const
     {
-        if (m_methodToIndex.find(&method) == m_methodToIndex.end())
+        auto result = m_methods.find(&method);
+        if (result == m_methods.end())
         {
             return false;
         }
         else
         {
-            auto index = m_methodToIndex[&method];
-            pExistingMethod = m_pMetaInfo->GetMethodCore(index);
+            pExistingMethod = *result;
             return true;
         }
     }
@@ -791,8 +824,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterMethod(TempPtr<method_metadata_label_type> &pMethod)
     {
-        auto &method = *pMethod;
-        m_methodToIndex[&method] = m_pMetaInfo->RegisterMethodCore(pMethod);
+        m_pMetaInfo->RegisterMethodCore(pMethod);
+        m_methods.insert(pMethod.Get());
     }
 
 
@@ -828,16 +861,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetMethodBody(method_body_metadata_label_type const &body, method_body_metadata_label_type *&pExistingBody) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetMethodBody(method_body_metadata_label_type &body, method_body_metadata_label_type *&pExistingBody) const
     {
-        if (m_bodyToIndex.find(&body) == m_bodyToIndex.end())
+        auto result = m_bodies.find(&body);
+        if (result == m_bodies.end())
         {
             return false;
         }
         else
         {
-            auto index = m_bodyToIndex[&body];
-            pExistingBody = m_pMetaInfo->GetMethodBodyCore(index);
+            pExistingBody = *result;
             return true;
         }
     }
@@ -847,8 +880,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterMethodBody(TempPtr<method_body_metadata_label_type> &pBody)
     {
-        auto &body = *pBody;
-        m_bodyToIndex[&body] = m_pMetaInfo->RegisterMethodBodyCore(pBody);
+        m_pMetaInfo->RegisterMethodBodyCore(pBody);
+        m_bodies.insert(pBody.Get());
     }
 
 
@@ -885,16 +918,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetParameter(parameter_metadata_label_type const &param, parameter_metadata_label_type *&pExistingParam) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetParameter(parameter_metadata_label_type &param, parameter_metadata_label_type *&pExistingParam) const
     {
-        if (m_paramToIndex.find(&param) == m_paramToIndex.end())
+        auto result = m_params.find(&param);
+        if (result == m_params.end())
         {
             return false;
         }
         else
         {
-            auto index = m_paramToIndex[&param];
-            pExistingParam = m_pMetaInfo->GetParameterCore(index);
+            pExistingParam = *result;
             return true;
         }
     }
@@ -904,8 +937,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterParameter(TempPtr<parameter_metadata_label_type> &pParam)
     {
-        auto &param = *pParam;
-        m_paramToIndex[&param] = m_pMetaInfo->RegisterParameterCore(pParam);
+        m_pMetaInfo->RegisterParameterCore(pParam);
+        m_params.insert(pParam.Get());
     }
     
 
@@ -942,16 +975,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetLocal(local_metadata_label_type const &local, local_metadata_label_type *&pExistingLocal) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetLocal(local_metadata_label_type &local, local_metadata_label_type *&pExistingLocal) const
     {
-        if (m_localToIndex.find(&local) == m_localToIndex.end())
+        auto result = m_locals.find(&local);
+        if (result == m_locals.end())
         {
             return false;
         }
         else
         {
-            auto index = m_localToIndex[&local];
-            pExistingLocal = m_pMetaInfo->GetLocalCore(index);
+            pExistingLocal = *result;
             return true;
         }
     }
@@ -961,8 +994,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterLocal(TempPtr<local_metadata_label_type> &pLocal)
     {
-        auto &local = *pLocal;
-        m_localToIndex[&local] = m_pMetaInfo->RegisterLocalCore(pLocal);
+        m_pMetaInfo->RegisterLocalCore(pLocal);
+        m_locals.insert(pLocal.Get());
     }
 
 
@@ -998,16 +1031,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetProperty(property_metadata_label_type const &prop, property_metadata_label_type *&pExistingProp) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetProperty(property_metadata_label_type &prop, property_metadata_label_type *&pExistingProp) const
     {
-        if (m_propToIndex.find(&prop) == m_propToIndex.end())
+        auto result = m_props.find(&prop);
+        if (result == m_props.end())
         {
             return false;
         }
         else
         {
-            auto index = m_propToIndex[&prop];
-            pExistingProp = m_pMetaInfo->GetPropertyCore(index);
+            pExistingProp = *result;
             return true;
         }
     }
@@ -1017,8 +1050,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterProperty(TempPtr<property_metadata_label_type> &pProp)
     {
-        auto &prop = *pProp;
-        m_propToIndex[&prop] = m_pMetaInfo->RegisterPropertyCore(pProp);
+        m_pMetaInfo->RegisterPropertyCore(pProp);
+        m_props.insert(pProp.Get());
     }
     
 
@@ -1054,16 +1087,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetField(field_metadata_label_type const &field, field_metadata_label_type *&pExistingField) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetField(field_metadata_label_type &field, field_metadata_label_type *&pExistingField) const
     {
-        if (m_fieldToIndex.find(&field) == m_fieldToIndex.end())
+        auto result = m_fields.find(&field);
+        if (result == m_fields.end())
         {
             return false;
         }
         else
         {
-            auto index = m_fieldToIndex[&field];
-            pExistingField = m_pMetaInfo->GetFieldCore(index);
+            pExistingField = *result;
             return true;
         }
     }
@@ -1073,8 +1106,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterField(TempPtr<field_metadata_label_type> &pField)
     {
-        auto &field = *pField;
-        m_fieldToIndex[&field] = m_pMetaInfo->RegisterFieldCore(pField);
+        m_pMetaInfo->RegisterFieldCore(pField);
+        m_fields.insert(pField.Get());
     }
 
 
@@ -1110,16 +1143,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetCustomAttribute(custom_attribute_metadata_label_type const &cas, custom_attribute_metadata_label_type *&pExistingCas) const
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::TryGetCustomAttribute(custom_attribute_metadata_label_type &cas, custom_attribute_metadata_label_type *&pExistingCas) const
     {
-        if (m_casToIndex.find(&cas) == m_casToIndex.end())
+        auto result = m_cass.find(&cas);
+        if (result == m_cass.end())
         {
             return false;
         }
         else
         {
-            auto index = m_casToIndex[&cas];
-            pExistingCas = m_pMetaInfo->GetCustomAttributeCore(index);
+            pExistingCas = *result;
             return true;
         }
     }
@@ -1129,8 +1162,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::RegisterCustomAttribute(TempPtr<custom_attribute_metadata_label_type> &pCas)
     {
-        auto &cas = *pCas;
-        m_casToIndex[&cas] = m_pMetaInfo->RegisterCustomAttributeCore(pCas);
+        m_pMetaInfo->RegisterCustomAttributeCore(pCas);
+        m_cass.insert(pCas.Get());
     }
 
 

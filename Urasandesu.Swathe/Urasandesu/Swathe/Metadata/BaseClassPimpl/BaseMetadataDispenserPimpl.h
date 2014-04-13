@@ -111,7 +111,7 @@
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     using boost::filesystem::path;
-    using boost::unordered_map;
+    using boost::unordered_set;
     using std::pair;
     using std::vector;
     using std::wstring;
@@ -128,6 +128,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         SWATHE_END_METADATA_DISPENSER_PIMPL_FACADE_TYPEDEF_ALIAS
 
         BaseMetadataDispenserPimpl(metadata_dispenser_label_type *pClass);
+        ~BaseMetadataDispenserPimpl();
 
         void Initialize(metadata_info_label_type *pMetaInfo);
         IAssembly const *GetAssembly(wstring const &fullName) const;
@@ -152,7 +153,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         TempPtr<assembly_metadata_label_type> NewAssembly(path const &asmPath) const;
         TempPtr<assembly_metadata_label_type> NewAssembly(assembly_metadata_label_type const *pTargetAsm, mdToken mdt) const;
         void RegisterAssembly(TempPtr<assembly_metadata_label_type> &pAsm);
-        bool TryGetAssembly(assembly_metadata_label_type const &asm_, assembly_metadata_label_type *&pExistingAsm) const;
+        bool TryGetAssembly(assembly_metadata_label_type &asm_, assembly_metadata_label_type *&pExistingAsm) const;
         
         assembly_generator_label_type *DefineAssembly(IAssembly const *pSrcAsm) const;
         assembly_generator_label_type *ResolveAssembly(IAssembly const *pAsm) const;
@@ -168,8 +169,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         mutable metadata_dispenser_label_type *m_pClass;
         metadata_info_label_type *m_pMetaInfo;
-        mutable unordered_map<IAssembly const *, SIZE_T, IAssemblyHash, IAssemblyEqualTo> m_asmToIndex;
-        mutable vector<pair<assembly_generator_label_type *, SIZE_T> > m_asmGenToIndex;
+        mutable unordered_set<assembly_metadata_label_type *, IAssemblyHash, IAssemblyEqualTo> m_asms;
+        mutable vector<assembly_generator_label_type *> m_asmGens;
         mutable ATL::CComPtr<IMetaDataDispenserEx> m_pComMetaDisp;
         
     };

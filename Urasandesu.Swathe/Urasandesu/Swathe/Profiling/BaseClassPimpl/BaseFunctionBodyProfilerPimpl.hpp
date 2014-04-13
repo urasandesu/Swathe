@@ -52,6 +52,16 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    void BaseFunctionBodyProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
+    {
+        _ASSERTE(pProcProf);
+        _ASSERTE(!m_pProcProf);
+        m_pProcProf = pProcProf;
+    }
+
+
+
+    template<class ApiHolder>    
     UINT_PTR BaseFunctionBodyProfilerPimpl<ApiHolder>::GetID() const
     {
         return m_id;
@@ -92,16 +102,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     {
         _ASSERTE(m_functionId != static_cast<UINT_PTR>(-1));
         return m_pProcProf->AttachToFunction(m_functionId);
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseFunctionBodyProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
-    {
-        _ASSERTE(pProcProf);
-        _ASSERTE(!m_pProcProf);
-        m_pProcProf = pProcProf;
     }
 
 

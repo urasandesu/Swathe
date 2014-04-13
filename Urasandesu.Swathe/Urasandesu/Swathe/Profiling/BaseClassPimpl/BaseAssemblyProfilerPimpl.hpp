@@ -54,6 +54,16 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    void BaseAssemblyProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
+    {
+        _ASSERTE(pProcProf != nullptr);
+        _ASSERTE(m_pProcProf == nullptr);
+        m_pProcProf = pProcProf;
+    }
+
+
+
+    template<class ApiHolder>    
     UINT_PTR BaseAssemblyProfilerPimpl<ApiHolder>::GetID() const
     {
         _ASSERTE(m_id != static_cast<UINT_PTR>(-1));
@@ -85,14 +95,14 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     typename BaseAssemblyProfilerPimpl<ApiHolder>::assembly_generator_label_type *BaseAssemblyProfilerPimpl<ApiHolder>::GetAssemblyGenerator()
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using ATL::CComPtr;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (!m_pAsmGen)
         {
-            BOOST_LOG_NAMED_SCOPE("if (!m_pAsmGen)");
+            CPPANONYM_LOG_NAMED_SCOPE("if (!m_pAsmGen)");
 
             if (m_moduleId == static_cast<UINT_PTR>(-1))
                 FillProperties(this, m_name, m_appDomainId, m_moduleId);
@@ -111,16 +121,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
             m_pAsmGen = pDisp->GetModifiableAssembly(&*pComMetaImp);
         }
         return m_pAsmGen;
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseAssemblyProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
-    {
-        _ASSERTE(pProcProf != nullptr);
-        _ASSERTE(m_pProcProf == nullptr);
-        m_pProcProf = pProcProf;
     }
 
 

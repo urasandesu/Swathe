@@ -77,9 +77,9 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 104;
+        static INT const PIMPL_TYPE_SIZE = 112;
 #else
-        static INT const PIMPL_TYPE_SIZE = 200;
+        static INT const PIMPL_TYPE_SIZE = 224;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

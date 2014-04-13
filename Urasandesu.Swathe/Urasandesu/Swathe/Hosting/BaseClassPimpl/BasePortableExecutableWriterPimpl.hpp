@@ -377,7 +377,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     void BasePortableExecutableWriterPimpl<ApiHolder>::EmitOptions(wstring const &modName)
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         SetOutputFileName(modName);
         CPPANONYM_D_LOGW1(L"Module Name: %|1$s|", modName);
@@ -391,7 +391,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     void BasePortableExecutableWriterPimpl<ApiHolder>::EmitMethodBody(IMethodBody const *pBody, HCEESECTION &textSection)
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         auto const &header = pBody->GetRawHeader();
         auto const &body = pBody->GetRawBody();
@@ -437,7 +437,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     void BasePortableExecutableWriterPimpl<ApiHolder>::EmitStrongNameReservedArea(AutoPtr<IStrongNameKey const> const &pSnKey, HCEESECTION &textSection)
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 

@@ -63,6 +63,20 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    void BaseAppDomainProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf, metadata_info_label_type *pMetaInfo)
+    {
+        _ASSERTE(pProcProf != nullptr);
+        _ASSERTE(m_pProcProf == nullptr);
+        m_pProcProf = pProcProf;
+
+        _ASSERTE(pMetaInfo != nullptr);
+        _ASSERTE(m_pMetaInfo == nullptr);
+        m_pMetaInfo = pMetaInfo;
+    }
+
+
+
+    template<class ApiHolder>    
     UINT_PTR BaseAppDomainProfilerPimpl<ApiHolder>::GetID() const
     {
         _ASSERTE(m_id != static_cast<UINT_PTR>(-1));
@@ -104,20 +118,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     void BaseAppDomainProfilerPimpl<ApiHolder>::SetData(wstring const &name, AnyPtr const &pData)
     {
         m_dataEntries[name] = pData;
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseAppDomainProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf, metadata_info_label_type *pMetaInfo)
-    {
-        _ASSERTE(pProcProf != nullptr);
-        _ASSERTE(m_pProcProf == nullptr);
-        m_pProcProf = pProcProf;
-
-        _ASSERTE(pMetaInfo != nullptr);
-        _ASSERTE(m_pMetaInfo == nullptr);
-        m_pMetaInfo = pMetaInfo;
     }
 
 

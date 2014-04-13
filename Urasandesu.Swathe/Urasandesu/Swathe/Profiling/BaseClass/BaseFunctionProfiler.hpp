@@ -72,6 +72,12 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    void BaseFunctionProfiler<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
+    {
+        Pimpl()->Initialize(pProcProf);
+    }
+
+    template<class ApiHolder>    
     UINT_PTR BaseFunctionProfiler<ApiHolder>::GetID() const
     {
         return Pimpl()->GetID();
@@ -111,12 +117,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     void BaseFunctionProfiler<ApiHolder>::SetFunctionBody(TempPtr<function_body_profiler_label_type const> const &pBodyProf)
     {
         Pimpl()->SetFunctionBody(pBodyProf);
-    }
-
-    template<class ApiHolder>    
-    void BaseFunctionProfiler<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
-    {
-        Pimpl()->Initialize(pProcProf);
     }
 
     template<class ApiHolder>    

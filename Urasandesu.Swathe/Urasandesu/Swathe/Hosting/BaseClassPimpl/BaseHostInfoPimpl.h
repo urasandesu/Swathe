@@ -45,6 +45,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     using Urasandesu::CppAnonym::Utilities::TempPtr;
     using boost::aligned_storage;
     using boost::unordered_map;
+    using std::vector;
     using std::wstring;
 
     template<
@@ -88,7 +89,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         storage_type m_storage;
         mutable host_info_label_type *m_pClass;
         host_info_label_type *m_pHost;
-        mutable unordered_map<wstring, SIZE_T> m_versionToIndex;
+        mutable vector<host_info_label_type *> m_hosts;
+        mutable unordered_map<wstring, runtime_host_label_type *> m_versionToRuntimes;
         mutable ATL::CComPtr<ICLRMetaHost> m_pComMetaHost;
     };
 

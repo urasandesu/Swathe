@@ -46,7 +46,6 @@
 
 namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseClassPimpl { 
 
-    using boost::aligned_storage;
     using boost::unordered_map;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
     
@@ -75,50 +74,31 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         TempPtr<function_body_profiler_label_type> AttachToFunctionBody(FunctionID functionId, FunctionBodyID functionBodyId);
         
     private:
-        base_heap_provider_type *BaseHeapProvider();
-        base_heap_provider_type const *BaseHeapProvider() const;
         void Initialize(profiling_info_label_type *pProfInfo);
         TempPtr<app_domain_profiler_label_type> NewAppDomainProfiler(AppDomainID appDomainId);
-        TempPtr<app_domain_profiler_label_type> NewAppDomainProfilerCore();
         void RegisterAppDomainProfiler(TempPtr<app_domain_profiler_label_type> &pDomainProf);
         TempPtr<assembly_profiler_label_type> NewAssemblyProfiler(AssemblyID assemblyId);
-        TempPtr<assembly_profiler_label_type> NewAssemblyProfilerCore();
         void RegisterAssemblyProfiler(TempPtr<assembly_profiler_label_type> &pAsmProf);
         TempPtr<module_profiler_label_type> NewModuleProfiler(ModuleID moduleId);
-        TempPtr<module_profiler_label_type> NewModuleProfilerCore();
         void RegisterModuleProfiler(TempPtr<module_profiler_label_type> &pModProf);
         TempPtr<class_profiler_label_type> NewClassProfiler(ClassID classId);
-        TempPtr<class_profiler_label_type> NewClassProfilerCore();
         void RegisterClassProfiler(TempPtr<class_profiler_label_type> &pClsProf);
         TempPtr<function_profiler_label_type> NewFunctionProfiler(FunctionID functionId);
-        TempPtr<function_profiler_label_type> NewFunctionProfilerCore();
         void RegisterFunctionProfiler(TempPtr<function_profiler_label_type> &pFuncProf);
         TempPtr<function_body_profiler_label_type> NewFunctionBodyProfiler(FunctionID functionId, FunctionBodyID functionBodyId);
-        TempPtr<function_body_profiler_label_type> NewFunctionBodyProfilerCore();
         void RegisterFunctionBodyProfiler(TempPtr<function_body_profiler_label_type> &pBodyProf);
         ICorProfilerInfo2 &GetCOMProfilerInfo();
         IUnknown &GetCOMProfilerInfoUnknown();
         void SetCOMProfilerInfoUnknown(IUnknown *pComProfInfoUnk);
 
-#ifdef _DEBUG
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
-#else
-#ifdef _M_IX86
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 192;
-#else
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 384;
-#endif
-#endif
-        typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
-        storage_type m_storage;
         mutable process_profiler_label_type *m_pClass;
         profiling_info_label_type *m_pProfInfo;
-        unordered_map<AppDomainID, SIZE_T> m_appDomainIdToIndex;
-        unordered_map<AssemblyID, SIZE_T> m_assemblyIdToIndex;
-        unordered_map<ModuleID, SIZE_T> m_moduleIdToIndex;
-        unordered_map<ClassID, SIZE_T> m_classIdToIndex;
-        unordered_map<FunctionID, SIZE_T> m_functionIdToIndex;
-        unordered_map<FunctionBodyID, SIZE_T> m_functionBodyIdToIndex;
+        unordered_map<AppDomainID, app_domain_profiler_label_type *> m_appDomainIdToObjs;
+        unordered_map<AssemblyID, assembly_profiler_label_type *> m_assemblyIdToObjs;
+        unordered_map<ModuleID, module_profiler_label_type *> m_moduleIdToObjs;
+        unordered_map<ClassID, class_profiler_label_type *> m_classIdToObjs;
+        unordered_map<FunctionID, function_profiler_label_type *> m_functionIdToObjs;
+        unordered_map<FunctionBodyID, function_body_profiler_label_type *> m_functionBodyIdToObjs;
         ATL::CComPtr<ICorProfilerInfo2> m_pComProfInfo;
         ATL::CComPtr<IUnknown> m_pComProfInfoUnk;
     };

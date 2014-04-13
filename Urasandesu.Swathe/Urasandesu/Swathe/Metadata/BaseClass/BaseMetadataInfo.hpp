@@ -109,15 +109,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::assembly_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetAssemblyCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterAssemblyCore(TempPtr<assembly_metadata_label_type> &pAsm)
     {
-        return Pimpl()->GetAssemblyCore(index);
+        Pimpl()->RegisterAssemblyCore(pAsm);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterAssemblyCore(TempPtr<assembly_metadata_label_type> &pAsm)
+    void BaseMetadataInfo<ApiHolder>::UnloadAssemblyCore(assembly_metadata_label_type *pAsm)
     {
-        return Pimpl()->RegisterAssemblyCore(pAsm);
+        Pimpl()->UnloadAssemblyCore(pAsm);
     }
 
     template<class ApiHolder>    
@@ -127,15 +127,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::module_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetModuleCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterModuleCore(TempPtr<module_metadata_label_type> &pMod)
     {
-        return Pimpl()->GetModuleCore(index);
+        Pimpl()->RegisterModuleCore(pMod);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterModuleCore(TempPtr<module_metadata_label_type> &pMod)
+    void BaseMetadataInfo<ApiHolder>::UnloadModuleCore(module_metadata_label_type *pMod)
     {
-        return Pimpl()->RegisterModuleCore(pMod);
+        Pimpl()->UnloadModuleCore(pMod);
     }
 
     template<class ApiHolder>    
@@ -145,15 +145,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::type_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetTypeCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterTypeCore(TempPtr<type_metadata_label_type> &pType)
     {
-        return Pimpl()->GetTypeCore(index);
+        Pimpl()->RegisterTypeCore(pType);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterTypeCore(TempPtr<type_metadata_label_type> &pType)
+    void BaseMetadataInfo<ApiHolder>::UnloadTypeCore(type_metadata_label_type *pType)
     {
-        return Pimpl()->RegisterTypeCore(pType);
+        Pimpl()->UnloadTypeCore(pType);
     }
 
     template<class ApiHolder>    
@@ -163,15 +163,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::method_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetMethodCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterMethodCore(TempPtr<method_metadata_label_type> &pMethod)
     {
-        return Pimpl()->GetMethodCore(index);
+        Pimpl()->RegisterMethodCore(pMethod);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterMethodCore(TempPtr<method_metadata_label_type> &pMethod)
+    void BaseMetadataInfo<ApiHolder>::UnloadMethodCore(method_metadata_label_type *pMethod)
     {
-        return Pimpl()->RegisterMethodCore(pMethod);
+        Pimpl()->UnloadMethodCore(pMethod);
     }
 
     template<class ApiHolder>    
@@ -181,15 +181,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::method_body_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetMethodBodyCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterMethodBodyCore(TempPtr<method_body_metadata_label_type> &pBody)
     {
-        return Pimpl()->GetMethodBodyCore(index);
+        Pimpl()->RegisterMethodBodyCore(pBody);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterMethodBodyCore(TempPtr<method_body_metadata_label_type> &pBody)
+    void BaseMetadataInfo<ApiHolder>::UnloadMethodBodyCore(method_body_metadata_label_type *pBody)
     {
-        return Pimpl()->RegisterMethodBodyCore(pBody);
+        Pimpl()->UnloadMethodBodyCore(pBody);
     }
 
     template<class ApiHolder>    
@@ -199,15 +199,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::parameter_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetParameterCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterParameterCore(TempPtr<parameter_metadata_label_type> &pParam)
     {
-        return Pimpl()->GetParameterCore(index);
+        Pimpl()->RegisterParameterCore(pParam);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterParameterCore(TempPtr<parameter_metadata_label_type> &pParam)
+    void BaseMetadataInfo<ApiHolder>::UnloadParameterCore(parameter_metadata_label_type *pParam)
     {
-        return Pimpl()->RegisterParameterCore(pParam);
+        Pimpl()->UnloadParameterCore(pParam);
     }
 
     template<class ApiHolder>    
@@ -217,15 +217,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::local_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetLocalCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterLocalCore(TempPtr<local_metadata_label_type> &pLocal)
     {
-        return Pimpl()->GetLocalCore(index);
+        Pimpl()->RegisterLocalCore(pLocal);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterLocalCore(TempPtr<local_metadata_label_type> &pLocal)
+    void BaseMetadataInfo<ApiHolder>::UnloadLocalCore(local_metadata_label_type *pLocal)
     {
-        return Pimpl()->RegisterLocalCore(pLocal);
+        Pimpl()->UnloadLocalCore(pLocal);
     }
     
     template<class ApiHolder>    
@@ -235,15 +235,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::property_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetPropertyCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterPropertyCore(TempPtr<property_metadata_label_type> &pProp)
     {
-        return Pimpl()->GetPropertyCore(index);
+        Pimpl()->RegisterPropertyCore(pProp);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterPropertyCore(TempPtr<property_metadata_label_type> &pProp)
+    void BaseMetadataInfo<ApiHolder>::UnloadPropertyCore(property_metadata_label_type *pProp)
     {
-        return Pimpl()->RegisterPropertyCore(pProp);
+        Pimpl()->UnloadPropertyCore(pProp);
     }
 
     template<class ApiHolder>    
@@ -253,15 +253,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::field_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetFieldCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterFieldCore(TempPtr<field_metadata_label_type> &pField)
     {
-        return Pimpl()->GetFieldCore(index);
+        Pimpl()->RegisterFieldCore(pField);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterFieldCore(TempPtr<field_metadata_label_type> &pField)
+    void BaseMetadataInfo<ApiHolder>::UnloadFieldCore(field_metadata_label_type *pField)
     {
-        return Pimpl()->RegisterFieldCore(pField);
+        Pimpl()->UnloadFieldCore(pField);
     }
 
     template<class ApiHolder>    
@@ -271,15 +271,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::custom_attribute_metadata_label_type *BaseMetadataInfo<ApiHolder>::GetCustomAttributeCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterCustomAttributeCore(TempPtr<custom_attribute_metadata_label_type> &pCa)
     {
-        return Pimpl()->GetCustomAttributeCore(index);
+        Pimpl()->RegisterCustomAttributeCore(pCa);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterCustomAttributeCore(TempPtr<custom_attribute_metadata_label_type> &pCa)
+    void BaseMetadataInfo<ApiHolder>::UnloadCustomAttributeCore(custom_attribute_metadata_label_type *pCa)
     {
-        return Pimpl()->RegisterCustomAttributeCore(pCa);
+        Pimpl()->UnloadCustomAttributeCore(pCa);
     }
 
     template<class ApiHolder>    
@@ -289,15 +289,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::assembly_generator_label_type *BaseMetadataInfo<ApiHolder>::GetAssemblyGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterAssemblyGeneratorCore(TempPtr<assembly_generator_label_type> &pAsmGen)
     {
-        return Pimpl()->GetAssemblyGeneratorCore(index);
+        Pimpl()->RegisterAssemblyGeneratorCore(pAsmGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterAssemblyGeneratorCore(TempPtr<assembly_generator_label_type> &pAsmGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadAssemblyGeneratorCore(assembly_generator_label_type *pAsmGen)
     {
-        return Pimpl()->RegisterAssemblyGeneratorCore(pAsmGen);
+        Pimpl()->UnloadAssemblyGeneratorCore(pAsmGen);
     }
 
     template<class ApiHolder>    
@@ -307,15 +307,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::module_generator_label_type *BaseMetadataInfo<ApiHolder>::GetModuleGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterModuleGeneratorCore(TempPtr<module_generator_label_type> &pModGen)
     {
-        return Pimpl()->GetModuleGeneratorCore(index);
+        Pimpl()->RegisterModuleGeneratorCore(pModGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterModuleGeneratorCore(TempPtr<module_generator_label_type> &pModGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadModuleGeneratorCore(module_generator_label_type *pModGen)
     {
-        return Pimpl()->RegisterModuleGeneratorCore(pModGen);
+        Pimpl()->UnloadModuleGeneratorCore(pModGen);
     }
 
     template<class ApiHolder>    
@@ -325,15 +325,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::type_generator_label_type *BaseMetadataInfo<ApiHolder>::GetTypeGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterTypeGeneratorCore(TempPtr<type_generator_label_type> &pTypeGen)
     {
-        return Pimpl()->GetTypeGeneratorCore(index);
+        Pimpl()->RegisterTypeGeneratorCore(pTypeGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterTypeGeneratorCore(TempPtr<type_generator_label_type> &pTypeGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadTypeGeneratorCore(type_generator_label_type *pTypeGen)
     {
-        return Pimpl()->RegisterTypeGeneratorCore(pTypeGen);
+        Pimpl()->UnloadTypeGeneratorCore(pTypeGen);
     }
 
     template<class ApiHolder>    
@@ -343,15 +343,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::method_generator_label_type *BaseMetadataInfo<ApiHolder>::GetMethodGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterMethodGeneratorCore(TempPtr<method_generator_label_type> &pMethodGen)
     {
-        return Pimpl()->GetMethodGeneratorCore(index);
+        Pimpl()->RegisterMethodGeneratorCore(pMethodGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterMethodGeneratorCore(TempPtr<method_generator_label_type> &pMethodGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadMethodGeneratorCore(method_generator_label_type *pMethodGen)
     {
-        return Pimpl()->RegisterMethodGeneratorCore(pMethodGen);
+        Pimpl()->UnloadMethodGeneratorCore(pMethodGen);
     }
 
     template<class ApiHolder>    
@@ -361,15 +361,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::parameter_generator_label_type *BaseMetadataInfo<ApiHolder>::GetParameterGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterParameterGeneratorCore(TempPtr<parameter_generator_label_type> &pParamGen)
     {
-        return Pimpl()->GetParameterGeneratorCore(index);
+        Pimpl()->RegisterParameterGeneratorCore(pParamGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterParameterGeneratorCore(TempPtr<parameter_generator_label_type> &pParamGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadParameterGeneratorCore(parameter_generator_label_type *pParamGen)
     {
-        return Pimpl()->RegisterParameterGeneratorCore(pParamGen);
+        Pimpl()->UnloadParameterGeneratorCore(pParamGen);
     }
 
     template<class ApiHolder>    
@@ -379,15 +379,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::property_generator_label_type *BaseMetadataInfo<ApiHolder>::GetPropertyGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterPropertyGeneratorCore(TempPtr<property_generator_label_type> &pPropGen)
     {
-        return Pimpl()->GetPropertyGeneratorCore(index);
+        Pimpl()->RegisterPropertyGeneratorCore(pPropGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterPropertyGeneratorCore(TempPtr<property_generator_label_type> &pPropGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadPropertyGeneratorCore(property_generator_label_type *pPropGen)
     {
-        return Pimpl()->RegisterPropertyGeneratorCore(pPropGen);
+        Pimpl()->UnloadPropertyGeneratorCore(pPropGen);
     }
 
     template<class ApiHolder>    
@@ -397,15 +397,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::field_generator_label_type *BaseMetadataInfo<ApiHolder>::GetFieldGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterFieldGeneratorCore(TempPtr<field_generator_label_type> &pFieldGen)
     {
-        return Pimpl()->GetFieldGeneratorCore(index);
+        Pimpl()->RegisterFieldGeneratorCore(pFieldGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterFieldGeneratorCore(TempPtr<field_generator_label_type> &pFieldGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadFieldGeneratorCore(field_generator_label_type *pFieldGen)
     {
-        return Pimpl()->RegisterFieldGeneratorCore(pFieldGen);
+        Pimpl()->UnloadFieldGeneratorCore(pFieldGen);
     }
 
     template<class ApiHolder>    
@@ -415,15 +415,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::method_body_generator_label_type *BaseMetadataInfo<ApiHolder>::GetMethodBodyGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterMethodBodyGeneratorCore(TempPtr<method_body_generator_label_type> &pBodyGen)
     {
-        return Pimpl()->GetMethodBodyGeneratorCore(index);
+        Pimpl()->RegisterMethodBodyGeneratorCore(pBodyGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterMethodBodyGeneratorCore(TempPtr<method_body_generator_label_type> &pBodyGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadMethodBodyGeneratorCore(method_body_generator_label_type *pBodyGen)
     {
-        return Pimpl()->RegisterMethodBodyGeneratorCore(pBodyGen);
+        Pimpl()->UnloadMethodBodyGeneratorCore(pBodyGen);
     }
 
     template<class ApiHolder>    
@@ -433,15 +433,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::local_generator_label_type *BaseMetadataInfo<ApiHolder>::GetLocalGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterLocalGeneratorCore(TempPtr<local_generator_label_type> &pLocalGen)
     {
-        return Pimpl()->GetLocalGeneratorCore(index);
+        Pimpl()->RegisterLocalGeneratorCore(pLocalGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterLocalGeneratorCore(TempPtr<local_generator_label_type> &pLocalGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadLocalGeneratorCore(local_generator_label_type *pLocalGen)
     {
-        return Pimpl()->RegisterLocalGeneratorCore(pLocalGen);
+        Pimpl()->UnloadLocalGeneratorCore(pLocalGen);
     }
 
     template<class ApiHolder>    
@@ -451,15 +451,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataInfo<ApiHolder>::custom_attribute_generator_label_type *BaseMetadataInfo<ApiHolder>::GetCustomAttributeGeneratorCore(SIZE_T index) const
+    void BaseMetadataInfo<ApiHolder>::RegisterCustomAttributeGeneratorCore(TempPtr<custom_attribute_generator_label_type> &pCaGen)
     {
-        return Pimpl()->GetCustomAttributeGeneratorCore(index);
+        Pimpl()->RegisterCustomAttributeGeneratorCore(pCaGen);
     }
 
     template<class ApiHolder>    
-    SIZE_T BaseMetadataInfo<ApiHolder>::RegisterCustomAttributeGeneratorCore(TempPtr<custom_attribute_generator_label_type> &pCaGen)
+    void BaseMetadataInfo<ApiHolder>::UnloadCustomAttributeGeneratorCore(custom_attribute_generator_label_type *pCaGen)
     {
-        return Pimpl()->RegisterCustomAttributeGeneratorCore(pCaGen);
+        Pimpl()->UnloadCustomAttributeGeneratorCore(pCaGen);
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClass { 

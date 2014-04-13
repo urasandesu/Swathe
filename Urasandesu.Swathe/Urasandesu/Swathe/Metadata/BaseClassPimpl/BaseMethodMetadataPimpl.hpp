@@ -572,7 +572,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMethodMetadataPimpl<ApiHolder>::OutDebugInfo() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         CPPANONYM_D_LOGW(L"");
         CPPANONYM_D_LOGW(L"MethodMetadata -----------------------------------------------------");

@@ -751,7 +751,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseTypeMetadataPimpl<ApiHolder>::OutDebugInfo() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using boost::get;
         using Urasandesu::CppAnonym::Utilities::Empty;

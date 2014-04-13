@@ -57,6 +57,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
         BaseFunctionProfilerPimpl(function_profiler_label_type *pClass);
 
+        void Initialize(process_profiler_label_type *pProcProf);
         UINT_PTR GetID() const;
         TempPtr<class_profiler_label_type> AttachToClass();
         TempPtr<module_profiler_label_type> AttachToModule();
@@ -66,7 +67,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         void SetFunctionBody(TempPtr<function_body_profiler_label_type const> const &pBodyProf);
         
     private:
-        void Initialize(process_profiler_label_type *pProcProf);
         void SetID(UINT_PTR id);
         mdToken GetToken() const;
         static void FillProperties(function_profiler_pimpl_label_type const *_this, ClassID &classId, ModuleID &moduleId, mdToken &mdt);

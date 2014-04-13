@@ -62,6 +62,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         SWATHE_END_RUNTIME_HOST_PIMPL_FACADE_TYPEDEF_ALIAS
 
         BaseRuntimeHostPimpl(runtime_host_label_type *pClass);
+        struct info_destructor;
         ~BaseRuntimeHostPimpl();
 
         void Initialize(host_info_label_type *pHost);
@@ -98,7 +99,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         mutable wstring m_corVersion;
         mutable bool m_corSysDirPathInit;
         mutable path m_corSysDirPath;
-        mutable unordered_map<TypeInfo, SIZE_T, TypeInfoHash, TypeInfoEqualTo> m_infoToIndex;
+        mutable unordered_map<TypeInfo, void *, TypeInfoHash, TypeInfoEqualTo> m_infoToObjs;
         mutable ATL::CComPtr<ICLRRuntimeInfo> m_pComRuntimeInfo;
     };
 

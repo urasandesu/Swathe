@@ -54,8 +54,45 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     }
 
     template<class ApiHolder>    
+    struct BaseRuntimeHostPimpl<ApiHolder>::info_destructor
+    {
+        info_destructor(base_heap_provider_type *pBaseProvider, unordered_map<TypeInfo, void *, TypeInfoHash, TypeInfoEqualTo> &infoToObjs) : 
+            m_pBaseProvider(pBaseProvider), 
+            m_infoToObjs(infoToObjs)
+        { }
+
+        template<class T>
+        void operator()(T)
+        {
+            using boost::mpl::identity;
+
+            typedef typename T::object_type Info;
+
+            auto info = TypeInfo(identity<Info>());
+            auto result = m_infoToObjs.find(info);
+            if (result != m_infoToObjs.end())
+            {
+                auto &provider = m_pBaseProvider->FirstProviderOf<Info>();
+                provider.DeleteObject(static_cast<Info *>((*result).second));
+            }
+        }
+
+        base_heap_provider_type *m_pBaseProvider;
+        unordered_map<TypeInfo, void *, TypeInfoHash, TypeInfoEqualTo> &m_infoToObjs;
+    };
+
+    template<class ApiHolder>    
     BaseRuntimeHostPimpl<ApiHolder>::~BaseRuntimeHostPimpl()
     {
+        namespace mpl = boost::mpl;
+        using mpl::for_each;
+
+        if (!m_infoToObjs.empty())
+        {
+            typedef typename base_heap_provider_type::disposing_info<>::type DisposingInfos;
+            for_each<DisposingInfos>(info_destructor(BaseHeapProvider(), m_infoToObjs));
+        }
+
         BaseHeapProvider()->~base_heap_provider_type();
     }
 
@@ -216,7 +253,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         auto info = TypeInfo(identity<Info>());
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<Info>();
-        m_infoToIndex[info] = provider.RegisterObject(pInfo);
+        provider.RegisterObject(pInfo);
+        m_infoToObjs[info] = pInfo.Get();
     }
 
     
@@ -230,16 +268,14 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         BOOST_MPL_ASSERT((typename base_heap_provider_type::is_provided_object<Info>));
 
         auto info = TypeInfo(identity<Info>());
-        if (m_infoToIndex.find(info) == m_infoToIndex.end())
+        auto result = m_infoToObjs.find(info);
+        if (result == m_infoToObjs.end())
         {
             return false;
         }
         else
         {
-            auto index = m_infoToIndex[info];
-            auto *pBaseProvider = BaseHeapProvider();
-            auto &provider = pBaseProvider->FirstProviderOf<Info>();
-            pExistingInfo = provider.GetObject(index);
+            pExistingInfo = static_cast<Info *>((*result).second);
             return true;
         }
     }

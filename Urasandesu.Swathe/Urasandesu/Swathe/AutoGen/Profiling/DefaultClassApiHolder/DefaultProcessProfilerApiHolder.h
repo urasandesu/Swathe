@@ -48,14 +48,6 @@
 #include <Urasandesu/Swathe/Profiling/ProfilingInfoPimplFwd.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSLABEL_METADATAINFOLABEL_H
-#include <Urasandesu/Swathe/AutoGen/Metadata/ClassLabel/MetadataInfoLabel.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_METADATAINFOFWD_H
-#include <Urasandesu/Swathe/Metadata/MetadataInfoFwd.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_CLASSLABEL_RUNTIMEHOSTLABEL_H
 #include <Urasandesu/Swathe/AutoGen/Hosting/ClassLabel/RuntimeHostLabel.h>
 #endif
@@ -74,8 +66,6 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
         using Urasandesu::Swathe::Profiling::ProfilingInfo;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassPimplLabel::ProfilingInfoPimplLabel;
         using Urasandesu::Swathe::Profiling::ProfilingInfoPimpl;
-        using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::MetadataInfoLabel;
-        using Urasandesu::Swathe::Metadata::MetadataInfo;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassLabel::RuntimeHostLabel;
         using Urasandesu::Swathe::Hosting::RuntimeHost;
         using mpl::map;
@@ -86,7 +76,6 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
             typedef map<
                 pair<ProfilingInfoLabel, ProfilingInfo>,
                 pair<ProfilingInfoPimplLabel, ProfilingInfoPimpl>,
-                pair<MetadataInfoLabel, MetadataInfo>,
                 pair<RuntimeHostLabel, RuntimeHost>
             > api_cartridges;
         };

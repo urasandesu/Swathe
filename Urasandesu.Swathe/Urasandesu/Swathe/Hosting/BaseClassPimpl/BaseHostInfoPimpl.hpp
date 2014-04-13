@@ -54,10 +54,23 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     BaseHostInfoPimpl<ApiHolder>::~BaseHostInfoPimpl()
     {
-        BaseHeapProvider()->~base_heap_provider_type();
+        if (!m_versionToRuntimes.empty())
+        {
+            auto *pBaseProvider = BaseHeapProvider();
+            auto &provider = pBaseProvider->FirstProviderOf<runtime_host_label_type>();
+            BOOST_FOREACH (auto const &pair, m_versionToRuntimes)
+                provider.DeleteObject(pair.second);
+        }
 
-        // If we delegate releasing the resources to system, the result will become unintended consequences for Boost.Log.
-        boost::log::core::get()->remove_all_sinks();
+        if (!m_hosts.empty())
+        {
+            auto *pBaseProvider = BaseHeapProvider();
+            auto &provider = pBaseProvider->FirstProviderOf<host_info_label_type>();
+            BOOST_FOREACH (auto const &pHost, m_hosts)
+                provider.DeleteObject(pHost);
+        }
+
+        BaseHeapProvider()->~base_heap_provider_type();
     }
 
     template<class ApiHolder>    
@@ -157,6 +170,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<host_info_label_type>();
         provider.RegisterObject(pHost);
+        m_hosts.push_back(pHost.Get());
     }
 
 
@@ -180,7 +194,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<runtime_host_label_type>();
-        m_versionToIndex[pRuntime->GetCORVersion()] = provider.RegisterObject(pRuntime);
+        provider.RegisterObject(pRuntime);
+        m_versionToRuntimes[pRuntime->GetCORVersion()] = pRuntime.Get();
     }
 
 
@@ -188,16 +203,14 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     bool BaseHostInfoPimpl<ApiHolder>::TryGetRuntime(wstring const &version, runtime_host_label_type *&pExistingRuntime) const
     {
-        if (m_versionToIndex.find(version) == m_versionToIndex.end())
+        auto result = m_versionToRuntimes.find(version);
+        if (result == m_versionToRuntimes.end())
         {
             return false;
         }
         else
         {
-            auto index = m_versionToIndex[version];
-            auto *pBaseProvider = BaseHeapProvider();
-            auto &provider = pBaseProvider->FirstProviderOf<runtime_host_label_type>();
-            pExistingRuntime = provider.GetObject(index);
+            pExistingRuntime = (*result).second;
             return true;
         }
     }

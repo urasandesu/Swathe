@@ -82,17 +82,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdProperty BasePropertyGeneratorPimpl<ApiHolder>::GetToken() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
-            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+            CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
 
             if (!m_pSrcProp)
             {
-                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcProp)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (!m_pSrcProp)");
 
                 // TODO: 仮実装
                 auto mdtTarget = GetDeclaringType()->GetToken();
@@ -110,7 +110,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
-                BOOST_LOG_NAMED_SCOPE("if (m_pSrcProp)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (m_pSrcProp)");
 
                 // TODO: 仮実装
                 auto mdtSetter = m_pClass->GetSetMethod()->GetToken();

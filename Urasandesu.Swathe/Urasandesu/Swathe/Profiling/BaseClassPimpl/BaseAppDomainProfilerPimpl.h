@@ -60,13 +60,13 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         BaseAppDomainProfilerPimpl(app_domain_profiler_label_type *pClass);
         ~BaseAppDomainProfilerPimpl();
         
+        void Initialize(process_profiler_label_type *pProcProf, metadata_info_label_type *pMetaInfo);
         UINT_PTR GetID() const;
         metadata_dispenser_label_type *GetMetadataDispenser();
         AnyPtr GetData(wstring const &name);
         void SetData(wstring const &name, AnyPtr const &pData);
 
     private:
-        void Initialize(process_profiler_label_type *pProcProf, metadata_info_label_type *pMetaInfo);
         void SetID(UINT_PTR id);
 
         mutable app_domain_profiler_label_type *m_pClass;

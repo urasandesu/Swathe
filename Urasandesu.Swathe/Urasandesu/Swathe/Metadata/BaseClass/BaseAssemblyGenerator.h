@@ -227,15 +227,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         custom_attribute_generator_label_type *DefineCustomAttribute(IMethod const *pCtor, bool constructorArgsSpecified, vector<CustomAttributeArgument> const &constructorArgs, bool namedPropertiesSpecified, vector<IProperty const *> const &namedProperties, bool propertyValuesSpecified, vector<CustomAttributeArgument> const &propertyValues, CustomAttributeProvider const &member);
         void RegisterCustomAttributeGenerator(TempPtr<custom_attribute_generator_label_type> &pCaGen);
         
-        vector<pair<module_generator_label_type const *, SIZE_T> > const &GetModuleGeneratorToIndex() const;
-        vector<pair<type_generator_label_type const *, SIZE_T> > const &GetTypeGeneratorToIndex() const;
-        vector<pair<field_generator_label_type const *, SIZE_T> > const &GetFieldGeneratorToIndex() const;
-        vector<pair<method_generator_label_type const *, SIZE_T> > const &GetMethodGeneratorToIndex() const;
-        vector<pair<method_body_generator_label_type const *, SIZE_T> > const &GetMethodBodyGeneratorToIndex() const;
-        vector<pair<local_generator_label_type const *, SIZE_T> > const &GetLocalGeneratorToIndex() const;
-        vector<pair<parameter_generator_label_type const *, SIZE_T> > const &GetParameterGeneratorToIndex() const;
-        vector<pair<property_generator_label_type const *, SIZE_T> > const &GetPropertyGeneratorToIndex() const;
-        vector<pair<custom_attribute_generator_label_type const *, SIZE_T> > const &GetCustomAttributeGeneratorToIndex() const;
+        vector<module_generator_label_type *> const &GetModuleGeneratorToIndex() const;
+        vector<type_generator_label_type *> const &GetTypeGeneratorToIndex() const;
+        vector<field_generator_label_type *> const &GetFieldGeneratorToIndex() const;
+        vector<method_generator_label_type *> const &GetMethodGeneratorToIndex() const;
+        vector<method_body_generator_label_type *> const &GetMethodBodyGeneratorToIndex() const;
+        vector<local_generator_label_type *> const &GetLocalGeneratorToIndex() const;
+        vector<parameter_generator_label_type *> const &GetParameterGeneratorToIndex() const;
+        vector<property_generator_label_type *> const &GetPropertyGeneratorToIndex() const;
+        vector<custom_attribute_generator_label_type *> const &GetCustomAttributeGeneratorToIndex() const;
 
         IModule const *Resolve(IModule const *pMod) const;
         IType const *Resolve(IType const *pType) const;

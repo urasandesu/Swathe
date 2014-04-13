@@ -57,11 +57,11 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
         BaseClassProfilerPimpl(class_profiler_label_type *pClass);
 
+        void Initialize(process_profiler_label_type *pProcProf);
         UINT_PTR GetID() const;
         TempPtr<module_profiler_label_type> AttachToModule();
         
     private:
-        void Initialize(process_profiler_label_type *pProcProf);
         void SetID(UINT_PTR id);
         static void FillProperties(class_profiler_pimpl_label_type const *_this, ModuleID &moduleId, mdToken &mdt);
 

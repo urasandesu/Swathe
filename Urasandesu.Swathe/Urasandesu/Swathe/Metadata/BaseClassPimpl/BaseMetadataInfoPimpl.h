@@ -43,7 +43,7 @@
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     using boost::aligned_storage;
-    using boost::unordered_map;
+    using boost::unordered_set;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
 
     template<
@@ -71,84 +71,84 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void RegisterDispenser(TempPtr<metadata_dispenser_label_type> &pDisp);
 
         TempPtr<assembly_metadata_label_type> NewAssemblyCore(metadata_dispenser_label_type *pDisp) const;
-        assembly_metadata_label_type *GetAssemblyCore(SIZE_T index) const;
-        SIZE_T RegisterAssemblyCore(TempPtr<assembly_metadata_label_type> &pAsm);
+        void RegisterAssemblyCore(TempPtr<assembly_metadata_label_type> &pAsm);
+        void UnloadAssemblyCore(assembly_metadata_label_type *pAsm);
 
         TempPtr<module_metadata_label_type> NewModuleCore(assembly_metadata_label_type *pAsm) const;
-        module_metadata_label_type *GetModuleCore(SIZE_T index) const;
-        SIZE_T RegisterModuleCore(TempPtr<module_metadata_label_type> &pMod);
+        void RegisterModuleCore(TempPtr<module_metadata_label_type> &pMod);
+        void UnloadModuleCore(module_metadata_label_type *pMod);
 
         TempPtr<type_metadata_label_type> NewTypeCore(assembly_metadata_label_type *pAsm) const;
-        type_metadata_label_type *GetTypeCore(SIZE_T index) const;
-        SIZE_T RegisterTypeCore(TempPtr<type_metadata_label_type> &pType);
+        void RegisterTypeCore(TempPtr<type_metadata_label_type> &pType);
+        void UnloadTypeCore(type_metadata_label_type *pType);
 
         TempPtr<method_metadata_label_type> NewMethodCore(assembly_metadata_label_type *pAsm) const;
-        method_metadata_label_type *GetMethodCore(SIZE_T index) const;
-        SIZE_T RegisterMethodCore(TempPtr<method_metadata_label_type> &pMethod);
+        void RegisterMethodCore(TempPtr<method_metadata_label_type> &pMethod);
+        void UnloadMethodCore(method_metadata_label_type *pMethod);
 
         TempPtr<method_body_metadata_label_type> NewMethodBodyCore(assembly_metadata_label_type *pAsm) const;
-        method_body_metadata_label_type *GetMethodBodyCore(SIZE_T index) const;
-        SIZE_T RegisterMethodBodyCore(TempPtr<method_body_metadata_label_type> &pBody);
+        void RegisterMethodBodyCore(TempPtr<method_body_metadata_label_type> &pBody);
+        void UnloadMethodBodyCore(method_body_metadata_label_type *pBody);
 
         TempPtr<parameter_metadata_label_type> NewParameterCore(assembly_metadata_label_type *pAsm) const;
-        parameter_metadata_label_type *GetParameterCore(SIZE_T index) const;
-        SIZE_T RegisterParameterCore(TempPtr<parameter_metadata_label_type> &pParam);
+        void RegisterParameterCore(TempPtr<parameter_metadata_label_type> &pParam);
+        void UnloadParameterCore(parameter_metadata_label_type *pParam);
 
         TempPtr<local_metadata_label_type> NewLocalCore(assembly_metadata_label_type *pAsm) const;
-        local_metadata_label_type *GetLocalCore(SIZE_T index) const;
-        SIZE_T RegisterLocalCore(TempPtr<local_metadata_label_type> &pLocal);
+        void RegisterLocalCore(TempPtr<local_metadata_label_type> &pLocal);
+        void UnloadLocalCore(local_metadata_label_type *pLocal);
 
         TempPtr<property_metadata_label_type> NewPropertyCore(assembly_metadata_label_type *pAsm) const;
-        property_metadata_label_type *GetPropertyCore(SIZE_T index) const;
-        SIZE_T RegisterPropertyCore(TempPtr<property_metadata_label_type> &pProp);
+        void RegisterPropertyCore(TempPtr<property_metadata_label_type> &pProp);
+        void UnloadPropertyCore(property_metadata_label_type *pProp);
 
         TempPtr<field_metadata_label_type> NewFieldCore(assembly_metadata_label_type *pAsm) const;
-        field_metadata_label_type *GetFieldCore(SIZE_T index) const;
-        SIZE_T RegisterFieldCore(TempPtr<field_metadata_label_type> &pField);
+        void RegisterFieldCore(TempPtr<field_metadata_label_type> &pField);
+        void UnloadFieldCore(field_metadata_label_type *pField);
 
         TempPtr<custom_attribute_metadata_label_type> NewCustomAttributeCore(assembly_metadata_label_type *pAsm) const;
-        custom_attribute_metadata_label_type *GetCustomAttributeCore(SIZE_T index) const;
-        SIZE_T RegisterCustomAttributeCore(TempPtr<custom_attribute_metadata_label_type> &pCa);
+        void RegisterCustomAttributeCore(TempPtr<custom_attribute_metadata_label_type> &pCa);
+        void UnloadCustomAttributeCore(custom_attribute_metadata_label_type *pCa);
 
         TempPtr<assembly_generator_label_type> NewAssemblyGeneratorCore(metadata_dispenser_label_type *pDisp) const;
-        assembly_generator_label_type *GetAssemblyGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterAssemblyGeneratorCore(TempPtr<assembly_generator_label_type> &pAsmGen);
+        void RegisterAssemblyGeneratorCore(TempPtr<assembly_generator_label_type> &pAsmGen);
+        void UnloadAssemblyGeneratorCore(assembly_generator_label_type *pAsmGen);
 
         TempPtr<module_generator_label_type> NewModuleGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        module_generator_label_type *GetModuleGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterModuleGeneratorCore(TempPtr<module_generator_label_type> &pModGen);
+        void RegisterModuleGeneratorCore(TempPtr<module_generator_label_type> &pModGen);
+        void UnloadModuleGeneratorCore(module_generator_label_type *pModGen);
 
         TempPtr<type_generator_label_type> NewTypeGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        type_generator_label_type *GetTypeGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterTypeGeneratorCore(TempPtr<type_generator_label_type> &pTypeGen);
+        void RegisterTypeGeneratorCore(TempPtr<type_generator_label_type> &pTypeGen);
+        void UnloadTypeGeneratorCore(type_generator_label_type *pTypeGen);
 
         TempPtr<method_generator_label_type> NewMethodGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        method_generator_label_type *GetMethodGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterMethodGeneratorCore(TempPtr<method_generator_label_type> &pMethodGen);
+        void RegisterMethodGeneratorCore(TempPtr<method_generator_label_type> &pMethodGen);
+        void UnloadMethodGeneratorCore(method_generator_label_type *pMethodGen);
 
         TempPtr<parameter_generator_label_type> NewParameterGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        parameter_generator_label_type *GetParameterGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterParameterGeneratorCore(TempPtr<parameter_generator_label_type> &pParamGen);
+        void RegisterParameterGeneratorCore(TempPtr<parameter_generator_label_type> &pParamGen);
+        void UnloadParameterGeneratorCore(parameter_generator_label_type *pParamGen);
 
         TempPtr<property_generator_label_type> NewPropertyGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        property_generator_label_type *GetPropertyGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterPropertyGeneratorCore(TempPtr<property_generator_label_type> &pPropGen);
+        void RegisterPropertyGeneratorCore(TempPtr<property_generator_label_type> &pPropGen);
+        void UnloadPropertyGeneratorCore(property_generator_label_type *pPropGen);
 
         TempPtr<field_generator_label_type> NewFieldGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        field_generator_label_type *GetFieldGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterFieldGeneratorCore(TempPtr<field_generator_label_type> &pFieldGen);
+        void RegisterFieldGeneratorCore(TempPtr<field_generator_label_type> &pFieldGen);
+        void UnloadFieldGeneratorCore(field_generator_label_type *pFieldGen);
 
         TempPtr<method_body_generator_label_type> NewMethodBodyGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        method_body_generator_label_type *GetMethodBodyGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterMethodBodyGeneratorCore(TempPtr<method_body_generator_label_type> &pBodyGen);
+        void RegisterMethodBodyGeneratorCore(TempPtr<method_body_generator_label_type> &pBodyGen);
+        void UnloadMethodBodyGeneratorCore(method_body_generator_label_type *pBodyGen);
 
         TempPtr<local_generator_label_type> NewLocalGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        local_generator_label_type *GetLocalGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterLocalGeneratorCore(TempPtr<local_generator_label_type> &pLocalGen);
+        void RegisterLocalGeneratorCore(TempPtr<local_generator_label_type> &pLocalGen);
+        void UnloadLocalGeneratorCore(local_generator_label_type *pLocalGen);
 
         TempPtr<custom_attribute_generator_label_type> NewCustomAttributeGeneratorCore(assembly_generator_label_type *pAsmGen) const;
-        custom_attribute_generator_label_type *GetCustomAttributeGeneratorCore(SIZE_T index) const;
-        SIZE_T RegisterCustomAttributeGeneratorCore(TempPtr<custom_attribute_generator_label_type> &pCaGen);
+        void RegisterCustomAttributeGeneratorCore(TempPtr<custom_attribute_generator_label_type> &pCaGen);
+        void UnloadCustomAttributeGeneratorCore(custom_attribute_generator_label_type *pCaGen);
 
 #ifdef _DEBUG
 #ifdef _M_IX86
@@ -167,7 +167,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         storage_type m_storage;
         mutable metadata_info_label_type *m_pClass;
         runtime_host_label_type *m_pRuntime;
-        mutable unordered_map<metadata_dispenser_label_type *, SIZE_T> m_dispToIndex;
+        mutable unordered_set<metadata_dispenser_label_type *> m_disps;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

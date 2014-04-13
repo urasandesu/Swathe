@@ -41,8 +41,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     BaseProfilingInfoPimpl<ApiHolder>::BaseProfilingInfoPimpl(profiling_info_label_type *pClass) : 
         m_pClass(pClass), 
-        m_pRuntime(nullptr), 
-        m_procProfIndex(static_cast<SIZE_T>(-1))
+        m_pRuntime(nullptr)
     { 
 #ifdef _DEBUG
         BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
@@ -55,6 +54,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     BaseProfilingInfoPimpl<ApiHolder>::~BaseProfilingInfoPimpl()
     {
+        DetachFromCurrentProcess();
         BaseHeapProvider()->~base_heap_provider_type();
     }
 
@@ -88,7 +88,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     TempPtr<typename BaseProfilingInfoPimpl<ApiHolder>::process_profiler_label_type> BaseProfilingInfoPimpl<ApiHolder>::AttachToCurrentProcess(IUnknown *pComProfInfoUnk)
     {
-        if (m_procProfIndex == static_cast<SIZE_T>(-1))
+        if (!m_pCurrentProcProf)
         {
             return NewProcessProfiler(pComProfInfoUnk);
         }
@@ -104,7 +104,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     typename BaseProfilingInfoPimpl<ApiHolder>::process_profiler_label_type *BaseProfilingInfoPimpl<ApiHolder>::GetCurrentProcessProfiler()
     {
-        _ASSERTE(m_procProfIndex != static_cast<SIZE_T>(-1));
+        _ASSERTE(m_pCurrentProcProf);
         return m_pCurrentProcProf.Get();
     }
 
@@ -113,14 +113,14 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     void BaseProfilingInfoPimpl<ApiHolder>::DetachFromCurrentProcess()
     {
-        if (m_procProfIndex == static_cast<SIZE_T>(-1))
+        if (!m_pCurrentProcProf)
             return;
 
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<process_profiler_label_type>();
-        provider.DeleteObject(m_procProfIndex);
+        provider.DeleteObject(m_pCurrentProcProf.Get());
         
-        m_procProfIndex = static_cast<SIZE_T>(-1);
+        m_pCurrentProcProf = TempPtr<process_profiler_label_type>();
     }
 
 
@@ -162,8 +162,214 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     {
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<process_profiler_label_type>();
-        m_procProfIndex = provider.RegisterObject(pProcProf);
+        provider.RegisterObject(pProcProf);
         m_pCurrentProcProf = pProcProf;
+    }
+
+    
+    
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfoPimpl<ApiHolder>::app_domain_profiler_label_type> BaseProfilingInfoPimpl<ApiHolder>::NewAppDomainProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<app_domain_profiler_label_type>();
+        auto pDomainProf = provider.NewObject();
+        auto const *pRuntime = GetRuntime();
+        auto *pMetaInfo = pRuntime->GetInfo<metadata_info_label_type>();
+        pDomainProf->Initialize(pProcProf, pMetaInfo);
+        auto handler = app_domain_profiler_persisted_handler_label_type(pProcProf);
+        provider.AddPersistedHandler(pDomainProf, handler);
+        return pDomainProf;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::RegisterAppDomainProfilerCore(TempPtr<app_domain_profiler_label_type> &pDomainProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<app_domain_profiler_label_type>();
+        provider.RegisterObject(pDomainProf);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::DetachFromAppDomainCore(app_domain_profiler_label_type *pDomainProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<app_domain_profiler_label_type>();
+        provider.DeleteObject(pDomainProf);
+    }
+
+
+
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfoPimpl<ApiHolder>::assembly_profiler_label_type> BaseProfilingInfoPimpl<ApiHolder>::NewAssemblyProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<assembly_profiler_label_type>();
+        auto pAsmProf = provider.NewObject();
+        pAsmProf->Initialize(pProcProf);
+        auto handler = assembly_profiler_persisted_handler_label_type(pProcProf);
+        provider.AddPersistedHandler(pAsmProf, handler);
+        return pAsmProf;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::RegisterAssemblyProfilerCore(TempPtr<assembly_profiler_label_type> &pAsmProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<assembly_profiler_label_type>();
+        provider.RegisterObject(pAsmProf);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::DetachFromAssemblyCore(assembly_profiler_label_type *pAsmProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<assembly_profiler_label_type>();
+        provider.DeleteObject(pAsmProf);
+    }
+
+
+        
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfoPimpl<ApiHolder>::module_profiler_label_type> BaseProfilingInfoPimpl<ApiHolder>::NewModuleProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<module_profiler_label_type>();
+        auto pModProf = provider.NewObject();
+        pModProf->Initialize(pProcProf);
+        auto handler = module_profiler_persisted_handler_label_type(pProcProf);
+        provider.AddPersistedHandler(pModProf, handler);
+        return pModProf;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::RegisterModuleProfilerCore(TempPtr<module_profiler_label_type> &pModProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<module_profiler_label_type>();
+        provider.RegisterObject(pModProf);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::DetachFromModuleCore(module_profiler_label_type *pModProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<module_profiler_label_type>();
+        provider.DeleteObject(pModProf);
+    }
+
+
+        
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfoPimpl<ApiHolder>::class_profiler_label_type> BaseProfilingInfoPimpl<ApiHolder>::NewClassProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<class_profiler_label_type>();
+        auto pClsProf = provider.NewObject();
+        pClsProf->Initialize(pProcProf);
+        auto handler = class_profiler_persisted_handler_label_type(pProcProf);
+        provider.AddPersistedHandler(pClsProf, handler);
+        return pClsProf;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::RegisterClassProfilerCore(TempPtr<class_profiler_label_type> &pClsProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<class_profiler_label_type>();
+        provider.RegisterObject(pClsProf);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::DetachFromClassCore(class_profiler_label_type *pClsProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<class_profiler_label_type>();
+        provider.DeleteObject(pClsProf);
+    }
+
+
+        
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfoPimpl<ApiHolder>::function_profiler_label_type> BaseProfilingInfoPimpl<ApiHolder>::NewFunctionProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<function_profiler_label_type>();
+        auto pFuncProf = provider.NewObject();
+        pFuncProf->Initialize(pProcProf);
+        auto handler = function_profiler_persisted_handler_label_type(pProcProf);
+        provider.AddPersistedHandler(pFuncProf, handler);
+        return pFuncProf;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::RegisterFunctionProfilerCore(TempPtr<function_profiler_label_type> &pFuncProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<function_profiler_label_type>();
+        provider.RegisterObject(pFuncProf);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::DetachFromFunctionCore(function_profiler_label_type *pFuncProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<function_profiler_label_type>();
+        provider.DeleteObject(pFuncProf);
+    }
+
+
+        
+    template<class ApiHolder>    
+    TempPtr<typename BaseProfilingInfoPimpl<ApiHolder>::function_body_profiler_label_type> BaseProfilingInfoPimpl<ApiHolder>::NewFunctionBodyProfilerCore(process_profiler_label_type *pProcProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<function_body_profiler_label_type>();
+        auto pBodyProf = provider.NewObject();
+        pBodyProf->Initialize(pProcProf);
+        auto handler = function_body_profiler_persisted_handler_label_type(pProcProf);
+        provider.AddPersistedHandler(pBodyProf, handler);
+        return pBodyProf;
+    }
+
+
+    
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::RegisterFunctionBodyProfilerCore(TempPtr<function_body_profiler_label_type> &pBodyProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<function_body_profiler_label_type>();
+        provider.RegisterObject(pBodyProf);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseProfilingInfoPimpl<ApiHolder>::DetachFromFunctionBodyCore(function_body_profiler_label_type *pBodyProf)
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<function_body_profiler_label_type>();
+        provider.DeleteObject(pBodyProf);
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseClassPimpl { 

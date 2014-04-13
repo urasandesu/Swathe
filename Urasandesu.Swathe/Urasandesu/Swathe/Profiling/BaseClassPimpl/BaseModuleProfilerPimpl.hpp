@@ -51,6 +51,16 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    void BaseModuleProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
+    {
+        _ASSERTE(pProcProf != nullptr);
+        _ASSERTE(m_pProcProf == nullptr);
+        m_pProcProf = pProcProf;
+    }
+
+
+
+    template<class ApiHolder>    
     UINT_PTR BaseModuleProfilerPimpl<ApiHolder>::GetID() const
     {
         _ASSERTE(m_id != static_cast<UINT_PTR>(-1));
@@ -75,16 +85,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         if (m_assemblyId == static_cast<UINT_PTR>(-1))
             FillProperties(this, m_name, m_assemblyId);
         return m_pProcProf->AttachToAssembly(m_assemblyId);
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseModuleProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
-    {
-        _ASSERTE(pProcProf != nullptr);
-        _ASSERTE(m_pProcProf == nullptr);
-        m_pProcProf = pProcProf;
     }
 
 

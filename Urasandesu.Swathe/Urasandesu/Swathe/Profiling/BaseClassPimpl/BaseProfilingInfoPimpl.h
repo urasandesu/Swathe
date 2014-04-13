@@ -71,20 +71,43 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         TempPtr<process_profiler_label_type> NewProcessProfilerCore();
         void RegisterProcessProfiler(TempPtr<process_profiler_label_type> &pProcProf);
 
+        TempPtr<app_domain_profiler_label_type> NewAppDomainProfilerCore(process_profiler_label_type *pProcProf);
+        void RegisterAppDomainProfilerCore(TempPtr<app_domain_profiler_label_type> &pDomainProf);
+        void DetachFromAppDomainCore(app_domain_profiler_label_type *pDomainProf);
+
+        TempPtr<assembly_profiler_label_type> NewAssemblyProfilerCore(process_profiler_label_type *pProcProf);
+        void RegisterAssemblyProfilerCore(TempPtr<assembly_profiler_label_type> &pAsmProf);
+        void DetachFromAssemblyCore(assembly_profiler_label_type *pAsmProf);
+        
+        TempPtr<module_profiler_label_type> NewModuleProfilerCore(process_profiler_label_type *pProcProf);
+        void RegisterModuleProfilerCore(TempPtr<module_profiler_label_type> &pModProf);
+        void DetachFromModuleCore(module_profiler_label_type *pModProf);
+        
+        TempPtr<class_profiler_label_type> NewClassProfilerCore(process_profiler_label_type *pProcProf);
+        void RegisterClassProfilerCore(TempPtr<class_profiler_label_type> &pClsProf);
+        void DetachFromClassCore(class_profiler_label_type *pClsProf);
+        
+        TempPtr<function_profiler_label_type> NewFunctionProfilerCore(process_profiler_label_type *pProcProf);
+        void RegisterFunctionProfilerCore(TempPtr<function_profiler_label_type> &pFuncProf);
+        void DetachFromFunctionCore(function_profiler_label_type *pFuncProf);
+        
+        TempPtr<function_body_profiler_label_type> NewFunctionBodyProfilerCore(process_profiler_label_type *pProcProf);
+        void RegisterFunctionBodyProfilerCore(TempPtr<function_body_profiler_label_type> &pBodyProf);
+        void DetachFromFunctionBodyCore(function_body_profiler_label_type *pBodyProf);
+
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
 #else
 #ifdef _M_IX86
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 32;
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 224;
 #else
-        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 64;
+        static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 448;
 #endif
 #endif
         typedef typename aligned_storage<BASE_HEAP_PROVIDER_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
         mutable profiling_info_label_type *m_pClass;
         runtime_host_label_type const *m_pRuntime;
-        SIZE_T m_procProfIndex;
         TempPtr<process_profiler_label_type> m_pCurrentProcProf;
     };
 

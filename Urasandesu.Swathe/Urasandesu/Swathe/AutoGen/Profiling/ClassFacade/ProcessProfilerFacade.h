@@ -44,24 +44,72 @@
 #include <Urasandesu/Swathe/Profiling/ProcessProfilerFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_PROFILING_APPDOMAINPROFILERFWD_H
+#include <Urasandesu/Swathe/Profiling/AppDomainProfilerFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_APPDOMAINPROFILERPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Profiling/AppDomainProfilerPersistedHandlerFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_PROFILING_APPDOMAINPROFILERPIMPLFWD_H
 #include <Urasandesu/Swathe/Profiling/AppDomainProfilerPimplFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_ASSEMBLYPROFILERFWD_H
+#include <Urasandesu/Swathe/Profiling/AssemblyProfilerFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_ASSEMBLYPROFILERPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Profiling/AssemblyProfilerPersistedHandlerFwd.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_PROFILING_ASSEMBLYPROFILERPIMPLFWD_H
 #include <Urasandesu/Swathe/Profiling/AssemblyProfilerPimplFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_PROFILING_MODULEPROFILERFWD_H
+#include <Urasandesu/Swathe/Profiling/ModuleProfilerFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_MODULEPROFILERPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Profiling/ModuleProfilerPersistedHandlerFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_PROFILING_MODULEPROFILERPIMPLFWD_H
 #include <Urasandesu/Swathe/Profiling/ModuleProfilerPimplFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_CLASSPROFILERFWD_H
+#include <Urasandesu/Swathe/Profiling/ClassProfilerFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_CLASSPROFILERPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Profiling/ClassProfilerPersistedHandlerFwd.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_PROFILING_CLASSPROFILERPIMPLFWD_H
 #include <Urasandesu/Swathe/Profiling/ClassProfilerPimplFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONPROFILERFWD_H
+#include <Urasandesu/Swathe/Profiling/FunctionProfilerFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONPROFILERPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Profiling/FunctionProfilerPersistedHandlerFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONPROFILERPIMPLFWD_H
 #include <Urasandesu/Swathe/Profiling/FunctionProfilerPimplFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONBODYPROFILERFWD_H
+#include <Urasandesu/Swathe/Profiling/FunctionBodyProfilerFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONBODYPROFILERPERSISTEDHANDLERFWD_H
+#include <Urasandesu/Swathe/Profiling/FunctionBodyProfilerPersistedHandlerFwd.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONBODYPROFILERPIMPLFWD_H
@@ -76,60 +124,8 @@
 #include <Urasandesu/Swathe/AutoGen/Profiling/ClassPimplLabel/ProfilingInfoPimplLabel.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSLABEL_METADATAINFOLABEL_H
-#include <Urasandesu/Swathe/AutoGen/Metadata/ClassLabel/MetadataInfoLabel.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_CLASSLABEL_RUNTIMEHOSTLABEL_H
 #include <Urasandesu/Swathe/AutoGen/Hosting/ClassLabel/RuntimeHostLabel.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONPROFILERFWD_H
-#include <Urasandesu/Swathe/Profiling/FunctionProfilerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONPROFILERPERSISTEDHANDLERFWD_H
-#include <Urasandesu/Swathe/Profiling/FunctionProfilerPersistedHandlerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONBODYPROFILERFWD_H
-#include <Urasandesu/Swathe/Profiling/FunctionBodyProfilerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_FUNCTIONBODYPROFILERPERSISTEDHANDLERFWD_H
-#include <Urasandesu/Swathe/Profiling/FunctionBodyProfilerPersistedHandlerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_CLASSPROFILERFWD_H
-#include <Urasandesu/Swathe/Profiling/ClassProfilerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_CLASSPROFILERPERSISTEDHANDLERFWD_H
-#include <Urasandesu/Swathe/Profiling/ClassProfilerPersistedHandlerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_MODULEPROFILERFWD_H
-#include <Urasandesu/Swathe/Profiling/ModuleProfilerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_MODULEPROFILERPERSISTEDHANDLERFWD_H
-#include <Urasandesu/Swathe/Profiling/ModuleProfilerPersistedHandlerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_ASSEMBLYPROFILERFWD_H
-#include <Urasandesu/Swathe/Profiling/AssemblyProfilerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_ASSEMBLYPROFILERPERSISTEDHANDLERFWD_H
-#include <Urasandesu/Swathe/Profiling/AssemblyProfilerPersistedHandlerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_APPDOMAINPROFILERFWD_H
-#include <Urasandesu/Swathe/Profiling/AppDomainProfilerFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_PROFILING_APPDOMAINPROFILERPERSISTEDHANDLERFWD_H
-#include <Urasandesu/Swathe/Profiling/AppDomainProfilerPersistedHandlerFwd.h>
 #endif
 
 namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profiling { namespace ClassFacade { 
@@ -142,28 +138,27 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
         using Urasandesu::Swathe::AutoGen::Profiling::ClassApiAt::ProcessProfilerApiAt;
         using Urasandesu::Swathe::Profiling::ProcessProfilerPimpl;
         using Urasandesu::Swathe::Profiling::ProcessProfiler;
+        using Urasandesu::Swathe::Profiling::AppDomainProfiler;
+        using Urasandesu::Swathe::Profiling::AppDomainProfilerPersistedHandler;
         using Urasandesu::Swathe::Profiling::AppDomainProfilerPimpl;
+        using Urasandesu::Swathe::Profiling::AssemblyProfiler;
+        using Urasandesu::Swathe::Profiling::AssemblyProfilerPersistedHandler;
         using Urasandesu::Swathe::Profiling::AssemblyProfilerPimpl;
+        using Urasandesu::Swathe::Profiling::ModuleProfiler;
+        using Urasandesu::Swathe::Profiling::ModuleProfilerPersistedHandler;
         using Urasandesu::Swathe::Profiling::ModuleProfilerPimpl;
+        using Urasandesu::Swathe::Profiling::ClassProfiler;
+        using Urasandesu::Swathe::Profiling::ClassProfilerPersistedHandler;
         using Urasandesu::Swathe::Profiling::ClassProfilerPimpl;
+        using Urasandesu::Swathe::Profiling::FunctionProfiler;
+        using Urasandesu::Swathe::Profiling::FunctionProfilerPersistedHandler;
         using Urasandesu::Swathe::Profiling::FunctionProfilerPimpl;
+        using Urasandesu::Swathe::Profiling::FunctionBodyProfiler;
+        using Urasandesu::Swathe::Profiling::FunctionBodyProfilerPersistedHandler;
         using Urasandesu::Swathe::Profiling::FunctionBodyProfilerPimpl;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassLabel::ProfilingInfoLabel;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassPimplLabel::ProfilingInfoPimplLabel;
-        using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::MetadataInfoLabel;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassLabel::RuntimeHostLabel;
-        using Urasandesu::Swathe::Profiling::FunctionProfiler;
-        using Urasandesu::Swathe::Profiling::FunctionProfilerPersistedHandler;
-        using Urasandesu::Swathe::Profiling::FunctionBodyProfiler;
-        using Urasandesu::Swathe::Profiling::FunctionBodyProfilerPersistedHandler;
-        using Urasandesu::Swathe::Profiling::ClassProfiler;
-        using Urasandesu::Swathe::Profiling::ClassProfilerPersistedHandler;
-        using Urasandesu::Swathe::Profiling::ModuleProfiler;
-        using Urasandesu::Swathe::Profiling::ModuleProfilerPersistedHandler;
-        using Urasandesu::Swathe::Profiling::AssemblyProfiler;
-        using Urasandesu::Swathe::Profiling::AssemblyProfilerPersistedHandler;
-        using Urasandesu::Swathe::Profiling::AppDomainProfiler;
-        using Urasandesu::Swathe::Profiling::AppDomainProfilerPersistedHandler;
         using mpl::vector;
         
         template<
@@ -176,94 +171,35 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
             typedef ProcessProfilerPimpl process_profiler_pimpl_label_type;
             typedef typename ProcessProfilerApiAt<ApiHolder, ProfilingInfoLabel>::type profiling_info_label_type;
             typedef typename ProcessProfilerApiAt<ApiHolder, ProfilingInfoPimplLabel>::type profiling_info_pimpl_label_type;
-            typedef typename ProcessProfilerApiAt<ApiHolder, MetadataInfoLabel>::type metadata_info_label_type;
             typedef typename ProcessProfilerApiAt<ApiHolder, RuntimeHostLabel>::type runtime_host_label_type;
 
             typedef ProcessProfilerPimpl process_profiler_pimpl_label_type;
             typedef ProcessProfiler process_profiler_label_type;
-            typedef AppDomainProfilerPimpl app_domain_profiler_pimpl_label_type;
-            typedef AssemblyProfilerPimpl assembly_profiler_pimpl_label_type;
-            typedef ModuleProfilerPimpl module_profiler_pimpl_label_type;
-            typedef ClassProfilerPimpl class_profiler_pimpl_label_type;
-            typedef FunctionProfilerPimpl function_profiler_pimpl_label_type;
-            typedef FunctionBodyProfilerPimpl function_body_profiler_pimpl_label_type;
-            typedef FunctionProfiler function_profiler_label_type;
-            typedef FunctionProfilerPersistedHandler function_profiler_persisted_handler_label_type;
-            typedef FunctionBodyProfiler function_body_profiler_label_type;
-            typedef FunctionBodyProfilerPersistedHandler function_body_profiler_persisted_handler_label_type;
-            typedef ClassProfiler class_profiler_label_type;
-            typedef ClassProfilerPersistedHandler class_profiler_persisted_handler_label_type;
-            typedef ModuleProfiler module_profiler_label_type;
-            typedef ModuleProfilerPersistedHandler module_profiler_persisted_handler_label_type;
-            typedef AssemblyProfiler assembly_profiler_label_type;
-            typedef AssemblyProfilerPersistedHandler assembly_profiler_persisted_handler_label_type;
             typedef AppDomainProfiler app_domain_profiler_label_type;
             typedef AppDomainProfilerPersistedHandler app_domain_profiler_persisted_handler_label_type;
+            typedef AppDomainProfilerPimpl app_domain_profiler_pimpl_label_type;
+            typedef AssemblyProfiler assembly_profiler_label_type;
+            typedef AssemblyProfilerPersistedHandler assembly_profiler_persisted_handler_label_type;
+            typedef AssemblyProfilerPimpl assembly_profiler_pimpl_label_type;
+            typedef ModuleProfiler module_profiler_label_type;
+            typedef ModuleProfilerPersistedHandler module_profiler_persisted_handler_label_type;
+            typedef ModuleProfilerPimpl module_profiler_pimpl_label_type;
+            typedef ClassProfiler class_profiler_label_type;
+            typedef ClassProfilerPersistedHandler class_profiler_persisted_handler_label_type;
+            typedef ClassProfilerPimpl class_profiler_pimpl_label_type;
+            typedef FunctionProfiler function_profiler_label_type;
+            typedef FunctionProfilerPersistedHandler function_profiler_persisted_handler_label_type;
+            typedef FunctionProfilerPimpl function_profiler_pimpl_label_type;
+            typedef FunctionBodyProfiler function_body_profiler_label_type;
+            typedef FunctionBodyProfilerPersistedHandler function_body_profiler_persisted_handler_label_type;
+            typedef FunctionBodyProfilerPimpl function_body_profiler_pimpl_label_type;
 
             
+            typedef Nil base_heap_provider_type;
             
-            
-            
-            
-            
-            
-            typedef FunctionProfiler function_profiler_label_4becd107_type;
-            typedef FunctionBodyProfiler function_body_profiler_label_4becd107_type;
-            typedef ClassProfiler class_profiler_label_4becd107_type;
-            typedef ModuleProfiler module_profiler_label_4becd107_type;
-            typedef AssemblyProfiler assembly_profiler_label_4becd107_type;
-            typedef AppDomainProfiler app_domain_profiler_label_4becd107_type;
-            
-            typedef FunctionProfilerPersistedHandler function_profiler_persisted_handler_label_type;
-            typedef FunctionBodyProfilerPersistedHandler function_body_profiler_persisted_handler_label_type;
-            typedef ClassProfilerPersistedHandler class_profiler_persisted_handler_label_type;
-            typedef ModuleProfilerPersistedHandler module_profiler_persisted_handler_label_type;
-            typedef AssemblyProfilerPersistedHandler assembly_profiler_persisted_handler_label_type;
-            typedef AppDomainProfilerPersistedHandler app_domain_profiler_persisted_handler_label_type;
-            
-            typedef DisposingInfo<function_profiler_label_4becd107_type, function_profiler_persisted_handler_label_type> function_profiler_label_disposing_info_type;
-            typedef DisposingInfo<function_body_profiler_label_4becd107_type, function_body_profiler_persisted_handler_label_type> function_body_profiler_label_disposing_info_type;
-            typedef DisposingInfo<class_profiler_label_4becd107_type, class_profiler_persisted_handler_label_type> class_profiler_label_disposing_info_type;
-            typedef DisposingInfo<module_profiler_label_4becd107_type, module_profiler_persisted_handler_label_type> module_profiler_label_disposing_info_type;
-            typedef DisposingInfo<assembly_profiler_label_4becd107_type, assembly_profiler_persisted_handler_label_type> assembly_profiler_label_disposing_info_type;
-            typedef DisposingInfo<app_domain_profiler_label_4becd107_type, app_domain_profiler_persisted_handler_label_type> app_domain_profiler_label_disposing_info_type;
-            
-            typedef DisposableHeapProvider<
-                function_profiler_label_disposing_info_type,
-                function_body_profiler_label_disposing_info_type,
-                class_profiler_label_disposing_info_type,
-                module_profiler_label_disposing_info_type,
-                assembly_profiler_label_disposing_info_type,
-                app_domain_profiler_label_disposing_info_type
-            > base_heap_provider_type;
-            
-            #define SWATHE_DECLARE_PROCESS_PROFILER_DISPOSABLE_HEAP_PROVIDER_TYPEDEF_ALIAS \
+            #define SWATHE_DECLARE_PROCESS_PROFILER_EMPTY_HEAP_PROVIDER_TYPEDEF_ALIAS \
                 typedef typename facade::base_heap_provider_type base_heap_provider_type; \
                 friend typename base_heap_provider_type; \
-                typedef typename facade::function_profiler_persisted_handler_label_type function_profiler_persisted_handler_label_type; \
-                typedef typename facade::function_body_profiler_persisted_handler_label_type function_body_profiler_persisted_handler_label_type; \
-                typedef typename facade::class_profiler_persisted_handler_label_type class_profiler_persisted_handler_label_type; \
-                typedef typename facade::module_profiler_persisted_handler_label_type module_profiler_persisted_handler_label_type; \
-                typedef typename facade::assembly_profiler_persisted_handler_label_type assembly_profiler_persisted_handler_label_type; \
-                typedef typename facade::app_domain_profiler_persisted_handler_label_type app_domain_profiler_persisted_handler_label_type; \
-                friend typename function_profiler_persisted_handler_label_type; \
-                friend typename function_body_profiler_persisted_handler_label_type; \
-                friend typename class_profiler_persisted_handler_label_type; \
-                friend typename module_profiler_persisted_handler_label_type; \
-                friend typename assembly_profiler_persisted_handler_label_type; \
-                friend typename app_domain_profiler_persisted_handler_label_type; \
-                typedef typename facade::function_profiler_label_disposing_info_type function_profiler_label_disposing_info_type; \
-                typedef typename facade::function_body_profiler_label_disposing_info_type function_body_profiler_label_disposing_info_type; \
-                typedef typename facade::class_profiler_label_disposing_info_type class_profiler_label_disposing_info_type; \
-                typedef typename facade::module_profiler_label_disposing_info_type module_profiler_label_disposing_info_type; \
-                typedef typename facade::assembly_profiler_label_disposing_info_type assembly_profiler_label_disposing_info_type; \
-                typedef typename facade::app_domain_profiler_label_disposing_info_type app_domain_profiler_label_disposing_info_type; \
-                friend typename function_profiler_label_disposing_info_type; \
-                friend typename function_body_profiler_label_disposing_info_type; \
-                friend typename class_profiler_label_disposing_info_type; \
-                friend typename module_profiler_label_disposing_info_type; \
-                friend typename assembly_profiler_label_disposing_info_type; \
-                friend typename app_domain_profiler_label_disposing_info_type; \
             
         };
     
@@ -281,7 +217,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
     typedef Urasandesu::Swathe::AutoGen::Profiling::ClassFacade::ProcessProfilerFacade<ApiHolder> facade;
 
 #define SWATHE_DECLARE_PROCESS_PROFILER_FACADE_TYPEDEF_ALIAS \
-    SWATHE_DECLARE_PROCESS_PROFILER_DISPOSABLE_HEAP_PROVIDER_TYPEDEF_ALIAS \
+    SWATHE_DECLARE_PROCESS_PROFILER_EMPTY_HEAP_PROVIDER_TYPEDEF_ALIAS \
     typedef typename facade::class_type class_type; \
     typedef typename facade::class_pimpl_type class_pimpl_type; \
     friend typename class_pimpl_type; \
@@ -289,52 +225,50 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
     friend typename process_profiler_pimpl_label_type; \
     typedef typename facade::profiling_info_label_type profiling_info_label_type; \
     typedef typename facade::profiling_info_pimpl_label_type profiling_info_pimpl_label_type; \
-    typedef typename facade::metadata_info_label_type metadata_info_label_type; \
     typedef typename facade::runtime_host_label_type runtime_host_label_type; \
     friend typename profiling_info_label_type; \
     friend typename profiling_info_pimpl_label_type; \
-    friend typename metadata_info_label_type; \
     friend typename runtime_host_label_type; \
     typedef typename facade::process_profiler_pimpl_label_type process_profiler_pimpl_label_type; \
     typedef typename facade::process_profiler_label_type process_profiler_label_type; \
-    typedef typename facade::app_domain_profiler_pimpl_label_type app_domain_profiler_pimpl_label_type; \
-    typedef typename facade::assembly_profiler_pimpl_label_type assembly_profiler_pimpl_label_type; \
-    typedef typename facade::module_profiler_pimpl_label_type module_profiler_pimpl_label_type; \
-    typedef typename facade::class_profiler_pimpl_label_type class_profiler_pimpl_label_type; \
-    typedef typename facade::function_profiler_pimpl_label_type function_profiler_pimpl_label_type; \
-    typedef typename facade::function_body_profiler_pimpl_label_type function_body_profiler_pimpl_label_type; \
-    typedef typename facade::function_profiler_label_type function_profiler_label_type; \
-    typedef typename facade::function_profiler_persisted_handler_label_type function_profiler_persisted_handler_label_type; \
-    typedef typename facade::function_body_profiler_label_type function_body_profiler_label_type; \
-    typedef typename facade::function_body_profiler_persisted_handler_label_type function_body_profiler_persisted_handler_label_type; \
-    typedef typename facade::class_profiler_label_type class_profiler_label_type; \
-    typedef typename facade::class_profiler_persisted_handler_label_type class_profiler_persisted_handler_label_type; \
-    typedef typename facade::module_profiler_label_type module_profiler_label_type; \
-    typedef typename facade::module_profiler_persisted_handler_label_type module_profiler_persisted_handler_label_type; \
-    typedef typename facade::assembly_profiler_label_type assembly_profiler_label_type; \
-    typedef typename facade::assembly_profiler_persisted_handler_label_type assembly_profiler_persisted_handler_label_type; \
     typedef typename facade::app_domain_profiler_label_type app_domain_profiler_label_type; \
     typedef typename facade::app_domain_profiler_persisted_handler_label_type app_domain_profiler_persisted_handler_label_type; \
+    typedef typename facade::app_domain_profiler_pimpl_label_type app_domain_profiler_pimpl_label_type; \
+    typedef typename facade::assembly_profiler_label_type assembly_profiler_label_type; \
+    typedef typename facade::assembly_profiler_persisted_handler_label_type assembly_profiler_persisted_handler_label_type; \
+    typedef typename facade::assembly_profiler_pimpl_label_type assembly_profiler_pimpl_label_type; \
+    typedef typename facade::module_profiler_label_type module_profiler_label_type; \
+    typedef typename facade::module_profiler_persisted_handler_label_type module_profiler_persisted_handler_label_type; \
+    typedef typename facade::module_profiler_pimpl_label_type module_profiler_pimpl_label_type; \
+    typedef typename facade::class_profiler_label_type class_profiler_label_type; \
+    typedef typename facade::class_profiler_persisted_handler_label_type class_profiler_persisted_handler_label_type; \
+    typedef typename facade::class_profiler_pimpl_label_type class_profiler_pimpl_label_type; \
+    typedef typename facade::function_profiler_label_type function_profiler_label_type; \
+    typedef typename facade::function_profiler_persisted_handler_label_type function_profiler_persisted_handler_label_type; \
+    typedef typename facade::function_profiler_pimpl_label_type function_profiler_pimpl_label_type; \
+    typedef typename facade::function_body_profiler_label_type function_body_profiler_label_type; \
+    typedef typename facade::function_body_profiler_persisted_handler_label_type function_body_profiler_persisted_handler_label_type; \
+    typedef typename facade::function_body_profiler_pimpl_label_type function_body_profiler_pimpl_label_type; \
     friend typename process_profiler_pimpl_label_type; \
     friend typename process_profiler_label_type; \
-    friend typename app_domain_profiler_pimpl_label_type; \
-    friend typename assembly_profiler_pimpl_label_type; \
-    friend typename module_profiler_pimpl_label_type; \
-    friend typename class_profiler_pimpl_label_type; \
-    friend typename function_profiler_pimpl_label_type; \
-    friend typename function_body_profiler_pimpl_label_type; \
-    friend typename function_profiler_label_type; \
-    friend typename function_profiler_persisted_handler_label_type; \
-    friend typename function_body_profiler_label_type; \
-    friend typename function_body_profiler_persisted_handler_label_type; \
-    friend typename class_profiler_label_type; \
-    friend typename class_profiler_persisted_handler_label_type; \
-    friend typename module_profiler_label_type; \
-    friend typename module_profiler_persisted_handler_label_type; \
-    friend typename assembly_profiler_label_type; \
-    friend typename assembly_profiler_persisted_handler_label_type; \
     friend typename app_domain_profiler_label_type; \
     friend typename app_domain_profiler_persisted_handler_label_type; \
+    friend typename app_domain_profiler_pimpl_label_type; \
+    friend typename assembly_profiler_label_type; \
+    friend typename assembly_profiler_persisted_handler_label_type; \
+    friend typename assembly_profiler_pimpl_label_type; \
+    friend typename module_profiler_label_type; \
+    friend typename module_profiler_persisted_handler_label_type; \
+    friend typename module_profiler_pimpl_label_type; \
+    friend typename class_profiler_label_type; \
+    friend typename class_profiler_persisted_handler_label_type; \
+    friend typename class_profiler_pimpl_label_type; \
+    friend typename function_profiler_label_type; \
+    friend typename function_profiler_persisted_handler_label_type; \
+    friend typename function_profiler_pimpl_label_type; \
+    friend typename function_body_profiler_label_type; \
+    friend typename function_body_profiler_persisted_handler_label_type; \
+    friend typename function_body_profiler_pimpl_label_type; \
 
 #define SWATHE_END_PROCESS_PROFILER_FACADE_TYPEDEF_ALIAS
 

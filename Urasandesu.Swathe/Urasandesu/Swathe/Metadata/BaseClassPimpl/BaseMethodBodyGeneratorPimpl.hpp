@@ -105,28 +105,28 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseMethodBodyGeneratorPimpl<ApiHolder>::GetToken() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
-            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+            CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
 
             if (!m_pSrcBody)
             {
-                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcBody)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (!m_pSrcBody)");
 
                 auto const &locals = m_pClass->GetLocals();
                 if (locals.empty())
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (locals.empty())");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (locals.empty())");
                     CPPANONYM_D_LOGW(L"Getting Method Body Generator Token... 1: There are no locals.");
                     m_mdt = mdSignatureNil;
                 }
                 else
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (!locals.empty())");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (!locals.empty())");
 
                     auto const &sig = m_pClass->GetSignature();
                     auto const &blob = sig.GetBlob();
@@ -294,14 +294,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     vector<BYTE> const &BaseMethodBodyGeneratorPimpl<ApiHolder>::GetRawBody() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using std::back_inserter;
         using std::copy;
 
         if (!m_rawBodyInit)
         {
-            BOOST_LOG_NAMED_SCOPE("if (!m_rawBodyInit)");
+            CPPANONYM_LOG_NAMED_SCOPE("if (!m_rawBodyInit)");
 
             auto rawBody = vector<BYTE>();
             auto const &insts = GetInstructions();
@@ -348,14 +348,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     UINT BaseMethodBodyGeneratorPimpl<ApiHolder>::GetRawBodyMaxStack() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using boost::adaptors::filtered;
         using boost::unordered_set;
         
         if (!m_rawBodyMaxStackInit)
         {
-            BOOST_LOG_NAMED_SCOPE("if (!m_rawBodyMaxStackInit)");
+            CPPANONYM_LOG_NAMED_SCOPE("if (!m_rawBodyMaxStackInit)");
 
             auto const &exClauses = GetExceptionClauses();
             auto catchClauseStartSet = unordered_set<IInstructionPtrRange::iterator, IInstructionRangeIteratorHash, IInstructionRangeIteratorEqualTo>();
@@ -1225,12 +1225,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         // TODO: Method Body 向けのデフォルト Custom Attribute を実装。
         //m_pClass->GetCustomAttributes(false);   // resolves default custom attributes of this Assembly.
         //for (auto i = m_caGenToIndex.begin(), i_end = m_caGenToIndex.end(); i != i_end; ++i)
-        //    (*i).first->Accept(pVisitor);
+        //    (*i)->Accept(pVisitor);
 
         auto const &localGenToIndex = m_pAsmGen->GetLocalGeneratorToIndex();
         for (auto i = 0ul; i < localGenToIndex.size(); ++i)
-            if (localGenToIndex[i].first->GetMethodBody() == m_pClass)
-                localGenToIndex[i].first->Accept(pVisitor);
+            if (localGenToIndex[i]->GetMethodBody() == m_pClass)
+                localGenToIndex[i]->Accept(pVisitor);
 
         GetInstructions();   // resolves default instructions of this Method.
         auto *pBaseProvider = BaseHeapProvider();

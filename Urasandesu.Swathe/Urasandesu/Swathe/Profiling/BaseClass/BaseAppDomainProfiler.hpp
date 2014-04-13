@@ -73,6 +73,12 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    void BaseAppDomainProfiler<ApiHolder>::Initialize(process_profiler_label_type *pProcProf, metadata_info_label_type *pMetaInfo)
+    {
+        Pimpl()->Initialize(pProcProf, pMetaInfo);
+    }
+
+    template<class ApiHolder>    
     UINT_PTR BaseAppDomainProfiler<ApiHolder>::GetID() const
     {
         return Pimpl()->GetID();
@@ -94,12 +100,6 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     void BaseAppDomainProfiler<ApiHolder>::SetData(wstring const &name, AnyPtr const &pData)
     {
         Pimpl()->SetData(name, pData);
-    }
-
-    template<class ApiHolder>    
-    void BaseAppDomainProfiler<ApiHolder>::Initialize(process_profiler_label_type *pProcProf, metadata_info_label_type *pMetaInfo)
-    {
-        Pimpl()->Initialize(pProcProf, pMetaInfo);
     }
 
     template<class ApiHolder>    

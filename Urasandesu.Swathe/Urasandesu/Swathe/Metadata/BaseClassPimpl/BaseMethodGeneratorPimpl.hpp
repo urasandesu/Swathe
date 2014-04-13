@@ -82,17 +82,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseMethodGeneratorPimpl<ApiHolder>::GetToken() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
-            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+            CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
 
             if (!m_pSrcMethod)
             {
-                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcMethod)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (!m_pSrcMethod)");
 
                 auto isGenericMethodInstance = IsGenericMethod() && !IsGenericMethodDefinition();
                 if (isGenericMethodInstance)
@@ -102,7 +102,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
 
                     auto mdtTarget = GetDeclaringType()->GetToken();
                     auto const &name = m_pClass->GetName();
@@ -126,16 +126,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
-                BOOST_LOG_NAMED_SCOPE("if (m_pSrcMethod)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (m_pSrcMethod)");
 
                 if (!m_pAsmGen->IsModifiable())
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
 
                     auto isGenericMethodInstance = IsGenericMethod() && !IsGenericMethodDefinition();
                     if (isGenericMethodInstance)
                     {
-                        BOOST_LOG_NAMED_SCOPE("if (isGenericMethodInstance)");
+                        CPPANONYM_LOG_NAMED_SCOPE("if (isGenericMethodInstance)");
 
                         CPPANONYM_D_LOGW(L"Getting Method Generator Token... 3: Generic Method Instance");
                         auto mdtTarget = GetDeclaringMethod()->GetToken();
@@ -156,7 +156,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     }
                     else
                     {
-                        BOOST_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
+                        CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
 
                         auto mdtTarget = GetDeclaringType()->GetToken();
                         auto const &name = GetName();
@@ -179,7 +179,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 else
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
 
                     CPPANONYM_D_LOGW(L"Getting Method Generator Token... 5: Modifiable Method");
                     m_mdt = m_pSrcMethod->GetToken();
@@ -683,20 +683,20 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         // TODO: Method 向けのデフォルト Custom Attribute を実装。
         //m_pClass->GetCustomAttributes(false);   // resolves default custom attributes of this Assembly.
         //for (auto i = m_caGenToIndex.begin(), i_end = m_caGenToIndex.end(); i != i_end; ++i)
-        //    (*i).first->Accept(pVisitor);
+        //    (*i)->Accept(pVisitor);
 
         m_pClass->GetReturnType();   // resolves the return Type of this Method.
 
         m_pClass->GetParameters();   // resolves the Parameters of this Method.
         auto const &paramGenToIndex = m_pAsmGen->GetParameterGeneratorToIndex();
         for (auto i = 0ul; i < paramGenToIndex.size(); ++i)
-            if (paramGenToIndex[i].first->GetMethod() == m_pClass)
-                paramGenToIndex[i].first->Accept(pVisitor);
+            if (paramGenToIndex[i]->GetMethod() == m_pClass)
+                paramGenToIndex[i]->Accept(pVisitor);
 
         auto const &methodBodyGenToIndex = m_pAsmGen->GetMethodBodyGeneratorToIndex();
         for (auto i = 0ul; i < methodBodyGenToIndex.size(); ++i)
-            if (methodBodyGenToIndex[i].first->GetMethod() == m_pClass)
-                methodBodyGenToIndex[i].first->Accept(pVisitor);
+            if (methodBodyGenToIndex[i]->GetMethod() == m_pClass)
+                methodBodyGenToIndex[i]->Accept(pVisitor);
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

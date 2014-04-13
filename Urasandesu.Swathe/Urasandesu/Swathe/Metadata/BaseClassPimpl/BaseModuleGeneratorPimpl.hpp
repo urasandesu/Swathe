@@ -215,12 +215,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         // TODO: Module 向けのデフォルト Custom Attribute を実装。
         //m_pClass->GetCustomAttributes(false);   // resolves default custom attributes of this Assembly.
         //for (auto i = m_caGenToIndex.begin(), i_end = m_caGenToIndex.end(); i != i_end; ++i)
-        //    (*i).first->Accept(pVisitor);
+        //    (*i)->Accept(pVisitor);
 
         auto const &typeGenToIndex = m_pAsmGen->GetTypeGeneratorToIndex();
         for (auto i = 0ul; i < typeGenToIndex.size(); ++i)
-            if (typeGenToIndex[i].first->GetModule() == m_pClass)
-                typeGenToIndex[i].first->Accept(pVisitor);
+            if (typeGenToIndex[i]->GetModule() == m_pClass)
+                typeGenToIndex[i]->Accept(pVisitor);
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

@@ -76,17 +76,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     mdToken BaseFieldGeneratorPimpl<ApiHolder>::GetToken() const
     {
-        BOOST_LOG_FUNCTION();
+        CPPANONYM_LOG_FUNCTION();
 
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         if (IsNilToken(m_mdt))
         {
-            BOOST_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
+            CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
 
             if (!m_pSrcField)
             {
-                BOOST_LOG_NAMED_SCOPE("if (!m_pSrcField)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (!m_pSrcField)");
 
                 auto mdtTarget = GetDeclaringType()->GetToken();
                 auto const &name = GetName();
@@ -102,17 +102,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
             else
             {
-                BOOST_LOG_NAMED_SCOPE("if (m_pSrcField)");
+                CPPANONYM_LOG_NAMED_SCOPE("if (m_pSrcField)");
 
                 if (!m_pAsmGen->IsModifiable())
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (!m_pAsmGen->IsModifiable())");
 
                     BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
                 }
                 else
                 {
-                    BOOST_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
 
                     CPPANONYM_D_LOGW(L"Getting Field Generator Token... 2: Modifiable Field");
                     m_mdt = m_pSrcField->GetToken();

@@ -40,12 +40,28 @@
 #include <Urasandesu/Swathe/Profiling/ProcessProfilerFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_CLASSPIMPLLABEL_PROCESSPROFILERPIMPLLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Profiling/ClassPimplLabel/ProcessProfilerPimplLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_PROCESSPROFILERPIMPLFWD_H
+#include <Urasandesu/Swathe/Profiling/ProcessProfilerPimplFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_AUTOGEN_PROFILING_CLASSPERSISTEDHANDLERLABEL_PROCESSPROFILERPERSISTEDHANDLERLABEL_H
 #include <Urasandesu/Swathe/AutoGen/Profiling/ClassPersistedHandlerLabel/ProcessProfilerPersistedHandlerLabel.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_PROFILING_PROCESSPROFILERPERSISTEDHANDLERFWD_H
 #include <Urasandesu/Swathe/Profiling/ProcessProfilerPersistedHandlerFwd.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSLABEL_METADATAINFOLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/ClassLabel/MetadataInfoLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METADATAINFOFWD_H
+#include <Urasandesu/Swathe/Metadata/MetadataInfoFwd.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_AUTOGEN_HOSTING_CLASSLABEL_RUNTIMEHOSTLABEL_H
@@ -72,8 +88,12 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
         using namespace Urasandesu::CppAnonym::Traits;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassLabel::ProcessProfilerLabel;
         using Urasandesu::Swathe::Profiling::ProcessProfiler;
+        using Urasandesu::Swathe::AutoGen::Profiling::ClassPimplLabel::ProcessProfilerPimplLabel;
+        using Urasandesu::Swathe::Profiling::ProcessProfilerPimpl;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassPersistedHandlerLabel::ProcessProfilerPersistedHandlerLabel;
         using Urasandesu::Swathe::Profiling::ProcessProfilerPersistedHandler;
+        using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::MetadataInfoLabel;
+        using Urasandesu::Swathe::Metadata::MetadataInfo;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassLabel::RuntimeHostLabel;
         using Urasandesu::Swathe::Hosting::RuntimeHost;
         using Urasandesu::Swathe::AutoGen::Hosting::ClassPimplLabel::RuntimeHostPimplLabel;
@@ -85,7 +105,9 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
         {
             typedef map<
                 pair<ProcessProfilerLabel, ProcessProfiler>,
+                pair<ProcessProfilerPimplLabel, ProcessProfilerPimpl>,
                 pair<ProcessProfilerPersistedHandlerLabel, ProcessProfilerPersistedHandler>,
+                pair<MetadataInfoLabel, MetadataInfo>,
                 pair<RuntimeHostLabel, RuntimeHost>,
                 pair<RuntimeHostPimplLabel, RuntimeHostPimpl>
             > api_cartridges;
