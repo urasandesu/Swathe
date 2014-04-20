@@ -154,6 +154,7 @@ namespace {
             params.push_back(pIntPtr);
             pFunc1DateTime_ctor = pFunc1DateTime->GetMethod(L".ctor", CallingConventions::CC_HAS_THIS, pVoid, params);
         }
+        ASSERT_TRUE(pFunc1DateTime_ctor != nullptr);
         ASSERT_EQ(0x06000232, pFunc1DateTime_ctor->GetToken());   // !! CAUTION: This is CORRECT !!
                                                                   // User defined TypeSpec will be invalid until saving the assembly.
 
@@ -162,6 +163,7 @@ namespace {
             auto params = vector<IType const *>();
             pDateTime_get_UtcNow = pDateTime->GetMethod(L"get_UtcNow", CallingConventions::CC_STANDARD, pDateTime, params);
         }
+        ASSERT_TRUE(pDateTime_get_UtcNow != nullptr);
 #ifdef _M_IX86
         ASSERT_EQ(0x060002D3, pDateTime_get_UtcNow->GetToken());
 #else
@@ -173,6 +175,7 @@ namespace {
             auto params = vector<IType const *>();
             pDateTime_ToLocalTime = pDateTime->GetMethod(L"ToLocalTime", CallingConventions::CC_HAS_THIS, pDateTime, params);
         }
+        ASSERT_TRUE(pDateTime_ToLocalTime != nullptr);
 #ifdef _M_IX86
         ASSERT_EQ(0x060002E7, pDateTime_ToLocalTime->GetToken());
 #else

@@ -1433,6 +1433,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             auto params = vector<IType const *>();
             params.push_back(pInt32);
             pCompilationRelaxations_ctor = pCompilationRelaxations->GetConstructor(params);
+            _ASSERTE(pCompilationRelaxations_ctor);
         }
 
         auto const *pRuntimeCompatibility = pMSCorLibDll->GetType(MetadataSpecialValues::TYPE_NAME_OF_RUNTIME_COMPATIBILITY_ATTRIBUTE);
@@ -1440,6 +1441,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto params = vector<IType const *>();
             pRuntimeCompatibility_ctor = pRuntimeCompatibility->GetConstructor(params);
+            _ASSERTE(pRuntimeCompatibility_ctor);
         }
         auto const *pRuntimeCompatibility_WrapNonExceptionThrows = static_cast<IProperty *>(nullptr);
         {

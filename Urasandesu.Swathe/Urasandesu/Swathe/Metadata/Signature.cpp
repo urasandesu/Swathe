@@ -1599,6 +1599,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         ;
                         break;
 
+                    case TypeKinds::TK_PTR:
                     case TypeKinds::TK_BYREF:
                     case TypeKinds::TK_SZARRAY:
                         sb <<

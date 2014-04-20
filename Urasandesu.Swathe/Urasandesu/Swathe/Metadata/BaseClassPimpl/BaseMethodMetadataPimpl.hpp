@@ -751,6 +751,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             auto const *pRefType = pAsm->GetType(mdtOwner);
             auto const *pRefSrcType = pRefType->GetSourceType();
             pSrcMethod = pRefSrcType->GetMethod(name, callingConvention, pRetType, params);
+            _ASSERTE(pSrcMethod);
         }
         else if (TypeFromToken(mdtOwner) == mdtTypeSpec)
         {
@@ -758,6 +759,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             auto const *pRefType = pAsm->GetType(mdtOwner);
             auto const *pRefSrcType = pRefType->GetSourceType();
             pSrcMethod = pRefSrcType->GetMethod(name, callingConvention, pRetType, params);
+            _ASSERTE(pSrcMethod);
         }
         else
         {

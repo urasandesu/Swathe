@@ -40,6 +40,10 @@
 #include <Urasandesu/Swathe/Metadata/MetadataSpecialValues.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IMETHOD_H
+#include <Urasandesu/Swathe/Metadata/IMethod.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_IPROPERTY_H
 #include <Urasandesu/Swathe/Metadata/IProperty.h>
 #endif
@@ -890,8 +894,88 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         bool operator ()(IType const *x, IType const *y) const
         {
-            return x->GetSourceType() == y->GetSourceType();
+            return MetadataSpecialValues::IsPrimitiveKind(x->GetKind()) ? x->GetKind() == y->GetKind() : x->GetSourceType() == y->GetSourceType();
         }
+    };
+
+    struct IMethodBinder : 
+        std::unary_function<IMethod const *, bool>
+    {
+        IMethodBinder() : 
+            m_callingConvention(CallingConventions::CC_UNREACHED), 
+            m_pRetType(nullptr), 
+            m_paramsInit(false), 
+            m_paramTypesInit(false)
+        { }
+
+        bool operator ()(IMethod const *pMethod) const
+        {
+            using boost::adaptors::transformed;
+            using Urasandesu::CppAnonym::Collections::SequenceEqual;
+            
+            auto toType = MethodParamToType();
+            auto typeEqualTo = MethodSigTypeEqualTo();
+            auto isTarget = true;
+            if (!m_name.empty())
+                isTarget &= pMethod->GetName() == m_name;
+            
+            if (m_callingConvention != CallingConventions::CC_UNREACHED)
+                isTarget &= pMethod->GetCallingConvention() == m_callingConvention;
+            
+            if (m_pRetType)
+                isTarget &= typeEqualTo(pMethod->GetReturnType(), m_pRetType);
+            
+            if (m_paramsInit)
+                isTarget &= SequenceEqual(pMethod->GetParameters() | transformed(toType), m_params | transformed(toType), typeEqualTo);
+            
+            if (m_paramTypesInit)
+                isTarget &= SequenceEqual(pMethod->GetParameters() | transformed(toType), m_paramTypes, typeEqualTo);
+            
+            return isTarget;
+        }
+        
+        void SetName(wstring const &name)
+        {
+            _ASSERTE(m_name.empty());
+            _ASSERTE(!name.empty());
+            m_name = name;
+        }
+        
+        void SetCallingConvention(CallingConventions const &callingConvention)
+        {
+            _ASSERTE(m_callingConvention == CallingConventions::CC_UNREACHED);
+            _ASSERTE(callingConvention != CallingConventions::CC_UNREACHED);
+            m_callingConvention = callingConvention;
+        }
+        
+        void SetReturnType(IType const *pRetType)
+        {
+            _ASSERTE(!m_pRetType);
+            _ASSERTE(pRetType);
+            m_pRetType = pRetType;
+        }
+        
+        void SetParameters(vector<IParameter const *> const &params)
+        {
+            _ASSERTE(!m_paramsInit);
+            m_params = params;
+            m_paramsInit = true;
+        }
+        
+        void SetParameterTypes(vector<IType const *> const &paramTypes)
+        {
+            _ASSERTE(!m_paramTypesInit);
+            m_paramTypes = paramTypes;
+            m_paramTypesInit = true;
+        }
+
+        wstring m_name;
+        CallingConventions m_callingConvention;
+        IType const *m_pRetType;
+        bool m_paramsInit;
+        vector<IParameter const *> m_params;
+        bool m_paramTypesInit;
+        vector<IType const *> m_paramTypes;
     };
 
     template<class ApiHolder>    
@@ -904,11 +988,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         auto methods = m_pClass->GetMethods();
         auto results = vector<IMethod const *>();
-        auto isTarget = [&](IMethod const *pMethod) -> bool { return pMethod->GetName() == name; };
-        copy(methods | filtered(isTarget), back_inserter(results));
+        auto binder = IMethodBinder();
+        binder.SetName(name);
+        copy(methods | filtered(binder), back_inserter(results));
         
         if (results.size() == 0)
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
+            return nullptr;
         
         if (1 < results.size())
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_DUPLICATE));
@@ -928,21 +1013,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         auto methods = m_pClass->GetMethods();
         auto results = vector<IMethod const *>();
-        auto isTarget = 
-            [&](IMethod const *pMethod) -> bool
-            { 
-                using boost::adaptors::transformed;
-                using Urasandesu::CppAnonym::Collections::SequenceEqual;
-                                  
-                auto toType = MethodParamToType();
-                auto typeEqualTo = MethodSigTypeEqualTo();
-                return pMethod->GetName() == name && 
-                       SequenceEqual(pMethod->GetParameters() | transformed(toType), paramTypes, typeEqualTo); 
-            };
-        copy(methods | filtered(isTarget), back_inserter(results));
+        auto binder = IMethodBinder();
+        binder.SetName(name);
+        binder.SetParameterTypes(paramTypes);
+        copy(methods | filtered(binder), back_inserter(results));
         
         if (results.size() == 0)
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
+            return nullptr;
         
         if (1 < results.size())
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_DUPLICATE));
@@ -962,24 +1039,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         auto methods = m_pClass->GetMethods();
         auto results = vector<IMethod const *>();
-        auto isTarget = 
-            [&](IMethod const *pMethod) -> bool
-            { 
-                using boost::adaptors::transformed;
-                using std::function;
-                using Urasandesu::CppAnonym::Collections::SequenceEqual;
-                                  
-                auto toType = MethodParamToType();
-                auto typeEqualTo = MethodSigTypeEqualTo();
-                return pMethod->GetName() == name && 
-                       pMethod->GetCallingConvention() == callingConvention && 
-                       typeEqualTo(pMethod->GetReturnType(), pRetType) && 
-                       SequenceEqual(pMethod->GetParameters() | transformed(toType), paramTypes, typeEqualTo); 
-            };
-        copy(methods | filtered(isTarget), back_inserter(results));
+        auto binder = IMethodBinder();
+        binder.SetName(name);
+        binder.SetCallingConvention(callingConvention);
+        binder.SetReturnType(pRetType);
+        binder.SetParameterTypes(paramTypes);
+        copy(methods | filtered(binder), back_inserter(results));
         
         if (results.size() == 0)
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
+            return nullptr;
         
         if (1 < results.size())
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_DUPLICATE));
@@ -999,23 +1067,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         auto methods = m_pClass->GetMethods();
         auto results = vector<IMethod const *>();
-        auto isTarget = 
-            [&](IMethod const *pMethod) -> bool
-            { 
-                using boost::adaptors::transformed;
-                using Urasandesu::CppAnonym::Collections::SequenceEqual;
-                                  
-                auto toType = MethodParamToType();
-                auto typeEqualTo = MethodSigTypeEqualTo();
-                return pMethod->GetName() == name && 
-                       pMethod->GetCallingConvention() == callingConvention && 
-                       typeEqualTo(pMethod->GetReturnType(), pRetType) && 
-                       SequenceEqual(pMethod->GetParameters() | transformed(toType), params | transformed(toType), typeEqualTo); 
-            };
-        copy(methods | filtered(isTarget), back_inserter(results));
+        auto binder = IMethodBinder();
+        binder.SetName(name);
+        binder.SetCallingConvention(callingConvention);
+        binder.SetReturnType(pRetType);
+        binder.SetParameters(params);
+        copy(methods | filtered(binder), back_inserter(results));
         
         if (results.size() == 0)
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
+            return nullptr;
         
         if (1 < results.size())
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_DUPLICATE));
@@ -1028,6 +1088,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethod const *BaseTypeMetadataPimpl<ApiHolder>::GetConstructor(vector<IType const *> const &paramTypes) const
     {
+        // Against the mscorlib specified as below, strict versioning is unnecessary. Because the void is just used at the signature of the .ctor.
         auto const *pMSCorLib = m_pAsm->GetAssembly(MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB, m_pAsm->GetProcessorArchitectures());
         auto const *pMSCorLibDll = pMSCorLib->GetMainModule();
         auto const *pVoid = pMSCorLibDll->GetType(MetadataSpecialValues::TYPE_NAME_OF_VOID);

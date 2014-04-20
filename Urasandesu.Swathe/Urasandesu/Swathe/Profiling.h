@@ -100,8 +100,24 @@
 #include <Urasandesu/Swathe/Profiling/FunctionBodyProfiler.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACKIMPL_H
+#include <Urasandesu/Swathe/Profiling/ICorProfilerCallbackImpl.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK2IMPL_H
 #include <Urasandesu/Swathe/Profiling/ICorProfilerCallback2Impl.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK3IMPL_H
+#include <Urasandesu/Swathe/Profiling/ICorProfilerCallback3Impl.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK4IMPL_H
+#include <Urasandesu/Swathe/Profiling/ICorProfilerCallback4Impl.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK5IMPL_H
+#include <Urasandesu/Swathe/Profiling/ICorProfilerCallback5Impl.h>
 #endif
 
 #endif  // #ifndef URASANDESU_SWATHE_PROFILING_H

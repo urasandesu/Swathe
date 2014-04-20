@@ -1,5 +1,5 @@
 ﻿/* 
- * File: ICorProfilerCallback2Impl.h
+ * File: ICorProfilerCallback5Impl.h
  * 
  * Author: Akira Sugiura (urasandesu@gmail.com)
  * 
@@ -29,11 +29,11 @@
 
 
 #pragma once
-#ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK2IMPL_H
-#define URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK2IMPL_H
+#ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK5IMPL_H
+#define URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK5IMPL_H
 
-#ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACKIMPL_H
-#include <Urasandesu/Swathe/Profiling/ICorProfilerCallbackImpl.h>
+#ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK4IMPL_H
+#include <Urasandesu/Swathe/Profiling/ICorProfilerCallback4Impl.h>
 #endif
 
 namespace Urasandesu { namespace Swathe { namespace Profiling {
@@ -41,18 +41,11 @@ namespace Urasandesu { namespace Swathe { namespace Profiling {
     template<
         class Base
     >
-    class ATL_NO_VTABLE ICorProfilerCallback2Impl : public ICorProfilerCallbackImpl<Base>
+    class ATL_NO_VTABLE ICorProfilerCallback5Impl : public ICorProfilerCallback4Impl<Base>
     {
-        CPPANONYM_STDMETHOD_NOEXCEPT(ThreadNameChanged, ((ThreadID,threadId))((ULONG,cchName))((WCHAR*,name)))
-        CPPANONYM_STDMETHOD_NOEXCEPT(GarbageCollectionStarted, ((int,cGenerations))((BOOL*,generationCollected))((COR_PRF_GC_REASON,reason)))
-        CPPANONYM_STDMETHOD_NOEXCEPT(SurvivingReferences, ((ULONG,cSurvivingObjectIDRanges))((ObjectID*,objectIDRangeStart))((ULONG*,cObjectIDRangeLength)))
-        CPPANONYM_STDMETHOD_NOEXCEPT(GarbageCollectionFinished, BOOST_PP_EMPTY())
-        CPPANONYM_STDMETHOD_NOEXCEPT(FinalizeableObjectQueued, ((DWORD,finalizerFlags))((ObjectID,objectID)))
-        CPPANONYM_STDMETHOD_NOEXCEPT(RootReferences2, ((ULONG,cRootRefs))((ObjectID*,rootRefIds))((COR_PRF_GC_ROOT_KIND*,rootKinds))((COR_PRF_GC_ROOT_FLAGS*,rootFlags))((UINT_PTR*,rootIds)))
-        CPPANONYM_STDMETHOD_NOEXCEPT(HandleCreated, ((GCHandleID,handleId))((ObjectID,initialObjectId)))
-        CPPANONYM_STDMETHOD_NOEXCEPT(HandleDestroyed, ((GCHandleID,handleId)))
+        CPPANONYM_STDMETHOD_NOEXCEPT(ConditionalWeakTableElementReferences, ((ULONG,cRootRefs))((ObjectID *,keyRefIds))((ObjectID *,valueRefIds))((GCHandleID *,rootIds)))
     };
 
 }}}  // namespace Urasandesu { namespace Swathe { namespace Profiling {
 
-#endif  // URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK2IMPL_H
+#endif  // URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK5IMPL_H

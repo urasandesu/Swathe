@@ -5307,6 +5307,18 @@
     <ClInclude Include="Urasandesu\Swathe\Metadata\FieldMetadataPimplFwd.h">
       <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
     </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\ICorProfilerCallbackImpl.h">
+      <Filter>Header Files\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\ICorProfilerCallback3Impl.h">
+      <Filter>Header Files\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\ICorProfilerCallback4Impl.h">
+      <Filter>Header Files\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\ICorProfilerCallback5Impl.h">
+      <Filter>Header Files\Urasandesu\Swathe\Profiling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Urasandesu.Swathe.rc">

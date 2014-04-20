@@ -517,6 +517,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto const *pBaseType = m_pClass->GetBaseType();
                 _ASSERTE(pBaseType);    // TODO: interface の場合とかに落ちる。
                 auto const *pBaseType_ctor = pBaseType->GetConstructor(MetadataSpecialValues::EMPTY_TYPES);
+                _ASSERTE(pBaseType_ctor);
                 auto *pTypeGen_ctor = m_pClass->DefineDefaultConstructor(MethodAttributes::MA_PUBLIC | 
                                                                          MethodAttributes::MA_HIDE_BY_SIG | 
                                                                          MethodAttributes::MA_SPECIAL_NAME);
