@@ -648,7 +648,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 break;
             
             case mdtTypeSpec:
-                m_pSrcType = GetDeclaringType()->GetSourceType();
+                switch (GetKind().Value())
+                {
+                    case TypeKinds::TK_VAR:
+                    case TypeKinds::TK_MVAR:
+                        m_pSrcType = m_pClass;
+                        break;
+                        
+                    default:
+                        m_pSrcType = GetDeclaringType()->GetSourceType();
+                        break;
+                }
                 break;
 
             default:
@@ -1212,6 +1222,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     
                     if (TypeFromToken(m_mdtExt) == mdtTypeSpec) // This check is shortcut for CRTP. e.g. class A<T> : B<A<T>>.
                         return m_kind = TypeKinds::TK_CLASS;
+                    
+                    if (m_attr & TypeAttributes::TA_INTERFACE)  // Recheck whether the type is interface. The type that is resolved by name may need it.
+                        return m_kind;
                     
                     auto const *pBaseType = GetBaseType();
                     _ASSERTE(pBaseType);

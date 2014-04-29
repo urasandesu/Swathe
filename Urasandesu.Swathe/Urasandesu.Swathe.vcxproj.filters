@@ -5319,6 +5319,12 @@
     <ClInclude Include="Urasandesu\Swathe\Profiling\ICorProfilerCallback5Impl.h">
       <Filter>Header Files\Urasandesu\Swathe\Profiling</Filter>
     </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\IPortableExecutableReader.h">
+      <Filter>Header Files\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Hosting\IPortableExecutableReaderFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Urasandesu.Swathe.rc">

@@ -55,7 +55,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_orderedTypesInit(false), 
         m_asmFlags(AssemblyFlags::AF_UNREACHED),
         m_refAsmsInit(false), 
-        m_asmStorageInit(false), 
         m_openFlags(ofRead), 
         m_pOpeningAsm(nullptr), 
         m_pSrcAsm(nullptr)
@@ -204,7 +203,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto mdtTarget = GetToken();
             if (TypeFromToken(mdtTarget) == mdtAssembly)
-                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_procArchs, m_asmFlags);
+                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_asmFlags);
             else if (TypeFromToken(mdtTarget) == mdtAssemblyRef)
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
             else
@@ -222,9 +221,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto mdtTarget = GetToken();
             if (TypeFromToken(mdtTarget) == mdtAssembly)
-                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_procArchs, m_asmFlags);
+                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_asmFlags);
             else if (TypeFromToken(mdtTarget) == mdtAssemblyRef)
-                FillAssemblyRefProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_procArchs, m_asmFlags);
+                FillAssemblyRefProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_asmFlags);
             else
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
         }
@@ -240,7 +239,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto mdtTarget = GetToken();
             if (TypeFromToken(mdtTarget) == mdtAssembly)
-                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_procArchs, m_asmFlags);
+                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_asmFlags);
             else if (TypeFromToken(mdtTarget) == mdtAssemblyRef)
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
             else
@@ -258,11 +257,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto mdtTarget = GetToken();
             if (TypeFromToken(mdtTarget) == mdtAssembly)
-                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_procArchs, m_asmFlags);
+                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_asmFlags);
             else if (TypeFromToken(mdtTarget) == mdtAssemblyRef)
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
             else
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        if (!(m_asmFlags & AssemblyFlags::AF_PA_MASK))
+        {
+            FillPlatformByCOMMetaDataImport(&GetCOMMetaDataImport(), m_amd, m_procArchs, m_asmFlags);
+            if (m_procArchs.size() != 2 || m_procArchs[1] == ProcessorArchitecture::PA_UNKNOWN)
+                FillPlatformByHeuristicAlgorithm(this, m_amd, m_procArchs, m_asmFlags);
         }
         return m_asmFlags;
     }
@@ -352,6 +357,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     vector<ProcessorArchitecture> const &BaseAssemblyMetadataPimpl<ApiHolder>::GetProcessorArchitectures() const
     {
+        if (m_asmFlags == AssemblyFlags::AF_UNREACHED) // ProcessorArchitectures can't validate whether it has already initialized, so we use the Flags property instead of it. Flags property has value necessarily.
+        {
+            auto mdtTarget = GetToken();
+            if (TypeFromToken(mdtTarget) == mdtAssembly)
+                FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_asmFlags);
+            else if (TypeFromToken(mdtTarget) == mdtAssemblyRef)
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            else
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        if (!(m_asmFlags & AssemblyFlags::AF_PA_MASK))
+        {
+            FillPlatformByCOMMetaDataImport(&GetCOMMetaDataImport(), m_amd, m_procArchs, m_asmFlags);
+            if (m_procArchs.size() != 2 || m_procArchs[1] == ProcessorArchitecture::PA_UNKNOWN)
+                FillPlatformByHeuristicAlgorithm(this, m_amd, m_procArchs, m_asmFlags);
+        }
         return m_procArchs;
     }
 
@@ -503,15 +524,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    iterator_range<BYTE const *> BaseAssemblyMetadataPimpl<ApiHolder>::GetAssemblyStorage() const
+    AutoPtr<IPortableExecutableReader const> const &BaseAssemblyMetadataPimpl<ApiHolder>::GetPortableExecutableReader() const
     {
-        if (!m_asmStorageInit)
-        {
-            auto pReader = m_pPEInfo->CreateReader(&GetCOMMetaDataImport(), GetAssemblyFilePath());
-            m_asmStorage = pReader->GetMappedFileSource();
-            m_asmStorageInit = true;
-        }
-        return m_asmStorage;
+        if (!m_pReader)
+            m_pReader = m_pPEInfo->CreateReader(&GetCOMMetaDataImport(), GetAssemblyFilePath());
+        return m_pReader;
     }
 
 
@@ -1692,6 +1709,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     path const &BaseAssemblyMetadataPimpl<ApiHolder>::GetAssemblyFilePath() const
     {
         using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
         using Urasandesu::Swathe::Fusion::NewAssemblyNameFlags;
         using Urasandesu::Swathe::Fusion::AssemblyCacheFlags; 
         
@@ -1761,7 +1779,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::FillAssemblyProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags)
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillAssemblyProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, AssemblyFlags &asmFlags)
     {
         using Urasandesu::CppAnonym::Collections::ResizeIfAvailable;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
@@ -1783,7 +1801,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         wzname.resize(wznameSize);
         amd.szLocale = ResizeIfAvailable(amd.cbLocale, locale);
         amd.rOS = ResizeIfAvailable(amd.ulOS, os);
-        amd.rProcessor = reinterpret_cast<DWORD *>(ResizeIfAvailable(amd.ulProcessor, procArchs));
         hr = comMetaAsmImp.GetAssemblyProps(mdtTarget, const_cast<const void**>(&pPubKeyBlob), &pubKeyBlobSize, NULL, &wzname[0], wznameSize, NULL, &amd, NULL);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
@@ -1791,14 +1808,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         name = &wzname[0];
         asmFlags = AssemblyFlags(dwasmFlags);
         pSnKey = pSnInfo->NewStrongNameKey(*reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob), pubKeyBlobSize);
-        if (!amd.rProcessor)
-            FillPlatform(_this, amd, procArchs, asmFlags);
     }
     
     
     
     template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::FillAssemblyRefProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags)
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillAssemblyRefProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, AssemblyFlags &asmFlags)
     {
         using Urasandesu::CppAnonym::Collections::ResizeIfAvailable;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
@@ -1822,7 +1837,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         wzname.resize(wznameSize);
         amd.szLocale = ResizeIfAvailable(amd.cbLocale, locale);
         amd.rOS = ResizeIfAvailable(amd.ulOS, os);
-        amd.rProcessor = reinterpret_cast<DWORD *>(ResizeIfAvailable(amd.ulProcessor, procArchs));
         hr = comMetaAsmImp.GetAssemblyRefProps(mdtTarget, const_cast<void const **>(&pPubKeyOrToken), &pubKeyOrTokenSize, &wzname[0], wznameSize, nullptr, &amd, nullptr, nullptr, nullptr);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
@@ -1833,64 +1847,84 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
         else
             pSnKey = pSnInfo->NewStrongNameKeyWithToken(pPubKeyOrToken, pubKeyOrTokenSize);
-        if (!amd.rProcessor)
-            FillPlatform(_this, amd, procArchs, asmFlags);
     }
 
 
 
-    //template<class ApiHolder>    
-    //void BaseAssemblyMetadataPimpl<ApiHolder>::FillAttributes(assembly_metadata_pimpl_label_type const *_this, vector<ICustomAttribute const *> &cas)
-    //{
-    //    using boost::array;
-    //    using Urasandesu::CppAnonym::CppAnonymCOMException;
-
-    //    auto *pClass = _this->m_pClass;
-    //    auto *pDisp = _this->m_pDisp;
-
-    //    auto &comMetaImp = pClass->GetCOMMetaDataImport();
-
-    //    auto hEnum = static_cast<HCORENUM>(nullptr);
-    //        BOOST_SCOPE_EXIT((&hEnum)(&comMetaImp))
-    //        {
-    //            if (hEnum)
-    //                comMetaImp.CloseEnum(hEnum);
-    //        }
-    //        BOOST_SCOPE_EXIT_END
-    //    auto mdtTarget = pClass->GetToken();
-    //    auto mdcas = array<mdCustomAttribute, 16>();
-    //    auto count = 0ul;
-    //    auto hr = E_FAIL;
-    //    do
-    //    {
-    //        hr = comMetaImp.EnumCustomAttributes(&hEnum, mdtTarget, 0, mdcas.c_array(), mdcas.size(), &count);
-    //        if (FAILED(hr))
-    //            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-
-    //        cas.reserve(cas.size() + count);
-    //        for (auto i = 0u; i < count; ++i)
-    //        {
-    //            auto pCas = pClass->GetCustomAttribute(mdcas[i], static_cast<IAssembly const *>(pClass));
-    //            cas.push_back(pCas);
-    //        }
-    //    } while (0 < count);
-    //}
-
-
-
     template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::FillPlatform(assembly_metadata_pimpl_label_type const *_this, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags)
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillPlatformByCOMMetaDataImport(IMetaDataImport2 *pComMetaImp, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags)
     {
         using Urasandesu::CppAnonym::Collections::ResizeIfAvailable;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
         
-        auto &comMetaImp = _this->GetCOMMetaDataImport();
+        _ASSERTE(pComMetaImp);
         
         auto dwPEKind = 0ul;
         auto dwMachine = 0ul;
-        auto hr = comMetaImp.GetPEKind(&dwPEKind, &dwMachine);
+        auto hr = pComMetaImp->GetPEKind(&dwPEKind, &dwMachine);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        
+        if (hr == S_FALSE)
+            return;
+        
+        FillPlatform(dwPEKind, dwMachine, amd, procArchs, asmFlags);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillPlatformByHeuristicAlgorithm(assembly_metadata_pimpl_label_type const *_this, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags)
+    {
+        using Urasandesu::CppAnonym::Collections::ResizeIfAvailable;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        if (procArchs.empty())
+        {
+            amd.ulProcessor = 2ul;
+            amd.rProcessor = reinterpret_cast<DWORD *>(ResizeIfAvailable(amd.ulProcessor, procArchs));
+
+            auto mdtTarget = _this->GetToken();
+            if (TypeFromToken(mdtTarget) == mdtAssembly)
+            {
+                auto const &pPEReader = _this->GetPortableExecutableReader();
+                auto dwPEKind = 0ul;
+                auto dwMachine = 0ul;
+                pPEReader->GetPEKind(dwPEKind, dwMachine);
+                
+                FillPlatform(dwPEKind, dwMachine, amd, procArchs, asmFlags);
+            }
+            else if (TypeFromToken(mdtTarget) == mdtAssemblyRef)
+            {
+#ifdef _M_IX86
+                procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
+                procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+#else
+                procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_AMD64);
+                procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+#endif
+            }
+            else
+            {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
+        }
+        
+        if (procArchs.size() == 2 && procArchs[1] == ProcessorArchitecture::PA_UNKNOWN)
+        {
+            auto sysInfo = SYSTEM_INFO();
+            ::ZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
+            ::GetSystemInfo(&sysInfo);
+            procArchs[1] = ProcessorArchitecture(sysInfo.wProcessorArchitecture);
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillPlatform(DWORD dwPEKind, DWORD dwMachine, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags)
+    {
+        using Urasandesu::CppAnonym::Collections::ResizeIfAvailable;
         
         amd.ulProcessor = 2ul;
         amd.rProcessor = reinterpret_cast<DWORD *>(ResizeIfAvailable(amd.ulProcessor, procArchs));
@@ -1916,10 +1950,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 if (dwPEKind & peILonly)
                 {
                     procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
-                    auto sysInfo = SYSTEM_INFO();
-                    ::ZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
-                    ::GetSystemInfo(&sysInfo);
-                    procArchs[1] = ProcessorArchitecture(sysInfo.wProcessorArchitecture);
+                    procArchs[1] = ProcessorArchitecture::PA_UNKNOWN;
                     asmFlags |= AssemblyFlags::AF_PA_MSIL;
                 }
             }
@@ -1937,10 +1968,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 else if (dwPEKind & peILonly)
                 {
                     procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
-                    auto sysInfo = SYSTEM_INFO();
-                    ::ZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
-                    ::GetSystemInfo(&sysInfo);
-                    procArchs[1] = ProcessorArchitecture(sysInfo.wProcessorArchitecture);
+                    procArchs[1] = ProcessorArchitecture::PA_UNKNOWN;
                     asmFlags |= AssemblyFlags::AF_PA_MSIL;
                 }
                 else

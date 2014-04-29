@@ -84,6 +84,30 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     }
 
     template<class ApiHolder>    
+    BYTE const *BasePortableExecutableReader<ApiHolder>::AdvanceToSectionHeader(BYTE const *i, BYTE const *i_end) const
+    {
+        return Pimpl()->AdvanceToSectionHeader(i, i_end);
+    }
+
+    template<class ApiHolder>    
+    BYTE const *BasePortableExecutableReader<ApiHolder>::GetPEHeaders(BYTE const *i, BYTE const *i_end, IMAGE_DOS_HEADER &dosHeader, array<BYTE, 0x40> &dosStubBody, IMAGE_FILE_HEADER &fileHeader, IMAGE_NT_HEADERS32 &ntHeaders32, IMAGE_NT_HEADERS64 &ntHeaders64) const
+    {
+        return Pimpl()->GetPEHeaders(i, i_end, dosHeader, dosStubBody, fileHeader, ntHeaders32, ntHeaders64);
+    }
+
+    template<class ApiHolder>    
+    void BasePortableExecutableReader<ApiHolder>::GetPEKind(DWORD &dwPEKind, DWORD &dwMachine) const
+    {
+        Pimpl()->GetPEKind(dwPEKind, dwMachine);
+    }
+
+    template<class ApiHolder>    
+    COR_ILMETHOD const *BasePortableExecutableReader<ApiHolder>::GetILMethodBody(ULONG codeRVA) const
+    {
+        return Pimpl()->GetILMethodBody(codeRVA);
+    }
+
+    template<class ApiHolder>    
     void BasePortableExecutableReader<ApiHolder>::SetCOMMetaDataImport(IMetaDataImport2 *pComMetaImp)
     {
         Pimpl()->SetCOMMetaDataImport(pComMetaImp);

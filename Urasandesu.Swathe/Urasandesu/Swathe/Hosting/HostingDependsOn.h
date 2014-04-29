@@ -92,6 +92,14 @@ namespace Urasandesu { namespace Swathe { namespace Hosting {
     {
         return PEGetData(i, i_end, sizeof(IMAGE_SECTION_HEADER), reinterpret_cast<BYTE *>(&secHeader));
     }
+    
+    
+    
+    template<class PEDataIterator>
+    PEDataIterator PEGetCLIHeader(PEDataIterator const &i, PEDataIterator const &i_end, IMAGE_COR20_HEADER &cliHeader)
+    {
+        return PEGetData(i, i_end, sizeof(IMAGE_COR20_HEADER), reinterpret_cast<BYTE *>(&cliHeader));
+    }
 
 }}}  // namespace Urasandesu { namespace Swathe { namespace Hosting {
 

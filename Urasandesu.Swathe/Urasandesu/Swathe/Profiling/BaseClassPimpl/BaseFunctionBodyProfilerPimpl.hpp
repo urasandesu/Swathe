@@ -42,8 +42,8 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     BaseFunctionBodyProfilerPimpl<ApiHolder>::BaseFunctionBodyProfilerPimpl(function_body_profiler_label_type *pClass) : 
         m_pClass(pClass), 
         m_pProcProf(nullptr), 
-        m_id(static_cast<UINT_PTR>(-1)), 
-        m_functionId(static_cast<UINT_PTR>(-1)), 
+        m_id(-1), 
+        m_functionId(-1), 
         m_pBodyGen(nullptr)
     { }
 
@@ -70,17 +70,16 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
 
     template<class ApiHolder>    
-    typename BaseFunctionBodyProfilerPimpl<ApiHolder>::method_body_generator_label_type *BaseFunctionBodyProfilerPimpl<ApiHolder>::GetMethodBodyGenerator()
+    typename BaseFunctionBodyProfilerPimpl<ApiHolder>::method_body_generator_label_type *BaseFunctionBodyProfilerPimpl<ApiHolder>::GetMethodBodyGenerator(method_generator_label_type *pMethodGen)
     {
         using boost::polymorphic_cast;
         using Urasandesu::Swathe::Metadata::IMethodBody;
 
         if (!m_pBodyGen)
         {
+            _ASSERTE(pMethodGen);
             auto functionBodyId = GetID();
-            auto pFuncProf = m_pClass->AttachToFunction();
-            auto *pMethodGen = pFuncProf->GetMethodGenerator();
-            m_pBodyGen = functionBodyId == static_cast<UINT_PTR>(-1) ? 
+            m_pBodyGen = functionBodyId == -1 ? 
                             pMethodGen->DefineMethodBody() : 
                             polymorphic_cast<method_body_generator_label_type *>(const_cast<IMethodBody *>(pMethodGen->GetMethodBody()));
         }
@@ -90,9 +89,9 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
 
     template<class ApiHolder>    
-    typename BaseFunctionBodyProfilerPimpl<ApiHolder>::method_body_generator_label_type const *BaseFunctionBodyProfilerPimpl<ApiHolder>::GetMethodBodyGenerator() const
+    typename BaseFunctionBodyProfilerPimpl<ApiHolder>::method_body_generator_label_type const *BaseFunctionBodyProfilerPimpl<ApiHolder>::GetMethodBodyGenerator(method_generator_label_type const *pMethodGen) const
     {
-        return const_cast<class_pimpl_type *>(this)->GetMethodBodyGenerator();
+        return const_cast<class_pimpl_type *>(this)->GetMethodBodyGenerator(const_cast<method_generator_label_type *>(pMethodGen));
     }
 
 
@@ -100,8 +99,16 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     TempPtr<typename BaseFunctionBodyProfilerPimpl<ApiHolder>::function_profiler_label_type> BaseFunctionBodyProfilerPimpl<ApiHolder>::AttachToFunction()
     {
-        _ASSERTE(m_functionId != static_cast<UINT_PTR>(-1));
+        _ASSERTE(m_functionId != -1);
         return m_pProcProf->AttachToFunction(m_functionId);
+    }
+
+
+
+    template<class ApiHolder>    
+    TempPtr<typename BaseFunctionBodyProfilerPimpl<ApiHolder>::function_profiler_label_type const> BaseFunctionBodyProfilerPimpl<ApiHolder>::AttachToFunction() const
+    {
+        return const_cast<class_pimpl_type *>(this)->AttachToFunction();
     }
 
 
@@ -109,7 +116,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     void BaseFunctionBodyProfilerPimpl<ApiHolder>::SetID(UINT_PTR id)
     {
-        _ASSERTE(m_id == static_cast<UINT_PTR>(-1));
+        _ASSERTE(m_id == -1);
         m_id = id;
     }
 
@@ -118,8 +125,8 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     void BaseFunctionBodyProfilerPimpl<ApiHolder>::SetFunctionID(FunctionID functionId)
     {
-        _ASSERTE(functionId != static_cast<UINT_PTR>(-1));
-        _ASSERTE(m_functionId == static_cast<UINT_PTR>(-1));
+        _ASSERTE(functionId != -1);
+        _ASSERTE(m_functionId == -1);
         m_functionId = functionId;
     }
 

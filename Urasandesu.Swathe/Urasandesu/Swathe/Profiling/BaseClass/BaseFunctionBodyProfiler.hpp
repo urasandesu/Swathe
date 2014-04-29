@@ -84,19 +84,25 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     }
 
     template<class ApiHolder>    
-    typename BaseFunctionBodyProfiler<ApiHolder>::method_body_generator_label_type *BaseFunctionBodyProfiler<ApiHolder>::GetMethodBodyGenerator()
+    typename BaseFunctionBodyProfiler<ApiHolder>::method_body_generator_label_type *BaseFunctionBodyProfiler<ApiHolder>::GetMethodBodyGenerator(method_generator_label_type *pMethodGen)
     {
-        return Pimpl()->GetMethodBodyGenerator();
+        return Pimpl()->GetMethodBodyGenerator(pMethodGen);
     }
 
     template<class ApiHolder>    
-    typename BaseFunctionBodyProfiler<ApiHolder>::method_body_generator_label_type const *BaseFunctionBodyProfiler<ApiHolder>::GetMethodBodyGenerator() const
+    typename BaseFunctionBodyProfiler<ApiHolder>::method_body_generator_label_type const *BaseFunctionBodyProfiler<ApiHolder>::GetMethodBodyGenerator(method_generator_label_type const *pMethodGen) const
     {
-        return Pimpl()->GetMethodBodyGenerator();
+        return Pimpl()->GetMethodBodyGenerator(pMethodGen);
     }
 
     template<class ApiHolder>    
     TempPtr<typename BaseFunctionBodyProfiler<ApiHolder>::function_profiler_label_type> BaseFunctionBodyProfiler<ApiHolder>::AttachToFunction()
+    {
+        return Pimpl()->AttachToFunction();
+    }
+
+    template<class ApiHolder>    
+    TempPtr<typename BaseFunctionBodyProfiler<ApiHolder>::function_profiler_label_type const> BaseFunctionBodyProfiler<ApiHolder>::AttachToFunction() const
     {
         return Pimpl()->AttachToFunction();
     }

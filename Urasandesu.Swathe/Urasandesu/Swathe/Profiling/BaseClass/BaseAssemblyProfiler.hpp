@@ -97,9 +97,9 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     }
 
     template<class ApiHolder>    
-    typename BaseAssemblyProfiler<ApiHolder>::assembly_generator_label_type *BaseAssemblyProfiler<ApiHolder>::GetAssemblyGenerator()
+    typename BaseAssemblyProfiler<ApiHolder>::assembly_generator_label_type *BaseAssemblyProfiler<ApiHolder>::GetAssemblyGenerator(metadata_dispenser_label_type *pDisp)
     {
-        return Pimpl()->GetAssemblyGenerator();
+        return Pimpl()->GetAssemblyGenerator(pDisp);
     }
 
     template<class ApiHolder>    

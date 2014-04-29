@@ -60,6 +60,10 @@
 #include <Urasandesu/Swathe/Profiling/FunctionProfilerPimplFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSLABEL_METADATADISPENSERLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/ClassLabel/MetadataDispenserLabel.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSLABEL_ASSEMBLYGENERATORLABEL_H
 #include <Urasandesu/Swathe/AutoGen/Metadata/ClassLabel/AssemblyGeneratorLabel.h>
 #endif
@@ -78,6 +82,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
         using Urasandesu::Swathe::AutoGen::Profiling::ClassPimplLabel::ProcessProfilerPimplLabel;
         using Urasandesu::Swathe::Profiling::AppDomainProfiler;
         using Urasandesu::Swathe::Profiling::FunctionProfilerPimpl;
+        using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::MetadataDispenserLabel;
         using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::AssemblyGeneratorLabel;
         using mpl::vector;
         
@@ -91,6 +96,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
             typedef AssemblyProfilerPimpl assembly_profiler_pimpl_label_type;
             typedef typename AssemblyProfilerApiAt<ApiHolder, ProcessProfilerLabel>::type process_profiler_label_type;
             typedef typename AssemblyProfilerApiAt<ApiHolder, ProcessProfilerPimplLabel>::type process_profiler_pimpl_label_type;
+            typedef typename AssemblyProfilerApiAt<ApiHolder, MetadataDispenserLabel>::type metadata_dispenser_label_type;
             typedef typename AssemblyProfilerApiAt<ApiHolder, AssemblyGeneratorLabel>::type assembly_generator_label_type;
 
             typedef AssemblyProfilerPimpl assembly_profiler_pimpl_label_type;
@@ -129,9 +135,11 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
     friend typename assembly_profiler_pimpl_label_type; \
     typedef typename facade::process_profiler_label_type process_profiler_label_type; \
     typedef typename facade::process_profiler_pimpl_label_type process_profiler_pimpl_label_type; \
+    typedef typename facade::metadata_dispenser_label_type metadata_dispenser_label_type; \
     typedef typename facade::assembly_generator_label_type assembly_generator_label_type; \
     friend typename process_profiler_label_type; \
     friend typename process_profiler_pimpl_label_type; \
+    friend typename metadata_dispenser_label_type; \
     friend typename assembly_generator_label_type; \
     typedef typename facade::assembly_profiler_pimpl_label_type assembly_profiler_pimpl_label_type; \
     typedef typename facade::assembly_profiler_label_type assembly_profiler_label_type; \

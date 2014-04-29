@@ -52,6 +52,10 @@
 #include <Urasandesu/Swathe/StrongNaming/IStrongNameKey.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_HOSTING_IPORTABLEEXECUTABLEREADER_H
+#include <Urasandesu/Swathe/Hosting/IPortableExecutableReader.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_IASSEMBLY_H
 #include <Urasandesu/Swathe/Metadata/IAssembly.h>
 #endif
@@ -189,6 +193,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using Urasandesu::CppAnonym::Utilities::EqualTo;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
     using Urasandesu::Swathe::StrongNaming::IStrongNameKey;
+    using Urasandesu::Swathe::Hosting::IPortableExecutableReader;
     using Urasandesu::Swathe::Fusion::Platform;
     using std::ptrdiff_t;
     using std::vector;
@@ -234,7 +239,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes() const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         ITypePtrRange GetTypes() const;
-        iterator_range<BYTE const *> GetAssemblyStorage() const;
+        AutoPtr<IPortableExecutableReader const> const &GetPortableExecutableReader() const;
         bool Exists() const;
         
     private:
@@ -317,9 +322,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetOpenFlags(DWORD openFlags);
         void SetOpeningAssembly(assembly_metadata_label_type const *pOpeningAsm);
         void SetProcessorArchitectures(vector<ProcessorArchitecture> const &procArchs);
-        static void FillAssemblyProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
-        static void FillAssemblyRefProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
-        static void FillPlatform(assembly_metadata_pimpl_label_type const *_this, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
+        static void FillAssemblyProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, AssemblyFlags &asmFlags);
+        static void FillAssemblyRefProperties(assembly_metadata_pimpl_label_type const *_this, mdToken mdtTarget, wstring &name, AutoPtr<IStrongNameKey const> &pSnKey, ASSEMBLYMETADATA &amd,  vector<WCHAR> &locale, vector<OSINFO> &os, AssemblyFlags &asmFlags);
+        static void FillPlatformByCOMMetaDataImport(IMetaDataImport2 *pComMetaImp, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
+        static void FillPlatformByHeuristicAlgorithm(assembly_metadata_pimpl_label_type const *_this, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
+        static void FillPlatform(DWORD dwPEKind, DWORD dwMachine, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
         static void ResolveAssemblyPathByCurrentDirectory(assembly_metadata_pimpl_label_type const *_this, wstring const &name, path &asmPath);
         static void ResolveAssemblyPathByGAC(assembly_metadata_pimpl_label_type const *_this, unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > const &candidates, path &asmPath);
 
@@ -354,8 +361,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable path m_asmPath;
         mutable bool m_refAsmsInit;
         mutable vector<IAssembly const *> m_refAsms;
-        mutable bool m_asmStorageInit;
-        mutable iterator_range<BYTE const *> m_asmStorage;
+        mutable AutoPtr<IPortableExecutableReader const> m_pReader;
         DWORD m_openFlags;
         assembly_metadata_label_type const *m_pOpeningAsm;
         IAssembly const *m_pSrcAsm;

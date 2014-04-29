@@ -68,6 +68,9 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
             auto &provider = pBaseProvider->FirstProviderOf<host_info_label_type>();
             BOOST_FOREACH (auto const &pHost, m_hosts)
                 provider.DeleteObject(pHost);
+
+            // If we delegate releasing the resources to system, the result will become unintended consequences for Boost.Log.
+            boost::log::core::get()->remove_all_sinks();
         }
 
         BaseHeapProvider()->~base_heap_provider_type();
@@ -103,6 +106,10 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     typename BaseHostInfoPimpl<ApiHolder>::host_info_label_type *BaseHostInfoPimpl<ApiHolder>::CreateHost()
     {
+        typedef boost::lock_guard<boost::mutex> Guard;
+        static auto lock = boost::mutex();
+        auto _ = Guard(lock);
+
         auto pHost = NewHost(); 
         pHost.Persist();
         return pHost.Get();
@@ -123,20 +130,6 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         auto *pExistingRuntime = static_cast<runtime_host_label_type *>(nullptr);
         if (!TryGetRuntime(version, pExistingRuntime))
         {
-            //auto pNewRuntime = NewRuntime(version);
-
-            //auto const &corVersion = pNewRuntime->GetCORVersion();
-            //if (corVersion != version)
-            //{
-            //    auto what = wstring();
-            //    what += L"The version '";
-            //    what += version;
-            //    what += L"' is not supported. For your information, this process runs at version '";
-            //    what += corVersion;
-            //    what += L"'.";
-            //    BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(what));
-            //}
-
             pNewRuntime.Persist();
             return pNewRuntime.Get();
         }

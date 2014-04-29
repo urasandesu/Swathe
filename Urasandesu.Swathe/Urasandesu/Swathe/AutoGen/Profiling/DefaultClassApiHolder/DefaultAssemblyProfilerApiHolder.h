@@ -48,6 +48,14 @@
 #include <Urasandesu/Swathe/Profiling/ProcessProfilerPimplFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSLABEL_METADATADISPENSERLABEL_H
+#include <Urasandesu/Swathe/AutoGen/Metadata/ClassLabel/MetadataDispenserLabel.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_METADATA_METADATADISPENSERFWD_H
+#include <Urasandesu/Swathe/Metadata/MetadataDispenserFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_AUTOGEN_METADATA_CLASSLABEL_ASSEMBLYGENERATORLABEL_H
 #include <Urasandesu/Swathe/AutoGen/Metadata/ClassLabel/AssemblyGeneratorLabel.h>
 #endif
@@ -66,6 +74,8 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
         using Urasandesu::Swathe::Profiling::ProcessProfiler;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassPimplLabel::ProcessProfilerPimplLabel;
         using Urasandesu::Swathe::Profiling::ProcessProfilerPimpl;
+        using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::MetadataDispenserLabel;
+        using Urasandesu::Swathe::Metadata::MetadataDispenser;
         using Urasandesu::Swathe::AutoGen::Metadata::ClassLabel::AssemblyGeneratorLabel;
         using Urasandesu::Swathe::Metadata::AssemblyGenerator;
         using mpl::map;
@@ -76,6 +86,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
             typedef map<
                 pair<ProcessProfilerLabel, ProcessProfiler>,
                 pair<ProcessProfilerPimplLabel, ProcessProfilerPimpl>,
+                pair<MetadataDispenserLabel, MetadataDispenser>,
                 pair<AssemblyGeneratorLabel, AssemblyGenerator>
             > api_cartridges;
         };

@@ -52,6 +52,10 @@
 #include <Urasandesu/Swathe/StrongNaming/IStrongNameKey.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_HOSTING_IPORTABLEEXECUTABLEREADER_H
+#include <Urasandesu/Swathe/Hosting/IPortableExecutableReader.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_PORTABLEEXECUTABLEKINDS_HPP
 #include <Urasandesu/Swathe/Metadata/PortableExecutableKinds.hpp>
 #endif
@@ -122,6 +126,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using Urasandesu::CppAnonym::Utilities::AutoPtr;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
     using Urasandesu::Swathe::StrongNaming::IStrongNameKey;
+    using Urasandesu::Swathe::Hosting::IPortableExecutableReader;
 
     template<
         class ApiHolder
@@ -164,7 +169,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes() const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         ITypePtrRange GetTypes() const;
-        iterator_range<BYTE const *> GetAssemblyStorage() const;
+        AutoPtr<IPortableExecutableReader const> const &GetPortableExecutableReader() const;
         vector<IAssembly const *> const &GetReferencedAssemblies() const;
         module_generator_label_type *DefineModule(wstring const &name);
         void Save(PortableExecutableKinds const &portableExecutableKind, ImageFileMachine const &imageFileMachine);

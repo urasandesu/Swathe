@@ -42,10 +42,10 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     BaseFunctionProfilerPimpl<ApiHolder>::BaseFunctionProfilerPimpl(function_profiler_label_type *pClass) : 
         m_pClass(pClass), 
         m_pProcProf(nullptr), 
-        m_id(static_cast<UINT_PTR>(-1)), 
-        m_classId(static_cast<UINT_PTR>(-1)), 
-        m_moduleId(static_cast<UINT_PTR>(-1)), 
-        m_functionBodyId(static_cast<UINT_PTR>(-1)), 
+        m_id(-1), 
+        m_classId(-1), 
+        m_moduleId(-1), 
+        m_functionBodyId(-1), 
         m_mdt(mdTokenNil), 
         m_pMethodGen(nullptr)
     { }
@@ -57,8 +57,8 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     void BaseFunctionProfilerPimpl<ApiHolder>::Initialize(process_profiler_label_type *pProcProf)
     {
-        _ASSERTE(pProcProf != nullptr);
-        _ASSERTE(m_pProcProf == nullptr);
+        _ASSERTE(pProcProf);
+        _ASSERTE(!m_pProcProf);
         m_pProcProf = pProcProf;
     }
 
@@ -67,7 +67,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     UINT_PTR BaseFunctionProfilerPimpl<ApiHolder>::GetID() const
     {
-        _ASSERTE(m_id != static_cast<UINT_PTR>(-1));
+        _ASSERTE(m_id != -1);
         return m_id;
     }
 
@@ -76,7 +76,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     TempPtr<typename BaseFunctionProfilerPimpl<ApiHolder>::class_profiler_label_type> BaseFunctionProfilerPimpl<ApiHolder>::AttachToClass()
     {
-        if (m_classId == static_cast<UINT_PTR>(-1))
+        if (m_classId == -1)
             FillProperties(this, m_classId, m_moduleId, m_mdt);
         return m_pProcProf->AttachToClass(m_classId);
     }
@@ -86,7 +86,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     TempPtr<typename BaseFunctionProfilerPimpl<ApiHolder>::module_profiler_label_type> BaseFunctionProfilerPimpl<ApiHolder>::AttachToModule()
     {
-        if (m_moduleId == static_cast<UINT_PTR>(-1))
+        if (m_moduleId == -1)
             FillProperties(this, m_classId, m_moduleId, m_mdt);
         return m_pProcProf->AttachToModule(m_moduleId);
     }
@@ -94,22 +94,19 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
 
     template<class ApiHolder>    
-    typename BaseFunctionProfilerPimpl<ApiHolder>::method_generator_label_type *BaseFunctionProfilerPimpl<ApiHolder>::GetMethodGenerator()
+    typename BaseFunctionProfilerPimpl<ApiHolder>::method_generator_label_type *BaseFunctionProfilerPimpl<ApiHolder>::GetMethodGenerator(assembly_generator_label_type *pAsmGen)
     {
         if (!m_pMethodGen)
         {
             auto pModProf = m_pClass->AttachToModule();
             _ASSERTE(!IsNilToken(m_mdt));
-            auto pAsmProf = pModProf->AttachToAssembly();
-            auto pDomainProf = pAsmProf->AttachToAppDomain();
+            _ASSERTE(pAsmGen);
             
-            if (m_functionBodyId == static_cast<UINT_PTR>(-1))
+            if (m_functionBodyId == -1)
                 FillFunctionBodyProperties(this, m_functionBodyId);
             
             auto *pILBody = reinterpret_cast<COR_ILMETHOD *>(m_functionBodyId);
             
-            auto *pDisp = pDomainProf->GetMetadataDispenser();
-            auto *pAsmGen = pAsmProf->GetAssemblyGenerator();
             m_pMethodGen = pAsmGen->GetModifiableMethod(m_mdt, pILBody);
         }
         return m_pMethodGen;
@@ -118,9 +115,17 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     
     
     template<class ApiHolder>    
+    typename BaseFunctionProfilerPimpl<ApiHolder>::method_generator_label_type const *BaseFunctionProfilerPimpl<ApiHolder>::GetMethodGenerator(assembly_generator_label_type const *pAsmGen) const
+    {
+        return const_cast<class_pimpl_type *>(this)->GetMethodGenerator(const_cast<assembly_generator_label_type *>(pAsmGen));
+    }
+
+
+
+    template<class ApiHolder>    
     TempPtr<typename BaseFunctionProfilerPimpl<ApiHolder>::function_body_profiler_label_type> BaseFunctionProfilerPimpl<ApiHolder>::AttachToFunctionBody()
     {
-        if (m_functionBodyId == static_cast<UINT_PTR>(-1))
+        if (m_functionBodyId == -1)
             FillFunctionBodyProperties(this, m_functionBodyId);
         return m_pProcProf->AttachToFunctionBody(GetID(), m_functionBodyId);
     }
@@ -144,10 +149,14 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
         auto pModProf = m_pClass->AttachToModule();
         auto pAsmProf = pModProf->AttachToAssembly();
-        auto *pAsmGen = pAsmProf->GetAssemblyGenerator();
+        auto pDomainProf = pAsmProf->AttachToAppDomain();
+        auto *pDisp = pDomainProf->GetMetadataDispenser();
+        auto *pAsmGen = pAsmProf->GetAssemblyGenerator(pDisp);
         auto _ = AssemblySavingPrepared(pAsmGen);
         
-        auto const *pBody = pBodyProf->GetMethodBodyGenerator();
+        auto pFuncProf = pBodyProf->AttachToFunction();
+        auto const *pMethodGen = pFuncProf->GetMethodGenerator(pAsmGen);
+        auto const *pBody = pBodyProf->GetMethodBodyGenerator(pMethodGen);
         
         auto const &header = pBody->GetRawHeader();
         auto const &body = pBody->GetRawBody();
@@ -184,8 +193,8 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         
         
         auto &comProfInfo = m_pProcProf->GetCOMProfilerInfo();
-        _ASSERTE(m_moduleId != static_cast<UINT_PTR>(-1));
-        _ASSERTE(m_mdt != static_cast<UINT_PTR>(-1));
+        _ASSERTE(m_moduleId != -1);
+        _ASSERTE(m_mdt != -1);
         auto hr = comProfInfo.SetILFunctionBody(m_moduleId, m_mdt, pILBody);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
@@ -196,8 +205,8 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     void BaseFunctionProfilerPimpl<ApiHolder>::SetID(UINT_PTR id)
     {
-        _ASSERTE(id != static_cast<UINT_PTR>(-1));
-        _ASSERTE(m_id == static_cast<UINT_PTR>(-1));
+        _ASSERTE(id != -1);
+        _ASSERTE(m_id == -1);
         m_id = id;
     }
 

@@ -55,23 +55,23 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     template<class ApiHolder>    
     BaseProcessProfilerPimpl<ApiHolder>::~BaseProcessProfilerPimpl()
     {
-        BOOST_FOREACH (auto const &pair, m_appDomainIdToObjs)
-            m_pProfInfo->DetachFromAppDomainCore(pair.second);
-
-        BOOST_FOREACH (auto const &pair, m_assemblyIdToObjs)
-            m_pProfInfo->DetachFromAssemblyCore(pair.second);
-
-        BOOST_FOREACH (auto const &pair, m_moduleIdToObjs)
-            m_pProfInfo->DetachFromModuleCore(pair.second);
-
-        BOOST_FOREACH (auto const &pair, m_classIdToObjs)
-            m_pProfInfo->DetachFromClassCore(pair.second);
+        BOOST_FOREACH (auto const &pair, m_functionBodyIdToObjs)
+            m_pProfInfo->DetachFromFunctionBodyCore(pair.second);
 
         BOOST_FOREACH (auto const &pair, m_functionIdToObjs)
             m_pProfInfo->DetachFromFunctionCore(pair.second);
 
-        BOOST_FOREACH (auto const &pair, m_functionBodyIdToObjs)
-            m_pProfInfo->DetachFromFunctionBodyCore(pair.second);
+        BOOST_FOREACH (auto const &pair, m_classIdToObjs)
+            m_pProfInfo->DetachFromClassCore(pair.second);
+
+        BOOST_FOREACH (auto const &pair, m_moduleIdToObjs)
+            m_pProfInfo->DetachFromModuleCore(pair.second);
+
+        BOOST_FOREACH (auto const &pair, m_assemblyIdToObjs)
+            m_pProfInfo->DetachFromAssemblyCore(pair.second);
+
+        BOOST_FOREACH (auto const &pair, m_appDomainIdToObjs)
+            m_pProfInfo->DetachFromAppDomainCore(pair.second);
     }
     
 #define SWATHE_DECLARE_BASE_PROCESS_PROFILER_PIMPL_ADDITIONAL_INSTANTIATION \

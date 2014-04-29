@@ -62,7 +62,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         UINT_PTR GetID() const;
         wstring const &GetName() const;
         TempPtr<app_domain_profiler_label_type> AttachToAppDomain();
-        assembly_generator_label_type *GetAssemblyGenerator();
+        assembly_generator_label_type *GetAssemblyGenerator(metadata_dispenser_label_type *pDisp);
     
     private:
         assembly_profiler_pimpl_label_type *Pimpl();

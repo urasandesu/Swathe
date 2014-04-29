@@ -70,40 +70,123 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     iterator_range<BYTE const *> BasePortableExecutableReaderPimpl<ApiHolder>::GetMappedFileSource() const
     {
-        using boost::adaptors::reversed;
-        using boost::algorithm::boyer_moore_horspool_search;
-        using boost::filesystem::file_size;
         using boost::make_iterator_range;
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-        
-        auto &comMetaTbl = GetCOMMetaDataTables();
-        
-        auto const *pvMd = static_cast<BYTE *>(nullptr);
-        auto cbMd = 0ul;
-        auto hr = comMetaTbl.GetMetaDataStorage(reinterpret_cast<void const **>(&pvMd), &cbMd);
-        if (FAILED(hr))
-            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-        
-        BYTE const DOS_HEADER_PATTERN[] = {
-            0x4D, 0x5A, 0x90, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 
-            0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00
-        };
-        ULONG const DOS_HEADER_PATTERN_SIZE = sizeof(DOS_HEADER_PATTERN) / sizeof(BYTE);
-        
-        auto asmSize = file_size(m_asmPath);
-        auto i = pvMd - asmSize;
-        auto i_end = pvMd;
-        auto source = make_iterator_range(i, i_end) | reversed;
-        auto pattern = make_iterator_range(DOS_HEADER_PATTERN, DOS_HEADER_PATTERN + DOS_HEADER_PATTERN_SIZE) | reversed;
-        auto result = boyer_moore_horspool_search(source, pattern);
-        if (result == source.end())
-            return iterator_range<BYTE const *>();
-        
-        i = &result.base()[0] - DOS_HEADER_PATTERN_SIZE;
-        i_end = i + asmSize;
+
+        auto &file = GetMemoryMappedFile();
+        auto i = reinterpret_cast<BYTE const *>(file.begin());
+        auto i_end = reinterpret_cast<BYTE const *>(file.end());
         return make_iterator_range(i, i_end);
+    }
+
+
+
+    template<class ApiHolder>    
+    BYTE const *BasePortableExecutableReaderPimpl<ApiHolder>::AdvanceToSectionHeader(BYTE const *i, BYTE const *i_end) const
+    {
+        auto dosHeader = IMAGE_DOS_HEADER();
+        auto dosStubBody = array<BYTE, 0x40>();
+        auto fileHeader = IMAGE_FILE_HEADER();
+        auto ntHeaders32 = IMAGE_NT_HEADERS32();
+        auto ntHeaders64 = IMAGE_NT_HEADERS64();
+        return GetPEHeaders(i, i_end, dosHeader, dosStubBody, fileHeader, ntHeaders32, ntHeaders64);
+    }
+
+
+
+    template<class ApiHolder>    
+    BYTE const *BasePortableExecutableReaderPimpl<ApiHolder>::GetPEHeaders(BYTE const *i, BYTE const *i_end, IMAGE_DOS_HEADER &dosHeader, array<BYTE, 0x40> &dosStubBody, IMAGE_FILE_HEADER &fileHeader, IMAGE_NT_HEADERS32 &ntHeaders32, IMAGE_NT_HEADERS64 &ntHeaders64) const
+    {
+        _ASSERTE(i != i_end);
+
+        i = PEGetDOSHeader(i, i_end, dosHeader);
+        _ASSERTE(dosHeader.e_magic == 0x5A4D);
+        _ASSERTE(i != i_end);
+        
+        i = PEGetData(i, i_end, dosStubBody.size(), dosStubBody.begin());
+        _ASSERTE(i != i_end);
+        
+        auto signature = DWORD();
+        PEGetNTHeadersPrerequisites(i, i_end, signature, fileHeader);
+        _ASSERTE(signature == 0x00004550);
+        if (fileHeader.Machine == IMAGE_FILE_MACHINE_I386)
+            i = PEGetNTHeaders(i, i_end, ntHeaders32);
+        else
+            i = PEGetNTHeaders(i, i_end, ntHeaders64);
+        _ASSERTE(i != i_end);
+
+        return i;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BasePortableExecutableReaderPimpl<ApiHolder>::GetPEKind(DWORD &dwPEKind, DWORD &dwMachine) const
+    {
+        auto mappedFileSource = GetMappedFileSource();
+        
+        auto i = mappedFileSource.begin();
+        auto i_end = mappedFileSource.end();
+        
+        auto dosHeader = IMAGE_DOS_HEADER();
+        auto dosStubBody = array<BYTE, 0x40>();
+        auto fileHeader = IMAGE_FILE_HEADER();
+        auto ntHeaders32 = IMAGE_NT_HEADERS32();
+        auto ntHeaders64 = IMAGE_NT_HEADERS64();
+        i = GetPEHeaders(i, i_end, dosHeader, dosStubBody, fileHeader, ntHeaders32, ntHeaders64);
+        _ASSERTE(i != i_end);
+        
+        auto cliHeaderRVA = 0ul;
+        if (fileHeader.Machine == IMAGE_FILE_MACHINE_I386)
+            cliHeaderRVA = ntHeaders32.OptionalHeader.DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES - 2].VirtualAddress;
+        else
+            cliHeaderRVA = ntHeaders64.OptionalHeader.DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES - 2].VirtualAddress;
+        
+        auto textSecHeader = IMAGE_SECTION_HEADER();
+        i = PEGetSectionHeader(i, i_end, textSecHeader);
+        _ASSERTE(std::string(reinterpret_cast<CHAR *>(&textSecHeader.Name[0])) == std::string(".text"));
+        _ASSERTE(i != i_end);
+        
+        i = mappedFileSource.begin();
+        i_end = mappedFileSource.end();
+        
+        auto offset = cliHeaderRVA - textSecHeader.VirtualAddress + textSecHeader.PointerToRawData;
+        i += offset;
+        _ASSERTE(i != i_end);
+        
+        auto cliHeader = IMAGE_COR20_HEADER();
+        i = PEGetCLIHeader(i, i_end, cliHeader);
+        _ASSERTE(i != i_end);
+        
+        dwMachine = fileHeader.Machine;
+        dwPEKind = cliHeader.Flags;
+    }
+
+
+
+    template<class ApiHolder>    
+    COR_ILMETHOD const *BasePortableExecutableReaderPimpl<ApiHolder>::GetILMethodBody(ULONG codeRVA) const
+    {
+        auto mappedFileSource = GetMappedFileSource();
+        
+        auto i = mappedFileSource.begin();
+        auto i_end = mappedFileSource.end();
+        
+        i = AdvanceToSectionHeader(i, i_end);
+        _ASSERTE(i != i_end);
+        
+        auto textSecHeader = IMAGE_SECTION_HEADER();
+        i = PEGetSectionHeader(i, i_end, textSecHeader);
+        _ASSERTE(std::string(reinterpret_cast<CHAR *>(&textSecHeader.Name[0])) == std::string(".text"));
+        _ASSERTE(i != i_end);
+        
+        i = mappedFileSource.begin();
+        i_end = mappedFileSource.end();
+        
+        auto offset = codeRVA - textSecHeader.VirtualAddress + textSecHeader.PointerToRawData;
+        i += offset;
+        _ASSERTE(i != i_end);
+        
+        return reinterpret_cast<COR_ILMETHOD const *>(i);
     }
 
 
@@ -127,20 +210,32 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
 
     template<class ApiHolder>    
-    IMetaDataTables2 &BasePortableExecutableReaderPimpl<ApiHolder>::GetCOMMetaDataTables() const
+    mapped_file_source &BasePortableExecutableReaderPimpl<ApiHolder>::GetMemoryMappedFile() const
     {
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        using boost::iostreams::basic_mapped_file_params;
+        using boost::iostreams::mapped_file_base;        
+        using boost::filesystem::canonical;
+        using boost::filesystem::path;
+        using Urasandesu::CppAnonym::CppAnonymException;
 
-        if (m_pComMetaTbl.p == nullptr)
+        typedef basic_mapped_file_params<path> MappedFileParams;
+
+        if (!m_file.is_open())
         {
-            _ASSERT(m_pComMetaImp.p);
-
-            auto hr = m_pComMetaImp->QueryInterface(IID_IMetaDataTables2, 
-                                                    reinterpret_cast<void **>(&m_pComMetaTbl));
-            if (FAILED(hr))
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            auto params = MappedFileParams(canonical(m_asmPath));
+            params.flags = mapped_file_base::readonly;
+            try
+            {
+                m_file.open(params);
+            }
+            catch (...)
+            {
+                auto oss = std::ostringstream();
+                oss << diagnostic_information(boost::current_exception());
+                BOOST_THROW_EXCEPTION(CppAnonymException(oss.str()));
+            }
         }
-        return *m_pComMetaTbl;
+        return m_file;
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 

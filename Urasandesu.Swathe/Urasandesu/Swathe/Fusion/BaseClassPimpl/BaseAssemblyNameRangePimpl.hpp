@@ -191,10 +191,26 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
             auto &comAsmName = m_pCondition->GetCOMAssemblyName();
             auto dwflags = m_flags.Value();
             auto hr = pfnCreateAssemblyEnum(&m_pComAsmEnum, nullptr, &comAsmName, dwflags, nullptr);
+            if (hr == FUSION_E_PRIVATE_ASM_DISALLOWED)
+            {
+                // Fusion API sometimes demands the strong name even if a private assembly is passed. Is this behavior the specifications?
+                m_pComAsmEnum = ATL::CComPtr<IAssemblyEnum>(&GetEmptyCOMAssemblyEnum());
+                hr = S_OK;
+            }
+
             if (FAILED(hr)) 
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
         }
         return *m_pComAsmEnum;
+    }
+
+
+
+    template<class ApiHolder>    
+    IAssemblyEnum &BaseAssemblyNameRangePimpl<ApiHolder>::GetEmptyCOMAssemblyEnum()
+    {
+        static empty_assembly_enum emptyComAsmEnum;
+        return emptyComAsmEnum;
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClassPimpl { 

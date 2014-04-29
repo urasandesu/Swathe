@@ -52,6 +52,10 @@
 #include <Urasandesu/Swathe/Metadata/ICustomAttributeFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_HOSTING_IPORTABLEEXECUTABLEREADER_H
+#include <Urasandesu/Swathe/Hosting/IPortableExecutableReader.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_STRONGNAMING_ISTRONGNAMEKEYFWD_H
 #include <Urasandesu/Swathe/StrongNaming/IStrongNameKeyFwd.h>
 #endif
@@ -107,7 +111,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual ICustomAttributePtrRange GetCustomAttributes() const = 0;
         virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const = 0;
         virtual ITypePtrRange GetTypes() const = 0;
-        virtual boost::iterator_range<BYTE const *> GetAssemblyStorage() const = 0;
+        virtual Urasandesu::CppAnonym::Utilities::AutoPtr<Hosting::IPortableExecutableReader const> const &GetPortableExecutableReader() const = 0;
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

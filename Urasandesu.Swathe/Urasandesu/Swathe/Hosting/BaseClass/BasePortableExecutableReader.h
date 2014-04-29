@@ -40,15 +40,21 @@
 #include <Urasandesu/Swathe/Hosting/BaseClass/BasePortableExecutableReaderFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_HOSTING_IPORTABLEEXECUTABLEREADER_H
+#include <Urasandesu/Swathe/Hosting/IPortableExecutableReader.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClass { 
 
+    using boost::array;
     using boost::filesystem::path;
     using boost::iterator_range;
 
     template<
         class ApiHolder
     >    
-    class BasePortableExecutableReader
+    class BasePortableExecutableReader : 
+        public IPortableExecutableReader
     {
     public:
         SWATHE_BEGIN_PORTABLE_EXECUTABLE_READER_FACADE_TYPEDEF_ALIAS
@@ -60,6 +66,10 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
         void Initialize(portable_executable_info_label_type *pPEInfo, strong_name_info_label_type const *pSnInfo);
         iterator_range<BYTE const *> GetMappedFileSource() const;
+        BYTE const *AdvanceToSectionHeader(BYTE const *i, BYTE const *i_end) const;
+        BYTE const *GetPEHeaders(BYTE const *i, BYTE const *i_end, IMAGE_DOS_HEADER &dosHeader, array<BYTE, 0x40> &dosStubBody, IMAGE_FILE_HEADER &fileHeader, IMAGE_NT_HEADERS32 &ntHeaders32, IMAGE_NT_HEADERS64 &ntHeaders64) const;
+        void GetPEKind(DWORD &dwPEKind, DWORD &dwMachine) const;
+        COR_ILMETHOD const *GetILMethodBody(ULONG codeRVA) const;
     
     private:
         portable_executable_reader_pimpl_label_type *Pimpl();
@@ -71,7 +81,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 44;
+        static INT const PIMPL_TYPE_SIZE = 48;
 #else
         static INT const PIMPL_TYPE_SIZE = 80;
 #endif

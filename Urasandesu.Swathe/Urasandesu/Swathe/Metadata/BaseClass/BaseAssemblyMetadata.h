@@ -48,6 +48,10 @@
 #include <Urasandesu/Swathe/StrongNaming/IStrongNameKey.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_HOSTING_IPORTABLEEXECUTABLEREADER_H
+#include <Urasandesu/Swathe/Hosting/IPortableExecutableReader.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_TYPEKINDS_H
 #include <Urasandesu/Swathe/Metadata/TypeKinds.h>
 #endif
@@ -101,6 +105,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using Urasandesu::CppAnonym::Utilities::AutoPtr;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
     using Urasandesu::Swathe::StrongNaming::IStrongNameKey;
+    using Urasandesu::Swathe::Hosting::IPortableExecutableReader;
 
     template<
         class ApiHolder
@@ -143,7 +148,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes() const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         ITypePtrRange GetTypes() const;
-        iterator_range<BYTE const *> GetAssemblyStorage() const;
+        AutoPtr<IPortableExecutableReader const> const &GetPortableExecutableReader() const;
         bool Exists() const;
     
     private:
@@ -212,9 +217,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 472;
+        static INT const PIMPL_TYPE_SIZE = 464;
 #else
-        static INT const PIMPL_TYPE_SIZE = 888;
+        static INT const PIMPL_TYPE_SIZE = 872;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

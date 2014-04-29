@@ -42,7 +42,9 @@
 
 namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 
 
+    using boost::array;
     using boost::filesystem::path;
+    using boost::iostreams::mapped_file_source;
     using boost::iterator_range;
     
     template<
@@ -60,19 +62,22 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
         void Initialize(portable_executable_info_label_type *pPEInfo, strong_name_info_label_type const *pSnInfo);
         iterator_range<BYTE const *> GetMappedFileSource() const;
+        BYTE const *AdvanceToSectionHeader(BYTE const *i, BYTE const *i_end) const;
+        BYTE const *GetPEHeaders(BYTE const *i, BYTE const *i_end, IMAGE_DOS_HEADER &dosHeader, array<BYTE, 0x40> &dosStubBody, IMAGE_FILE_HEADER &fileHeader, IMAGE_NT_HEADERS32 &ntHeaders32, IMAGE_NT_HEADERS64 &ntHeaders64) const;
+        void GetPEKind(DWORD &dwPEKind, DWORD &dwMachine) const;
+        COR_ILMETHOD const *GetILMethodBody(ULONG codeRVA) const;
         
     private:
         void SetCOMMetaDataImport(IMetaDataImport2 *pComMetaImp);
         void SetAssemblyPath(path const &asmPath);
-        IMetaDataTables2 &GetCOMMetaDataTables() const;
+        mapped_file_source &GetMemoryMappedFile() const;
 
         mutable portable_executable_reader_label_type *m_pClass;
         portable_executable_info_label_type *m_pPEInfo;
         strong_name_info_label_type const *m_pSnInfo;
         ATL::CComPtr<IMetaDataImport2> m_pComMetaImp;
         path m_asmPath;
-        mutable ATL::CComPtr<IMetaDataTables2> m_pComMetaTbl;
-        int reserved;        
+        mutable mapped_file_source m_file;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 

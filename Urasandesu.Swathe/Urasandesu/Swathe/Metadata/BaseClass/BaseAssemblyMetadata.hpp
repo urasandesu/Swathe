@@ -235,9 +235,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    iterator_range<BYTE const *> BaseAssemblyMetadata<ApiHolder>::GetAssemblyStorage() const
+    AutoPtr<IPortableExecutableReader const> const &BaseAssemblyMetadata<ApiHolder>::GetPortableExecutableReader() const
     {
-        return Pimpl()->GetAssemblyStorage();
+        return Pimpl()->GetPortableExecutableReader();
     }
 
     template<class ApiHolder>    

@@ -61,7 +61,8 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         UINT_PTR GetID() const;
         TempPtr<class_profiler_label_type> AttachToClass();
         TempPtr<module_profiler_label_type> AttachToModule();
-        method_generator_label_type *GetMethodGenerator();
+        method_generator_label_type *GetMethodGenerator(assembly_generator_label_type *pAsmGen);
+        method_generator_label_type const *GetMethodGenerator(assembly_generator_label_type const *pAsmGen) const;
         TempPtr<function_body_profiler_label_type> AttachToFunctionBody();
         TempPtr<function_body_profiler_label_type> NewFunctionBody();
         void SetFunctionBody(TempPtr<function_body_profiler_label_type const> const &pBodyProf);

@@ -396,53 +396,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         if (!pILBody)
         {
-            auto asmStorage = pAsm->GetAssemblyStorage();
-
-            auto i = asmStorage.begin();
-            auto i_end = asmStorage.end();
-            _ASSERTE(i != i_end);
-                
-            auto dosHeader = IMAGE_DOS_HEADER();
-            i = PEGetDOSHeader(i, i_end, dosHeader);
-            _ASSERTE(dosHeader.e_magic == 0x5A4D);
-            _ASSERTE(i != i_end);
-                
-            auto dosStubBody = array<BYTE, 0x40>();
-            i = PEGetData(i, i_end, dosStubBody.size(), dosStubBody.begin());
-            _ASSERTE(i != i_end);
-                
-            {
-                auto signature = DWORD();
-                auto fileHeader = IMAGE_FILE_HEADER();
-                PEGetNTHeadersPrerequisites(i, i_end, signature, fileHeader);
-                _ASSERTE(signature == 0x00004550);
-                if (fileHeader.Machine == IMAGE_FILE_MACHINE_I386)
-                {
-                    auto ntHeaders32 = IMAGE_NT_HEADERS32();
-                    i = PEGetNTHeaders(i, i_end, ntHeaders32);
-                }
-                else
-                {
-                    auto ntHeaders64 = IMAGE_NT_HEADERS64();
-                    i = PEGetNTHeaders(i, i_end, ntHeaders64);
-                }
-                _ASSERTE(i != i_end);
-            }
-                
-            auto textSecHeader = IMAGE_SECTION_HEADER();
-            i = PEGetSectionHeader(i, i_end, textSecHeader);
-            _ASSERTE(std::string(reinterpret_cast<CHAR *>(&textSecHeader.Name[0])) == std::string(".text"));
-            _ASSERTE(i != i_end);
-                
-            i = asmStorage.begin();
-            i_end = asmStorage.end();
-                
-            auto codeRVA = pMethod->GetCodeRVA();
-            auto offset = codeRVA - textSecHeader.VirtualAddress + textSecHeader.PointerToRawData;
-            i += offset;
-            _ASSERTE(i != i_end);
-                
-            pILBody = reinterpret_cast<COR_ILMETHOD const *>(i);
+            auto const &pPEReader = pAsm->GetPortableExecutableReader();
+            pILBody = pPEReader->GetILMethodBody(pMethod->GetCodeRVA());
         }
         
         

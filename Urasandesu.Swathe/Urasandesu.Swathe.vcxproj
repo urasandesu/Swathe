@@ -708,6 +708,8 @@
     <ClInclude Include="Urasandesu\Swathe\Hosting\CeeCreateFlags.h" />
     <ClInclude Include="Urasandesu\Swathe\Hosting\ComImageFlags.h" />
     <ClInclude Include="Urasandesu\Swathe\Hosting\HostingDependsOn.h" />
+    <ClInclude Include="Urasandesu\Swathe\Hosting\IPortableExecutableReader.h" />
+    <ClInclude Include="Urasandesu\Swathe\Hosting\IPortableExecutableReaderFwd.h" />
     <ClInclude Include="Urasandesu\Swathe\Hosting\RuntimeHostChainMapper.h" />
     <ClInclude Include="Urasandesu\Swathe\MetaData.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\AssemblyFlags.h" />

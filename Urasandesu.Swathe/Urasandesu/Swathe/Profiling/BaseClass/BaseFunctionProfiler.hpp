@@ -96,9 +96,15 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     }
 
     template<class ApiHolder>    
-    typename BaseFunctionProfiler<ApiHolder>::method_generator_label_type *BaseFunctionProfiler<ApiHolder>::GetMethodGenerator()
+    typename BaseFunctionProfiler<ApiHolder>::method_generator_label_type *BaseFunctionProfiler<ApiHolder>::GetMethodGenerator(assembly_generator_label_type *pAsmGen)
     {
-        return Pimpl()->GetMethodGenerator();
+        return Pimpl()->GetMethodGenerator(pAsmGen);
+    }
+
+    template<class ApiHolder>    
+    typename BaseFunctionProfiler<ApiHolder>::method_generator_label_type const *BaseFunctionProfiler<ApiHolder>::GetMethodGenerator(assembly_generator_label_type const *pAsmGen) const
+    {
+        return Pimpl()->GetMethodGenerator(pAsmGen);
     }
 
     template<class ApiHolder>    

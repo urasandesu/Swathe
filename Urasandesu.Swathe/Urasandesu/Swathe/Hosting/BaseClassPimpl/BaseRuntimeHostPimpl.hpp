@@ -155,7 +155,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
             auto buffer = array<WCHAR, MAX_PATH>();
             auto length = static_cast<DWORD>(buffer.size());
 
-            auto hr = comRuntimeInfo.GetRuntimeDirectory(buffer.c_array(), &length);
+            auto hr = comRuntimeInfo.GetVersionString(buffer.c_array(), &length);
             if (FAILED(hr))
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
                 

@@ -56,6 +56,10 @@
 #include <Urasandesu/Swathe/Profiling/FunctionProfilerFwd.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_METHODGENERATORFWD_H
+#include <Urasandesu/Swathe/Metadata/MethodGeneratorFwd.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_METHODBODYGENERATORFWD_H
 #include <Urasandesu/Swathe/Metadata/MethodBodyGeneratorFwd.h>
 #endif
@@ -73,6 +77,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
         using Urasandesu::Swathe::AutoGen::Profiling::ClassLabel::ProcessProfilerLabel;
         using Urasandesu::Swathe::AutoGen::Profiling::ClassPimplLabel::ProcessProfilerPimplLabel;
         using Urasandesu::Swathe::Profiling::FunctionProfiler;
+        using Urasandesu::Swathe::Metadata::MethodGenerator;
         using Urasandesu::Swathe::Metadata::MethodBodyGenerator;
         using mpl::vector;
         
@@ -90,6 +95,7 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
             typedef FunctionBodyProfilerPimpl function_body_profiler_pimpl_label_type;
             typedef FunctionBodyProfiler function_body_profiler_label_type;
             typedef FunctionProfiler function_profiler_label_type;
+            typedef MethodGenerator method_generator_label_type;
             typedef MethodBodyGenerator method_body_generator_label_type;
 
             
@@ -128,10 +134,12 @@ namespace Urasandesu { namespace Swathe { namespace AutoGen { namespace Profilin
     typedef typename facade::function_body_profiler_pimpl_label_type function_body_profiler_pimpl_label_type; \
     typedef typename facade::function_body_profiler_label_type function_body_profiler_label_type; \
     typedef typename facade::function_profiler_label_type function_profiler_label_type; \
+    typedef typename facade::method_generator_label_type method_generator_label_type; \
     typedef typename facade::method_body_generator_label_type method_body_generator_label_type; \
     friend typename function_body_profiler_pimpl_label_type; \
     friend typename function_body_profiler_label_type; \
     friend typename function_profiler_label_type; \
+    friend typename method_generator_label_type; \
     friend typename method_body_generator_label_type; \
 
 #define SWATHE_END_FUNCTION_BODY_PROFILER_FACADE_TYPEDEF_ALIAS

@@ -77,10 +77,21 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         bool MoveNext();
         
     private:
+        struct empty_assembly_enum : IAssemblyEnum
+        {
+            STDMETHOD(QueryInterface)(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject) { return S_OK; }
+            STDMETHOD_(ULONG, AddRef)(void) { return S_OK; }
+            STDMETHOD_(ULONG, Release)(void) { return S_OK; }
+            STDMETHOD(GetNextAssembly)(LPVOID pvReserved, IAssemblyName **ppName, DWORD dwFlags) { return S_FALSE; }
+            STDMETHOD(Reset)(void) { return S_OK; }
+            STDMETHOD(Clone)(IAssemblyEnum **ppEnum) { return S_FALSE; }
+        };
+
         void Initialize(fusion_info_label_type const *pFuInfo);
         void SetCondition(AutoPtr<assembly_name_label_type> const &pCondition);
         void SetFlags(AssemblyCacheFlags const &flags);
         IAssemblyEnum &GetCOMAssemblyEnum();
+        static IAssemblyEnum &GetEmptyCOMAssemblyEnum();
 
         mutable assembly_name_range_label_type *m_pClass;
         fusion_info_label_type const *m_pFuInfo;
@@ -88,7 +99,6 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         AssemblyCacheFlags m_flags;
         AutoPtr<assembly_name_label_type const> m_pCurrent;
         mutable ATL::CComPtr<IAssemblyEnum> m_pComAsmEnum;
-        
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClassPimpl { 

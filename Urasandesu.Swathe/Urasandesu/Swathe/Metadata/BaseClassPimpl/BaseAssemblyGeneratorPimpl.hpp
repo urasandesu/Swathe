@@ -261,7 +261,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     ASSEMBLYMETADATA const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetAssemblyMetadata() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_pSrcAsm)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        else
+        {
+            return m_pSrcAsm->GetAssemblyMetadata();
+        }
     }
     
     
@@ -364,7 +371,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     vector<ProcessorArchitecture> const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetProcessorArchitectures() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_pSrcAsm)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        else
+        {
+            return m_pSrcAsm->GetProcessorArchitectures();
+        }
     }
 
 
@@ -524,7 +538,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    iterator_range<BYTE const *> BaseAssemblyGeneratorPimpl<ApiHolder>::GetAssemblyStorage() const
+    AutoPtr<IPortableExecutableReader const> const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetPortableExecutableReader() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
