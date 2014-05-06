@@ -41,7 +41,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling {
     template<
         class Base
     >
-    class ATL_NO_VTABLE ICorProfilerCallback4Impl : public ICorProfilerCallback3Impl<Base>
+    class ATL_NO_VTABLE ICorProfilerCallback4WithoutChainImpl : public ICorProfilerCallback3WithoutChainImpl<Base>
     {
         CPPANONYM_STDMETHOD_NOEXCEPT(ReJITCompilationStarted, ((FunctionID,functionId))((ReJITID,rejitId))((BOOL,fIsSafeToBlock)))
         CPPANONYM_STDMETHOD_NOEXCEPT(GetReJITParameters, ((ModuleID,moduleId))((mdMethodDef,methodId))((ICorProfilerFunctionControl *,pFunctionControl)))
@@ -49,6 +49,63 @@ namespace Urasandesu { namespace Swathe { namespace Profiling {
         CPPANONYM_STDMETHOD_NOEXCEPT(ReJITError, ((ModuleID,moduleId))((mdMethodDef,methodId))((FunctionID,functionId))((HRESULT,hrStatus)))
         CPPANONYM_STDMETHOD_NOEXCEPT(MovedReferences2, ((ULONG,cMovedObjectIDRanges))((ObjectID *,oldObjectIDRangeStart))((ObjectID *,newObjectIDRangeStart))((SIZE_T *,cObjectIDRangeLength)))
         CPPANONYM_STDMETHOD_NOEXCEPT(SurvivingReferences2, ((ULONG,cSurvivingObjectIDRanges))((ObjectID *,objectIDRangeStart))((SIZE_T *,cObjectIDRangeLength)))
+    };
+
+
+
+    template<
+        class Base
+    >
+    class ATL_NO_VTABLE ICorProfilerCallback4Impl : public ICorProfilerCallback3Impl<Base>
+    {
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(ReJITCompilationStarted, ((FunctionID,functionId))((ReJITID,rejitId))((BOOL,fIsSafeToBlock)))
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(GetReJITParameters, ((ModuleID,moduleId))((mdMethodDef,methodId))((ICorProfilerFunctionControl *,pFunctionControl)))
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(ReJITCompilationFinished, ((FunctionID,functionId))((ReJITID,rejitId))((HRESULT,hrStatus))((BOOL,fIsSafeToBlock)))
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(ReJITError, ((ModuleID,moduleId))((mdMethodDef,methodId))((FunctionID,functionId))((HRESULT,hrStatus)))
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(MovedReferences2, ((ULONG,cMovedObjectIDRanges))((ObjectID *,oldObjectIDRangeStart))((ObjectID *,newObjectIDRangeStart))((SIZE_T *,cObjectIDRangeLength)))
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(SurvivingReferences2, ((ULONG,cSurvivingObjectIDRanges))((ObjectID *,objectIDRangeStart))((SIZE_T *,cObjectIDRangeLength)))
+        
+        
+        
+    protected:
+        ICorProfilerCallback4 &GetCOMExternalProfilerCallback()
+        {
+            using Urasandesu::CppAnonym::CppAnonymCOMException;
+            
+            if (!m_pComProfExtCallback4)
+            {
+                auto &comProfExtCallback = ICorProfilerCallback3Impl<Base>::GetCOMExternalProfilerCallback();
+                auto hr = comProfExtCallback.QueryInterface(IID_ICorProfilerCallback4, reinterpret_cast<void **>(&m_pComProfExtCallback4));
+                if (FAILED(hr)) 
+                {
+                    m_pComProfExtCallback4 = ATL::CComPtr<ICorProfilerCallback4>(&GetEmptyCOMExternalProfilerCallback());
+                    return *m_pComProfExtCallback4;
+                }
+            }
+            return *m_pComProfExtCallback4;
+        }
+        
+        
+        
+    private:
+        struct empty_profiler_callback : ICorProfilerCallback4WithoutChainImpl<ICorProfilerCallback4>
+        {
+            STDMETHOD(QueryInterface)(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject) { return E_NOINTERFACE; }
+            STDMETHOD_(ULONG, AddRef)(void) { return 0; }
+            STDMETHOD_(ULONG, Release)(void) { return 0; }
+        };
+
+
+
+        static ICorProfilerCallback4 &GetEmptyCOMExternalProfilerCallback()
+        {
+            static empty_profiler_callback emptyProfCallback;
+            return emptyProfCallback;
+        }
+
+
+
+        ATL::CComPtr<ICorProfilerCallback4> m_pComProfExtCallback4;
     };
 
 }}}  // namespace Urasandesu { namespace Swathe { namespace Profiling {

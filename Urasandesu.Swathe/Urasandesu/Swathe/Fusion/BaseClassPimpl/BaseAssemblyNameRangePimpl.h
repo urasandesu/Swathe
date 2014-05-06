@@ -79,9 +79,9 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     private:
         struct empty_assembly_enum : IAssemblyEnum
         {
-            STDMETHOD(QueryInterface)(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject) { return S_OK; }
-            STDMETHOD_(ULONG, AddRef)(void) { return S_OK; }
-            STDMETHOD_(ULONG, Release)(void) { return S_OK; }
+            STDMETHOD(QueryInterface)(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject) { return E_NOINTERFACE; }
+            STDMETHOD_(ULONG, AddRef)(void) { return 0; }
+            STDMETHOD_(ULONG, Release)(void) { return 0; }
             STDMETHOD(GetNextAssembly)(LPVOID pvReserved, IAssemblyName **ppName, DWORD dwFlags) { return S_FALSE; }
             STDMETHOD(Reset)(void) { return S_OK; }
             STDMETHOD(Clone)(IAssemblyEnum **ppEnum) { return S_FALSE; }

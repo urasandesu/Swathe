@@ -41,11 +41,65 @@ namespace Urasandesu { namespace Swathe { namespace Profiling {
     template<
         class Base
     >
-    class ATL_NO_VTABLE ICorProfilerCallback3Impl : public ICorProfilerCallback2Impl<Base>
+    class ATL_NO_VTABLE ICorProfilerCallback3WithoutChainImpl : public ICorProfilerCallback2WithoutChainImpl<Base>
     {
         CPPANONYM_STDMETHOD_NOEXCEPT(InitializeForAttach, ((IUnknown *,pCorProfilerInfoUnk))((void *,pvClientData))((UINT,cbClientData)))
         CPPANONYM_STDMETHOD_NOEXCEPT(ProfilerAttachComplete, BOOST_PP_EMPTY())
         CPPANONYM_STDMETHOD_NOEXCEPT(ProfilerDetachSucceeded, BOOST_PP_EMPTY())
+    };
+
+
+
+    template<
+        class Base
+    >
+    class ATL_NO_VTABLE ICorProfilerCallback3Impl : public ICorProfilerCallback2Impl<Base>
+    {
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(InitializeForAttach, ((IUnknown *,pCorProfilerInfoUnk))((void *,pvClientData))((UINT,cbClientData)))
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(ProfilerAttachComplete, BOOST_PP_EMPTY())
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(ProfilerDetachSucceeded, BOOST_PP_EMPTY())
+        
+        
+        
+    protected:
+        ICorProfilerCallback3 &GetCOMExternalProfilerCallback()
+        {
+            using Urasandesu::CppAnonym::CppAnonymCOMException;
+            
+            if (!m_pComProfExtCallback3)
+            {
+                auto &comProfExtCallback = ICorProfilerCallback2Impl<Base>::GetCOMExternalProfilerCallback();
+                auto hr = comProfExtCallback.QueryInterface(IID_ICorProfilerCallback3, reinterpret_cast<void **>(&m_pComProfExtCallback3));
+                if (FAILED(hr)) 
+                {
+                    m_pComProfExtCallback3 = ATL::CComPtr<ICorProfilerCallback3>(&GetEmptyCOMExternalProfilerCallback());
+                    return *m_pComProfExtCallback3;
+                }
+            }
+            return *m_pComProfExtCallback3;
+        }
+        
+        
+        
+    private:
+        struct empty_profiler_callback : ICorProfilerCallback3WithoutChainImpl<ICorProfilerCallback3>
+        {
+            STDMETHOD(QueryInterface)(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject) { return E_NOINTERFACE; }
+            STDMETHOD_(ULONG, AddRef)(void) { return 0; }
+            STDMETHOD_(ULONG, Release)(void) { return 0; }
+        };
+
+
+
+        static ICorProfilerCallback3 &GetEmptyCOMExternalProfilerCallback()
+        {
+            static empty_profiler_callback emptyProfCallback;
+            return emptyProfCallback;
+        }
+
+
+
+        ATL::CComPtr<ICorProfilerCallback3> m_pComProfExtCallback3;
     };
 
 }}}  // namespace Urasandesu { namespace Swathe { namespace Profiling {

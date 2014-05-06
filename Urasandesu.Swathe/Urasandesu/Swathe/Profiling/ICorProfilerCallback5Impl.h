@@ -41,9 +41,61 @@ namespace Urasandesu { namespace Swathe { namespace Profiling {
     template<
         class Base
     >
-    class ATL_NO_VTABLE ICorProfilerCallback5Impl : public ICorProfilerCallback4Impl<Base>
+    class ATL_NO_VTABLE ICorProfilerCallback5WithoutChainImpl : public ICorProfilerCallback4WithoutChainImpl<Base>
     {
         CPPANONYM_STDMETHOD_NOEXCEPT(ConditionalWeakTableElementReferences, ((ULONG,cRootRefs))((ObjectID *,keyRefIds))((ObjectID *,valueRefIds))((GCHandleID *,rootIds)))
+    };
+
+
+
+    template<
+        class Base
+    >
+    class ATL_NO_VTABLE ICorProfilerCallback5Impl : public ICorProfilerCallback4Impl<Base>
+    {
+        SWATHE_PROFILING_STDMETHOD_NOEXCEPT(ConditionalWeakTableElementReferences, ((ULONG,cRootRefs))((ObjectID *,keyRefIds))((ObjectID *,valueRefIds))((GCHandleID *,rootIds)))
+        
+        
+        
+    protected:
+        ICorProfilerCallback5 &GetCOMExternalProfilerCallback()
+        {
+            using Urasandesu::CppAnonym::CppAnonymCOMException;
+            
+            if (!m_pComProfExtCallback5)
+            {
+                auto &comProfExtCallback = ICorProfilerCallback4Impl<Base>::GetCOMExternalProfilerCallback();
+                auto hr = comProfExtCallback.QueryInterface(IID_ICorProfilerCallback5, reinterpret_cast<void **>(&m_pComProfExtCallback5));
+                if (FAILED(hr)) 
+                {
+                    m_pComProfExtCallback5 = ATL::CComPtr<ICorProfilerCallback5>(&GetEmptyCOMExternalProfilerCallback());
+                    return *m_pComProfExtCallback5;
+                }
+            }
+            return *m_pComProfExtCallback5;
+        }
+        
+        
+        
+    private:
+        struct empty_profiler_callback : ICorProfilerCallback5WithoutChainImpl<ICorProfilerCallback5>
+        {
+            STDMETHOD(QueryInterface)(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject) { return E_NOINTERFACE; }
+            STDMETHOD_(ULONG, AddRef)(void) { return 0; }
+            STDMETHOD_(ULONG, Release)(void) { return 0; }
+        };
+
+
+
+        static ICorProfilerCallback5 &GetEmptyCOMExternalProfilerCallback()
+        {
+            static empty_profiler_callback emptyProfCallback;
+            return emptyProfCallback;
+        }
+
+
+
+        ATL::CComPtr<ICorProfilerCallback5> m_pComProfExtCallback5;
     };
 
 }}}  // namespace Urasandesu { namespace Swathe { namespace Profiling {
