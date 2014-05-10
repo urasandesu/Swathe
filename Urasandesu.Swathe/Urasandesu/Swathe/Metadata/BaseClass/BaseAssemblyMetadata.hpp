@@ -295,9 +295,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseAssemblyMetadata<ApiHolder>::type_metadata_label_type const *BaseAssemblyMetadata<ApiHolder>::GetType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
+    typename BaseAssemblyMetadata<ApiHolder>::type_metadata_label_type const *BaseAssemblyMetadata<ApiHolder>::GetType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
     {
-        return Pimpl()->GetType(mdt, kind, genericParamPos, genericArgsSpecified, genericArgs, member);
+        return Pimpl()->GetType(mdt, kind, arrDimsSpecified, arrDims, genericParamPos, genericArgsSpecified, genericArgs, member);
     }
 
     template<class ApiHolder>    

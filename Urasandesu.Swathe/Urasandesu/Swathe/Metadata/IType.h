@@ -97,6 +97,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual bool IsNested() const = 0;
         virtual ULONG GetGenericParameterPosition() const = 0;
         virtual std::vector<IType const *> const &GetGenericArguments() const = 0;
+        virtual std::vector<ArrayDimension> const &GetDimensions() const = 0;
         virtual Signature const &GetSignature() const = 0;
         virtual IType const *MakeArrayType() const = 0;
         virtual IType const *MakeGenericType(std::vector<IType const *> const &genericArgs) const = 0;
@@ -138,6 +139,32 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
+
+namespace Urasandesu { namespace CppAnonym { namespace Utilities {
+
+    namespace HashDetail {
+
+        template<>
+        struct HashImpl<Urasandesu::Swathe::Metadata::ArrayDimension> : 
+            Traits::HashComputable<Urasandesu::Swathe::Metadata::ArrayDimension>
+        {
+            result_type operator()(param_type v) const
+            {
+                return boost::hash_value(v.GetSize()) ^ boost::hash_value(v.GetLowerBound());
+            }
+        };
+
+    }   // namespace HashDetail {
+
+    
+    
+    template<>
+    struct Hash<Urasandesu::Swathe::Metadata::ArrayDimension> : 
+        HashDetail::HashImpl<Urasandesu::Swathe::Metadata::ArrayDimension>
+    {
+    };
+
+}}}   // namespace Urasandesu { namespace CppAnonym { namespace Utilities {
 
 #endif  // URASANDESU_SWATHE_METADATA_ITYPE_H
 

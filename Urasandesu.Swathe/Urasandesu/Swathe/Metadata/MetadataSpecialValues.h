@@ -32,24 +32,8 @@
 #ifndef URASANDESU_SWATHE_METADATA_METADATASPECIALVALUES_H
 #define URASANDESU_SWATHE_METADATA_METADATASPECIALVALUES_H
 
-#ifndef URASANDESU_SWATHE_METADATA_ITYPEFWD_H
-#include <Urasandesu/Swathe/Metadata/ITypeFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_IPARAMETERFWD_H
-#include <Urasandesu/Swathe/Metadata/IParameterFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_IPROPERTYFWD_H
-#include <Urasandesu/Swathe/Metadata/IPropertyFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_ICUSTOMATTRIBUTEFWD_H
-#include <Urasandesu/Swathe/Metadata/ICustomAttributeFwd.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_TYPEKINDS_H
-#include <Urasandesu/Swathe/Metadata/TypeKinds.h>
+#ifndef URASANDESU_SWATHE_METADATA_SIGNATURE_H
+#include <Urasandesu/Swathe/Metadata/Signature.h>
 #endif
 
 namespace Urasandesu { namespace Swathe { namespace Metadata {
@@ -83,10 +67,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         static std::wstring const MODULE_NAME_OF_MAIN;
         static std::wstring const METHOD_NAME_OF_CTOR;
         static std::wstring const METHOD_NAME_OF_CCTOR;
+        static std::wstring const EMPTY_NAME;
         static std::vector<IType const *> const EMPTY_TYPES;
         static std::vector<IProperty const *> const EMPTY_PROPERTIES;
         static std::vector<IParameter const *> const EMPTY_PARAMETERS;
         static std::vector<CustomAttributeArgument> const EMPTY_CUSTOM_ATTRIBUTE_ARGUMENTS;
+        static std::vector<ArrayDimension> const EMPTY_DIMENSIONS;
+        static std::vector<ArrayDimension> const SZ_DIMENSIONS;
+        static Signature const EMPTY_SIGNATURE;
 
         static TypeKinds ToTypeKind(std::wstring const &typeName)
         {
@@ -167,6 +155,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     return false;
             }
         }
+
+        static std::vector<ArrayDimension> MakeSZArrayDimensions()
+        {
+            auto arrDims = std::vector<ArrayDimension>();
+            arrDims.push_back(ArrayDimension(-1, 0));
+            return arrDims;
+        }
+
+        static bool IsArraysSpecialMethod(IMethod const *pMethod, IType const *pOwnerType);
+        static IMethod *MakeEmptyMethod();
     };
 
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

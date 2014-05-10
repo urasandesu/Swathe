@@ -438,6 +438,7 @@
     <ClCompile Include="Urasandesu\Swathe\AutoGen\Metadata\BaseClass\BaseFieldMetadata.cpp" />
     <ClCompile Include="Urasandesu\Swathe\AutoGen\Metadata\BaseClassPersistedHandler\BaseFieldMetadataPersistedHandler.cpp" />
     <ClCompile Include="Urasandesu\Swathe\AutoGen\Metadata\BaseClassPimpl\BaseFieldMetadataPimpl.cpp" />
+    <ClCompile Include="Urasandesu\Swathe\Profiling\ProfilingSpecialValues.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dllmain.h" />
@@ -581,6 +582,7 @@
     <ClInclude Include="Urasandesu\Swathe\Profiling\ICorProfilerCallbackImpl.h" />
     <ClInclude Include="Urasandesu\Swathe\Profiling\ProfilerEvents.h" />
     <ClInclude Include="Urasandesu\Swathe\Profiling\ProfilingDependsOn.h" />
+    <ClInclude Include="Urasandesu\Swathe\Profiling\ProfilingSpecialValues.h" />
     <ClInclude Include="Urasandesu\Swathe\StrongNaming.h" />
     <ClInclude Include="Urasandesu\Swathe\StrongNaming\IStrongNameKey.h" />
     <ClInclude Include="Urasandesu\Swathe\StrongNaming\IStrongNameKeyFwd.h" />

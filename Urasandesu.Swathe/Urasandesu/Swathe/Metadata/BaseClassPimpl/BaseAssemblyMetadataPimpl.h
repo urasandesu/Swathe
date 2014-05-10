@@ -255,9 +255,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void RegisterModule(TempPtr<module_metadata_label_type> &pMod);
         
         type_metadata_label_type const *GetType(wstring const &fullName, TypeProvider const &member) const;
-        type_metadata_label_type const *GetType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
+        type_metadata_label_type const *GetType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
         TempPtr<type_metadata_label_type> NewType(wstring const &fullName, TypeProvider const &member) const;
-        TempPtr<type_metadata_label_type> NewType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
+        TempPtr<type_metadata_label_type> NewType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
         bool TryGetType(type_metadata_label_type &type, type_metadata_label_type *&pExistingType) const;
         void RegisterType(TempPtr<type_metadata_label_type> &pType);
         

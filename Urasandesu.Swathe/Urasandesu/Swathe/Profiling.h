@@ -120,4 +120,8 @@
 #include <Urasandesu/Swathe/Profiling/ICorProfilerCallback5Impl.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_PROFILING_PROFILINGSPECIALVALUES_H
+#include <Urasandesu/Swathe/Profiling/ProfilingSpecialValues.h>
+#endif
+
 #endif  // #ifndef URASANDESU_SWATHE_PROFILING_H

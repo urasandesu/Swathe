@@ -49,6 +49,32 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
     > TypeProvider;
 
     typedef boost::any_range<IType const *, boost::forward_traversal_tag, IType const *, std::ptrdiff_t> ITypePtrRange;
+
+    class ArrayDimension
+    {
+    public:
+        typedef ArrayDimension this_type;
+        
+        ArrayDimension() : 
+            m_size(-1), 
+            m_lowerBound(-1)
+        { }
+        
+        ArrayDimension(UINT size, UINT lowerBound) : 
+            m_size(size), 
+            m_lowerBound(lowerBound)
+        { }
+        
+        UINT GetSize() const { return m_size; }
+        UINT GetLowerBound() const { return m_lowerBound; }
+        
+        bool operator ==(this_type const &other) const { return m_size == other.m_size && m_lowerBound == other.m_lowerBound; }
+        bool operator !=(this_type const &other) const { return !(*this == other); }
+
+    private:
+        UINT m_size;
+        UINT m_lowerBound;
+    };
         
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 

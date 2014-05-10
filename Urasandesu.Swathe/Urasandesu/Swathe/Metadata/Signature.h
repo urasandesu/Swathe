@@ -60,8 +60,8 @@
 #include <Urasandesu/Swathe/Metadata/ILocalFwd.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_ICUSTOMATTRIBUTE_H
-#include <Urasandesu/Swathe/Metadata/ICustomAttribute.h>
+#ifndef URASANDESU_SWATHE_METADATA_ICUSTOMATTRIBUTEFWD_H
+#include <Urasandesu/Swathe/Metadata/ICustomAttributeFwd.h>
 #endif
 
 #ifndef URASANDESU_SWATHE_METADATA_TYPEKINDS_H
@@ -98,6 +98,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             void Encode(ICustomAttribute const *pCa);
 
             void Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<IType const *> &genericArgs) const;
+            void Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<ArrayDimension> &arrDims) const;
             void Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType) const;
             void Decode(IType const *pType, TypeKinds &kind, ULONG &genericParamPos) const;
             void Decode(IMethod const *pMethod, CallingConventions &callingConvention, vector<IType const *> &genericArgs, IType const *&pRetType, vector<IParameter const *> &params) const;

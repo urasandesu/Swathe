@@ -32,6 +32,10 @@
 #ifndef URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACKIMPL_H
 #define URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACKIMPL_H
 
+#ifndef URASANDESU_SWATHE_PROFILING_PROFILINGSPECIALVALUES_H
+#include <Urasandesu/Swathe/Profiling/ProfilingSpecialValues.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Profiling {
 
     template<
@@ -390,7 +394,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling {
             
             if (!m_pComExtProfFactory)
             {
-                auto strExtProf = Environment::GetEnvironmentVariable(L"URASANDESU_SWATHE_EXTERNAL_PROFILER");
+                auto strExtProf = Environment::GetEnvironmentVariable(ProfilingSpecialValues::EXTERNAL_PROFILER_KEY);
                 if (strExtProf.empty())
                 {
                     m_pComExtProfFactory = ATL::CComPtr<IClassFactory>(&GetEmptyCOMExternalProfilerClassFactory());

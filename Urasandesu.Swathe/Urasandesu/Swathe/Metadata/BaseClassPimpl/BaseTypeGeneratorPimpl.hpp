@@ -340,6 +340,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    vector<ArrayDimension> const &BaseTypeGeneratorPimpl<ApiHolder>::GetDimensions() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     Signature const &BaseTypeGeneratorPimpl<ApiHolder>::GetSignature() const
     {
         if (m_sig.GetBlob().empty())

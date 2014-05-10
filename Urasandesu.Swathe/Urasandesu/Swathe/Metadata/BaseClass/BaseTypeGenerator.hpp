@@ -145,6 +145,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    vector<ArrayDimension> const &BaseTypeGenerator<ApiHolder>::GetDimensions() const
+    {
+        return Pimpl()->GetDimensions();
+    }
+
+    template<class ApiHolder>    
     Signature const &BaseTypeGenerator<ApiHolder>::GetSignature() const
     {
         return Pimpl()->GetSignature();

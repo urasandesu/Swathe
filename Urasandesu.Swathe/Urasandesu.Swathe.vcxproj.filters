@@ -353,6 +353,9 @@
     <Filter Include="Source Files\Urasandesu\CppAnonym\Utilities">
       <UniqueIdentifier>{3f277689-51e5-4ad4-876e-da8d52a96ff9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Urasandesu\Swathe\Profiling">
+      <UniqueIdentifier>{332b9db5-aa8c-4cf6-b966-de21fadffba4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -879,6 +882,9 @@
     </ClCompile>
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Utilities\CComClassFactorySlim.cpp">
       <Filter>Source Files\Urasandesu\CppAnonym\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Urasandesu\Swathe\Profiling\ProfilingSpecialValues.cpp">
+      <Filter>Source Files\Urasandesu\Swathe\Profiling</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -5327,6 +5333,9 @@
     </ClInclude>
     <ClInclude Include="Urasandesu\Swathe\Hosting\IPortableExecutableReaderFwd.h">
       <Filter>Header Files\Urasandesu\Swathe\Hosting</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Profiling\ProfilingSpecialValues.h">
+      <Filter>Header Files\Urasandesu\Swathe\Profiling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1029,6 +1029,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 ILocal const *&m_pLocal;
             };
 
+            struct ArrayShape
+            {
+                explicit ArrayShape(vector<ArrayDimension> &arrDims) : 
+                    m_arrDims(arrDims)
+                { }
+            
+                vector<ArrayDimension> &m_arrDims;
+            };
+
 
 
             template<class T>
@@ -1389,6 +1398,46 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     }
                 }
             };
+            
+            
+            
+            template<>
+            struct TakeImplForAnother<ArrayShape>
+            {
+                static void Take(SignatureProvider const &provider, vector<COR_SIGNATURE> const &blob, SIZE_T &index, ArrayShape &v)
+                {
+                    auto rank = 0ul;
+                    index += ::CorSigUncompressData(&blob[index], &rank);
+                    
+                    auto numSizes = 0ul;
+                    index += ::CorSigUncompressData(&blob[index], &numSizes);
+                    
+                    auto sizes = vector<UINT>();
+                    sizes.resize(numSizes);
+                    for (auto i = 0ul; i < sizes.size(); i++)
+                    {
+                        auto size = 0ul;
+                        index += ::CorSigUncompressData(&blob[index], &size);
+                        sizes[i] = size;
+                    }
+                    
+                    auto numLoBounds = 0ul;
+                    index += ::CorSigUncompressData(&blob[index], &numLoBounds);
+                    
+                    auto loBounds = vector<UINT>();
+                    loBounds.resize(numLoBounds);
+                    for (auto i = 0ul; i < loBounds.size(); i++)
+                    {
+                        auto loBound = 0ul;
+                        index += ::CorSigUncompressData(&blob[index], &loBound);
+                        loBounds[i] = loBound;
+                    }
+                    
+                    v.m_arrDims.resize(rank);
+                    for (auto i = 0ul; i < v.m_arrDims.size(); i++)
+                        v.m_arrDims[i] = ArrayDimension(i < sizes.size() ? sizes[i] : -1, i < loBounds.size() ? loBounds[i] : -1);
+                }
+            };
 
 
 
@@ -1592,6 +1641,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     case TypeKinds::TK_R4:
                     case TypeKinds::TK_R8:
                     case TypeKinds::TK_STRING:
+                    case TypeKinds::TK_TYPEDBYREF:
                     case TypeKinds::TK_I:
                     case TypeKinds::TK_OBJECT:
                         sb <<
@@ -1786,6 +1836,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     pDeclaringType >> 
                     CompressCount(genericArgs) >> 
                     genericArgs
+                ;
+            }
+
+
+
+            void Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<ArrayDimension> &arrDims) const
+            {
+                using namespace TakerDetail;
+
+                _ASSERTE(pType);
+                _ASSERTE(!m_blob.empty());
+
+                (m_blob, pType) >> 
+                    kind >> 
+                    pDeclaringType >> 
+                    ArrayShape(arrDims)
                 ;
             }
 
@@ -2011,6 +2077,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         void SignatureImpl::Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<IType const *> &genericArgs) const
         {
             Pimpl()->Decode(pType, kind, pDeclaringType, genericArgs);
+        }
+
+        void SignatureImpl::Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType, vector<ArrayDimension> &arrDims) const
+        {
+            Pimpl()->Decode(pType, kind, pDeclaringType, arrDims);
         }
 
         void SignatureImpl::Decode(IType const *pType, TypeKinds &kind, IType const *&pDeclaringType) const

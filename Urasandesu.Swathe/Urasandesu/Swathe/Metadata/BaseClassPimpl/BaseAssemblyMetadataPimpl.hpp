@@ -325,7 +325,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetType(mdToken mdt) const
     {
-        return m_pClass->GetType(mdt, TypeKinds::TK_UNREACHED, static_cast<ULONG>(-1), false, MetadataSpecialValues::EMPTY_TYPES, TypeProvider());
+        return m_pClass->GetType(mdt, TypeKinds::TK_UNREACHED, false, MetadataSpecialValues::EMPTY_DIMENSIONS, static_cast<ULONG>(-1), false, MetadataSpecialValues::EMPTY_TYPES, TypeProvider());
     }
 
 
@@ -341,7 +341,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetGenericTypeParameter(ULONG genericParamPos) const
     {
-        return m_pClass->GetType(mdTokenNil, TypeKinds::TK_VAR, genericParamPos, true, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
+        return m_pClass->GetType(mdTokenNil, TypeKinds::TK_VAR, true, MetadataSpecialValues::EMPTY_DIMENSIONS, genericParamPos, true, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
     }
 
 
@@ -349,7 +349,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyMetadataPimpl<ApiHolder>::GetGenericMethodParameter(ULONG genericParamPos) const
     {
-        return m_pClass->GetType(mdTokenNil, TypeKinds::TK_MVAR, genericParamPos, true, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
+        return m_pClass->GetType(mdTokenNil, TypeKinds::TK_MVAR, true, MetadataSpecialValues::EMPTY_DIMENSIONS, genericParamPos, true, MetadataSpecialValues::EMPTY_TYPES, GetMainModule());
     }
 
 
@@ -681,9 +681,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseAssemblyMetadataPimpl<ApiHolder>::type_metadata_label_type const *BaseAssemblyMetadataPimpl<ApiHolder>::GetType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
+    typename BaseAssemblyMetadataPimpl<ApiHolder>::type_metadata_label_type const *BaseAssemblyMetadataPimpl<ApiHolder>::GetType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
     {
-        auto pNewType = NewType(mdt, kind, genericParamPos, genericArgsSpecified, genericArgs, member);
+        auto pNewType = NewType(mdt, kind, arrDimsSpecified, arrDims, genericParamPos, genericArgsSpecified, genericArgs, member);
 
         auto *pExistingType = static_cast<type_metadata_label_type *>(nullptr);
         if (!TryGetType(*pNewType, pExistingType))
@@ -711,12 +711,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    TempPtr<typename BaseAssemblyMetadataPimpl<ApiHolder>::type_metadata_label_type> BaseAssemblyMetadataPimpl<ApiHolder>::NewType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
+    TempPtr<typename BaseAssemblyMetadataPimpl<ApiHolder>::type_metadata_label_type> BaseAssemblyMetadataPimpl<ApiHolder>::NewType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const
     {
         auto pType = m_pMetaInfo->NewTypeCore(m_pClass);
         _ASSERTE(!IsNilToken(mdt) || genericArgsSpecified || kind == TypeKinds::TK_GENERICINST || TypeKinds::TK_BYREF);
         pType->SetToken(mdt);
         pType->SetKind(kind);
+        if (arrDimsSpecified)
+            pType->SetDimensions(arrDims);
         pType->SetGenericParameterPosition(genericParamPos);
         if (genericArgsSpecified)
             pType->SetGenericArguments(genericArgs);
@@ -1881,9 +1883,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         if (procArchs.empty())
         {
-            amd.ulProcessor = 2ul;
-            amd.rProcessor = reinterpret_cast<DWORD *>(ResizeIfAvailable(amd.ulProcessor, procArchs));
-
             auto mdtTarget = _this->GetToken();
             if (TypeFromToken(mdtTarget) == mdtAssembly)
             {
@@ -1892,10 +1891,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto dwMachine = 0ul;
                 pPEReader->GetPEKind(dwPEKind, dwMachine);
                 
+                // Revert, because set temporary value when resolving the assembly path.
+                procArchs.clear();
+
+                amd.ulProcessor = 2ul;
+                amd.rProcessor = reinterpret_cast<DWORD *>(ResizeIfAvailable(amd.ulProcessor, procArchs));
                 FillPlatform(dwPEKind, dwMachine, amd, procArchs, asmFlags);
             }
             else if (TypeFromToken(mdtTarget) == mdtAssemblyRef)
             {
+                amd.ulProcessor = 2ul;
+                amd.rProcessor = reinterpret_cast<DWORD *>(ResizeIfAvailable(amd.ulProcessor, procArchs));
 #ifdef _M_IX86
                 procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
                 procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
@@ -1928,7 +1934,31 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         amd.ulProcessor = 2ul;
         amd.rProcessor = reinterpret_cast<DWORD *>(ResizeIfAvailable(amd.ulProcessor, procArchs));
-        if (dwPEKind & pe32Plus)
+        if (dwPEKind & pe32BitRequired)
+        {
+            if (dwMachine == IMAGE_FILE_MACHINE_I386)
+            {
+                if (dwPEKind & pe32BitRequired)
+                {
+                    procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
+                    procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+                    asmFlags |= AssemblyFlags::AF_PA_X86;
+                }
+                else if (dwPEKind & peILonly)
+                {
+                    procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+                    procArchs[1] = ProcessorArchitecture::PA_UNKNOWN;
+                    asmFlags |= AssemblyFlags::AF_PA_MSIL;
+                }
+                else
+                {
+                    procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
+                    procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+                    asmFlags |= AssemblyFlags::AF_PA_X86;
+                }
+            }
+        }
+        else
         {
             if (dwMachine != IMAGE_FILE_MACHINE_I386)
             {
@@ -1952,30 +1982,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
                     procArchs[1] = ProcessorArchitecture::PA_UNKNOWN;
                     asmFlags |= AssemblyFlags::AF_PA_MSIL;
-                }
-            }
-        }
-        else
-        {
-            if (dwMachine == IMAGE_FILE_MACHINE_I386)
-            {
-                if (dwPEKind & pe32BitRequired)
-                {
-                    procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
-                    procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
-                    asmFlags |= AssemblyFlags::AF_PA_X86;
-                }
-                else if (dwPEKind & peILonly)
-                {
-                    procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
-                    procArchs[1] = ProcessorArchitecture::PA_UNKNOWN;
-                    asmFlags |= AssemblyFlags::AF_PA_MSIL;
-                }
-                else
-                {
-                    procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
-                    procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
-                    asmFlags |= AssemblyFlags::AF_PA_X86;
                 }
             }
         }

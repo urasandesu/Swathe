@@ -62,6 +62,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_mdtResolutionScope(mdTokenNil), 
         m_mdtExt(mdTokenNil), 
         m_mdtOwner(mdTokenNil), 
+        m_arrDimsInit(false), 
         m_genericParamPos(-1), 
         m_genericArgsInit(false), 
         m_interfacesInit(false), 
@@ -233,7 +234,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     bool BaseTypeMetadataPimpl<ApiHolder>::IsArray() const
     {
-        return GetKind() == TypeKinds::TK_SZARRAY;
+        return GetKind() == TypeKinds::TK_SZARRAY || GetKind() == TypeKinds::TK_ARRAY;
     }
 
 
@@ -335,6 +336,39 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         _ASSERTE(m_genericArgsInit);
         return m_genericArgs;
+    }
+
+
+
+    template<class ApiHolder>    
+    vector<ArrayDimension> const &BaseTypeMetadataPimpl<ApiHolder>::GetDimensions() const
+    {
+        if (m_arrDimsInit)
+            return m_arrDims;
+
+        auto mdtTarget = GetToken();
+        switch (TypeFromToken(mdtTarget))
+        {
+            case mdtTypeSpec:
+                GetDeclaringType();
+                break;
+
+            case mdtTypeDef:
+            case mdtTypeRef:
+            case mdtGenericParam:
+            case mdtTypeVar:
+            case mdtTypeMVar:
+                // nop
+                m_arrDimsInit = true;
+                break;
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+        _ASSERTE(m_arrDimsInit);
+        return m_arrDims;
     }
 
 
@@ -524,7 +558,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             case mdtTypeSpec:
                 if (m_sig.GetBlob().empty())
                     FillTypeSpecSignature(&m_pAsm->GetCOMMetaDataImport(), mdtTarget, m_sig);
-                FillTypeSpecProperties(m_pClass, m_sig, m_kind, m_member, m_genericArgsInit, m_genericArgs, m_genericParamPos);
+                FillTypeSpecProperties(m_pClass, m_sig, m_kind, m_arrDimsInit, m_arrDims, m_genericParamPos, m_genericArgsInit, m_genericArgs, m_member);
                 break;
 
             default:
@@ -541,7 +575,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::GetNestedType(mdToken mdt) const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_UNREACHED, -1, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_UNREACHED, true, MetadataSpecialValues::EMPTY_DIMENSIONS, -1, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -549,7 +583,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::GetGenericParameter(mdToken mdt) const
     {
-        return m_pAsm->GetType(mdt, TypeKinds::TK_VAR, -1, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(mdt, TypeKinds::TK_VAR, true, MetadataSpecialValues::EMPTY_DIMENSIONS, -1, false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -687,20 +721,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!pOtherType)
             return m_pClass == pType->GetSourceType();
         
-        auto isThisDefinition = !IsGenericType() || IsGenericTypeDefinition();
-        auto isOtherDefinition = !pOtherType->IsGenericType() || pOtherType->IsGenericTypeDefinition();
-        if (isThisDefinition != isOtherDefinition)
+        auto isThisDef = !IsGenericType() || IsGenericTypeDefinition();
+        auto isOtherDef = !pOtherType->IsGenericType() || pOtherType->IsGenericTypeDefinition();
+        if (isThisDef != isOtherDef)
             return false;
         
-        if (isThisDefinition && isOtherDefinition)
-            return GetToken() == pOtherType->GetToken() &&
-                   GetKind() == pOtherType->GetKind() && 
-                   GetDeclaringType() == pOtherType->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-                   GetAssembly() == pOtherType->GetAssembly();
+        auto isThisArr = IsArray();
+        auto isOtherArr = pOtherType->IsArray();
+        if (isThisArr != isOtherArr)
+            return false;
         
         auto mdtTarget = GetToken();
         switch (TypeFromToken(mdtTarget))
         {
+            case mdtTypeSpec:
+                return GetToken() == pOtherType->GetToken() &&
+                       GetKind() == pOtherType->GetKind() && 
+                       GetDeclaringType() == pOtherType->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+                       GetAssembly() == pOtherType->GetAssembly();
+
             case mdtTypeDef:
             case mdtTypeRef:
             case mdtGenericParam:
@@ -709,13 +748,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 return GetToken() == pOtherType->GetToken() &&
                        GetKind() == pOtherType->GetKind() && 
                        GetDeclaringType() == pOtherType->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-                       GetAssembly() == pOtherType->GetAssembly() &&
-                       SequenceEqual(GetGenericArguments(), pOtherType->GetGenericArguments());
+                       GetAssembly() == pOtherType->GetAssembly() && 
+                       (isThisDef && isOtherDef ? true : SequenceEqual(GetGenericArguments(), pOtherType->GetGenericArguments())) && 
+                       (!isThisArr && !isOtherArr ? true : SequenceEqual(GetDimensions(), pOtherType->GetDimensions()));
                 
-            case mdtTypeSpec:
-                return GetToken() == pOtherType->GetToken() &&
-                       GetAssembly() == pOtherType->GetAssembly();
-
             default:
                 auto oss = std::wostringstream();
                 oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
@@ -731,17 +767,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using Urasandesu::CppAnonym::Collections::SequenceHashValue;
         using Urasandesu::CppAnonym::Utilities::HashValue;
             
-        auto isDefinition = !IsGenericType() || IsGenericTypeDefinition();
+        auto defHash = !IsGenericType() || IsGenericTypeDefinition() ? 0 : SequenceHashValue(GetGenericArguments());
+        auto arrHash = !IsArray() ? 0 : SequenceHashValue(GetDimensions());
         auto mdtTarget = GetToken();
         auto kindHash = 0;
         switch (TypeFromToken(mdtTarget))
         {
-            case mdtTypeRef:
             case mdtTypeSpec:
                 kindHash = 0;
                 break;
             
             case mdtTypeDef:
+            case mdtTypeRef:
             case mdtGenericParam:
             case mdtTypeVar:
             case mdtTypeMVar:
@@ -755,9 +792,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         auto asmHash = HashValue(GetAssembly());
         
-        return isDefinition ? 
-                    (mdtTarget ^ kindHash ^ asmHash) : 
-                    (mdtTarget ^ kindHash ^ asmHash ^ SequenceHashValue(GetGenericArguments()));
+        return mdtTarget ^ kindHash ^ asmHash ^ defHash ^ arrHash;
     }
 
 
@@ -829,7 +864,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeArrayType() const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_SZARRAY, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_SZARRAY, true, MetadataSpecialValues::SZ_DIMENSIONS, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -837,7 +872,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeGenericType(vector<IType const *> const &genericArgs) const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_GENERICINST, -1, true, genericArgs, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_GENERICINST, true, MetadataSpecialValues::EMPTY_DIMENSIONS, -1, true, genericArgs, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -845,7 +880,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakePointerType() const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PTR, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PTR, true, MetadataSpecialValues::EMPTY_DIMENSIONS, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -853,7 +888,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeByRefType() const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_BYREF, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_BYREF, true, MetadataSpecialValues::EMPTY_DIMENSIONS, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -861,7 +896,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakePinnedType() const
     {
-        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PINNED, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_PINNED, true, MetadataSpecialValues::EMPTY_DIMENSIONS, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -1276,6 +1311,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseTypeMetadataPimpl<ApiHolder>::SetDimensions(vector<ArrayDimension> const &arrDims)
+    {
+        _ASSERTE(!m_arrDimsInit);
+        m_arrDimsInit = true;
+        m_arrDims = arrDims;        
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseTypeMetadataPimpl<ApiHolder>::SetGenericArguments(vector<IType const *> const &genericArgs)
     {
         _ASSERTE(!m_genericArgsInit);
@@ -1623,7 +1668,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseTypeMetadataPimpl<ApiHolder>::FillTypeSpecProperties(IType const *pType, Signature const &sig, TypeKinds &kind, TypeProvider &member, bool &genericArgsInit, vector<IType const *> &genericArgs, ULONG &genericParamPos)
+    void BaseTypeMetadataPimpl<ApiHolder>::FillTypeSpecProperties(IType const *pType, Signature const &sig, TypeKinds &kind, bool &arrDimsInit, vector<ArrayDimension> &arrDims, ULONG &genericParamPos, bool &genericArgsInit, vector<IType const *> &genericArgs, TypeProvider &member)
     {
         using Urasandesu::CppAnonym::CppAnonymCOMException;
         
@@ -1639,7 +1684,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     auto const *pDeclaringType = static_cast<IType *>(nullptr);
                     sig.Decode(pType, kind, pDeclaringType);
                     member = pDeclaringType;
-                    genericArgsInit = true;
+                }
+                break;
+            
+            case TypeKinds::TK_ARRAY:
+                {
+                    auto const *pDeclaringType = static_cast<IType *>(nullptr);
+                    sig.Decode(pType, kind, pDeclaringType, arrDims);
+                    member = pDeclaringType;
                 }
                 break;
             
@@ -1648,7 +1700,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     auto const *pDeclaringType = static_cast<IType *>(nullptr);
                     sig.Decode(pType, kind, pDeclaringType, genericArgs);
                     member = pDeclaringType;
-                    genericArgsInit = true;
                 }
                 break;
 
@@ -1658,7 +1709,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     auto const *pAsm = pType->GetAssembly();
                     sig.Decode(pType, kind, genericParamPos);
                     member = pAsm->GetMainModule();
-                    genericArgsInit = true;
                 }
                 break;
 
@@ -1670,6 +1720,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
                 break;
         }
+        
+        arrDimsInit = true;
+        genericArgsInit = true;
     }
 
 

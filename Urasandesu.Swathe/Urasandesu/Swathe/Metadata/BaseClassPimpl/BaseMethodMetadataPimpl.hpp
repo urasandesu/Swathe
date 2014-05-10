@@ -346,7 +346,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     m_genericArgs.reserve(m_genericArgs.size() + count);
                     for (auto i = 0u; i < count; ++i)
                     {
-                        auto pGenericArg = m_pAsm->GetType(mdgps[i], TypeKinds::TK_MVAR, static_cast<ULONG>(m_genericArgs.size()), false, MetadataSpecialValues::EMPTY_TYPES, static_cast<IMethod const *>(m_pClass));
+                        auto pGenericArg = m_pAsm->GetType(mdgps[i], TypeKinds::TK_MVAR, true, MetadataSpecialValues::EMPTY_DIMENSIONS, static_cast<ULONG>(m_genericArgs.size()), true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IMethod const *>(m_pClass));
                         m_genericArgs.push_back(pGenericArg);
                     }
                 } while (0 < count);
@@ -757,8 +757,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto const *pAsm = pMethod->GetAssembly();
             auto const *pRefType = pAsm->GetType(mdtOwner);
-            auto const *pRefSrcType = pRefType->GetSourceType();
-            pSrcMethod = pRefSrcType->GetMethod(name, callingConvention, pRetType, params);
+            if (MetadataSpecialValues::IsArraysSpecialMethod(pMethod, pRefType))
+            {
+                pSrcMethod = MetadataSpecialValues::MakeEmptyMethod();
+            }
+            else
+            {
+                auto const *pRefSrcType = pRefType->GetSourceType();
+                pSrcMethod = pRefSrcType->GetMethod(name, callingConvention, pRetType, params);
+            }
             _ASSERTE(pSrcMethod);
         }
         else

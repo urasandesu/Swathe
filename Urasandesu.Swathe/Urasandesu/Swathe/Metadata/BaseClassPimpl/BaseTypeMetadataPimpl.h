@@ -135,6 +135,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool IsNested() const;
         ULONG GetGenericParameterPosition() const;
         vector<IType const *> const &GetGenericArguments() const;
+        vector<ArrayDimension> const &GetDimensions() const;
         Signature const &GetSignature() const;
         TypeAttributes GetAttribute() const;
         IType const *GetBaseType() const;
@@ -178,23 +179,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetToken(mdToken mdt);
         void SetFullName(wstring const &fullName);
         void SetMember(TypeProvider const &member);
+        void SetDimensions(vector<ArrayDimension> const &arrDims);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
         void SetGenericParameterPosition(ULONG genericParamPos);
         void SetKind(TypeKinds const &kind);
         static void FillTypeDefToken(IMetaDataImport2 *pComMetaImp, wstring const &fullName, mdToken &mdt);
-        //static void FillTypeDefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, TypeAttributes &attr, mdToken &mdtExt);
         static void FillTypeDefBaseType(IType const *pType, mdToken mdtExt, bool &baseTypeInit, IType const *&pBaseType);
         static void FillTypeDefGenericParams(IMetaDataImport2 *pComMetaImp, IType const *pType, mdToken mdtTarget, bool &genericArgsInit, vector<IType const *> &genericArgs);
         static void FillTypeDefCustomAttributes(IMetaDataImport2 *pComMetaImp, IType const *pType, mdToken mdtTarget, bool &casInit, vector<ICustomAttribute const *> &cas);
         static void FillTypeDefMethods(IMetaDataImport2 *pComMetaImp, IType const *pType, mdToken mdtTarget, bool &methodsInit, vector<IMethod const *> &methods);
         static void FillTypeDefProperties(IMetaDataImport2 *pComMetaImp, IType const *pType, mdToken mdtTarget, bool &propsInit, vector<IProperty const *> &props);
         static void FillNestedTypeOwner(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, mdToken &mdtOwner);
-        //static void FillTypeRefProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, wstring &fullName, mdToken &mdtResolutionScope);
         static void FillTypeRefSourceType(IType const *pType, mdToken mdtResolutionScope, wstring const &fullName, IType const *&pSrcType);
         static void FillGenericParamProperties(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, ULONG &genericParamPos, mdToken &mdtOwner, wstring &fullName);
         static void FillTypeMember(IType const *pType, mdToken mdtOwner, TypeProvider &member);
         static void FillTypeSpecSignature(IMetaDataImport2 *pComMetaImp, mdToken mdtTarget, Signature &sig);
-        static void FillTypeSpecProperties(IType const *pType, Signature const &sig, TypeKinds &kind, TypeProvider &member, bool &genericArgsInit, vector<IType const *> &genericArgs, ULONG &genericParamPos);
+        static void FillTypeSpecProperties(IType const *pType, Signature const &sig, TypeKinds &kind, bool &arrDimsInit, vector<ArrayDimension> &arrDims, ULONG &genericParamPos, bool &genericArgsInit, vector<IType const *> &genericArgs, TypeProvider &member);
         static void FillTypeVariableToken(IMetaDataImport2 *pComMetaImp, TypeKinds const &targetKind, ULONG targetPos, mdToken &mdt);
 
         
@@ -207,6 +207,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable mdToken m_mdtExt;
         mutable mdToken m_mdtOwner;
         mutable wstring m_fullName;
+        mutable bool m_arrDimsInit;
+        mutable vector<ArrayDimension> m_arrDims;
         mutable ULONG m_genericParamPos;
         mutable bool m_genericArgsInit;
         mutable vector<IType const *> m_genericArgs;

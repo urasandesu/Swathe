@@ -164,7 +164,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void RegisterModule(TempPtr<module_metadata_label_type> &pMod);
         
         type_metadata_label_type const *GetType(wstring const &fullName, TypeProvider const &member) const;
-        type_metadata_label_type const *GetType(mdToken mdt, TypeKinds const &kind, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
+        type_metadata_label_type const *GetType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, TypeProvider const &member) const;
         void RegisterType(TempPtr<type_metadata_label_type> &pType);
         
         method_metadata_label_type const *GetMethod(wstring const &name, CallingConventions const &callingConvention, IType const *pRetType, bool paramsSpecified, vector<IParameter const *> const &params, MethodProvider const &member) const;
