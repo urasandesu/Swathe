@@ -536,7 +536,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             &opCode != &OpCodes::Constrained &&
             &opCode != &OpCodes::Mkrefany &&
             &opCode != &OpCodes::Sizeof &&
-            &opCode != &OpCodes::Unbox_Any)
+            &opCode != &OpCodes::Unbox_Any &&
+            &opCode != &OpCodes::Ldelem &&
+            &opCode != &OpCodes::Stelem)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IType const *)\".";

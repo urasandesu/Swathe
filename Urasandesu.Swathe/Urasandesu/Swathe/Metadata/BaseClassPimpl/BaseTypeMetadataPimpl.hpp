@@ -939,7 +939,32 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         bool operator ()(IType const *x, IType const *y) const
         {
-            return MetadataSpecialValues::IsPrimitiveKind(x->GetKind()) ? x->GetKind() == y->GetKind() : x->GetSourceType() == y->GetSourceType();
+            using boost::adaptors::transformed;
+            using Urasandesu::CppAnonym::Collections::SequenceEqual;
+            
+            if (MetadataSpecialValues::IsPrimitiveKind(x->GetKind()))
+                return x->GetKind() == y->GetKind();
+
+            auto typeEqualTo = MethodSigTypeEqualTo();
+            
+            auto isXGenInst = x->IsGenericType() && !x->IsGenericTypeDefinition();
+            auto isYGenInst = y->IsGenericType() && !y->IsGenericTypeDefinition();
+            if (isXGenInst != isYGenInst)
+                return false;
+
+            if (isXGenInst)
+                return typeEqualTo(x->GetDeclaringType(), y->GetDeclaringType()) && 
+                       SequenceEqual(x->GetGenericArguments(), y->GetGenericArguments(), typeEqualTo);
+
+            auto isXArr = x->IsArray();
+            auto isYArr = y->IsArray();
+            if (isXArr != isYArr)
+                return false;
+            
+            if (isXArr)
+                return typeEqualTo(x->GetDeclaringType(), y->GetDeclaringType());
+
+            return x->GetSourceType() == y->GetSourceType();
         }
     };
 
@@ -964,16 +989,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             if (!m_name.empty())
                 isTarget &= pMethod->GetName() == m_name;
             
-            if (m_callingConvention != CallingConventions::CC_UNREACHED)
+            if (isTarget && m_callingConvention != CallingConventions::CC_UNREACHED)
                 isTarget &= pMethod->GetCallingConvention() == m_callingConvention;
             
-            if (m_pRetType)
+            if (isTarget && m_pRetType)
                 isTarget &= typeEqualTo(pMethod->GetReturnType(), m_pRetType);
             
-            if (m_paramsInit)
+            if (isTarget && m_paramsInit)
                 isTarget &= SequenceEqual(pMethod->GetParameters() | transformed(toType), m_params | transformed(toType), typeEqualTo);
             
-            if (m_paramTypesInit)
+            if (isTarget && m_paramTypesInit)
                 isTarget &= SequenceEqual(pMethod->GetParameters() | transformed(toType), m_paramTypes, typeEqualTo);
             
             return isTarget;

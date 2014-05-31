@@ -599,4 +599,42 @@ namespace {
             ASSERT_EQ(&OpCodes::Ret, &insts[4]->GetOpCode());
         }
     }
+
+
+    
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, SampleForGetMethod_01)
+    {
+        using namespace Urasandesu::Swathe::Hosting;
+        using namespace Urasandesu::Swathe::Metadata;
+        using namespace std;
+
+        auto const *pHost = HostInfo::CreateHost();
+        auto const *pRuntime = pHost->GetRuntime(L"v4.0.30319");
+        auto const *pMetaInfo = pRuntime->GetInfo<MetadataInfo>();
+        auto *pMetaDisp = pMetaInfo->CreateDispenser();
+
+        auto const *pMSCorLib = pMetaDisp->GetAssembly(L"mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+        auto const *pMSCorLibDll = pMSCorLib->GetModule(L"CommonLanguageRuntimeLibrary");
+        auto const *pIEnumerable1 = pMSCorLibDll->GetType(L"System.Collections.Generic.IEnumerable`1");
+        auto const *pInt32 = pMSCorLibDll->GetType(L"System.Int32");
+        auto const *pIEnumerable1Int32 = static_cast<IType *>(nullptr);
+        {
+            auto genericArgs = vector<IType const *>();
+            genericArgs.push_back(pInt32);
+            pIEnumerable1Int32 = pIEnumerable1->MakeGenericType(genericArgs);
+        }
+
+        auto const *pSystemCore = pMetaDisp->GetAssembly(L"System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+        auto const *pSystemCoreDll = pSystemCore->GetModule(L"System.Core.dll");
+        auto const *pEnumerable = pSystemCoreDll->GetType(L"System.Linq.Enumerable");
+        auto const *pEnumerable_Average_IEnumerable1Int32 = static_cast<IMethod *>(nullptr);
+        {
+            auto params = vector<IType const *>();
+            params.push_back(pIEnumerable1Int32);
+            pEnumerable_Average_IEnumerable1Int32 = pEnumerable->GetMethod(L"Average", params);
+        }
+
+        ASSERT_TRUE(pEnumerable_Average_IEnumerable1Int32 != nullptr);
+        ASSERT_EQ(0x0600049B, pEnumerable_Average_IEnumerable1Int32->GetToken());
+    }
 }
