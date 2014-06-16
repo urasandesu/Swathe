@@ -31,10 +31,6 @@
 
 #include "stdafx.h"
 
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYEQUALTO_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyEqualTo.h>
-#endif
-
 namespace Urasandesu { namespace Swathe { namespace Metadata {
 
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

@@ -249,6 +249,7 @@
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Utilities\CComClassFactorySlim.cpp" />
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Utilities\SemiAutoPtr.cpp" />
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Utilities\TypeInfo.cpp" />
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Version.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
@@ -287,8 +288,6 @@
     <ClCompile Include="Urasandesu\Swathe\BaseSwatheStorage.cpp" />
     <ClCompile Include="Urasandesu\Swathe\Metadata\ControlFlow.cpp" />
     <ClCompile Include="Urasandesu\Swathe\Metadata\ExceptionClause.cpp" />
-    <ClCompile Include="Urasandesu\Swathe\Metadata\IAssemblyEqualTo.cpp" />
-    <ClCompile Include="Urasandesu\Swathe\Metadata\IAssemblyHash.cpp" />
     <ClCompile Include="Urasandesu\Swathe\Metadata\ICustomAttributeEqualTo.cpp" />
     <ClCompile Include="Urasandesu\Swathe\Metadata\ICustomAttributeHash.cpp" />
     <ClCompile Include="Urasandesu\Swathe\Metadata\IFieldEqualTo.cpp" />
@@ -477,11 +476,7 @@
     <ClInclude Include="Urasandesu\Swathe\Metadata\ExceptionClauseFwd.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\FieldAttributes.hpp" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\IAssembly.h" />
-    <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyEqualTo.h" />
-    <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyEqualToFwd.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyFwd.h" />
-    <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyHash.h" />
-    <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyHashFwd.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\ICustomAttribute.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\ICustomAttributeEqualTo.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\ICustomAttributeEqualToFwd.h" />

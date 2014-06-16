@@ -85,7 +85,13 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     }
 
     template<class ApiHolder>
-    typename BaseHostInfo<ApiHolder>::runtime_host_label_type const *BaseHostInfo<ApiHolder>::GetRuntime(std::wstring const &version) const
+    unordered_map<wstring, typename BaseHostInfo<ApiHolder>::runtime_host_label_type const *> const &BaseHostInfo<ApiHolder>::GetRuntimes() const
+    {
+        return Pimpl()->GetRuntimes();
+    }
+
+    template<class ApiHolder>
+    typename BaseHostInfo<ApiHolder>::runtime_host_label_type const *BaseHostInfo<ApiHolder>::GetRuntime(wstring const &version) const
     {
         return Pimpl()->GetRuntime(version);
     }

@@ -53,6 +53,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 PA_IA32_ON_WIN64 = PROCESSOR_ARCHITECTURE_IA32_ON_WIN64, 
                 PA_UNKNOWN = PROCESSOR_ARCHITECTURE_UNKNOWN
             };
+
+            friend std::wostream &operator <<(std::wostream &os, Urasandesu::CppAnonym::SafeEnum<ProcessorArchitectureDetail::ProcessorArchitectureDef> v)
+            {
+                return os << v.Value();
+            }
+
+            friend std::wostream &operator <<(std::wostream &os, type v)
+            {
+                switch (v)
+                {
+                    case PA_INTEL: os << L"x86"; break;
+                    case PA_ARM:   os << L"ARM"; break;
+                    case PA_IA64:  os << L"IA64"; break;
+                    case PA_MSIL:  os << L"MSIL"; break;
+                    case PA_AMD64: os << L"AMD64"; break;
+                    default:       os << L"Unknown"; break;
+                }
+                return os;
+            }
         };
 
     }   // ProcessorArchitectureDetail

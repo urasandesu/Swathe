@@ -54,6 +54,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_casInit(false), 
         m_orderedTypesInit(false), 
         m_asmFlags(AssemblyFlags::AF_UNREACHED),
+        m_cultureNameInit(false), 
         m_refAsmsInit(false), 
         m_openFlags(ofRead), 
         m_pOpeningAsm(nullptr), 
@@ -151,28 +152,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (m_fullName.empty())
         {
-            auto const &name = m_pClass->GetName();
-            auto const &amd = m_pClass->GetAssemblyMetadata();
-            auto const pSnKey = m_pClass->GetStrongNameKey();
-
             auto oss = wostringstream();
-            oss << name;
-            oss << L", Version=" << amd.usMajorVersion << L"." << amd.usMinorVersion << L"." << amd.usBuildNumber << L"." << amd.usRevisionNumber;
-            oss << L", Culture=";
-            if (!amd.cbLocale)
-                oss << L"neutral";
-            else
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            oss << L", PublicKeyToken=";
-            if (!pSnKey)
-            {
-                oss << L"null";
-            }
-            else
-            {
-                auto const &pubKeyToken = pSnKey->GetPublicKeyToken();
-                oss << SequenceToString(pubKeyToken.begin(), pubKeyToken.end());
-            }
+            oss << GetName();
+            oss << L", Version=" << GetVersion();
+            oss << L", Culture=" << (GetCultureName().empty() ? L"neutral" : GetCultureName());
+            oss << L", PublicKeyToken=" << (!GetStrongNameKey() ? wstring(L"null") : SequenceToString(GetStrongNameKey()->GetPublicKeyToken()));
             m_fullName = oss.str();
         }
         return m_fullName;
@@ -250,6 +234,47 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     
+    template<class ApiHolder>    
+    Version const &BaseAssemblyMetadataPimpl<ApiHolder>::GetVersion() const
+    {
+        if (m_ver == Version())
+        {
+            auto const &amd = m_pClass->GetAssemblyMetadata();
+            m_ver = Version(amd.usMajorVersion, amd.usMinorVersion, amd.usBuildNumber, amd.usRevisionNumber);
+        }
+        return m_ver;
+    }
+
+
+
+    template<class ApiHolder>    
+    wstring const &BaseAssemblyMetadataPimpl<ApiHolder>::GetCultureName() const
+    {
+        if (!m_cultureNameInit)
+        {
+            auto const &amd = m_pClass->GetAssemblyMetadata();
+            if (!amd.cbLocale)
+                m_cultureName = wstring();
+            else
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            m_cultureNameInit = true;
+        }
+        return m_cultureName;
+    }
+
+
+
+    template<class ApiHolder>    
+    wstring const &BaseAssemblyMetadataPimpl<ApiHolder>::GetImageRuntimeVersion() const
+    {
+        if (m_runtimeVer.empty())
+            FillRuntimeVersionByCOMMetaDataImport(&GetCOMMetaDataImport(), m_runtimeVer);
+        _ASSERTE(!m_runtimeVer.empty());
+        return m_runtimeVer;
+    }
+
+
+
     template<class ApiHolder>    
     AssemblyFlags BaseAssemblyMetadataPimpl<ApiHolder>::GetFlags() const
     {
@@ -519,6 +544,44 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
 
         return m_orderedTypes;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::Equals(IAssembly const *pAsm) const
+    {
+        using Urasandesu::CppAnonym::Collections::SequenceEqual;
+
+        if (m_pClass == pAsm)
+            return true;
+
+        if (!pAsm)
+            return false;
+
+        auto const *pOtherAsm = dynamic_cast<class_type const *>(pAsm);
+        if (!pOtherAsm)
+            return m_pClass == pAsm->GetSourceAssembly();
+
+        return GetToken() == pOtherAsm->GetToken() && 
+               GetFullName() == pOtherAsm->GetFullName() && 
+               !GetTargetAssembly() ? !pOtherAsm->GetTargetAssembly() : GetTargetAssembly()->Equals(pOtherAsm->GetTargetAssembly()) && 
+               SequenceEqual(GetProcessorArchitectures(), pOtherAsm->GetProcessorArchitectures());
+    }
+
+
+
+    template<class ApiHolder>    
+    size_t BaseAssemblyMetadataPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Collections::SequenceHashValue;
+
+        auto mdtTarget = GetToken();
+        auto fullNameHash = boost::hash_value(GetFullName());
+        auto targetAsmHash = !GetTargetAssembly() ? 0 : GetTargetAssembly()->GetHashCode();
+        auto procArchsHash = SequenceHashValue(GetProcessorArchitectures());
+        
+        return mdtTarget ^ fullNameHash ^ targetAsmHash ^ procArchsHash;
     }
 
 
@@ -1985,6 +2048,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 }
             }
         }
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyMetadataPimpl<ApiHolder>::FillRuntimeVersionByCOMMetaDataImport(IMetaDataImport2 *pComMetaImp, wstring &runtimeVer)
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(pComMetaImp);
+        
+        auto wzname = array<WCHAR, MAX_SYM_NAME>();
+        auto wznameLength = 0ul;
+        auto hr = pComMetaImp->GetVersionString(wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        runtimeVer = wzname.data();
     }
 
 

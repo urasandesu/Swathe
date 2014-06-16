@@ -602,6 +602,95 @@ namespace {
 
 
     
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, GetRuntimesTest_01)
+    {
+        using namespace Urasandesu::CppAnonym::Traits;
+        using namespace Urasandesu::Swathe::Hosting;
+        using boost::remove_reference;
+        using std::map;
+        using std::wstring;
+
+        auto const *pHost = HostInfo::CreateHost();
+        auto const &runtimes = pHost->GetRuntimes();
+        ASSERT_EQ(2, runtimes.size());
+
+        ASSERT_TRUE(runtimes.find(L"v2.0.50727") != runtimes.end());
+        ASSERT_TRUE(runtimes.find(L"v3.5")       == runtimes.end());
+        ASSERT_TRUE(runtimes.find(L"v4.0.30319") != runtimes.end());
+
+        
+        typedef remove_reference<RemoveConst<decltype(runtimes)>::type>::type Runtimes;
+        typedef Runtimes::key_type Key;
+        typedef Runtimes::mapped_type Mapped;
+        auto orderedRuntimes = map<Key, Mapped>(runtimes.begin(), runtimes.end());
+        ASSERT_TRUE(wstring(L"v4.0.30319") == (*orderedRuntimes.rbegin()).first);
+    }
+
+
+    
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, GetImageRuntimeVersionTest_01)
+    {
+        using namespace Urasandesu::CppAnonym;
+        using namespace Urasandesu::Swathe::Hosting;
+        using namespace Urasandesu::Swathe::Fusion;
+        using namespace Urasandesu::Swathe::Metadata;
+        using boost::distance;
+        using std::wstring;
+
+        auto const *pHost = HostInfo::CreateHost();
+        auto const *pRuntime = pHost->GetRuntime(L"v4.0.30319");
+        
+        auto const *pFuInfo = pRuntime->GetInfo<FusionInfo>();
+        auto pCondition = pFuInfo->NewAssemblyName(L"mscorlib", NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
+        auto pAsmNames = pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
+        ASSERT_EQ(4, distance(*pAsmNames));
+        
+        auto const *pMetaInfo = pRuntime->GetInfo<MetadataInfo>();
+        auto *pMetaDisp = pMetaInfo->CreateDispenser();
+        auto i = 0ul;
+        BOOST_FOREACH (auto const &pAsmName, *pAsmNames)
+        {
+            auto const *pMSCorLib = pMetaDisp->GetAssembly(pAsmName->GetFullName());
+            auto const &ver = pMSCorLib->GetVersion();
+            auto const &cultureName = pMSCorLib->GetCultureName();
+            auto const &procArchs = pMSCorLib->GetProcessorArchitectures();
+            auto const &runtimeVer = pMSCorLib->GetImageRuntimeVersion();
+            std::wcout << pMSCorLib->GetFullName() << std::endl;
+            switch (i++)
+            {
+                case 0:
+                    ASSERT_EQ(Version(2, 0, 0, 0), ver);
+                    ASSERT_EQ(wstring(), cultureName);
+                    ASSERT_TRUE(procArchs[0] == ProcessorArchitecture::PA_AMD64);
+                    ASSERT_EQ(wstring(L"v2.0.50727"), runtimeVer);
+                    break;
+                case 1:
+                    ASSERT_EQ(Version(2, 0, 0, 0), ver);
+                    ASSERT_EQ(wstring(), cultureName);
+                    ASSERT_TRUE(procArchs[0] == ProcessorArchitecture::PA_INTEL);
+                    ASSERT_EQ(wstring(L"v2.0.50727"), runtimeVer);
+                    break;
+                case 2:
+                    ASSERT_EQ(Version(4, 0, 0, 0), ver);
+                    ASSERT_EQ(wstring(), cultureName);
+                    ASSERT_TRUE(procArchs[0] == ProcessorArchitecture::PA_AMD64);
+                    ASSERT_EQ(wstring(L"v4.0.30319"), runtimeVer);
+                    break;
+                case 3:
+                    ASSERT_EQ(Version(4, 0, 0, 0), ver);
+                    ASSERT_EQ(wstring(), cultureName);
+                    ASSERT_TRUE(procArchs[0] == ProcessorArchitecture::PA_INTEL);
+                    ASSERT_EQ(wstring(L"v4.0.30319"), runtimeVer);
+                    break;
+                default:
+                    FAIL() << "We shouldn't get here!!";
+                    break;
+            }
+        }
+    }
+
+
+    
     CPPANONYM_TEST(Urasandesu_Swathe_Test3, SampleForGetMethod_01)
     {
         using namespace Urasandesu::Swathe::Hosting;

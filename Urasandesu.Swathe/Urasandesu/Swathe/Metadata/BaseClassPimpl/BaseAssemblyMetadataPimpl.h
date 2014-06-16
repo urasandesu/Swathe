@@ -192,6 +192,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using Urasandesu::CppAnonym::Utilities::Hash;
     using Urasandesu::CppAnonym::Utilities::EqualTo;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
+    using Urasandesu::CppAnonym::Version;
     using Urasandesu::Swathe::StrongNaming::IStrongNameKey;
     using Urasandesu::Swathe::Hosting::IPortableExecutableReader;
     using Urasandesu::Swathe::Fusion::Platform;
@@ -220,6 +221,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         AutoPtr<IStrongNameKey const> const &GetStrongNameKey() const;
         wstring const &GetName() const;
         ASSEMBLYMETADATA const &GetAssemblyMetadata() const;
+        Version const &GetVersion() const;
+        wstring const &GetCultureName() const;
+        wstring const &GetImageRuntimeVersion() const;
         AssemblyFlags GetFlags() const;
         IAssembly const *GetSourceAssembly() const;
         IAssembly const *GetTargetAssembly() const;
@@ -239,6 +243,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes() const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         ITypePtrRange GetTypes() const;
+        bool Equals(IAssembly const *pAsm) const;
+        size_t GetHashCode() const;
         AutoPtr<IPortableExecutableReader const> const &GetPortableExecutableReader() const;
         bool Exists() const;
         
@@ -327,6 +333,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static void FillPlatformByCOMMetaDataImport(IMetaDataImport2 *pComMetaImp, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
         static void FillPlatformByHeuristicAlgorithm(assembly_metadata_pimpl_label_type const *_this, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
         static void FillPlatform(DWORD dwPEKind, DWORD dwMachine, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
+        static void FillRuntimeVersionByCOMMetaDataImport(IMetaDataImport2 *pComMetaImp, wstring &runtimeVer);
         static void ResolveAssemblyPathByCurrentDirectory(assembly_metadata_pimpl_label_type const *_this, wstring const &name, path &asmPath);
         static void ResolveAssemblyPathByGAC(assembly_metadata_pimpl_label_type const *_this, unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > const &candidates, path &asmPath);
 
@@ -359,6 +366,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable vector<ProcessorArchitecture> m_procArchs;
         mutable AssemblyFlags m_asmFlags;
         mutable path m_asmPath;
+        mutable Version m_ver;
+        mutable bool m_cultureNameInit;
+        mutable wstring m_cultureName;
+        mutable wstring m_runtimeVer;
         mutable bool m_refAsmsInit;
         mutable vector<IAssembly const *> m_refAsms;
         mutable AutoPtr<IPortableExecutableReader const> m_pReader;
@@ -367,6 +378,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *m_pSrcAsm;
         mutable ATL::CComPtr<IMetaDataAssemblyImport> m_pComMetaAsmImp;
         mutable ATL::CComPtr<IMetaDataImport2> m_pComMetaImp;
+        INT reserved;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

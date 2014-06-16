@@ -124,6 +124,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using std::wstring;
     using Urasandesu::CppAnonym::Utilities::AutoPtr;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
+    using Urasandesu::CppAnonym::Version;
     using Urasandesu::Swathe::StrongNaming::IStrongNameKey;
     using Urasandesu::Swathe::Hosting::IPortableExecutableReader;
 
@@ -150,6 +151,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetStrongNameKey(AutoPtr<IStrongNameKey const> const &pSnKey);
         wstring const &GetName() const;
         ASSEMBLYMETADATA const &GetAssemblyMetadata() const;
+        Version const &GetVersion() const;
+        wstring const &GetCultureName() const;
+        wstring const &GetImageRuntimeVersion() const;
         AssemblyFlags GetFlags() const;
         IAssembly const *GetSourceAssembly() const;
         IAssembly const *GetTargetAssembly() const;
@@ -169,6 +173,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes() const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         ITypePtrRange GetTypes() const;
+        bool Equals(IAssembly const *pAsm) const;
+        size_t GetHashCode() const;
         AutoPtr<IPortableExecutableReader const> const &GetPortableExecutableReader() const;
         vector<IAssembly const *> const &GetReferencedAssemblies() const;
         module_generator_label_type *DefineModule(wstring const &name);

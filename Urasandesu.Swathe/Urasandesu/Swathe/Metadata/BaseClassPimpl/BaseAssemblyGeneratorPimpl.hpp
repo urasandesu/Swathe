@@ -274,6 +274,37 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    Version const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetVersion() const
+    {
+        if (!m_pSrcAsm)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        else
+        {
+            return m_pSrcAsm->GetVersion();
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    wstring const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetCultureName() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    wstring const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetImageRuntimeVersion() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     AssemblyFlags BaseAssemblyGeneratorPimpl<ApiHolder>::GetFlags() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
@@ -531,6 +562,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     template<class ApiHolder>    
     ITypePtrRange BaseAssemblyGeneratorPimpl<ApiHolder>::GetTypes() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseAssemblyGeneratorPimpl<ApiHolder>::Equals(IAssembly const *pAsm) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    size_t BaseAssemblyGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }

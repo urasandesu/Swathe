@@ -38,6 +38,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
     typedef boost::any_range<IAssembly const *, boost::forward_traversal_tag, IAssembly const *, std::ptrdiff_t> IAssemblyPtrRange;
     
+    namespace IAssemblyEqualToDetail {
+
+        struct IAssemblyEqualToImpl;
+
+    }   // namespace IAssemblyEqualToDetail {
+
+    struct IAssemblyEqualTo;
+
+    namespace IAssemblyHashDetail {
+
+        struct IAssemblyHashImpl;
+
+    }   // namespace IAssemblyHashDetail {
+
+    struct IAssemblyHash;
+
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 
 #endif  // URASANDESU_SWATHE_METADATA_IASSEMBLYFWD_H

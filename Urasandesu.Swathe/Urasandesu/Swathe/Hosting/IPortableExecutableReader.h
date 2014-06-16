@@ -45,6 +45,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting {
         virtual BYTE const *AdvanceToSectionHeader(BYTE const *i, BYTE const *i_end) const = 0;
         virtual BYTE const *GetPEHeaders(BYTE const *i, BYTE const *i_end, IMAGE_DOS_HEADER &dosHeader, boost::array<BYTE, 0x40> &dosStubBody, IMAGE_FILE_HEADER &fileHeader, IMAGE_NT_HEADERS32 &ntHeaders32, IMAGE_NT_HEADERS64 &ntHeaders64) const = 0;
         virtual void GetPEKind(DWORD &dwPEKind, DWORD &dwMachine) const = 0;
+        //virtual void GetPEKindAndVersionString(DWORD &dwPEKind, DWORD &dwMachine, std::wstring &verStr) const = 0;
         virtual COR_ILMETHOD const *GetILMethodBody(ULONG codeRVA) const = 0;
     };
     

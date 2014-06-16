@@ -484,9 +484,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Ldloca_S &&
-            &opCode != &OpCodes::Stloc_S && 
-            &opCode != &OpCodes::Ldloc_S)
+        if (&opCode != &OpCodes::Ldloc && 
+            &opCode != &OpCodes::Ldloc_S && 
+            &opCode != &OpCodes::Ldloca && 
+            &opCode != &OpCodes::Ldloca_S && 
+            &opCode != &OpCodes::Stloc && 
+            &opCode != &OpCodes::Stloc_S)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, ILocal const *)\".";
@@ -524,21 +527,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Ldtoken &&
-            &opCode != &OpCodes::Initobj &&
-            &opCode != &OpCodes::Newarr && 
+        if (&opCode != &OpCodes::Box && 
             &opCode != &OpCodes::Castclass && 
+            &opCode != &OpCodes::Constrained && 
+            &opCode != &OpCodes::Constrained && 
+            &opCode != &OpCodes::Cpobj && 
+            &opCode != &OpCodes::Initobj && 
             &opCode != &OpCodes::Isinst && 
-            &opCode != &OpCodes::Box && 
-            &opCode != &OpCodes::Ldelema &&
-            &opCode != &OpCodes::Ldobj &&
-            &opCode != &OpCodes::Stobj &&
-            &opCode != &OpCodes::Constrained &&
-            &opCode != &OpCodes::Mkrefany &&
-            &opCode != &OpCodes::Sizeof &&
-            &opCode != &OpCodes::Unbox_Any &&
-            &opCode != &OpCodes::Ldelem &&
-            &opCode != &OpCodes::Stelem)
+            &opCode != &OpCodes::Ldelem && 
+            &opCode != &OpCodes::Ldelema && 
+            &opCode != &OpCodes::Ldobj && 
+            &opCode != &OpCodes::Ldtoken && 
+            &opCode != &OpCodes::Mkrefany && 
+            &opCode != &OpCodes::Newarr && 
+            &opCode != &OpCodes::Refanyval && 
+            &opCode != &OpCodes::Sizeof && 
+            &opCode != &OpCodes::Stelem && 
+            &opCode != &OpCodes::Stobj && 
+            &opCode != &OpCodes::Unbox && 
+            &opCode != &OpCodes::Unbox_Any)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IType const *)\".";
@@ -557,9 +564,33 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Brtrue_S &&
-            &opCode != &OpCodes::Brfalse_S &&
-            &opCode != &OpCodes::Leave)
+        if (&opCode != &OpCodes::Beq && 
+            &opCode != &OpCodes::Beq_S && 
+            &opCode != &OpCodes::Bge && 
+            &opCode != &OpCodes::Bge_S && 
+            &opCode != &OpCodes::Bge_Un && 
+            &opCode != &OpCodes::Bge_Un_S && 
+            &opCode != &OpCodes::Bgt && 
+            &opCode != &OpCodes::Bgt_S && 
+            &opCode != &OpCodes::Bgt_Un && 
+            &opCode != &OpCodes::Bgt_Un_S && 
+            &opCode != &OpCodes::Ble && 
+            &opCode != &OpCodes::Ble_S && 
+            &opCode != &OpCodes::Ble_Un && 
+            &opCode != &OpCodes::Blt && 
+            &opCode != &OpCodes::Blt_S && 
+            &opCode != &OpCodes::Blt_Un && 
+            &opCode != &OpCodes::Blt_Un_S && 
+            &opCode != &OpCodes::Bne_Un && 
+            &opCode != &OpCodes::Bne_Un_S && 
+            &opCode != &OpCodes::Br && 
+            &opCode != &OpCodes::Br_S && 
+            &opCode != &OpCodes::Brfalse && 
+            &opCode != &OpCodes::Brfalse_S && 
+            &opCode != &OpCodes::Brtrue && 
+            &opCode != &OpCodes::Brtrue_S && 
+            &opCode != &OpCodes::Leave && 
+            &opCode != &OpCodes::Leave_S)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, Label const &)\".";
@@ -578,11 +609,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Ldftn &&
-            &opCode != &OpCodes::Newobj &&
-            &opCode != &OpCodes::Call && 
-            &opCode != &OpCodes::Callvirt &&
-            &opCode != &OpCodes::Ldvirtftn)
+        if (&opCode != &OpCodes::Call && 
+            &opCode != &OpCodes::Callvirt && 
+            &opCode != &OpCodes::Jmp && 
+            &opCode != &OpCodes::Ldftn && 
+            &opCode != &OpCodes::Ldvirtftn && 
+            &opCode != &OpCodes::Newobj)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IMethod const *)\".";
@@ -639,13 +671,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             &opCode != &OpCodes::Brfalse_S && 
             &opCode != &OpCodes::Brtrue_S && 
             &opCode != &OpCodes::Ldarg_S && 
+            &opCode != &OpCodes::Ldarga_S && 
             &opCode != &OpCodes::Ldc_I4_S && 
             &opCode != &OpCodes::Ldloc_S && 
             &opCode != &OpCodes::Ldloca_S && 
             &opCode != &OpCodes::Leave_S && 
-            &opCode != &OpCodes::Stloc_S &&
-            &opCode != &OpCodes::Ldarga_S &&
-            &opCode != &OpCodes::Starg_S)
+            &opCode != &OpCodes::Starg_S && 
+            &opCode != &OpCodes::Stloc_S && 
+            &opCode != &OpCodes::Unaligned)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, BYTE)\".";
@@ -683,7 +716,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Ldloca)
+        if (&opCode != &OpCodes::Ldarg && 
+            &opCode != &OpCodes::Ldarga && 
+            &opCode != &OpCodes::Ldloc && 
+            &opCode != &OpCodes::Ldloca && 
+            &opCode != &OpCodes::Starg && 
+            &opCode != &OpCodes::Stloc)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, SHORT)\".";
@@ -702,10 +740,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Ldc_I4 && 
-            &opCode != &OpCodes::Beq &&
-            &opCode != &OpCodes::Br &&
-            &opCode != &OpCodes::Brfalse)
+        if (&opCode != &OpCodes::Beq && 
+            &opCode != &OpCodes::Bge && 
+            &opCode != &OpCodes::Bge_Un && 
+            &opCode != &OpCodes::Bgt && 
+            &opCode != &OpCodes::Bgt_Un && 
+            &opCode != &OpCodes::Ble && 
+            &opCode != &OpCodes::Ble_Un && 
+            &opCode != &OpCodes::Blt && 
+            &opCode != &OpCodes::Blt_Un && 
+            &opCode != &OpCodes::Bne_Un && 
+            &opCode != &OpCodes::Br && 
+            &opCode != &OpCodes::Brfalse && 
+            &opCode != &OpCodes::Brtrue && 
+            &opCode != &OpCodes::Ldc_I4 && 
+            &opCode != &OpCodes::Leave)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, INT)\".";
@@ -753,6 +802,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
         pInstGen->SetOperand(offsets);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodBodyGeneratorPimpl<ApiHolder>::Emit(OpCode const &opCode, vector<Label> const &labels)
+    {
+        using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
+
+        if (&opCode != &OpCodes::Switch)
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, vector<Label> const &)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
+
+        auto *pInstGen = NewInstructionGeneratorCore();
+        pInstGen->SetOpCode(opCode);
+        pInstGen->SetOperand(labels);
     }
 
 
@@ -1066,6 +1134,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void operator ()<vector<INT> >(vector<INT> const &offsets) const
         {
             m__this->Emit(m_opCode, offsets);
+        }
+
+        template<>
+        void operator ()<vector<Label> >(vector<Label> const &labels) const
+        {
+            m__this->Emit(m_opCode, labels);
         }
 
         mutable method_body_generator_pimpl_label_type *m__this;

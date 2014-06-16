@@ -41,7 +41,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     template<class ApiHolder>    
     BaseHostInfoPimpl<ApiHolder>::BaseHostInfoPimpl(host_info_label_type *pClass) : 
         m_pClass(pClass), 
-        m_pHost(nullptr)
+        m_pHost(nullptr), 
+        m_versionToRuntimesInit(false)
     { 
 #ifdef _DEBUG
         BOOST_MPL_ASSERT_RELATION(sizeof(base_heap_provider_type), <=, sizeof(storage_type));
@@ -59,7 +60,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
             auto *pBaseProvider = BaseHeapProvider();
             auto &provider = pBaseProvider->FirstProviderOf<runtime_host_label_type>();
             BOOST_FOREACH (auto const &pair, m_versionToRuntimes)
-                provider.DeleteObject(pair.second);
+                provider.DeleteObject(const_cast<runtime_host_label_type *>(pair.second));
         }
 
         if (!m_hosts.empty())
@@ -118,6 +119,16 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
     
     template<class ApiHolder>
+    unordered_map<wstring, typename BaseHostInfoPimpl<ApiHolder>::runtime_host_label_type const *> const &BaseHostInfoPimpl<ApiHolder>::GetRuntimes() const
+    {
+         if (!m_versionToRuntimesInit)
+             FillRuntimes(&GetCOMMetaHost(), this, m_versionToRuntimesInit);
+         return m_versionToRuntimes;
+    }
+
+
+
+    template<class ApiHolder>
     typename BaseHostInfoPimpl<ApiHolder>::runtime_host_label_type const *BaseHostInfoPimpl<ApiHolder>::GetRuntime(wstring const &version) const
     {
         using namespace Urasandesu::CppAnonym;
@@ -127,7 +138,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
         auto pNewRuntime = NewRuntime(version);
 
-        auto *pExistingRuntime = static_cast<runtime_host_label_type *>(nullptr);
+        auto const *pExistingRuntime = static_cast<runtime_host_label_type *>(nullptr);
         if (!TryGetRuntime(version, pExistingRuntime))
         {
             pNewRuntime.Persist();
@@ -167,6 +178,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     }
 
 
+    
     template<class ApiHolder>
     TempPtr<typename BaseHostInfoPimpl<ApiHolder>::runtime_host_label_type> BaseHostInfoPimpl<ApiHolder>::NewRuntime(wstring const &version) const
     {
@@ -177,6 +189,21 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         auto handler = runtime_host_persisted_handler_label_type(m_pClass);
         provider.AddPersistedHandler(pRuntime, handler);
         pRuntime->SetRequestedVersion(version);
+        return pRuntime;
+    }
+
+
+
+    template<class ApiHolder>
+    TempPtr<typename BaseHostInfoPimpl<ApiHolder>::runtime_host_label_type> BaseHostInfoPimpl<ApiHolder>::NewRuntime(ICLRRuntimeInfo *pComRuntimeInfo) const
+    {
+        auto *pBaseProvider = BaseHeapProvider();
+        auto &provider = pBaseProvider->FirstProviderOf<runtime_host_label_type>();
+        auto pRuntime = provider.NewObject();
+        pRuntime->Initialize(m_pClass);
+        auto handler = runtime_host_persisted_handler_label_type(m_pClass);
+        provider.AddPersistedHandler(pRuntime, handler);
+        pRuntime->SetCOMRuntimeInfo(pComRuntimeInfo);
         return pRuntime;
     }
     
@@ -194,7 +221,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
 
     template<class ApiHolder>    
-    bool BaseHostInfoPimpl<ApiHolder>::TryGetRuntime(wstring const &version, runtime_host_label_type *&pExistingRuntime) const
+    bool BaseHostInfoPimpl<ApiHolder>::TryGetRuntime(wstring const &version, runtime_host_label_type const *&pExistingRuntime) const
     {
         auto result = m_versionToRuntimes.find(version);
         if (result == m_versionToRuntimes.end())
@@ -222,6 +249,54 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
                 BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
         }
         return *m_pComMetaHost;
+    }
+
+
+    
+    template<class ApiHolder>    
+    void BaseHostInfoPimpl<ApiHolder>::FillRuntimes(ICLRMetaHost *pComMetaHost, host_info_pimpl_label_type const *pHostInfo, bool &versionToRuntimesInit)
+    {
+        using ATL::CComPtr;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        _ASSERTE(pComMetaHost);
+        _ASSERTE(pHostInfo);
+        
+        if (versionToRuntimesInit)
+            return;
+        
+        auto hr = E_FAIL;
+        
+        auto pEnumUnk = CComPtr<IEnumUnknown>();
+        hr = pComMetaHost->EnumerateInstalledRuntimes(&pEnumUnk);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        
+        auto celt = 1ul;
+        auto celtFetched = 0ul;
+        do
+        {
+            auto pUnk = CComPtr<IUnknown>();
+            hr = pEnumUnk->Next(celt, &pUnk, &celtFetched);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            
+            if (celtFetched == 0)
+                break;
+            
+            auto *pComRuntimeInfo = static_cast<ICLRRuntimeInfo *>(nullptr);
+            hr = pUnk->QueryInterface(IID_ICLRRuntimeInfo, reinterpret_cast<void **>(&pComRuntimeInfo));
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            
+            auto pNewRuntime = pHostInfo->NewRuntime(pComRuntimeInfo);
+
+            auto const *pExistingRuntime = static_cast<runtime_host_label_type *>(nullptr);
+            if (!pHostInfo->TryGetRuntime(pNewRuntime->GetCORVersion(), pExistingRuntime))
+                pNewRuntime.Persist();
+        } while (0 < celtFetched);
+        
+        versionToRuntimesInit = true;
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 

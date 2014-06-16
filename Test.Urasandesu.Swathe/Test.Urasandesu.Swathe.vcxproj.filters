@@ -528,12 +528,6 @@
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\IModuleHash.cpp">
       <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
     </ClCompile>
-    <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\IAssemblyEqualTo.cpp">
-      <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\Metadata\IAssemblyHash.cpp">
-      <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClCompile>
     <ClCompile Include="..\Urasandesu.Swathe\Urasandesu\Swathe\AutoGen\Fusion\BaseClass\BaseAssemblyCache.cpp">
       <Filter>Source Files\Urasandesu\Swathe\AutoGen\Fusion\BaseClass</Filter>
     </ClCompile>
@@ -620,6 +614,9 @@
     </ClCompile>
     <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Utilities\CComClassFactorySlim.cpp">
       <Filter>Source Files\Urasandesu\CppAnonym\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Version.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -63,6 +63,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
         void Initialize(host_info_label_type *pHost);
         static host_info_label_type *CreateHost();
+        unordered_map<wstring, runtime_host_label_type const *> const &GetRuntimes() const;
         runtime_host_label_type const *GetRuntime(wstring const &version) const;
         
     private:
@@ -71,10 +72,13 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         static TempPtr<host_info_label_type> NewHost();
         void RegisterHost(TempPtr<host_info_label_type> &pHost);
         TempPtr<runtime_host_label_type> NewRuntime(wstring const &version) const;
+        TempPtr<runtime_host_label_type> NewRuntime(ICLRRuntimeInfo *pComRuntimeInfo) const;
         void RegisterRuntime(TempPtr<runtime_host_label_type> &pRuntime);
-        bool TryGetRuntime(wstring const &version, runtime_host_label_type *&pExistingRuntime) const;
+        bool TryGetRuntime(wstring const &version, runtime_host_label_type const *&pExistingRuntime) const;
 
         ICLRMetaHost &GetCOMMetaHost() const;
+
+        static void FillRuntimes(ICLRMetaHost *pComMetaHost, host_info_pimpl_label_type const *pHostInfo, bool &versionToRuntimesInit);
 
 #ifdef _DEBUG
         static INT const BASE_HEAP_PROVIDER_TYPE_SIZE = 512;
@@ -90,7 +94,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         mutable host_info_label_type *m_pClass;
         host_info_label_type *m_pHost;
         mutable vector<host_info_label_type *> m_hosts;
-        mutable unordered_map<wstring, runtime_host_label_type *> m_versionToRuntimes;
+        mutable bool m_versionToRuntimesInit;
+        mutable unordered_map<wstring, runtime_host_label_type const *> m_versionToRuntimes;
         mutable ATL::CComPtr<ICLRMetaHost> m_pComMetaHost;
     };
 

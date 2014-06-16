@@ -45,6 +45,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     using boost::aligned_storage;
     using Urasandesu::CppAnonym::SimpleDisposable;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
+    using boost::unordered_map;
     using std::wstring;
 
     template<
@@ -63,7 +64,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
         void Initialize(host_info_label_type *pHost);
         static host_info_label_type *CreateHost();
-        runtime_host_label_type const *GetRuntime(std::wstring const &version) const;
+        unordered_map<wstring, runtime_host_label_type const *> const &GetRuntimes() const;
+        runtime_host_label_type const *GetRuntime(wstring const &version) const;
     
     private:
         host_info_pimpl_label_type *Pimpl();
@@ -77,9 +79,9 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 112;
+        static INT const PIMPL_TYPE_SIZE = 120;
 #else
-        static INT const PIMPL_TYPE_SIZE = 224;
+        static INT const PIMPL_TYPE_SIZE = 232;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

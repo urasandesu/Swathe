@@ -742,12 +742,6 @@
     <ClCompile Include="Urasandesu\Swathe\Metadata\IModuleHash.cpp">
       <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
     </ClCompile>
-    <ClCompile Include="Urasandesu\Swathe\Metadata\IAssemblyEqualTo.cpp">
-      <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClCompile>
-    <ClCompile Include="Urasandesu\Swathe\Metadata\IAssemblyHash.cpp">
-      <Filter>Source Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClCompile>
     <ClCompile Include="Urasandesu\Swathe\AutoGen\Fusion\BaseClass\BaseAssemblyCache.cpp">
       <Filter>Source Files\Urasandesu\Swathe\AutoGen\Fusion\BaseClass</Filter>
     </ClCompile>
@@ -885,6 +879,9 @@
     </ClCompile>
     <ClCompile Include="Urasandesu\Swathe\Profiling\ProfilingSpecialValues.cpp">
       <Filter>Source Files\Urasandesu\Swathe\Profiling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CppAnonym\Urasandesu.CppAnonym\Urasandesu\CppAnonym\Version.cpp">
+      <Filter>Source Files\Urasandesu\CppAnonym</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -4489,18 +4486,6 @@
       <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
     </ClInclude>
     <ClInclude Include="Urasandesu\Swathe\Metadata\IModuleHashFwd.h">
-      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyEqualTo.h">
-      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyEqualToFwd.h">
-      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyHash.h">
-      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
-    </ClInclude>
-    <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyHashFwd.h">
       <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
     </ClInclude>
     <ClInclude Include="Urasandesu\Swathe\AutoGen\Fusion\ClassApiAt\AssemblyCacheApiAt.h">

@@ -245,6 +245,16 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
 
     template<class ApiHolder>
+    void BaseRuntimeHostPimpl<ApiHolder>::SetCOMRuntimeInfo(ICLRRuntimeInfo *pComRuntimeInfo)
+    {
+        _ASSERTE(!m_pComRuntimeInfo);
+        _ASSERTE(pComRuntimeInfo);
+        m_pComRuntimeInfo = pComRuntimeInfo;
+    }
+
+
+
+    template<class ApiHolder>
     template<class Info>
     void BaseRuntimeHostPimpl<ApiHolder>::RegisterInfo(TempPtr<Info> &pInfo)
     {

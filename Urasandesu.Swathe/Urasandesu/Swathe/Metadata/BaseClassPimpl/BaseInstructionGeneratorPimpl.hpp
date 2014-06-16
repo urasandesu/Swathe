@@ -540,6 +540,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             BOOST_FOREACH (auto const &offset, *pOffsets)
                 blob.Put<INT>(offset);
         }
+        else if (auto *pLabels = get<vector<Label> >(&operand))
+        {
+            blob.Put<INT>(static_cast<INT>(pLabels->size()));
+            BOOST_FOREACH (auto const &label, *pLabels)
+            {
+                auto const *pTargetInst = pBodyGen->GetInstruction(label);
+                auto currentOffset = _this->GetToken();
+                auto currentSize = _this->GetSize();
+                auto targetOffset = pTargetInst->GetToken();
+                blob.Put<INT>(static_cast<INT>(targetOffset - currentOffset - currentSize));
+            }
+        }
         else
             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
@@ -581,6 +593,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (auto *pArg = get<SHORT>(&operand))
             blob.Put<SHORT>(*pArg);
+        else if (auto *const *ppLocal = get<ILocal const *>(&operand))
+            blob.Put<SHORT>(static_cast<SHORT>((*ppLocal)->GetLocalIndex()));
         else
             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }

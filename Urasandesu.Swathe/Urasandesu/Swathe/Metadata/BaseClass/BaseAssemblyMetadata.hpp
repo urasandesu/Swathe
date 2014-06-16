@@ -121,6 +121,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    Version const &BaseAssemblyMetadata<ApiHolder>::GetVersion() const
+    {
+        return Pimpl()->GetVersion();
+    }
+
+    template<class ApiHolder>    
+    wstring const &BaseAssemblyMetadata<ApiHolder>::GetCultureName() const
+    {
+        return Pimpl()->GetCultureName();
+    }
+
+    template<class ApiHolder>    
+    wstring const &BaseAssemblyMetadata<ApiHolder>::GetImageRuntimeVersion() const
+    {
+        return Pimpl()->GetImageRuntimeVersion();
+    }
+
+    template<class ApiHolder>    
     AssemblyFlags BaseAssemblyMetadata<ApiHolder>::GetFlags() const
     {
         return Pimpl()->GetFlags();
@@ -232,6 +250,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     ITypePtrRange BaseAssemblyMetadata<ApiHolder>::GetTypes() const
     {
         return Pimpl()->GetTypes();
+    }
+
+    template<class ApiHolder>    
+    bool BaseAssemblyMetadata<ApiHolder>::Equals(IAssembly const *pAsm) const
+    {
+        return Pimpl()->Equals(pAsm);
+    }
+
+    template<class ApiHolder>    
+    size_t BaseAssemblyMetadata<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
     }
 
     template<class ApiHolder>    

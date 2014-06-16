@@ -92,6 +92,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual Urasandesu::CppAnonym::Utilities::AutoPtr<StrongNaming::IStrongNameKey const> const &GetStrongNameKey() const = 0;
         virtual std::wstring const &GetName() const = 0;
         virtual ASSEMBLYMETADATA const &GetAssemblyMetadata() const = 0;
+        virtual Urasandesu::CppAnonym::Version const &GetVersion() const = 0;
+        virtual std::wstring const &GetCultureName() const = 0;
+        virtual std::wstring const &GetImageRuntimeVersion() const = 0;
         virtual AssemblyFlags GetFlags() const = 0;
         virtual IAssembly const *GetSourceAssembly() const = 0;
         virtual IAssembly const *GetTargetAssembly() const = 0;
@@ -112,6 +115,50 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const = 0;
         virtual ITypePtrRange GetTypes() const = 0;
         virtual Urasandesu::CppAnonym::Utilities::AutoPtr<Hosting::IPortableExecutableReader const> const &GetPortableExecutableReader() const = 0;
+        virtual bool Equals(IAssembly const *pAsm) const = 0;
+        virtual size_t GetHashCode() const = 0;
+    };
+    
+    namespace IAssemblyEqualToDetail {
+
+        using std::vector;
+        using Urasandesu::CppAnonym::Traits::EqualityComparable;
+
+        struct IAssemblyEqualToImpl : 
+            EqualityComparable<IAssembly const *>
+        {
+            result_type operator()(param_type x, param_type y) const
+            {
+                return !x && !y ? true : !x || !y ? false : x->Equals(y);
+            }
+        };
+
+    }   // namespace IAssemblyEqualToDetail {
+
+    struct IAssemblyEqualTo : 
+        IAssemblyEqualToDetail::IAssemblyEqualToImpl
+    {
+    };
+
+    namespace IAssemblyHashDetail {
+        
+        using std::vector;
+        using Urasandesu::CppAnonym::Traits::HashComputable;
+
+        struct IAssemblyHashImpl : 
+            HashComputable<IAssembly const *>
+        {
+            result_type operator()(param_type v) const
+            {
+                return !v ? 0 : v->GetHashCode();
+            }
+        };
+
+    }   // namespace IAssemblyHashDetail {
+
+    struct IAssemblyHash : 
+        IAssemblyHashDetail::IAssemblyHashImpl
+    {
     };
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {

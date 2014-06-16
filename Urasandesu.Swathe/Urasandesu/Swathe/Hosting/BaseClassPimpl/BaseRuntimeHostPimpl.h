@@ -75,6 +75,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;
         void SetRequestedVersion(wstring const &reqVersion);
+        void SetCOMRuntimeInfo(ICLRRuntimeInfo *pComRuntimeInfo);
         template<class Info> TempPtr<Info> NewInfo() const;
         template<class Info> void RegisterInfo(TempPtr<Info> &pInfo);
         template<class Info> bool TryGetInfo(Info *&pExistingInfo) const;

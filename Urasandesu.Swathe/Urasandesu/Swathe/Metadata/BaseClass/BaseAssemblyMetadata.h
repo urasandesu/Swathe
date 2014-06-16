@@ -104,6 +104,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using std::vector;
     using Urasandesu::CppAnonym::Utilities::AutoPtr;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
+    using Urasandesu::CppAnonym::Version;
     using Urasandesu::Swathe::StrongNaming::IStrongNameKey;
     using Urasandesu::Swathe::Hosting::IPortableExecutableReader;
 
@@ -129,6 +130,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         AutoPtr<IStrongNameKey const> const &GetStrongNameKey() const;
         wstring const &GetName() const;
         ASSEMBLYMETADATA const &GetAssemblyMetadata() const;
+        Version const &GetVersion() const;
+        wstring const &GetCultureName() const;
+        wstring const &GetImageRuntimeVersion() const;
         AssemblyFlags GetFlags() const;
         IAssembly const *GetSourceAssembly() const;
         IAssembly const *GetTargetAssembly() const;
@@ -148,6 +152,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes() const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         ITypePtrRange GetTypes() const;
+        bool Equals(IAssembly const *pAsm) const;
+        size_t GetHashCode() const;
         AutoPtr<IPortableExecutableReader const> const &GetPortableExecutableReader() const;
         bool Exists() const;
     
@@ -217,9 +223,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 464;
+        static INT const PIMPL_TYPE_SIZE = 536;
 #else
-        static INT const PIMPL_TYPE_SIZE = 872;
+        static INT const PIMPL_TYPE_SIZE = 968;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

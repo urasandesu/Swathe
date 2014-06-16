@@ -73,6 +73,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         runtime_host_pimpl_label_type *Pimpl();
         runtime_host_pimpl_label_type const *Pimpl() const;
         void SetRequestedVersion(wstring const &reqVersion);
+        void SetCOMRuntimeInfo(ICLRRuntimeInfo *pComRuntimeInfo);
         template<class Info> void RegisterInfo(TempPtr<Info> &pInfo);
 
         ICLRRuntimeInfo &GetCOMRuntimeInfo() const;

@@ -44,14 +44,6 @@
 #include <Urasandesu/Swathe/Metadata/IAssembly.h>
 #endif
 
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYHASH_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyHash.h>
-#endif
-
-#ifndef URASANDESU_SWATHE_METADATA_IASSEMBLYEQUALTO_H
-#include <Urasandesu/Swathe/Metadata/IAssemblyEqualTo.h>
-#endif
-
 #ifndef URASANDESU_SWATHE_METADATA_ITYPEFWD_H
 #include <Urasandesu/Swathe/Metadata/ITypeFwd.h>
 #endif
