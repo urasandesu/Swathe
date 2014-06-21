@@ -202,6 +202,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    path const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetLocation() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IModule const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetMainModule() const
     {
         if (m_pSrcAsm == nullptr)

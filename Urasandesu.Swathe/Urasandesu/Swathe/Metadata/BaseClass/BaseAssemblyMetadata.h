@@ -125,6 +125,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, fusion_info_label_type const *pFuInfo, strong_name_info_label_type const *pSnInfo);
         mdAssembly GetToken() const;
         wstring const &GetFullName() const;
+        path const &GetLocation() const;
         IModule const *GetMainModule() const;
         IModule const *GetModule(wstring const &name) const;
         AutoPtr<IStrongNameKey const> const &GetStrongNameKey() const;
@@ -214,7 +215,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         IMetaDataAssemblyImport &GetCOMMetaDataAssemblyImport() const;
         IMetaDataImport2 &GetCOMMetaDataImport() const;
-        path const &GetAssemblyFilePath() const;
         DWORD GetOpenFlags() const;
         void SetOpeningAssembly(assembly_metadata_label_type const *pOpeningAsm);
         void SetProcessorArchitectures(vector<ProcessorArchitecture> const &procArchs);

@@ -39,6 +39,12 @@
 namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass { 
 
     template<class ApiHolder>    
+    BaseAssemblyNameIterator<ApiHolder>::BaseAssemblyNameIterator() : 
+        m_pAsmNameRng(nullptr), 
+        m_hasNext(false)
+    { }
+
+    template<class ApiHolder>    
     BaseAssemblyNameIterator<ApiHolder>::BaseAssemblyNameIterator(assembly_name_range_label_type *pAsmNameRng, bool hasNext) : 
         m_pAsmNameRng(pAsmNameRng), 
         m_hasNext(hasNext)
@@ -51,6 +57,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     template<class ApiHolder>    
     typename BaseAssemblyNameIterator<ApiHolder>::reference BaseAssemblyNameIterator<ApiHolder>::dereference() const
     {
+        _ASSERTE(m_pAsmNameRng);
         return m_pAsmNameRng->GetCurrent();
     }
 
@@ -63,6 +70,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     template<class ApiHolder>    
     void BaseAssemblyNameIterator<ApiHolder>::increment()
     {
+        _ASSERTE(m_pAsmNameRng);
         m_hasNext = m_pAsmNameRng->MoveNext();
     }
     

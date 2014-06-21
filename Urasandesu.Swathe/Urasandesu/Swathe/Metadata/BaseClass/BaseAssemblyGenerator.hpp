@@ -91,6 +91,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    path const &BaseAssemblyGenerator<ApiHolder>::GetLocation() const
+    {
+        return Pimpl()->GetLocation();
+    }
+
+    template<class ApiHolder>    
     IModule const *BaseAssemblyGenerator<ApiHolder>::GetMainModule() const
     {
         return Pimpl()->GetMainModule();

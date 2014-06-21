@@ -165,6 +165,42 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    path const &BaseAssemblyMetadataPimpl<ApiHolder>::GetLocation() const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        using Urasandesu::Swathe::Fusion::NewAssemblyNameFlags;
+        using Urasandesu::Swathe::Fusion::AssemblyCacheFlags; 
+        
+
+        if (m_location.empty())
+        {
+            _ASSERTE(!m_fullName.empty());
+
+            auto pCondition = m_pFuInfo->NewAssemblyName(m_fullName, NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
+            auto pAsmNames = m_pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
+            
+            typedef unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > AssemblyNameMap;
+            typedef AssemblyNameMap::value_type Value;
+
+            auto candidates = AssemblyNameMap();
+            BOOST_FOREACH (auto const &pAsmName, *pAsmNames)
+                candidates[pAsmName->GetPlatform()] = pAsmName;
+
+            if (candidates.empty())
+                ResolveAssemblyPathByCurrentDirectory(this, pCondition->GetName(), m_location);
+            else
+                ResolveAssemblyPathByGAC(this, candidates, m_location);
+
+            _ASSERTE(!m_location.empty());
+            m_fullName.clear(); // This means that m_fullName can be filled completely by next GetFullName call when the assembly has been resolved.
+        }
+        return m_location;
+    }
+
+
+
+    template<class ApiHolder>    
     IModule const *BaseAssemblyMetadataPimpl<ApiHolder>::GetMainModule() const
     {
         return GetModule(MetadataSpecialValues::MODULE_NAME_OF_MAIN);
@@ -590,7 +626,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     AutoPtr<IPortableExecutableReader const> const &BaseAssemblyMetadataPimpl<ApiHolder>::GetPortableExecutableReader() const
     {
         if (!m_pReader)
-            m_pReader = m_pPEInfo->CreateReader(&GetCOMMetaDataImport(), GetAssemblyFilePath());
+            m_pReader = m_pPEInfo->CreateReader(&GetCOMMetaDataImport(), GetLocation());
         return m_pReader;
     }
 
@@ -607,10 +643,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto &comMetaDisp = m_pDisp->GetCOMMetaDataDispenser();
 
-        auto &asmPath = path();
-        asmPath /= m_name + L".dll";
+        auto &location = path();
+        location /= m_name + L".dll";
         auto openFlags = m_pClass->GetOpenFlags();
-        auto hr = comMetaDisp.OpenScope(asmPath.c_str(), openFlags, 
+        auto hr = comMetaDisp.OpenScope(location.c_str(), openFlags, 
                                         IID_IMetaDataImport2, reinterpret_cast<IUnknown **>(&m_pComMetaImp));
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
@@ -650,11 +686,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::SetAssemblyFilePath(path const &asmPath)
+    void BaseAssemblyMetadataPimpl<ApiHolder>::SetAssemblyFilePath(path const &location)
     {
-        _ASSERTE(!asmPath.empty());
-        _ASSERTE(m_asmPath.empty());
-        m_asmPath = asmPath;
+        _ASSERTE(!location.empty());
+        _ASSERTE(m_location.empty());
+        m_location = location;
     }
 
 
@@ -1732,9 +1768,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 auto &comMetaDisp = m_pDisp->GetCOMMetaDataDispenser();
 
-                auto const &asmPath = m_pClass->GetAssemblyFilePath();
+                auto const &location = GetLocation();
                 auto openFlags = m_pClass->GetOpenFlags();
-                auto hr = comMetaDisp.OpenScope(asmPath.c_str(), openFlags, 
+                auto hr = comMetaDisp.OpenScope(location.c_str(), openFlags, 
                                                 IID_IMetaDataImport2, reinterpret_cast<IUnknown **>(&m_pComMetaImp));
                 if (FAILED(hr))
                     BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
@@ -1766,42 +1802,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             default:
                 BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
         }
-    }
-
-
-
-    template<class ApiHolder>    
-    path const &BaseAssemblyMetadataPimpl<ApiHolder>::GetAssemblyFilePath() const
-    {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-        using Urasandesu::Swathe::Fusion::NewAssemblyNameFlags;
-        using Urasandesu::Swathe::Fusion::AssemblyCacheFlags; 
-        
-
-        if (m_asmPath.empty())
-        {
-            _ASSERTE(!m_fullName.empty());
-
-            auto pCondition = m_pFuInfo->NewAssemblyName(m_fullName, NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
-            auto pAsmNames = m_pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
-            
-            typedef unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > AssemblyNameMap;
-            typedef AssemblyNameMap::value_type Value;
-
-            auto candidates = AssemblyNameMap();
-            BOOST_FOREACH (auto const &pAsmName, *pAsmNames)
-                candidates[pAsmName->GetPlatform()] = pAsmName;
-
-            if (candidates.empty())
-                ResolveAssemblyPathByCurrentDirectory(this, pCondition->GetName(), m_asmPath);
-            else
-                ResolveAssemblyPathByGAC(this, candidates, m_asmPath);
-
-            _ASSERTE(!m_asmPath.empty());
-            m_fullName.clear(); // This means that m_fullName can be filled completely by next GetFullName call when the assembly has been resolved.
-        }
-        return m_asmPath;
     }
     
     
@@ -2072,15 +2072,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::ResolveAssemblyPathByCurrentDirectory(assembly_metadata_pimpl_label_type const *_this, wstring const &name, path &asmPath)
+    void BaseAssemblyMetadataPimpl<ApiHolder>::ResolveAssemblyPathByCurrentDirectory(assembly_metadata_pimpl_label_type const *_this, wstring const &name, path &location)
     {
-        asmPath = name + L".dll";
+        location = name + L".dll";
     }
 
 
 
     template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::ResolveAssemblyPathByGAC(assembly_metadata_pimpl_label_type const *_this, unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > const &candidates, path &asmPath)
+    void BaseAssemblyMetadataPimpl<ApiHolder>::ResolveAssemblyPathByGAC(assembly_metadata_pimpl_label_type const *_this, unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > const &candidates, path &location)
     {
         using boost::adaptors::transformed;        
         using Urasandesu::CppAnonym::CppAnonymCOMException;
@@ -2094,7 +2094,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             auto pAsmName = (*candidates.begin()).second;
             auto pAsmCache = pFuInfo->NewAssemblyCache();
             auto pAsmInfo = pAsmCache->QueryAssemblyInfo(AssemblyQueryTypes::AQT_DEFAULT, pAsmName->GetFullName());
-            asmPath = pAsmInfo->GetAssemblyPath();
+            location = pAsmInfo->GetAssemblyPath();
         }
         else
         {
@@ -2120,7 +2120,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             auto pAsmName = candidates.at(*result);
             auto pAsmCache = pFuInfo->NewAssemblyCache();
             auto pAsmInfo = pAsmCache->QueryAssemblyInfo(AssemblyQueryTypes::AQT_DEFAULT, pAsmName->GetFullName());
-            asmPath = pAsmInfo->GetAssemblyPath();
+            location = pAsmInfo->GetAssemblyPath();
         }
     }
 

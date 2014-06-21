@@ -61,6 +61,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
             SWATHE_DECLARE_ASSEMBLY_NAME_ITERATOR_FACADE_TYPEDEF_ALIAS
         SWATHE_END_ASSEMBLY_NAME_ITERATOR_FACADE_TYPEDEF_ALIAS
         
+        BaseAssemblyNameIterator();
         BaseAssemblyNameIterator(assembly_name_range_label_type *pAsmNameRng, bool hasNext = true);
     
     private:

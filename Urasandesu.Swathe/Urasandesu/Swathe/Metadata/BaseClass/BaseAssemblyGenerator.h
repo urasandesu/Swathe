@@ -116,6 +116,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
     using boost::any_range;
     using boost::noncopyable;
+    using boost::filesystem::path;
     using boost::forward_traversal_tag;
     using boost::iterator_range;
     using std::pair;
@@ -145,6 +146,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo);
         mdAssembly GetToken() const;
         wstring const &GetFullName() const;
+        path const &GetLocation() const;
         IModule const *GetMainModule() const;
         IModule const *GetModule(wstring const &name) const;
         AutoPtr<IStrongNameKey const> const &GetStrongNameKey() const;

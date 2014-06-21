@@ -91,6 +91,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    path const &BaseAssemblyMetadata<ApiHolder>::GetLocation() const
+    {
+        return Pimpl()->GetLocation();
+    }
+
+    template<class ApiHolder>    
     IModule const *BaseAssemblyMetadata<ApiHolder>::GetMainModule() const
     {
         return Pimpl()->GetMainModule();
@@ -532,12 +538,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IMetaDataImport2 &BaseAssemblyMetadata<ApiHolder>::GetCOMMetaDataImport() const
     {
         return Pimpl()->GetCOMMetaDataImport();
-    }
-
-    template<class ApiHolder>    
-    path const &BaseAssemblyMetadata<ApiHolder>::GetAssemblyFilePath() const
-    {
-        return Pimpl()->GetAssemblyFilePath();
     }
 
     template<class ApiHolder>    

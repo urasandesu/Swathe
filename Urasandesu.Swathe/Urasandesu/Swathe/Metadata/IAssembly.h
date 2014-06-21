@@ -87,6 +87,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IAssembly() { }
         virtual mdAssembly GetToken() const = 0;
         virtual std::wstring const &GetFullName() const = 0;
+        virtual boost::filesystem::path const &GetLocation() const = 0;
         virtual IModule const *GetMainModule() const = 0;
         virtual IModule const *GetModule(std::wstring const &name) const = 0;
         virtual Urasandesu::CppAnonym::Utilities::AutoPtr<StrongNaming::IStrongNameKey const> const &GetStrongNameKey() const = 0;
