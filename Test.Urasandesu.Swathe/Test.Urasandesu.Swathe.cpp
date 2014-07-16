@@ -602,6 +602,46 @@ namespace {
 
 
     
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, EnumerateInstructionsTest_02)
+    {
+        using Urasandesu::CppAnonym::Utilities::AutoPtr;
+
+        using namespace Urasandesu::Swathe;
+        using namespace Urasandesu::Swathe::Hosting;
+        using namespace Urasandesu::Swathe::Metadata;
+        using boost::get;
+        using std::vector;
+        using std::wstring;
+        using Urasandesu::CppAnonym::Utilities::Empty;
+
+        auto const *pHost = HostInfo::CreateHost();
+        auto const *pRuntime = pHost->GetRuntime(L"v4.0.30319");
+        auto const *pMetaInfo = pRuntime->GetInfo<MetadataInfo>();
+        auto *pMetaDisp = pMetaInfo->CreateDispenser();
+
+        auto const *pSystem = pMetaDisp->GetAssembly(L"System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+        auto const *pSystemDll = pSystem->GetModule(L"System.dll");
+        auto const *pWebClient = pSystemDll->GetType(L"System.Net.WebClient");
+        auto const *pWebClient_add_DownloadStringCompleted = pWebClient->GetMethod(L"add_DownloadStringCompleted");
+
+        ASSERT_TRUE(pWebClient_add_DownloadStringCompleted != nullptr);
+        {
+            auto *pBody = pWebClient_add_DownloadStringCompleted->GetMethodBody();
+
+            auto const &locals = pBody->GetLocals();
+            ASSERT_EQ(3, locals.size());
+            
+            auto const &insts = pBody->GetInstructions();
+            BOOST_FOREACH (auto const &pInst, insts)
+            {
+                auto const &opcode = pInst->GetOpCode();
+                std::wcout << opcode.GetName() << std::endl;
+            }
+        }
+    }
+
+
+    
     CPPANONYM_TEST(Urasandesu_Swathe_Test3, GetRuntimesTest_01)
     {
         using namespace Urasandesu::CppAnonym::Traits;

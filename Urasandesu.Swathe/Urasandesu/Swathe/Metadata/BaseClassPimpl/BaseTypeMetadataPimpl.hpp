@@ -945,6 +945,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             if (MetadataSpecialValues::IsPrimitiveKind(x->GetKind()))
                 return x->GetKind() == y->GetKind();
 
+            if (x->GetKind() == TypeKinds::TK_VAR || x->GetKind() == TypeKinds::TK_MVAR)
+                return x->GetKind() == y->GetKind() && 
+                       x->GetGenericParameterPosition() == y->GetGenericParameterPosition();
+
             auto typeEqualTo = MethodSigTypeEqualTo();
             
             auto isXGenInst = x->IsGenericType() && !x->IsGenericTypeDefinition();
@@ -964,6 +968,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             if (isXArr)
                 return typeEqualTo(x->GetDeclaringType(), y->GetDeclaringType());
 
+            auto isXByRef = x->IsByRef();
+            auto isYByRef = y->IsByRef();
+            if (isXByRef != isYByRef)
+                return false;
+            
+            if (isXByRef)
+                return typeEqualTo(x->GetDeclaringType(), y->GetDeclaringType());
+            
             return x->GetSourceType() == y->GetSourceType();
         }
     };
