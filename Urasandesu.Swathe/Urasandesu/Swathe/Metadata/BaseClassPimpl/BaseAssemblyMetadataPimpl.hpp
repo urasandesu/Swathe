@@ -2074,7 +2074,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyMetadataPimpl<ApiHolder>::ResolveAssemblyPathByCurrentDirectory(assembly_metadata_pimpl_label_type const *_this, wstring const &name, path &location)
     {
+        using boost::filesystem::exists;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
         location = name + L".dll";
+        if (exists(location))
+            return;
+        
+        location = name + L".exe";
+        if (exists(location))
+            return;
+        
+        BOOST_THROW_EXCEPTION(CppAnonymCOMException(ERROR_FILE_NOT_FOUND));
     }
 
 

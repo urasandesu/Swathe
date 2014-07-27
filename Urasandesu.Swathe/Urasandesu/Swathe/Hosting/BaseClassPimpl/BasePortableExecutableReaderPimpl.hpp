@@ -158,7 +158,20 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         _ASSERTE(i != i_end);
         
         dwMachine = fileHeader.Machine;
-        dwPEKind = cliHeader.Flags;
+        dwPEKind = 0ul;
+        if (fileHeader.Machine != IMAGE_FILE_MACHINE_I386)
+            dwPEKind |= static_cast<DWORD>(pe32Plus);
+        
+        if (cliHeader.Flags & COMIMAGE_FLAGS_ILONLY)
+            dwPEKind |= static_cast<DWORD>(peILonly);
+        else
+            dwPEKind |= static_cast<DWORD>(pe32Unmanaged);
+        
+        if (COR_IS_32BIT_REQUIRED(cliHeader.Flags))
+            dwPEKind |= static_cast<DWORD>(pe32BitRequired);
+        
+        if (COR_IS_32BIT_PREFERRED(cliHeader.Flags))
+            dwPEKind |= static_cast<DWORD>(pe32BitPreferred);
     }
 
 

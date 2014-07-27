@@ -220,7 +220,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetProcessorArchitectures(vector<ProcessorArchitecture> const &procArchs);
 
 #ifdef _DEBUG
-        static INT const PIMPL_TYPE_SIZE = 1024;
+        static INT const PIMPL_TYPE_SIZE = 1056;
 #else
 #ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 536;
