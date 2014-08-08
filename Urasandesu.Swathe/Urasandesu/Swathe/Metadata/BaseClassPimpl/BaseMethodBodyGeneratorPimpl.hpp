@@ -1305,7 +1305,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const &localGenToIndex = m_pAsmGen->GetLocalGeneratorToIndex();
         for (auto i = 0ul; i < localGenToIndex.size(); ++i)
-            if (localGenToIndex[i]->GetMethodBody() == m_pClass)
+            if (m_pClass->Equals(localGenToIndex[i]->GetMethodBody()))
                 localGenToIndex[i]->Accept(pVisitor);
 
         GetInstructions();   // resolves default instructions of this Method.

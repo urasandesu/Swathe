@@ -385,7 +385,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef decltype(m_asmGens) AsmGens;
         typedef AsmGens::value_type Value;
 
-        auto result = FindIf(m_asmGens, [&](Value const &v) { return v->GetSourceAssembly() == pAsm->GetSourceAssembly(); });
+        auto result = FindIf(m_asmGens, [&](Value const &v) { return v->Equals(pAsm); });
         if (result)
             return *result;
 

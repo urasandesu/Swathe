@@ -301,9 +301,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!pOtherBody)
             return m_pClass == pBody->GetSourceMethodBody();
 
-        return GetToken() == pOtherBody->GetToken() && 
-               GetMethod() == pOtherBody->GetMethod() &&
-               GetAssembly() == pOtherBody->GetAssembly();
+        auto isEqual = true;
+        if (isEqual)
+            isEqual &= GetToken() == pOtherBody->GetToken();
+        
+        if (isEqual && !GetMethod())
+            isEqual &= !pOtherBody->GetMethod();
+        else if (isEqual)
+            isEqual &= GetMethod()->Equals(pOtherBody->GetMethod());
+        
+        if (isEqual)
+            isEqual &= GetAssembly()->Equals(pOtherBody->GetAssembly());
+        
+        return isEqual;
     }
 
 
@@ -311,12 +321,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     size_t BaseMethodBodyMetadataPimpl<ApiHolder>::GetHashCode() const
     {
-        using Urasandesu::CppAnonym::Utilities::HashValue;
-
-        auto mdtTarget = GetToken();
-        auto methodHash = HashValue(GetMethod());
-        auto asmHash = HashValue(GetAssembly());
-        return mdtTarget ^ methodHash ^ asmHash;
+        return GetToken();
     }
 
 

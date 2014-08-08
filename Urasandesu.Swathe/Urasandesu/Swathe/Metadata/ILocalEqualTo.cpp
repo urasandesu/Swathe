@@ -45,17 +45,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
         ILocalEqualToImpl::result_type ILocalEqualToImpl::operator()(param_type x, param_type y) const
         {
-            if (!x && !y)
-                return true;
-            else if (!x || !y)
-                return false;
-            
-            auto mdtTargetX = x->GetToken();
-            auto const *pBodyX = x->GetMethodBody();
-            auto mdtTargetY = y->GetToken();
-            auto const *pBodyY = y->GetMethodBody();
-
-            return mdtTargetX == mdtTargetY && pBodyX == pBodyY;
+            return !x && !y ? true : !x || !y ? false : x->Equals(y);
         }
 
     }   // namespace ILocalEqualToDetail {

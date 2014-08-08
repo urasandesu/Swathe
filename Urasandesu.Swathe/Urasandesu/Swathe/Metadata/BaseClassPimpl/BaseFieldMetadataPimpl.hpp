@@ -199,11 +199,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *pOtherField = dynamic_cast<class_type const *>(pField);
         if (!pOtherField)
-            return m_pClass == pField->GetSourceField();
+            return m_pClass->Equals(pField->GetSourceField());
 
-        return GetToken() == pOtherField->GetToken() &&
-               GetDeclaringType() == pOtherField->GetDeclaringType() &&     // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-               GetAssembly() == pOtherField->GetAssembly();
+        auto isEqual = true;
+        if (isEqual)
+            isEqual &= GetToken() == pOtherField->GetToken();
+        
+        // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+        if (isEqual && !GetDeclaringType())
+            isEqual &= !pOtherField->GetDeclaringType();
+        else if (isEqual)
+            isEqual &= GetDeclaringType()->Equals(pOtherField->GetDeclaringType());
+        
+        if (isEqual)
+            isEqual &= GetAssembly()->Equals(pOtherField->GetAssembly());
+        
+        return isEqual;
     }
 
 
@@ -211,12 +222,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     size_t BaseFieldMetadataPimpl<ApiHolder>::GetHashCode() const
     {
-        using Urasandesu::CppAnonym::Utilities::HashValue;
-
-        auto mdtTarget = GetToken();
-        auto declaringTypeHash = HashValue(GetDeclaringType());    // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-        auto asmHash = HashValue(GetAssembly());
-        return mdtTarget ^ declaringTypeHash ^ asmHash;
+        return GetToken();
     }
 
 

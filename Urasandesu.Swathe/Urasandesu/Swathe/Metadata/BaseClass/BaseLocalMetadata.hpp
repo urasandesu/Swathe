@@ -114,6 +114,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    bool BaseLocalMetadata<ApiHolder>::Equals(ILocal const *pLocal) const
+    {
+        return Pimpl()->Equals(pLocal);
+    }
+
+    template<class ApiHolder>    
+    size_t BaseLocalMetadata<ApiHolder>::GetHashCode() const
+    {
+        return Pimpl()->GetHashCode();
+    }
+
+    template<class ApiHolder>    
     IAssembly const *BaseLocalMetadata<ApiHolder>::GetAssembly() const
     {
         return Pimpl()->GetAssembly();

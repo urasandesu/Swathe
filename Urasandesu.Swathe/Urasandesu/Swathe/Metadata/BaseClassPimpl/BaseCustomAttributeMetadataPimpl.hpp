@@ -191,12 +191,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             return false;
         
         if (m_pCtor)
-            return m_pCtor->GetDeclaringType()->GetSourceType() == pAttributeType->GetSourceType();
+            return m_pCtor->GetDeclaringType()->GetSourceType()->Equals(pAttributeType->GetSourceType());
         
         if (IsNilToken(m_mdtCtor))
             m_pAsm->FillCustomAttributeProperties(GetToken(), m_sig, m_mdtOwner, m_mdtCtor);
         
-        if (pAttributeType->GetAssembly() == m_pAsm)
+        if (pAttributeType->GetAssembly()->Equals(m_pAsm))
         {
             if (TypeFromToken(m_mdtCtor) != mdtMethodDef)
                 return false;

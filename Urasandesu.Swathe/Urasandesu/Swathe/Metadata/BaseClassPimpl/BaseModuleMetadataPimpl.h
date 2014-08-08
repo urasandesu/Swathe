@@ -97,7 +97,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable wstring m_name;
         mutable bool m_typesInit;
         mutable vector<IType const *> m_types;
-        IModule const *m_pSrcMod;
+        mutable IModule const *m_pSrcMod;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

@@ -81,6 +81,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
     private:
         struct get_token_visitor;
+        struct are_equal_visitor;
         void SetMember(ParameterProvider const &member);
         void SetPosition(ULONG position);
         void SetParameterType(IType const *pParamType);

@@ -323,7 +323,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IAssembly const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetSourceAssembly() const
     {
-        return m_pSrcAsm == nullptr ? m_pClass : m_pSrcAsm->GetSourceAssembly();
+        return !m_pSrcAsm ? m_pClass : m_pSrcAsm;
     }
     
     
@@ -579,7 +579,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     bool BaseAssemblyGeneratorPimpl<ApiHolder>::Equals(IAssembly const *pAsm) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (m_pClass == pAsm)
+            return true;
+
+        if (!pAsm)
+            return false;
+
+        auto const *pOtherAsmGen = dynamic_cast<class_type const *>(pAsm);
+        if (!pOtherAsmGen)
+            return pAsm->Equals(m_pSrcAsm);
+        
+        return GetSourceAssembly() == pOtherAsmGen->GetSourceAssembly();
     }
 
 
@@ -587,7 +597,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     size_t BaseAssemblyGeneratorPimpl<ApiHolder>::GetHashCode() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcAsm ? HashValue(m_pClass) : m_pSrcAsm->GetHashCode();
     }
 
 
@@ -703,12 +714,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pClass->GetCustomAttributes();   // resolves default custom attributes of this Assembly.
         auto const &caGenToIndex = m_pClass->GetCustomAttributeGeneratorToIndex();
         for (auto i = 0ul; i < caGenToIndex.size(); ++i)
-            if (caGenToIndex[i]->GetAssembly() == m_pClass)
+            if (m_pClass->Equals(caGenToIndex[i]->GetAssembly()))
                 caGenToIndex[i]->Accept(pVisitor);
 
         auto const &modGenToIndex = m_pClass->GetModuleGeneratorToIndex();
         for (auto i = 0ul; i < modGenToIndex.size(); ++i)
-            if (modGenToIndex[i]->GetAssembly() == m_pClass)
+            if (m_pClass->Equals(modGenToIndex[i]->GetAssembly()))
                 modGenToIndex[i]->Accept(pVisitor);
 
         //for (auto i = 0ul; i < m_refAsmGens.size(); ++i)
@@ -1416,13 +1427,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef decltype(m_refAsmGens) RefAsmGens;
         typedef RefAsmGens::value_type Value;
 
-        if (m_pClass->GetSourceAssembly() == pAsmGen->GetSourceAssembly())
+        if (m_pClass->Equals(pAsmGen))
             return;
 
         if (m_refAsmGens.empty())
             FillDefaultReferencedAssemblies(this, m_refAsmGens);
 
-        auto result = FindIf(m_refAsmGens, [&](Value const &v) { return v->GetSourceAssembly() == pAsmGen->GetSourceAssembly(); });
+        auto result = FindIf(m_refAsmGens, [&](Value const &v) { return v->Equals(pAsmGen); });
         if (result)
         {
             _ASSERTE(!(*result)->GetTargetAssembly());
@@ -1541,7 +1552,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef CaGens::value_type Value;
 
         auto const &caGenToIndex = pClass->GetCustomAttributeGeneratorToIndex();
-        auto isMine = [&](Value const &v) { return v->GetAssembly() == pClass; };
+        auto isMine = [&](Value const &v) { return v->GetAssembly()->Equals(pClass); };
         auto myCaGens = caGenToIndex | filtered(isMine);
         BOOST_FOREACH (auto const &pCaGen, myCaGens)
             cas.push_back(pCaGen);

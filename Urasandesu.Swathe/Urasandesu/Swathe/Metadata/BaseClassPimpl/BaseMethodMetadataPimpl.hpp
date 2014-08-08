@@ -508,31 +508,55 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *pOtherMethod = dynamic_cast<class_type const *>(pMethod);
         if (!pOtherMethod)
-            return m_pClass == pMethod->GetSourceMethod();
+            return m_pClass->Equals(pMethod->GetSourceMethod());
 
         auto isThisDefinition = !IsGenericMethod() || IsGenericMethodDefinition();
         auto isOtherDefinition = !pMethod->IsGenericMethod() || pMethod->IsGenericMethodDefinition();
         if (isThisDefinition != isOtherDefinition)
             return false;
         
+        auto isEqual = true;
         if (isThisDefinition && isOtherDefinition)
-            return GetToken() == pOtherMethod->GetToken() &&
-                   GetDeclaringType() == pOtherMethod->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-                   GetAssembly() == pOtherMethod->GetAssembly();
+        {
+            if (isEqual)
+                isEqual &= GetToken() == pOtherMethod->GetToken();
+            
+            // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+            if (isEqual && !GetDeclaringType())
+                isEqual &= !pOtherMethod->GetDeclaringType();
+            else if (isEqual)
+                isEqual &= GetDeclaringType()->Equals(pOtherMethod->GetDeclaringType());
+            
+            if (isEqual)
+                isEqual &= GetAssembly()->Equals(pOtherMethod->GetAssembly());
+            
+            return isEqual;
+        }
         
         auto mdtTarget = GetToken();
+        if (isEqual)
+            isEqual &= GetToken() == pOtherMethod->GetToken();
+        
+        if (isEqual)
+            isEqual &= GetAssembly()->Equals(pOtherMethod->GetAssembly());
+        
         switch (TypeFromToken(mdtTarget))
         {
             case mdtMethodDef:
             case mdtMemberRef:
-                return GetToken() == pOtherMethod->GetToken() &&
-                       GetDeclaringType() == pOtherMethod->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-                       GetAssembly() == pOtherMethod->GetAssembly() &&
-                       SequenceEqual(GetGenericArguments(), pOtherMethod->GetGenericArguments());
+                // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+                if (isEqual && !GetDeclaringType())
+                    isEqual &= !pOtherMethod->GetDeclaringType();
+                else if (isEqual)
+                    isEqual &= GetDeclaringType()->Equals(pOtherMethod->GetDeclaringType());
+                
+                if (isEqual)
+                    isEqual &= SequenceEqual(GetGenericArguments(), pOtherMethod->GetGenericArguments());
+                
+                return isEqual;
                 
             case mdtMethodSpec:
-                return GetToken() == pOtherMethod->GetToken() &&
-                       GetAssembly() == pOtherMethod->GetAssembly();
+                return isEqual;
 
             default:
                 auto oss = std::wostringstream();
@@ -546,17 +570,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     size_t BaseMethodMetadataPimpl<ApiHolder>::GetHashCode() const
     {
-        using Urasandesu::CppAnonym::Collections::SequenceHashValue;
-        using Urasandesu::CppAnonym::Utilities::HashValue;
-
-        auto isDefinition = !IsGenericMethod() || IsGenericMethodDefinition();
-        auto mdtTarget = GetToken();
-        auto declaringTypeHash = HashValue(GetDeclaringType());    // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-        auto asmHash = HashValue(GetAssembly());
-
-        return isDefinition ? 
-                    (mdtTarget ^ declaringTypeHash ^ asmHash) : 
-                    (mdtTarget ^ declaringTypeHash ^ asmHash ^ SequenceHashValue(GetGenericArguments()));
+        return GetToken();
     }
 
 

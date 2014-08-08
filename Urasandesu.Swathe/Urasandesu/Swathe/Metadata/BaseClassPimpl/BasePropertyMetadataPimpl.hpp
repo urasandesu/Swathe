@@ -265,11 +265,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *pOtherProp = dynamic_cast<class_type const *>(pProp);
         if (!pOtherProp)
-            return m_pClass == pProp->GetSourceProperty();
+            return m_pClass->Equals(pProp->GetSourceProperty());
 
-        return GetToken() == pOtherProp->GetToken() &&
-               GetDeclaringType() == pOtherProp->GetDeclaringType() &&     // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-               GetAssembly() == pOtherProp->GetAssembly();
+        auto isEqual = true;
+        if (isEqual)
+            isEqual &= GetToken() == pOtherProp->GetToken();
+        
+        // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+        if (isEqual && !GetDeclaringType())
+            isEqual &= !pOtherProp->GetDeclaringType();
+        else if (isEqual)
+            isEqual &= GetDeclaringType()->Equals(pOtherProp->GetDeclaringType());
+        
+        if (isEqual)
+            isEqual &= GetAssembly()->Equals(pOtherProp->GetAssembly());
+        
+        return isEqual;
     }
 
 
@@ -277,12 +288,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     size_t BasePropertyMetadataPimpl<ApiHolder>::GetHashCode() const
     {
-        using Urasandesu::CppAnonym::Utilities::HashValue;
-
-        auto mdtTarget = GetToken();
-        auto declaringTypeHash = HashValue(GetDeclaringType());    // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-        auto asmHash = HashValue(GetAssembly());
-        return mdtTarget ^ declaringTypeHash ^ asmHash;
+        return GetToken();
     }
 
 

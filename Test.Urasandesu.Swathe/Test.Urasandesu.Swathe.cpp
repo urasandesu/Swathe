@@ -291,12 +291,12 @@ namespace {
         pNowGetGen_Body->SetGetMethod(pNowGetGen_get_Body);
         pNowGetGen_Body->SetSetMethod(pNowGetGen_set_Body);
         ASSERT_EQ(wstring(L"Body"), pNowGetGen_Body->GetName());
-        ASSERT_TRUE(pNowGetGen_Body->GetPropertyType()->GetSourceType() == pFunc1DateTime->GetSourceType());
+        ASSERT_TRUE(pNowGetGen_Body->GetPropertyType()->GetSourceType()->Equals(pFunc1DateTime->GetSourceType()));
         ASSERT_EQ(0, pNowGetGen_Body->GetParameters().size());
         ASSERT_TRUE((pNowGetGen_Body->GetAttribute() & PropertyAttributes::PA_NONE) == PropertyAttributes::PA_NONE);
         ASSERT_FALSE((pNowGetGen_Body->GetAttribute() & PropertyAttributes::PA_SPECIAL_NAME) == PropertyAttributes::PA_SPECIAL_NAME);
-        ASSERT_TRUE(pNowGetGen_Body->GetGetMethod() == pNowGetGen_get_Body);
-        ASSERT_TRUE(pNowGetGen_Body->GetSetMethod() == pNowGetGen_set_Body);
+        ASSERT_TRUE(pNowGetGen_Body->GetGetMethod()->Equals(pNowGetGen_get_Body));
+        ASSERT_TRUE(pNowGetGen_Body->GetSetMethod()->Equals(pNowGetGen_set_Body));
 
         auto *pNowGetGen_cctor = pNowGetGen->DefineMethod(L".cctor", 
                                                           MethodAttributes::MA_PUBLIC | 

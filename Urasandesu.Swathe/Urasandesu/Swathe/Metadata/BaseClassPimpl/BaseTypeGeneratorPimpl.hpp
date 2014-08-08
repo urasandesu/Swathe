@@ -972,23 +972,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const &typeGenToIndex = m_pAsmGen->GetTypeGeneratorToIndex();
         for (auto i = 0ul; i < typeGenToIndex.size(); ++i)
-            if (typeGenToIndex[i]->GetDeclaringType() == m_pClass)
+            if (m_pClass->Equals(typeGenToIndex[i]->GetDeclaringType()))
                 typeGenToIndex[i]->Accept(pVisitor);
 
         auto const &fieldGenToIndex = m_pAsmGen->GetFieldGeneratorToIndex();
         for (auto i = 0ul; i < fieldGenToIndex.size(); ++i)
-            if (fieldGenToIndex[i]->GetDeclaringType() == m_pClass)
+            if (m_pClass->Equals(fieldGenToIndex[i]->GetDeclaringType()))
                 fieldGenToIndex[i]->Accept(pVisitor);
 
         m_pClass->GetConstructors();
         auto const &methodGenToIndex = m_pAsmGen->GetMethodGeneratorToIndex();
         for (auto i = 0ul; i < methodGenToIndex.size(); ++i)
-            if (methodGenToIndex[i]->GetDeclaringType() == m_pClass)
+            if (m_pClass->Equals(methodGenToIndex[i]->GetDeclaringType()))
                 methodGenToIndex[i]->Accept(pVisitor);
 
         auto const &propGenToIndex = m_pAsmGen->GetPropertyGeneratorToIndex();
         for (auto i = 0ul; i < propGenToIndex.size(); ++i)
-            if (propGenToIndex[i]->GetDeclaringType() == m_pClass)
+            if (m_pClass->Equals(propGenToIndex[i]->GetDeclaringType()))
                 propGenToIndex[i]->Accept(pVisitor);
     }
 

@@ -261,7 +261,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             if (TypeFromToken(mdtTarget) == mdtAssembly)
                 FillAssemblyProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_asmFlags);
             else if (TypeFromToken(mdtTarget) == mdtAssemblyRef)
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                FillAssemblyRefProperties(this, mdtTarget, m_name, m_pSnKey, m_amd, m_locale, m_os, m_asmFlags);
             else
                 BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
         }
@@ -338,7 +338,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IAssembly const *BaseAssemblyMetadataPimpl<ApiHolder>::GetSourceAssembly() const
     {
-        return m_pSrcAsm == nullptr ? m_pClass : m_pSrcAsm->GetSourceAssembly();
+        if (m_pSrcAsm)
+            return m_pSrcAsm;
+        
+        auto mdtTarget = GetToken();
+        switch (TypeFromToken(mdtTarget))
+        {
+            case mdtAssembly:
+                m_pSrcAsm = m_pClass;
+                break;
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+        _ASSERTE(m_pSrcAsm);
+        return m_pSrcAsm;
     }
     
     
@@ -597,12 +613,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *pOtherAsm = dynamic_cast<class_type const *>(pAsm);
         if (!pOtherAsm)
-            return m_pClass == pAsm->GetSourceAssembly();
+            return m_pClass->Equals(pAsm->GetSourceAssembly());
 
-        return GetToken() == pOtherAsm->GetToken() && 
-               GetFullName() == pOtherAsm->GetFullName() && 
-               !GetTargetAssembly() ? !pOtherAsm->GetTargetAssembly() : GetTargetAssembly()->Equals(pOtherAsm->GetTargetAssembly()) && 
-               SequenceEqual(GetProcessorArchitectures(), pOtherAsm->GetProcessorArchitectures());
+        auto isEqual = true;
+        if (isEqual)
+            isEqual &= GetToken() == pOtherAsm->GetToken();
+
+        if (isEqual)
+            isEqual &= GetFullName() == pOtherAsm->GetFullName();
+
+        if (isEqual && !GetTargetAssembly())
+            isEqual &= !pOtherAsm->GetTargetAssembly();
+        else if (isEqual)
+            isEqual &= GetTargetAssembly()->Equals(pOtherAsm->GetTargetAssembly());
+
+        if (isEqual)
+            isEqual &= SequenceEqual(GetProcessorArchitectures(), pOtherAsm->GetProcessorArchitectures());
+
+        return isEqual;
     }
 
 
@@ -612,6 +640,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::Collections::SequenceHashValue;
 
+        // The Assembly's token is always 0x20000001, so GetHashCode should return the value that considers other identifiers.
         auto mdtTarget = GetToken();
         auto fullNameHash = boost::hash_value(GetFullName());
         auto targetAsmHash = !GetTargetAssembly() ? 0 : GetTargetAssembly()->GetHashCode();
@@ -1353,7 +1382,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             return nullptr;
         
         auto const *pTargetAsm = pType->GetAssembly();
-        if (pTargetAsm == m_pClass)
+        if (pTargetAsm->Equals(m_pClass))
             return pType;
         
         auto mdtTarget = mdTokenNil;

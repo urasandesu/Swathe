@@ -375,7 +375,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable AutoPtr<IPortableExecutableReader const> m_pReader;
         DWORD m_openFlags;
         assembly_metadata_label_type const *m_pOpeningAsm;
-        IAssembly const *m_pSrcAsm;
+        mutable IAssembly const *m_pSrcAsm;
         mutable ATL::CComPtr<IMetaDataAssemblyImport> m_pComMetaAsmImp;
         mutable ATL::CComPtr<IMetaDataImport2> m_pComMetaImp;
         INT reserved;

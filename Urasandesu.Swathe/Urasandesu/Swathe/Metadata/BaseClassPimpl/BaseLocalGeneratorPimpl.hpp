@@ -133,7 +133,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     ILocal const *BaseLocalGeneratorPimpl<ApiHolder>::GetSourceLocal() const
     {
-        return !m_pSrcLocal ? m_pClass : m_pSrcLocal->GetSourceLocal();
+        return !m_pSrcLocal ? m_pClass : m_pSrcLocal;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseLocalGeneratorPimpl<ApiHolder>::Equals(ILocal const *pLocal) const
+    {
+        if (m_pClass == pLocal)
+            return true;
+
+        if (!pLocal)
+            return false;
+
+        auto const *pOtherLocalGen = dynamic_cast<class_type const *>(pLocal);
+        if (!pOtherLocalGen)
+            return pLocal->Equals(m_pSrcLocal);
+        
+        return GetSourceLocal() == pOtherLocalGen->GetSourceLocal();
+    }
+
+
+
+    template<class ApiHolder>    
+    size_t BaseLocalGeneratorPimpl<ApiHolder>::GetHashCode() const
+    {
+        using Urasandesu::CppAnonym::Utilities::HashValue;
+        return !m_pSrcLocal ? HashValue(m_pClass) : m_pSrcLocal->GetHashCode();
     }
 
 

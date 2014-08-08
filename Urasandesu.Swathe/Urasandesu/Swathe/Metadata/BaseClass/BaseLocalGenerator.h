@@ -76,6 +76,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethodBody const *GetMethodBody() const;
         IAssembly const *GetAssembly() const;
         ILocal const *GetSourceLocal() const;
+        bool Equals(ILocal const *pLocal) const;
+        size_t GetHashCode() const;
     
     private:
         local_generator_pimpl_label_type *Pimpl();

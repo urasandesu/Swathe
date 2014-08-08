@@ -524,16 +524,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
 
-    //template<class ApiHolder>    
-    //IDispenser const *BaseMethodGeneratorPimpl<ApiHolder>::GetDispenser() const
-    //{
-    //    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    //    //return m_pDisp;
-    //    // TODO: この I/F は削除。
-    //}
-
-
-
     template<class ApiHolder>    
     IParameter const *BaseMethodGeneratorPimpl<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
@@ -690,12 +680,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pClass->GetParameters();   // resolves the Parameters of this Method.
         auto const &paramGenToIndex = m_pAsmGen->GetParameterGeneratorToIndex();
         for (auto i = 0ul; i < paramGenToIndex.size(); ++i)
-            if (paramGenToIndex[i]->GetMethod() == m_pClass)
+            if (m_pClass->Equals(paramGenToIndex[i]->GetMethod()))
                 paramGenToIndex[i]->Accept(pVisitor);
 
         auto const &methodBodyGenToIndex = m_pAsmGen->GetMethodBodyGeneratorToIndex();
         for (auto i = 0ul; i < methodBodyGenToIndex.size(); ++i)
-            if (methodBodyGenToIndex[i]->GetMethod() == m_pClass)
+            if (m_pClass->Equals(methodBodyGenToIndex[i]->GetMethod()))
                 methodBodyGenToIndex[i]->Accept(pVisitor);
     }
 

@@ -653,7 +653,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         auto cas = GetCustomAttributes();
         auto isTarget = function<bool (ICustomAttribute const *)>();
-        isTarget = [pAttributeType](ICustomAttribute const *pCas) { return pCas->GetAttributeType()->GetSourceType() == pAttributeType->GetSourceType(); };
+        isTarget = [pAttributeType](ICustomAttribute const *pCas) { return pCas->Equals(pAttributeType); };
         return cas | filtered(isTarget);
     }
 
@@ -719,7 +719,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *pOtherType = dynamic_cast<class_type const *>(pType);
         if (!pOtherType)
-            return m_pClass == pType->GetSourceType();
+            return m_pClass->Equals(pType->GetSourceType());
         
         auto isThisDef = !IsGenericType() || IsGenericTypeDefinition();
         auto isOtherDef = !pOtherType->IsGenericType() || pOtherType->IsGenericTypeDefinition();
@@ -732,25 +732,40 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             return false;
         
         auto mdtTarget = GetToken();
+        auto isEqual = true;
+        if (isEqual)
+            isEqual &= GetToken() == pOtherType->GetToken();
+        
+        if (isEqual)
+            isEqual &= GetKind() == pOtherType->GetKind();
+        
+        // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
+        // NOTE: check just their equivalence by pointer, otherwise you will go into infinite loop if they are generic type instance.
+        if (isEqual && !GetDeclaringType())
+            isEqual &= !pOtherType->GetDeclaringType();
+        else if (isEqual)
+            isEqual &= GetDeclaringType() == pOtherType->GetDeclaringType();
+        
+        if (isEqual)
+            isEqual &= GetAssembly()->Equals(pOtherType->GetAssembly());
+
         switch (TypeFromToken(mdtTarget))
         {
             case mdtTypeSpec:
-                return GetToken() == pOtherType->GetToken() &&
-                       GetKind() == pOtherType->GetKind() && 
-                       GetDeclaringType() == pOtherType->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-                       GetAssembly() == pOtherType->GetAssembly();
+                return isEqual;
 
             case mdtTypeDef:
             case mdtTypeRef:
             case mdtGenericParam:
             case mdtTypeVar:
             case mdtTypeMVar:
-                return GetToken() == pOtherType->GetToken() &&
-                       GetKind() == pOtherType->GetKind() && 
-                       GetDeclaringType() == pOtherType->GetDeclaringType() &&  // to determine whether this member is gave from Generic Type Definition or Generic Type Instance
-                       GetAssembly() == pOtherType->GetAssembly() && 
-                       (isThisDef && isOtherDef ? true : SequenceEqual(GetGenericArguments(), pOtherType->GetGenericArguments())) && 
-                       (!isThisArr && !isOtherArr ? true : SequenceEqual(GetDimensions(), pOtherType->GetDimensions()));
+                if (isEqual && (!isThisDef || !isOtherDef))
+                    isEqual &= SequenceEqual(GetGenericArguments(), pOtherType->GetGenericArguments());
+                
+                if (isEqual && (!isThisArr || !isOtherArr))
+                    isEqual &= SequenceEqual(GetDimensions(), pOtherType->GetDimensions());
+
+                return isEqual;
                 
             default:
                 auto oss = std::wostringstream();
@@ -764,35 +779,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     size_t BaseTypeMetadataPimpl<ApiHolder>::GetHashCode() const
     {
-        using Urasandesu::CppAnonym::Collections::SequenceHashValue;
-        using Urasandesu::CppAnonym::Utilities::HashValue;
-            
-        auto defHash = !IsGenericType() || IsGenericTypeDefinition() ? 0 : SequenceHashValue(GetGenericArguments());
-        auto arrHash = !IsArray() ? 0 : SequenceHashValue(GetDimensions());
-        auto mdtTarget = GetToken();
-        auto kindHash = 0;
-        switch (TypeFromToken(mdtTarget))
-        {
-            case mdtTypeSpec:
-                kindHash = 0;
-                break;
-            
-            case mdtTypeDef:
-            case mdtTypeRef:
-            case mdtGenericParam:
-            case mdtTypeVar:
-            case mdtTypeMVar:
-                kindHash = GetKind().Value();
-                break;
-
-            default:
-                auto oss = std::wostringstream();
-                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
-        }
-        auto asmHash = HashValue(GetAssembly());
-        
-        return mdtTarget ^ kindHash ^ asmHash ^ defHash ^ arrHash;
+        return GetToken();
     }
 
 
@@ -976,7 +963,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             if (isXByRef)
                 return typeEqualTo(x->GetDeclaringType(), y->GetDeclaringType());
             
-            return x->GetSourceType() == y->GetSourceType();
+            return x->GetSourceType()->Equals(y->GetSourceType());
         }
     };
 

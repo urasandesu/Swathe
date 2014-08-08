@@ -117,6 +117,44 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    bool BaseLocalMetadataPimpl<ApiHolder>::Equals(ILocal const *pLocal) const
+    {
+        if (m_pClass == pLocal)
+            return true;
+
+        if (!pLocal)
+            return false;
+
+        auto const *pOtherLocal = dynamic_cast<class_type const *>(pLocal);
+        if (!pOtherLocal)
+            return m_pClass == pLocal->GetSourceLocal();
+
+        auto isEqual = true;
+        if (isEqual)
+            isEqual &= GetToken() == pOtherLocal->GetToken();
+        
+        if (isEqual && !GetMethodBody())
+            isEqual &= !pOtherLocal->GetMethodBody();
+        else if (isEqual)
+            isEqual &= GetMethodBody()->Equals(pOtherLocal->GetMethodBody());
+        
+        if (isEqual)
+            isEqual &= GetAssembly()->Equals(pOtherLocal->GetAssembly());
+        
+        return isEqual;
+    }
+
+
+
+    template<class ApiHolder>    
+    size_t BaseLocalMetadataPimpl<ApiHolder>::GetHashCode() const
+    {
+        return GetToken();
+    }
+
+
+
+    template<class ApiHolder>    
     IAssembly const *BaseLocalMetadataPimpl<ApiHolder>::GetAssembly() const
     {
         return m_pAsm;

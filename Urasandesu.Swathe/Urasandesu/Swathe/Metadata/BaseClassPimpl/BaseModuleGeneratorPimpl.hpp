@@ -219,7 +219,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const &typeGenToIndex = m_pAsmGen->GetTypeGeneratorToIndex();
         for (auto i = 0ul; i < typeGenToIndex.size(); ++i)
-            if (typeGenToIndex[i]->GetModule() == m_pClass)
+            if (m_pClass->Equals(typeGenToIndex[i]->GetModule()))
                 typeGenToIndex[i]->Accept(pVisitor);
     }
 

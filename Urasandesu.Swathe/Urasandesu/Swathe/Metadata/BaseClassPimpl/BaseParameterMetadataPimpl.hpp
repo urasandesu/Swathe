@@ -207,6 +207,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     bool BaseParameterMetadataPimpl<ApiHolder>::Equals(IParameter const *pParam) const
     {
+        using boost::apply_visitor;
+        
         if (m_pClass == pParam)
             return true;
 
@@ -215,12 +217,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *pOtherParam = dynamic_cast<class_type const *>(pParam);
         if (!pOtherParam)
-            return m_pClass == pParam->GetSourceParameter();
+            return m_pClass->Equals(pParam->GetSourceParameter());
 
-        return GetPosition() == pOtherParam->GetPosition() &&
-               GetParameterType() == pOtherParam->GetParameterType() &&     // to determine whether this parameter is ByRef
-               GetMember() == pOtherParam->GetMember() &&
-               GetAssembly() == pOtherParam->GetAssembly();
+        auto isEqual = true;
+        if (isEqual)
+            isEqual &= GetPosition() == pOtherParam->GetPosition();
+        
+        // to determine whether this parameter is ByRef
+        if (isEqual)
+            isEqual &= GetParameterType()->Equals(pOtherParam->GetParameterType());
+        
+        if (isEqual)
+            isEqual &= apply_visitor(are_equal_visitor(GetMember()), pOtherParam->GetMember());
+        
+        if (isEqual)
+            isEqual &= GetAssembly()->Equals(pOtherParam->GetAssembly());
+        
+        return isEqual;
     }
 
 
@@ -232,10 +245,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using Urasandesu::CppAnonym::Utilities::GetPointer;
 
         auto position = GetPosition();
-        auto paramTypeHash = HashValue(GetParameterType());     // to determine whether this parameter is ByRef
         auto memberHash = HashValue(GetPointer(GetMember()));
         auto asmHash = HashValue(GetAssembly());
-        return position ^ paramTypeHash ^ memberHash ^ asmHash;
+        return position ^ memberHash ^ asmHash;
     }
 
 
@@ -294,6 +306,44 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             return mdTokenNil;
         }
+    };
+
+
+
+    template<class ApiHolder>    
+    struct BaseParameterMetadataPimpl<ApiHolder>::are_equal_visitor : 
+        static_visitor<bool>
+    {
+        are_equal_visitor(ParameterProvider const &member) : 
+            m_member(member)
+        { }
+        
+        template<class T>
+        bool operator ()(T const &v) const
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+
+        template<>
+        bool operator ()<IMethod const *>(IMethod const *const &v) const
+        {
+            using boost::get;
+
+            auto const *const *ppMethod = get<IMethod const *>(&m_member);
+            if (!ppMethod)
+                return false;
+            
+            return v->Equals(*ppMethod);
+        }
+
+        template<>
+        bool operator ()<blank>(blank const &v) const
+        {
+            using Urasandesu::CppAnonym::Utilities::Empty;
+            return Empty(m_member);
+        }
+        
+        ParameterProvider const &m_member;
     };
 
 

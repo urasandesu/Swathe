@@ -125,7 +125,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto types = m_pAsm->GetTypes();
         auto const *pClass = static_cast<IModule const *>(m_pClass);
         auto isTarget = function<bool (IType const *)>();
-        isTarget = [pClass](IType const *pType) { return pType->GetModule() == pClass; };
+        isTarget = [pClass](IType const *pType) { return pClass->Equals(pType->GetModule()); };
         return types | filtered(isTarget);
     }
 
@@ -142,7 +142,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IModule const *BaseModuleMetadataPimpl<ApiHolder>::GetSourceModule() const
     {
-        return m_pSrcMod == nullptr ? m_pClass : m_pSrcMod->GetSourceModule();
+        if (m_pSrcMod)
+            return m_pSrcMod;
+        
+        auto mdtTarget = GetToken();
+        switch (TypeFromToken(mdtTarget))
+        {
+            case mdtModule:
+                m_pSrcMod = m_pClass;
+                break;
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+        _ASSERTE(m_pSrcMod);
+        return m_pSrcMod;
     }
 
 
@@ -158,10 +174,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *pOtherMod = dynamic_cast<class_type const *>(pMod);
         if (!pOtherMod)
-            return m_pClass == pMod->GetSourceModule();
+            return m_pClass->Equals(pMod->GetSourceModule());
 
-        return GetName() == pOtherMod->GetName() &&
-               GetAssembly() == pOtherMod->GetAssembly();
+        auto isEqual = true;
+        if (isEqual)
+            isEqual &= GetToken() == pOtherMod->GetToken();
+        
+        if (isEqual)
+            isEqual &= GetName() == pOtherMod->GetName();
+        
+        if (isEqual)
+            isEqual &= GetAssembly()->Equals(pOtherMod->GetAssembly());
+        
+        return isEqual;
     }
 
 
@@ -169,11 +194,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     size_t BaseModuleMetadataPimpl<ApiHolder>::GetHashCode() const
     {
-        using Urasandesu::CppAnonym::Utilities::HashValue;
-
-        auto nameHash = boost::hash_value(GetName());
-        auto asmHash = HashValue(GetAssembly());
-        return nameHash ^ asmHash;
+        return GetToken();
     }
 
     

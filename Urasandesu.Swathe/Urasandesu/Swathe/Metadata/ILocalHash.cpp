@@ -45,14 +45,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
         ILocalHashImpl::result_type ILocalHashImpl::operator()(param_type v) const
         {
-            using Urasandesu::CppAnonym::Utilities::HashValue;
-
-            if (!v)
-                return 0;
-            
-            auto mdtTarget = v->GetToken();
-            auto const *pBody = v->GetMethodBody();
-            return mdtTarget ^ HashValue(pBody);
+            return !v ? 0 : v->GetHashCode();
         }
 
     }   // namespace ILocalHashDetail {
