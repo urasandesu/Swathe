@@ -319,19 +319,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    BaseAssemblyGenerator<ApiHolder>::assembly_saving_prepared::assembly_saving_prepared(assembly_generator_label_type *_this) : 
-        m_pimpl(_this->Pimpl())
-    {
-        m_pimpl->PrepareSaving();
-    }
-
-    template<class ApiHolder>    
-    BaseAssemblyGenerator<ApiHolder>::assembly_saving_prepared::~assembly_saving_prepared()
-    {
-        m_pimpl->DisposeSaving();
-    }
-
-    template<class ApiHolder>    
     void BaseAssemblyGenerator<ApiHolder>::SetFullName(wstring const &fullName)
     {
         Pimpl()->SetFullName(fullName);
@@ -630,12 +617,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseAssemblyGenerator<ApiHolder>::AddReferencedAssembly(assembly_generator_label_type *pAsmGen)
     {
         Pimpl()->AddReferencedAssembly(pAsmGen);
-    }
-
-    template<class ApiHolder>    
-    bool BaseAssemblyGenerator<ApiHolder>::IsSaving() const
-    {
-        return Pimpl()->IsSaving();
     }
 
     template<class ApiHolder>    

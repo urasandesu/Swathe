@@ -68,7 +68,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_amdInit(false),
         m_casInit(false),
         m_refAsmsInit(false), 
-        m_isSaving(false), 
         m_pSavingAsmGen(nullptr), 
         m_pSrcAsm(nullptr), 
         m_isModifiable(false)
@@ -189,7 +188,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             if (m_pSrcAsm == nullptr)
             {
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                m_fullName = L"Anonymously Hosted DynamicMethods Assembly";
             }
             else
             {
@@ -507,10 +506,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         using Urasandesu::Swathe::Hosting::ComImageFlags;
         using Urasandesu::Swathe::Hosting::CeeCreateFlags;
 
-        typedef typename class_type::assembly_saving_prepared AssemblySavingPrepared;
-
-        auto _ = AssemblySavingPrepared(m_pClass);
-
         auto imageFlags = ComImageFlags();
         imageFlags = ComImageFlags::CIF_ILONLY;
         if (portableExecutableKind & PortableExecutableKinds::PEK_32BIT_REQUIRED)
@@ -589,7 +584,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (!pOtherAsmGen)
             return pAsm->Equals(m_pSrcAsm);
         
-        return GetSourceAssembly() == pOtherAsmGen->GetSourceAssembly();
+        auto isEqual = true;
+        if (isEqual && !GetTargetAssembly())
+            isEqual &= !pAsm->GetTargetAssembly();
+        else if (isEqual)
+            isEqual &= GetTargetAssembly()->Equals(pAsm->GetTargetAssembly());
+        
+        if (isEqual)
+            isEqual &= GetSourceAssembly() == pOtherAsmGen->GetSourceAssembly();
+
+        return isEqual;
     }
 
 
@@ -998,7 +1002,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::method_body_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewMethodBodyGenerator(IMethodBody const *pSrcBody, IMethod const *pMethod) const
     {
         auto pBodyGen = m_pMetaInfo->NewMethodBodyGeneratorCore(m_pClass);
-        pBodyGen->SetSourceMethodBody(pSrcBody);
+        if (pSrcBody)
+            pBodyGen->SetSourceMethodBody(pSrcBody);
         pBodyGen->SetMethod(pMethod);
         return pBodyGen;
     }
@@ -1214,7 +1219,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<module_generator_label_type const *> ModGens;
         typedef ModGens::value_type Value;
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pMod->GetAssembly());
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pMod->GetAssembly());
         auto const &modGenToIndex = pRefAsmGen->GetModuleGeneratorToIndex();
         auto isAlreadyExist = [&](Value const &v) { return v->Equals(pMod); };
         auto result = FindIf(modGenToIndex, isAlreadyExist);
@@ -1235,7 +1240,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<type_generator_label_type const *> TypeGens;
         typedef TypeGens::value_type Value;
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pType->GetAssembly());
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pType->GetAssembly());
         auto const &typeGenToIndex = pRefAsmGen->GetTypeGeneratorToIndex();
         auto isAlreadyExist = [&](Value const &v) { return v->Equals(pType); };
         auto result = FindIf(typeGenToIndex, isAlreadyExist);
@@ -1256,7 +1261,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<field_generator_label_type const *> FieldGens;
         typedef FieldGens::value_type Value;
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pField->GetAssembly());
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pField->GetAssembly());
         auto const &fieldGenToIndex = pRefAsmGen->GetFieldGeneratorToIndex();
         auto isAlreadyExist = [&](Value const &v) { return v->Equals(pField); };
         auto result = FindIf(fieldGenToIndex, isAlreadyExist);
@@ -1277,7 +1282,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<property_generator_label_type const *> PropertyGens;
         typedef PropertyGens::value_type Value;
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pProp->GetAssembly());
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pProp->GetAssembly());
         auto const &propGenToIndex = pRefAsmGen->GetPropertyGeneratorToIndex();
         auto isAlreadyExist = [&](Value const &v) { return v->Equals(pProp); };
         auto result = FindIf(propGenToIndex, isAlreadyExist);
@@ -1298,7 +1303,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<method_generator_label_type const *> MethodGens;
         typedef MethodGens::value_type Value;
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pMethod->GetAssembly());
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pMethod->GetAssembly());
         auto const &methodGenToIndex = pRefAsmGen->GetMethodGeneratorToIndex();
         auto isAlreadyExist = [&](Value const &v) { return v->Equals(pMethod); };
         auto result = FindIf(methodGenToIndex, isAlreadyExist);
@@ -1319,7 +1324,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<method_body_generator_label_type const *> MethodBodyGens;
         typedef MethodBodyGens::value_type Value;
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pBody->GetAssembly());
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pBody->GetAssembly());
         auto const &bodyGenToIndex = pRefAsmGen->GetMethodBodyGeneratorToIndex();
         auto isAlreadyExist = [&](Value const &v) { return v->Equals(pBody); };
         auto result = FindIf(bodyGenToIndex, isAlreadyExist);
@@ -1340,7 +1345,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef vector<parameter_generator_label_type const *> ParamGens;
         typedef ParamGens::value_type Value;
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssembly(pParam->GetAssembly());
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pParam->GetAssembly());
         auto const &paramGenToIndex = pRefAsmGen->GetParameterGeneratorToIndex();
         auto isAlreadyExist = [&](Value const &v) { return v->Equals(pParam); };
         auto result = FindIf(paramGenToIndex, isAlreadyExist);
@@ -1436,7 +1441,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto result = FindIf(m_refAsmGens, [&](Value const &v) { return v->Equals(pAsmGen); });
         if (result)
         {
-            _ASSERTE(!(*result)->GetTargetAssembly());
+            _ASSERTE(!(*result)->GetTargetAssembly() || (*result)->GetTargetAssembly() == m_pClass);
             (*result)->SetSavingAssembly(m_pClass);
         }
         else
@@ -1450,44 +1455,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    bool BaseAssemblyGeneratorPimpl<ApiHolder>::IsSaving() const
-    {
-        return m_isSaving;
-    }
-
-
-
-    template<class ApiHolder>    
     void BaseAssemblyGeneratorPimpl<ApiHolder>::SetSavingAssembly(assembly_generator_label_type *pSavingAsmGen)
     {
         m_pSavingAsmGen = pSavingAsmGen;
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseAssemblyGeneratorPimpl<ApiHolder>::PrepareSaving()
-    {
-        m_isSaving = true;
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseAssemblyGeneratorPimpl<ApiHolder>::DisposeSaving()
-    {
-        try
-        {
-            m_isSaving = false;
-            BOOST_FOREACH (auto &pRefAsmGen, m_refAsmGens)
-                pRefAsmGen->SetSavingAssembly(nullptr);
-        }
-        catch (...)
-        {
-#ifdef OUTPUT_DEBUG
-            std::cout << boost::diagnostic_information(boost::current_exception()) << std::endl;
-#endif
-        }
     }
 
 
@@ -1563,11 +1533,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyGeneratorPimpl<ApiHolder>::FillDefaultReferencedAssemblies(assembly_generator_pimpl_label_type const *_this, vector<assembly_generator_label_type *> &refAsmGens)
     {
+        auto *pClass = _this->m_pClass;
         auto *pDisp = _this->m_pDisp;
+        auto const *pSrcAsm = _this->m_pSrcAsm;
 
         auto const *pMSCorLib = pDisp->GetAssembly(MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB);
-        auto *pMSCorLibGen = pDisp->ResolveOrDefineAssembly(pMSCorLib);
+        if (pSrcAsm && pSrcAsm->Equals(pMSCorLib))
+            return;
+        
+        auto *pMSCorLibGen = pDisp->ResolveOrDefineAssemblyRef(pClass, pMSCorLib);
         refAsmGens.push_back(pMSCorLibGen);
+        pMSCorLibGen->SetSavingAssembly(pClass);
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

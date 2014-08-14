@@ -449,9 +449,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BasePropertyGeneratorPimpl<ApiHolder>::SetSourceProperty(IProperty const *pSrcProp)
     {
-        _ASSERTE(pSrcProp != nullptr);
-        _ASSERTE(m_pSrcProp == nullptr);
-        m_pSrcProp = pSrcProp;
+        _ASSERTE(pSrcProp);
+        _ASSERTE(!m_pSrcProp);
+        auto const *pSrcPropGen = dynamic_cast<class_type const *>(pSrcProp);
+        if (!pSrcPropGen)
+            m_pSrcProp = pSrcProp;
+        else
+            m_pSrcProp = pSrcPropGen->GetSourceProperty();
     }
 
 

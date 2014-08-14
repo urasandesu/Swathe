@@ -134,14 +134,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         assembly_metadata_label_type const *GetAssemblyCore(wstring const &fullName) const;
         assembly_metadata_label_type const *GetAssemblyCore(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         assembly_metadata_label_type const *GetAssemblyCore(IMetaDataImport2 *pComMetaImp) const;
-        assembly_metadata_label_type const *GetAssemblyRefCore(assembly_metadata_label_type const *pTargetAsm, mdToken mdt) const;
+        assembly_metadata_label_type const *GetAssemblyRefCore(assembly_metadata_label_type const *pOpeningAsm, mdToken mdt) const;
         assembly_metadata_label_type const *GetAssemblyWithPartialNameCore(wstring const &name) const;
         void RegisterAssembly(TempPtr<assembly_metadata_label_type> &pAsm);
 
         assembly_generator_label_type *DefineAssembly(IAssembly const *pSrcAsm) const;
-        assembly_generator_label_type *ResolveAssembly(IAssembly const *pAsm) const;
-        assembly_generator_label_type *ResolveOrDefineAssembly(IAssembly const *pAsm) const;
-        void UpdateReferencedAssemblyIfNecessary(assembly_generator_label_type *pResolvedAsm) const;
+        assembly_generator_label_type *ResolveAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const;
+        assembly_generator_label_type *ResolveOrDefineAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataEmit2 *pComMetaEmt, IAssembly const *pSrcAsm) const;
         void RegisterAssemblyGenerator(TempPtr<assembly_generator_label_type> &pAsmGen);
 

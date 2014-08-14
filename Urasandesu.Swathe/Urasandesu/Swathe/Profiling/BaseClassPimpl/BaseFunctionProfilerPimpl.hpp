@@ -145,14 +145,11 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     {
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
-        typedef typename assembly_generator_label_type::assembly_saving_prepared AssemblySavingPrepared;
-
         auto pModProf = m_pClass->AttachToModule();
         auto pAsmProf = pModProf->AttachToAssembly();
         auto pDomainProf = pAsmProf->AttachToAppDomain();
         auto *pDisp = pDomainProf->GetMetadataDispenser();
         auto *pAsmGen = pAsmProf->GetAssemblyGenerator(pDisp);
-        auto _ = AssemblySavingPrepared(pAsmGen);
         
         auto pFuncProf = pBodyProf->AttachToFunction();
         auto const *pMethodGen = pFuncProf->GetMethodGenerator(pAsmGen);

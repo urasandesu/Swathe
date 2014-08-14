@@ -264,10 +264,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMetaDataEmit2 &GetCOMMetaDataEmit();
         
         void AddReferencedAssembly(assembly_generator_label_type *pAsmGen);
-        bool IsSaving() const;
         void SetSavingAssembly(assembly_generator_label_type *pSavingAsmGen);
-        void PrepareSaving();
-        void DisposeSaving();
         static void FillDefaultAttributes(assembly_generator_pimpl_label_type const *_this, vector<ICustomAttribute const *> &cas);
         static void FillDefaultReferencedAssemblies(assembly_generator_pimpl_label_type const *_this, vector<assembly_generator_label_type *> &refAsmGens);
 
@@ -295,13 +292,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable vector<assembly_generator_label_type *> m_refAsmGens;
         mutable bool m_refAsmsInit;
         mutable vector<IAssembly const *> m_refAsms;
-        bool m_isSaving;
         assembly_generator_label_type *m_pSavingAsmGen;
         IAssembly const *m_pSrcAsm;
         mutable ATL::CComPtr<IMetaDataAssemblyEmit> m_pComMetaAsmEmt;
         mutable ATL::CComPtr<IMetaDataEmit2> m_pComMetaEmt;
         bool m_isModifiable;
-        int reserved;
         
     };
 

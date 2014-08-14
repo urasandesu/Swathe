@@ -189,17 +189,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         assembly_generator_pimpl_label_type *Pimpl();
         assembly_generator_pimpl_label_type const *Pimpl() const;
 
-        class assembly_saving_prepared : 
-            noncopyable
-        {
-        public: 
-            assembly_saving_prepared(assembly_generator_label_type *_this);
-            ~assembly_saving_prepared();
-            
-        private:
-            assembly_generator_pimpl_label_type *m_pimpl;
-        };
-
         void SetFullName(wstring const &fullName);
         void SetName(wstring const &name);
         void SetSourceAssembly(IAssembly const *pSrcAsm);
@@ -264,16 +253,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMetaDataEmit2 &GetCOMMetaDataEmit();
         
         void AddReferencedAssembly(assembly_generator_label_type *pAsmGen);
-        bool IsSaving() const;
         void SetSavingAssembly(assembly_generator_label_type *pSavingAsmGen);
 
 #ifdef _DEBUG
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 288;
+        static INT const PIMPL_TYPE_SIZE = 280;
 #else
-        static INT const PIMPL_TYPE_SIZE = 528;
+        static INT const PIMPL_TYPE_SIZE = 520;
 #endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

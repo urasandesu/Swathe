@@ -139,9 +139,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataDispenser<ApiHolder>::assembly_metadata_label_type const *BaseMetadataDispenser<ApiHolder>::GetAssemblyRefCore(assembly_metadata_label_type const *pTargetAsm, mdToken mdt) const
+    typename BaseMetadataDispenser<ApiHolder>::assembly_metadata_label_type const *BaseMetadataDispenser<ApiHolder>::GetAssemblyRefCore(assembly_metadata_label_type const *pOpeningAsm, mdToken mdt) const
     {
-        return Pimpl()->GetAssemblyRefCore(pTargetAsm, mdt);
+        return Pimpl()->GetAssemblyRefCore(pOpeningAsm, mdt);
     }
 
     template<class ApiHolder>    
@@ -163,22 +163,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseMetadataDispenser<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenser<ApiHolder>::ResolveAssembly(IAssembly const *pAsm) const
+    typename BaseMetadataDispenser<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenser<ApiHolder>::ResolveAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const
     {
-        return Pimpl()->ResolveAssembly(pAsm);
+        return Pimpl()->ResolveAssemblyRef(pSavingAsmGen, pAsm);
     }
 
     
     template<class ApiHolder>    
-    typename BaseMetadataDispenser<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenser<ApiHolder>::ResolveOrDefineAssembly(IAssembly const *pAsm) const
+    typename BaseMetadataDispenser<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenser<ApiHolder>::ResolveOrDefineAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const
     {
-        return Pimpl()->ResolveOrDefineAssembly(pAsm);
-    }
-
-    template<class ApiHolder>    
-    void BaseMetadataDispenser<ApiHolder>::UpdateReferencedAssemblyIfNecessary(assembly_generator_label_type *pResolvedAsm) const
-    {
-        return Pimpl()->UpdateReferencedAssemblyIfNecessary(pResolvedAsm);
+        return Pimpl()->ResolveOrDefineAssemblyRef(pSavingAsmGen, pAsm);
     }
 
     template<class ApiHolder>    

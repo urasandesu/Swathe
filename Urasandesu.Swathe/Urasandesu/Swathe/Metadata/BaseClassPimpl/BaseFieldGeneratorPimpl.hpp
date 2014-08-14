@@ -301,9 +301,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseFieldGeneratorPimpl<ApiHolder>::SetSourceField(IField const *pSrcField)
     {
-        _ASSERTE(pSrcField != nullptr);
-        _ASSERTE(m_pSrcField == nullptr);
-        m_pSrcField = pSrcField;
+        _ASSERTE(pSrcField);
+        _ASSERTE(!m_pSrcField);
+        auto const *pSrcFieldGen = dynamic_cast<class_type const *>(pSrcField);
+        if (!pSrcFieldGen)
+            m_pSrcField = pSrcField;
+        else
+            m_pSrcField = pSrcFieldGen->GetSourceField();
     }
 
 

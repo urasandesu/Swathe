@@ -348,9 +348,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseParameterGeneratorPimpl<ApiHolder>::SetSourceParameter(IParameter const *pSrcParam)
     {
-        _ASSERTE(pSrcParam != nullptr);
-        _ASSERTE(m_pSrcParam == nullptr);
-        m_pSrcParam = pSrcParam;
+        _ASSERTE(pSrcParam);
+        _ASSERTE(!m_pSrcParam);
+        auto const *pSrcParamGen = dynamic_cast<class_type const *>(pSrcParam);
+        if (!pSrcParamGen)
+            m_pSrcParam = pSrcParam;
+        else
+            m_pSrcParam = pSrcParamGen->GetSourceParameter();
     }
 
 

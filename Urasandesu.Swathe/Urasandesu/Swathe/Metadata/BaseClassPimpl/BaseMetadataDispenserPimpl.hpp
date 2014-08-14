@@ -231,9 +231,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_metadata_label_type const *BaseMetadataDispenserPimpl<ApiHolder>::GetAssemblyRefCore(assembly_metadata_label_type const *pTargetAsm, mdToken mdt) const
+    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_metadata_label_type const *BaseMetadataDispenserPimpl<ApiHolder>::GetAssemblyRefCore(assembly_metadata_label_type const *pOpeningAsm, mdToken mdt) const
     {
-        auto pNewAsm = NewAssembly(pTargetAsm, mdt);
+        auto pNewAsm = NewAssembly(pOpeningAsm, mdt);
 
         auto *pExistingAsm = static_cast<assembly_metadata_label_type *>(nullptr);
         if (!TryGetAssembly(*pNewAsm, pExistingAsm))
@@ -319,10 +319,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    TempPtr<typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_metadata_label_type> BaseMetadataDispenserPimpl<ApiHolder>::NewAssembly(assembly_metadata_label_type const *pTargetAsm, mdToken mdt) const
+    TempPtr<typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_metadata_label_type> BaseMetadataDispenserPimpl<ApiHolder>::NewAssembly(assembly_metadata_label_type const *pOpeningAsm, mdToken mdt) const
     {
         auto pAsm = m_pMetaInfo->NewAssemblyCore(m_pClass);
-        pAsm->SetOpeningAssembly(pTargetAsm);
+        pAsm->SetOpeningAssembly(pOpeningAsm);
         pAsm->SetToken(mdt);
         return pAsm;
     }
@@ -366,26 +366,44 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::ResolveAssembly(IAssembly const *pAsm) const
+    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::ResolveAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const
     {
         _ASSERTE(static_cast<IDispenser const *>(m_pClass) == pAsm->GetDispenser());
 
-        auto *pResolvedAsm = ResolveOrDefineAssembly(pAsm);
-        UpdateReferencedAssemblyIfNecessary(pResolvedAsm);
+        auto *pResolvedAsm = ResolveOrDefineAssemblyRef(pSavingAsmGen, pAsm);
+        UpdateReferencedAssemblyIfNecessary(pSavingAsmGen, pResolvedAsm);
         return pResolvedAsm;
     }
 
 
 
     template<class ApiHolder>    
-    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::ResolveOrDefineAssembly(IAssembly const *pAsm) const
+    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::GetTargetAssembly(assembly_generator_label_type *pSavingAsmGen)
+    {
+        _ASSERTE(pSavingAsmGen);
+        
+        auto const *pTargetAsm = pSavingAsmGen->GetTargetAssembly();
+        auto const *pTargetAsmGen = dynamic_cast<assembly_generator_label_type const *>(pTargetAsm);
+        if (!pTargetAsmGen)
+            return pSavingAsmGen;
+        
+        return GetTargetAssembly(const_cast<assembly_generator_label_type *>(pTargetAsmGen));
+    }
+
+    template<class ApiHolder>    
+    typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::ResolveOrDefineAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const
     {
         using Urasandesu::CppAnonym::Collections::FindIf;
-
+        
+        if (pSavingAsmGen->Equals(pAsm))
+            return pSavingAsmGen;
+        
         typedef decltype(m_asmGens) AsmGens;
         typedef AsmGens::value_type Value;
 
-        auto result = FindIf(m_asmGens, [&](Value const &v) { return v->Equals(pAsm); });
+        auto const *pAsmGen = dynamic_cast<assembly_generator_label_type const *>(pAsm);
+        auto isAlreadyExist = [&](Value const &v) { return pAsmGen ? v->Equals(pAsmGen) : v->Equals(pAsm) && GetTargetAssembly(pSavingAsmGen)->Equals(v->GetTargetAssembly()); };
+        auto result = FindIf(m_asmGens, isAlreadyExist);
         if (result)
             return *result;
 
@@ -395,16 +413,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    void BaseMetadataDispenserPimpl<ApiHolder>::UpdateReferencedAssemblyIfNecessary(assembly_generator_label_type *pResolvedAsm) const
+    void BaseMetadataDispenserPimpl<ApiHolder>::UpdateReferencedAssemblyIfNecessary(assembly_generator_label_type *pSavingAsmGen, assembly_generator_label_type *pResolvedAsm) const
     {
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef decltype(m_asmGens) AsmGens;
-        typedef AsmGens::value_type Value;
-
-        auto result = FindIf(m_asmGens, [&](Value const &v) { return v->IsSaving(); });
-        if (result && !pResolvedAsm->GetTargetAssembly())
-            (*result)->AddReferencedAssembly(pResolvedAsm);
+        if (!pResolvedAsm->GetTargetAssembly())
+            GetTargetAssembly(pSavingAsmGen)->AddReferencedAssembly(pResolvedAsm);
     }
 
 

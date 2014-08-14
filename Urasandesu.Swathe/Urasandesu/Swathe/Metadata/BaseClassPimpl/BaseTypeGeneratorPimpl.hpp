@@ -953,9 +953,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseTypeGeneratorPimpl<ApiHolder>::SetSourceType(IType const *pSrcType)
     {
         _ASSERTE(pSrcType);
-        _ASSERTE(!dynamic_cast<class_type const *>(pSrcType));
         _ASSERTE(!m_pSrcType);
-        m_pSrcType = pSrcType;
+        auto const *pSrcTypeGen = dynamic_cast<class_type const *>(pSrcType);
+        if (!pSrcTypeGen)
+            m_pSrcType = pSrcType;
+        else
+            m_pSrcType = pSrcTypeGen->GetSourceType();
     }
 
 

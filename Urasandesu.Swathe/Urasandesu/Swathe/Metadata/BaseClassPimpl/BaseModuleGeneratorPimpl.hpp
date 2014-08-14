@@ -198,9 +198,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseModuleGeneratorPimpl<ApiHolder>::SetSourceModule(IModule const *pSrcMod)
     {
-        _ASSERTE(m_pSrcMod == nullptr);
-        _ASSERTE(pSrcMod != nullptr);
-        m_pSrcMod = pSrcMod;
+        _ASSERTE(pSrcMod);
+        _ASSERTE(!m_pSrcMod);
+        auto const *pSrcModGen = dynamic_cast<class_type const *>(pSrcMod);
+        if (!pSrcModGen)
+            m_pSrcMod = pSrcMod;
+        else
+            m_pSrcMod = pSrcModGen->GetSourceModule();
     }
 
 

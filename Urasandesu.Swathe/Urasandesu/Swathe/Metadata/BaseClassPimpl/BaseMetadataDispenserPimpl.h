@@ -136,21 +136,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         assembly_metadata_label_type const *GetAssemblyCore(wstring const &fullName) const;
         assembly_metadata_label_type const *GetAssemblyCore(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         assembly_metadata_label_type const *GetAssemblyCore(IMetaDataImport2 *pComMetaImp) const;
-        assembly_metadata_label_type const *GetAssemblyRefCore(assembly_metadata_label_type const *pTargetAsm, mdToken mdt) const;
+        assembly_metadata_label_type const *GetAssemblyRefCore(assembly_metadata_label_type const *pOpeningAsm, mdToken mdt) const;
         assembly_metadata_label_type const *GetAssemblyWithPartialNameCore(wstring const &name) const;
         TempPtr<assembly_metadata_label_type> NewAssembly(wstring const &fullName) const;
         TempPtr<assembly_metadata_label_type> NewAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         TempPtr<assembly_metadata_label_type> NewAssemblyWithPartialName(wstring const &name) const;
         TempPtr<assembly_metadata_label_type> NewAssembly(IMetaDataImport2 *pComMetaImp) const;
         TempPtr<assembly_metadata_label_type> NewAssembly(path const &asmPath) const;
-        TempPtr<assembly_metadata_label_type> NewAssembly(assembly_metadata_label_type const *pTargetAsm, mdToken mdt) const;
+        TempPtr<assembly_metadata_label_type> NewAssembly(assembly_metadata_label_type const *pOpeningAsm, mdToken mdt) const;
         void RegisterAssembly(TempPtr<assembly_metadata_label_type> &pAsm);
         bool TryGetAssembly(assembly_metadata_label_type &asm_, assembly_metadata_label_type *&pExistingAsm) const;
         
         assembly_generator_label_type *DefineAssembly(IAssembly const *pSrcAsm) const;
-        assembly_generator_label_type *ResolveAssembly(IAssembly const *pAsm) const;
-        assembly_generator_label_type *ResolveOrDefineAssembly(IAssembly const *pAsm) const;
-        void UpdateReferencedAssemblyIfNecessary(assembly_generator_label_type *pResolvedAsm) const;
+        assembly_generator_label_type *ResolveAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const;
+        static assembly_generator_label_type *GetTargetAssembly(assembly_generator_label_type *pSavingAsmGen);
+        assembly_generator_label_type *ResolveOrDefineAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const;
+        void UpdateReferencedAssemblyIfNecessary(assembly_generator_label_type *pSavingAsmGen, assembly_generator_label_type *pResolvedAsm) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataEmit2 *pComMetaEmt, IAssembly const *pSrcAsm) const;
         TempPtr<assembly_generator_label_type> NewAssemblyGenerator(wstring const &name) const;
         TempPtr<assembly_generator_label_type> NewAssemblyGenerator(IAssembly const *pSrcAsm) const;

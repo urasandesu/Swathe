@@ -1262,8 +1262,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMethodBodyGeneratorPimpl<ApiHolder>::SetSourceMethodBody(IMethodBody const *pSrcBody)
     {
+        _ASSERTE(pSrcBody);
         _ASSERTE(!m_pSrcBody);
-        m_pSrcBody = pSrcBody;
+        auto const *pSrcBodyGen = dynamic_cast<class_type const *>(pSrcBody);
+        if (!pSrcBodyGen)
+            m_pSrcBody = pSrcBody;
+        else
+            m_pSrcBody = pSrcBodyGen->GetSourceMethodBody();
     }
 
 

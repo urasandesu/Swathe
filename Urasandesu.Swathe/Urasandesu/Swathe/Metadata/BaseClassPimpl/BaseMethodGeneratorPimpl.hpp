@@ -659,8 +659,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMethodGeneratorPimpl<ApiHolder>::SetSourceMethod(IMethod const *pSrcMethod)
     {
-        _ASSERTE(m_pSrcMethod == nullptr);
-        m_pSrcMethod = pSrcMethod;
+        _ASSERTE(pSrcMethod);
+        _ASSERTE(!m_pSrcMethod);
+        auto const *pSrcMethodGen = dynamic_cast<class_type const *>(pSrcMethod);
+        if (!pSrcMethodGen)
+            m_pSrcMethod = pSrcMethod;
+        else
+            m_pSrcMethod = pSrcMethodGen->GetSourceMethod();
     }
 
 
