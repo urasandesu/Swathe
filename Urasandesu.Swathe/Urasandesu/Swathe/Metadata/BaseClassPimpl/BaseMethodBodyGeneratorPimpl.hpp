@@ -1240,9 +1240,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void MarkEnd(SIZE_T endIndexOrFinallyEndIndex)
         {
             if (m_finallyEndLabel.GetIndex() == -1)
+            {
                 m_endIndex = endIndexOrFinallyEndIndex;
+                if (!m_catchStartEndIndexExTypes.empty())
+                {
+                    auto &last = m_catchStartEndIndexExTypes.back();
+                    last.get<1>() = m_endIndex;
+                }
+            }
             else
+            {
                 m_finallyEndIndex = endIndexOrFinallyEndIndex;
+            }
         }
 
     private:
