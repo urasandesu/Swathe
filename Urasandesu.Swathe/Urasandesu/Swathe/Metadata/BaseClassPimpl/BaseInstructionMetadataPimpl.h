@@ -87,6 +87,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static ULONG TakeInlineR(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeInlineString(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeInlineSwitch(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
+        static ULONG TakeInlineToken(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeInlineType(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeShortInlineBrTarget(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);
         static ULONG TakeShortInlineI(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand);

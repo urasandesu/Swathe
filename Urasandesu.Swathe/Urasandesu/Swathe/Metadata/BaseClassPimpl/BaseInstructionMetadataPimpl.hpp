@@ -239,7 +239,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 i += TakeInlineSwitch(this, i, i_end, m_operand);
                 break;
             case OperandParamTypes::OPT_INLINE_TOK:
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                i += TakeInlineToken(this, i, i_end, m_operand);
                 break;
             case OperandParamTypes::OPT_INLINE_TYPE:
                 i += TakeInlineType(this, i, i_end, m_operand);
@@ -400,6 +400,34 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         operand = offsets;
         
         return sizeof(INT) + length * sizeof(INT);
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseInstructionMetadataPimpl<ApiHolder>::TakeInlineToken(instruction_metadata_pimpl_label_type const *_this, BYTE const *i, BYTE const *i_end, Operand &operand)
+    {
+        auto const *pAsm = _this->m_pAsm;
+
+        auto mdtTarget = *reinterpret_cast<mdToken const *>(i);
+        _ASSERTE(i + sizeof(mdToken) <= i_end);
+
+        switch (TypeFromToken(mdtTarget))
+        {
+            case mdtTypeDef:
+            case mdtTypeRef:
+            case mdtGenericParam:
+            case mdtTypeSpec:
+                operand = pAsm->GetType(mdtTarget);
+                break;
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+
+        return sizeof(mdToken);
     }
 
 
