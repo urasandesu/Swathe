@@ -421,6 +421,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 operand = pAsm->GetType(mdtTarget);
                 break;
 
+            case mdtFieldDef:
+                operand = pAsm->GetField(mdtTarget);
+                break;
+
             default:
                 auto oss = std::wostringstream();
                 oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;

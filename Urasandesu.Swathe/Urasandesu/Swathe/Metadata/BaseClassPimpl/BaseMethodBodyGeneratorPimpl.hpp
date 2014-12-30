@@ -638,7 +638,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             &opCode != &OpCodes::Stfld && 
             &opCode != &OpCodes::Ldfld &&
             &opCode != &OpCodes::Ldflda &&
-            &opCode != &OpCodes::Ldsflda)
+            &opCode != &OpCodes::Ldsflda &&
+            &opCode != &OpCodes::Ldtoken)
         {
             auto oss = std::wostringstream();
             oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, IField const *)\".";

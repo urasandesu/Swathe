@@ -567,6 +567,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         if (auto *const *ppType = get<IType const *>(&operand))
             blob.Put<mdToken>(pAsmGen->Resolve(*ppType)->GetToken());
+        else if (auto *const *ppField = get<IField const *>(&operand))
+            blob.Put<mdToken>(pAsmGen->Resolve(*ppField)->GetToken());
         else
             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
