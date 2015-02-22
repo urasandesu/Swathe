@@ -132,6 +132,48 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
 
 
     template<class ApiHolder>    
+    Version BaseAssemblyNamePimpl<ApiHolder>::GetVersion() const
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (m_ver == Version())
+        {
+            auto &comAsmName = m_pClass->GetCOMAssemblyName();
+
+            auto hr = E_FAIL;
+
+            auto usmajorVersion = USHORT();
+            auto usmajorVersionSize = static_cast<DWORD>(sizeof(USHORT));
+            hr = comAsmName.GetProperty(ASM_NAME_MAJOR_VERSION, reinterpret_cast<LPBYTE>(&usmajorVersion), &usmajorVersionSize);
+            if (FAILED(hr)) 
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            auto usminorVersion = USHORT();
+            auto usminorVersionSize = static_cast<DWORD>(sizeof(USHORT));
+            hr = comAsmName.GetProperty(ASM_NAME_MINOR_VERSION, reinterpret_cast<LPBYTE>(&usminorVersion), &usminorVersionSize);
+            if (FAILED(hr)) 
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            auto usbuildNumber = USHORT();
+            auto usbuildNumberSize = static_cast<DWORD>(sizeof(USHORT));
+            hr = comAsmName.GetProperty(ASM_NAME_BUILD_NUMBER, reinterpret_cast<LPBYTE>(&usbuildNumber), &usbuildNumberSize);
+            if (FAILED(hr)) 
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            auto usrevisionNumber = USHORT();
+            auto usrevisionNumberSize = static_cast<DWORD>(sizeof(USHORT));
+            hr = comAsmName.GetProperty(ASM_NAME_REVISION_NUMBER, reinterpret_cast<LPBYTE>(&usrevisionNumber), &usrevisionNumberSize);
+            if (FAILED(hr)) 
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            
+            m_ver = Version(usmajorVersion, usminorVersion, usbuildNumber, usrevisionNumber);
+        }
+        return m_ver;
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseAssemblyNamePimpl<ApiHolder>::Initialize(fusion_info_label_type const *pFuInfo)
     {
         _ASSERTE(!m_pFuInfo);

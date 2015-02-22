@@ -184,7 +184,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
     using boost::any_range;
     using boost::filesystem::path;
-    using boost::forward_traversal_tag;
+    using boost::single_pass_traversal_tag;
     using boost::iterator_range;
     using boost::unordered_map;
     using boost::unordered_set;

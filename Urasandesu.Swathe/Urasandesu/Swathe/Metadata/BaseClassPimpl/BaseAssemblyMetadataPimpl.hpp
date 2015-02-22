@@ -168,6 +168,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     path const &BaseAssemblyMetadataPimpl<ApiHolder>::GetLocation() const
     {
         using boost::adaptors::filtered;
+        using boost::sort;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
         using Urasandesu::Swathe::Fusion::NewAssemblyNameFlags;
         using Urasandesu::Swathe::Fusion::AssemblyCacheFlags; 
@@ -180,11 +181,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             auto pCondition = m_pFuInfo->NewAssemblyName(m_fullName, NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
             auto pAsmNames = m_pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
             
+            typedef vector<AutoPtr<assembly_name_label_type const> > AssemblyNameVector;
+            typedef AssemblyNameVector::value_type Value;
+            auto orderedAsmNames = AssemblyNameVector(pAsmNames->begin(), pAsmNames->end());
+            sort(orderedAsmNames, [](Value const &x, Value const &y) { return x->GetVersion() < y->GetVersion(); });
+            
             typedef unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > AssemblyNameMap;
-            typedef AssemblyNameMap::value_type Value;
 
+            // NOTE: 'candidates' is overridden by the latest version assembly if there are multiple candidates.
             auto candidates = AssemblyNameMap();
-            BOOST_FOREACH (auto const &pAsmName, *pAsmNames)
+            BOOST_FOREACH (auto const &pAsmName, orderedAsmNames)
                 candidates[pAsmName->GetPlatform()] = pAsmName;
 
             if (candidates.empty())

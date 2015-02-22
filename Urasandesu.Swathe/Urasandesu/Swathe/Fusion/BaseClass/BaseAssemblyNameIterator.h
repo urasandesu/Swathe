@@ -44,7 +44,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
 
     using boost::iterator_core_access;
     using boost::iterator_facade;
-    using boost::forward_traversal_tag;
+    using boost::single_pass_traversal_tag;
     using Urasandesu::CppAnonym::Utilities::AutoPtr;
 
     template<
@@ -54,7 +54,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         public iterator_facade<
             BaseAssemblyNameIterator<ApiHolder>, 
             AutoPtr<typename Urasandesu::Swathe::AutoGen::Fusion::ClassFacade::AssemblyNameIteratorFacade<ApiHolder>::assembly_name_label_type const>, 
-            forward_traversal_tag>
+            single_pass_traversal_tag>
     {
     public:
         SWATHE_BEGIN_ASSEMBLY_NAME_ITERATOR_FACADE_TYPEDEF_ALIAS

@@ -482,6 +482,7 @@ namespace {
         using boost::filesystem::equivalent;        
         using boost::filesystem::path;
         using std::wstring;
+        using Urasandesu::CppAnonym::Version;
         
         auto const *pHost = HostInfo::CreateHost();
         auto const *pRuntime = pHost->GetRuntime(L"v2.0.50727");
@@ -509,11 +510,13 @@ namespace {
                         ASSERT_EQ(wstring(L"mscorlib, Version=2.0.0.0, Culture=neutral, " 
                                           L"PublicKeyToken=b77a5c561934e089, processorArchitecture=AMD64"), pAsmName->GetFullName());
                         ASSERT_TRUE(pAsmName->GetPlatform() == Platform::PF_AMD64);
+                        ASSERT_TRUE(pAsmName->GetVersion() == Version(2, 0, 0, 0));
                         break;
                     case 1:
                         ASSERT_EQ(wstring(L"mscorlib, Version=2.0.0.0, Culture=neutral, " 
                                           L"PublicKeyToken=b77a5c561934e089, processorArchitecture=x86"), pAsmName->GetFullName());
                         ASSERT_TRUE(pAsmName->GetPlatform() == Platform::PF_I386);
+                        ASSERT_TRUE(pAsmName->GetVersion() == Version(2, 0, 0, 0));
                         break;
                     default:
                         FAIL() << "We shouldn't get here!!";

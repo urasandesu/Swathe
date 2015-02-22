@@ -52,6 +52,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
 
     using std::wstring;
     using boost::aligned_storage;
+    using Urasandesu::CppAnonym::Version;
     
     template<
         class ApiHolder
@@ -68,6 +69,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         wstring const &GetFullName() const;
         wstring const &GetName() const;
         Platform GetPlatform() const;
+        Version GetVersion() const;
         
     private:
         void Initialize(fusion_info_label_type const *pFuInfo);
@@ -83,6 +85,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         mutable wstring m_fullName;
         mutable wstring m_name;
         mutable Platform m_platform;
+        mutable Version m_ver;
         mutable ATL::CComPtr<IAssemblyName> m_pComAsmName;
         int reserved;
         

@@ -90,6 +90,12 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     }
 
     template<class ApiHolder>    
+    Version BaseAssemblyName<ApiHolder>::GetVersion() const
+    {
+        return Pimpl()->GetVersion();
+    }
+
+    template<class ApiHolder>    
     void BaseAssemblyName<ApiHolder>::Initialize(fusion_info_label_type const *pFuInfo)
     {
         Pimpl()->Initialize(pFuInfo);

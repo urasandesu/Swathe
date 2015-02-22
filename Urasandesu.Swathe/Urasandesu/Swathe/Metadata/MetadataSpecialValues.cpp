@@ -68,7 +68,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_COMPILATION_RELAXATIONS_ATTRIBUTE = L"System.Runtime.CompilerServices.CompilationRelaxationsAttribute";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_RUNTIME_COMPATIBILITY_ATTRIBUTE = L"System.Runtime.CompilerServices.RuntimeCompatibilityAttribute";
     std::wstring const MetadataSpecialValues::GENERIC_TYPE_IDENTIFIER = L"`";
-    std::wstring const MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB = L"mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+    std::wstring const MetadataSpecialValues::ASSEMBLY_FULL_NAME_OF_MSCORLIB = L"mscorlib, Culture=neutral, PublicKeyToken=b77a5c561934e089";
     std::wstring const MetadataSpecialValues::MODULE_NAME_OF_MAIN = L"*";
     std::wstring const MetadataSpecialValues::METHOD_NAME_OF_CTOR = L".ctor";
     std::wstring const MetadataSpecialValues::METHOD_NAME_OF_CCTOR = L".cctor";

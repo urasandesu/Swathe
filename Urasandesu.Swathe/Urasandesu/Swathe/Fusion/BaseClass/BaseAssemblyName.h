@@ -51,6 +51,7 @@
 namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass { 
 
     using std::wstring;
+    using Urasandesu::CppAnonym::Version;
 
     template<
         class ApiHolder
@@ -68,6 +69,7 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         wstring const &GetFullName() const;
         wstring const &GetName() const;
         Platform GetPlatform() const;
+        Version GetVersion() const;
     
     private:
         assembly_name_pimpl_label_type *Pimpl();
@@ -82,9 +84,9 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 92;
+        static INT const PIMPL_TYPE_SIZE = 112;
 #else
-        static INT const PIMPL_TYPE_SIZE = 144;
+        static INT const PIMPL_TYPE_SIZE = 160;
 #endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

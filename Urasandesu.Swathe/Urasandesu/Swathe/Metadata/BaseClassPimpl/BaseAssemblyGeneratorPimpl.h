@@ -117,7 +117,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using boost::any_range;
     using boost::apply_visitor;
     using boost::filesystem::path;
-    using boost::forward_traversal_tag;
+    using boost::single_pass_traversal_tag;
     using boost::iterator_range;
     using boost::static_visitor;
     using std::pair;
