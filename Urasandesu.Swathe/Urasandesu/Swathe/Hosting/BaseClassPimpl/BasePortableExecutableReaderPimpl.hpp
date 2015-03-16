@@ -73,8 +73,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         using boost::make_iterator_range;
 
         auto &file = GetMemoryMappedFile();
-        auto i = reinterpret_cast<BYTE const *>(file.begin());
-        auto i_end = reinterpret_cast<BYTE const *>(file.end());
+        auto i = reinterpret_cast<BYTE const *>(&*file.begin());
+        auto i_end = i + file.size();
         return make_iterator_range(i, i_end);
     }
 
@@ -223,23 +223,26 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
 
     template<class ApiHolder>    
-    mapped_file_source &BasePortableExecutableReaderPimpl<ApiHolder>::GetMemoryMappedFile() const
+    vector<BYTE> const &BasePortableExecutableReaderPimpl<ApiHolder>::GetMemoryMappedFile() const
     {
         using boost::iostreams::basic_mapped_file_params;
-        using boost::iostreams::mapped_file_base;        
+        using boost::iostreams::mapped_file_base;
+        using boost::iostreams::mapped_file_source;
         using boost::filesystem::canonical;
         using boost::filesystem::path;
         using Urasandesu::CppAnonym::CppAnonymException;
 
         typedef basic_mapped_file_params<path> MappedFileParams;
 
-        if (!m_file.is_open())
+        if (m_file.empty())
         {
             auto params = MappedFileParams(canonical(m_asmPath));
             params.flags = mapped_file_base::readonly;
             try
             {
-                m_file.open(params);
+                auto file = mapped_file_source();
+                file.open(params);
+                m_file.assign(file.begin(), file.end());
             }
             catch (...)
             {

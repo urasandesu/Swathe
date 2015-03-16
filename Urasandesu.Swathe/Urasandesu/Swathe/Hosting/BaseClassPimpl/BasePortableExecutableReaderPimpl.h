@@ -44,8 +44,9 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
     using boost::array;
     using boost::filesystem::path;
-    using boost::iostreams::mapped_file_source;
     using boost::iterator_range;
+    using std::unique_ptr;
+    using std::vector;
     
     template<
         class ApiHolder
@@ -70,14 +71,15 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
     private:
         void SetCOMMetaDataImport(IMetaDataImport2 *pComMetaImp);
         void SetAssemblyPath(path const &asmPath);
-        mapped_file_source &GetMemoryMappedFile() const;
+        vector<BYTE> const &GetMemoryMappedFile() const;
 
         mutable portable_executable_reader_label_type *m_pClass;
         portable_executable_info_label_type *m_pPEInfo;
         strong_name_info_label_type const *m_pSnInfo;
         ATL::CComPtr<IMetaDataImport2> m_pComMetaImp;
         path m_asmPath;
-        mutable mapped_file_source m_file;
+        mutable vector<BYTE> m_file;
+        int reserved;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClassPimpl { 
