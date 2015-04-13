@@ -48,6 +48,10 @@
 #include <Urasandesu/Swathe/Metadata/OpCodes.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_SIGNATURE_H
+#include <Urasandesu/Swathe/Metadata/Signature.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     using std::vector;

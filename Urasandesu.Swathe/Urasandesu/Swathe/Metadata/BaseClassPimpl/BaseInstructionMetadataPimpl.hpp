@@ -425,6 +425,26 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 operand = pAsm->GetField(mdtTarget);
                 break;
 
+            case mdtMethodDef:
+            case mdtMethodSpec:
+                operand = pAsm->GetMethod(mdtTarget);
+                break;
+
+            case mdtMemberRef:
+                {
+                    auto mdtOwner = mdTokenNil;
+                    auto name = wstring();
+                    auto sig = Signature();
+                    pAsm->FillMemberRefProperties(mdtTarget, mdtOwner, name, sig);
+                    auto const &blob = sig.GetBlob();
+                    _ASSERTE(!blob.empty());
+                    if (blob[0] == CallingConventions::CC_FIELD)
+                        operand = pAsm->GetField(mdtTarget);
+                    else
+                        operand = pAsm->GetMethod(mdtTarget);
+                }
+                break;
+
             default:
                 auto oss = std::wostringstream();
                 oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
