@@ -33,7 +33,6 @@
 #define URASANDESU_SWATHE_METADATA_METADATADEPENDSON_H
 
 #include <vector>
-#include <boost/algorithm/string.hpp>
 #include <boost/array.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
