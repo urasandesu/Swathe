@@ -97,6 +97,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IAssemblyPtrRange BaseMetadataDispenser<ApiHolder>::GetAssemblies() const
+    {
+        return Pimpl()->GetAssemblies();
+    }
+
+    template<class ApiHolder>    
     typename BaseMetadataDispenser<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenser<ApiHolder>::DefineAssemblyWithPartialName(wstring const &name) const
     {
         return Pimpl()->DefineAssemblyWithPartialName(name);

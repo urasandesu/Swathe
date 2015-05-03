@@ -126,6 +126,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IAssembly const *GetAssembly(wstring const &fullName) const;
         IAssembly const *GetAssemblyFrom(path const &asmPath) const;
         bool TryGetAssemblyWithPartialName(wstring const &name, IAssembly const *&pAsm) const;
+        IAssemblyPtrRange GetAssemblies() const;
         assembly_generator_label_type *DefineAssemblyWithPartialName(wstring const &name) const;
         IAssembly const *GetAssembly(IMetaDataImport2 *pComMetaImp) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataImport2 *pModifiableComMetaImp) const;

@@ -123,6 +123,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IAssemblyPtrRange BaseMetadataDispenserPimpl<ApiHolder>::GetAssemblies() const
+    {
+        using boost::adaptors::filtered;
+        using boost::adaptors::transformed;
+        using std::function;
+
+        auto ofAssembly = function<bool (assembly_metadata_label_type *)>();
+        ofAssembly = [](assembly_metadata_label_type *pAsm) { return TypeFromToken(pAsm->GetToken()) == mdtAssembly; };
+        auto toAssembly = function<IAssembly const *(assembly_metadata_label_type *)>();
+        toAssembly = [](assembly_metadata_label_type *pAsm) { return static_cast<IAssembly const *>(pAsm); };
+        return m_asms | filtered(ofAssembly) | transformed(toAssembly);
+    }
+
+
+
+    template<class ApiHolder>    
     typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::DefineAssemblyWithPartialName(wstring const &name) const
     {
         auto pNewAsmGen = NewAssemblyGenerator(name);
