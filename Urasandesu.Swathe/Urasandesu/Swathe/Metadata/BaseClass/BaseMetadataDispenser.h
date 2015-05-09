@@ -96,6 +96,10 @@
 #include <Urasandesu/Swathe/Metadata/TypeKinds.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_ASSEMBLYRESOLVERFWD_H
+#include <Urasandesu/Swathe/Metadata/AssemblyResolverFwd.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClass { 
 
     using boost::filesystem::path;
@@ -118,7 +122,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BaseMetadataDispenser();
         ~BaseMetadataDispenser();
 
-        void Initialize(metadata_info_label_type *pMetaInfo);
+        void Initialize(metadata_info_label_type *pMetaInfo, fusion_info_label_type const *pFuInfo);
         IAssembly const *GetAssembly(wstring const &fullName) const;
         IAssembly const *GetAssemblyFrom(path const &asmPath) const;
         bool TryGetAssemblyWithPartialName(wstring const &name, IAssembly const *&pAsm) const;
@@ -126,6 +130,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         assembly_generator_label_type *DefineAssemblyWithPartialName(wstring const &name) const;        
         IAssembly const *GetAssembly(IMetaDataImport2 *pComMetaImp) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataImport2 *pModifiableComMetaImp) const;
+        AssemblyResolver<fusion_info_label_type> &GetAssemblyResolver();
+        AssemblyResolver<fusion_info_label_type> const &GetAssemblyResolver() const;
     
     private:
         metadata_dispenser_pimpl_label_type *Pimpl();
@@ -151,9 +157,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 48;
+        static INT const PIMPL_TYPE_SIZE = 88;
 #else
-        static INT const PIMPL_TYPE_SIZE = 96;
+        static INT const PIMPL_TYPE_SIZE = 176;
 #endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

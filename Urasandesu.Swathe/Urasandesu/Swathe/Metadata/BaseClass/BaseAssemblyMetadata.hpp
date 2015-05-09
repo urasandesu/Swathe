@@ -73,9 +73,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
-    void BaseAssemblyMetadata<ApiHolder>::Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, fusion_info_label_type const *pFuInfo, strong_name_info_label_type const *pSnInfo)
+    void BaseAssemblyMetadata<ApiHolder>::Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, strong_name_info_label_type const *pSnInfo)
     {
-        Pimpl()->Initialize(pMetaInfo, pDisp, pPEInfo, pFuInfo, pSnInfo);
+        Pimpl()->Initialize(pMetaInfo, pDisp, pPEInfo, pSnInfo);
     }
 
     template<class ApiHolder>    

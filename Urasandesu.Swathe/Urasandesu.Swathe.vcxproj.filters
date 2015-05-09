@@ -5322,6 +5322,12 @@
     <ClInclude Include="Urasandesu\Swathe\Profiling\ProfilingSpecialValues.h">
       <Filter>Header Files\Urasandesu\Swathe\Profiling</Filter>
     </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\AssemblyResolver.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\AssemblyResolverFwd.h">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Urasandesu.Swathe.rc">

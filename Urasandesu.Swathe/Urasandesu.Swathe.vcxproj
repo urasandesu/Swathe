@@ -466,6 +466,8 @@
     <ClInclude Include="Urasandesu\Swathe\Hosting\RuntimeHostChainMapper.h" />
     <ClInclude Include="Urasandesu\Swathe\MetaData.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\AssemblyFlags.h" />
+    <ClInclude Include="Urasandesu\Swathe\Metadata\AssemblyResolver.h" />
+    <ClInclude Include="Urasandesu\Swathe\Metadata\AssemblyResolverFwd.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\CallingConventions.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\ClauseKinds.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\ControlFlow.h" />

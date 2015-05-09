@@ -62,11 +62,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
-    void BaseMetadataDispenserPimpl<ApiHolder>::Initialize(metadata_info_label_type *pMetaInfo)
+    void BaseMetadataDispenserPimpl<ApiHolder>::Initialize(metadata_info_label_type *pMetaInfo, fusion_info_label_type const *pFuInfo)
     {
-        _ASSERTE(m_pMetaInfo == nullptr);
-        _ASSERTE(pMetaInfo != nullptr);
+        _ASSERTE(!m_pMetaInfo);
+        _ASSERTE(pMetaInfo);
         m_pMetaInfo = pMetaInfo;
+        
+        m_asmResolver.Initialize(pFuInfo);
     }
 
 
@@ -175,6 +177,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         pNewAsmGen.Persist();
 
         return pNewAsmGen.Get();
+    }
+
+
+
+    template<class ApiHolder>    
+    AssemblyResolver<typename BaseMetadataDispenserPimpl<ApiHolder>::fusion_info_label_type> &BaseMetadataDispenserPimpl<ApiHolder>::GetAssemblyResolver()
+    {
+        return m_asmResolver;
+    }
+
+
+
+    template<class ApiHolder>    
+    AssemblyResolver<typename BaseMetadataDispenserPimpl<ApiHolder>::fusion_info_label_type> const &BaseMetadataDispenserPimpl<ApiHolder>::GetAssemblyResolver() const
+    {
+        return const_cast<class_pimpl_type *>(this)->GetAssemblyResolver();
     }
 
 

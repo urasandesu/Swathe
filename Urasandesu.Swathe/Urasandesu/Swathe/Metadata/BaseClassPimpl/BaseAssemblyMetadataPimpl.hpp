@@ -40,6 +40,10 @@
 #include <Urasandesu/Swathe/Metadata/MetadataSpecialValues.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_ASSEMBLYRESOLVER_H
+#include <Urasandesu/Swathe/Metadata/AssemblyResolver.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<class ApiHolder>    
@@ -48,7 +52,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pMetaInfo(nullptr), 
         m_pDisp(nullptr),
         m_pPEInfo(nullptr), 
-        m_pFuInfo(nullptr),
         m_pSnInfo(nullptr),
         m_mdt(mdTokenNil), 
         m_casInit(false), 
@@ -99,7 +102,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, fusion_info_label_type const *pFuInfo, strong_name_info_label_type const *pSnInfo)
+    void BaseAssemblyMetadataPimpl<ApiHolder>::Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, strong_name_info_label_type const *pSnInfo)
     {
         _ASSERTE(!m_pMetaInfo);
         _ASSERTE(pMetaInfo);
@@ -112,10 +115,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         _ASSERTE(!m_pPEInfo);
         _ASSERTE(pPEInfo);
         m_pPEInfo = pPEInfo;
-
-        _ASSERTE(!m_pFuInfo);
-        _ASSERTE(pFuInfo);
-        m_pFuInfo = pFuInfo;
 
         _ASSERTE(!m_pSnInfo);
         _ASSERTE(pSnInfo);
@@ -167,37 +166,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     path const &BaseAssemblyMetadataPimpl<ApiHolder>::GetLocation() const
     {
-        using boost::adaptors::filtered;
-        using boost::sort;
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-        using Urasandesu::Swathe::Fusion::NewAssemblyNameFlags;
-        using Urasandesu::Swathe::Fusion::AssemblyCacheFlags; 
-        
-
         if (m_location.empty())
         {
-            _ASSERTE(!m_fullName.empty());
-
-            auto pCondition = m_pFuInfo->NewAssemblyName(m_fullName, NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
-            auto pAsmNames = m_pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
-            
-            typedef vector<AutoPtr<assembly_name_label_type const> > AssemblyNameVector;
-            typedef AssemblyNameVector::value_type Value;
-            auto orderedAsmNames = AssemblyNameVector(pAsmNames->begin(), pAsmNames->end());
-            sort(orderedAsmNames, [](Value const &x, Value const &y) { return x->GetVersion() < y->GetVersion(); });
-            
-            typedef unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > AssemblyNameMap;
-
-            // NOTE: 'candidates' is overridden by the latest version assembly if there are multiple candidates.
-            auto candidates = AssemblyNameMap();
-            BOOST_FOREACH (auto const &pAsmName, orderedAsmNames)
-                candidates[pAsmName->GetPlatform()] = pAsmName;
-
-            if (candidates.empty())
-                ResolveAssemblyPathByCurrentDirectory(this, pCondition->GetName(), m_location);
-            else
-                ResolveAssemblyPathByGAC(this, candidates, m_location);
-
+            auto const &asmResolver = m_pDisp->GetAssemblyResolver();
+            m_location = asmResolver.Resolve(m_fullName, m_procArchs);
             _ASSERTE(!m_location.empty());
             m_fullName.clear(); // This means that m_fullName can be filled completely by next GetFullName call when the assembly has been resolved.
         }
@@ -1820,27 +1792,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     
-    Platform ToPlatform(ProcessorArchitecture const &procArchs)
-    {
-        using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
-
-        switch (procArchs.Value())
-        {
-            case ProcessorArchitecture::PA_INTEL:
-                return Platform::PF_I386;
-            case ProcessorArchitecture::PA_IA64:
-                return Platform::PF_IA64;
-            case ProcessorArchitecture::PA_AMD64:
-                return Platform::PF_AMD64;
-            case ProcessorArchitecture::PA_MSIL:
-                return Platform::PF_MSIL;
-            default:
-                BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException());
-        }
-    }
-    
-    
-    
     template<class ApiHolder>    
     DWORD BaseAssemblyMetadataPimpl<ApiHolder>::GetOpenFlags() const
     {
@@ -2102,74 +2053,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
         runtimeVer = wzname.data();
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::ResolveAssemblyPathByCurrentDirectory(assembly_metadata_pimpl_label_type const *_this, wstring const &name, path &location)
-    {
-        using boost::filesystem::exists;
-        using Urasandesu::CppAnonym::CppAnonymArgumentException;
-
-        location = name + L".dll";
-        if (exists(location))
-            return;
-        
-        location = name + L".exe";
-        if (exists(location))
-            return;
-        
-        auto oss = std::wostringstream();
-        oss << L"The designated assembly is not found: " << name;
-        BOOST_THROW_EXCEPTION(CppAnonymArgumentException(oss.str()));
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseAssemblyMetadataPimpl<ApiHolder>::ResolveAssemblyPathByGAC(assembly_metadata_pimpl_label_type const *_this, unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > const &candidates, path &location)
-    {
-        using boost::adaptors::transformed;        
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-        using Urasandesu::Swathe::Fusion::AssemblyQueryTypes;
-
-        auto const *pFuInfo = _this->m_pFuInfo;
-
-        if (candidates.size() == 1)
-        {
-            auto pAsmName = (*candidates.begin()).second;
-            auto pAsmCache = pFuInfo->NewAssemblyCache();
-            auto pAsmInfo = pAsmCache->QueryAssemblyInfo(AssemblyQueryTypes::AQT_DEFAULT, pAsmName->GetFullName());
-            location = pAsmInfo->GetAssemblyPath();
-        }
-        else
-        {
-            auto procArchs = _this->m_procArchs;
-            if (procArchs.empty())
-            {
-                procArchs.resize(2);
-#ifdef _M_IX86
-                procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
-                procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
-#else
-                procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_AMD64);
-                procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
-#endif
-            }
-
-            _ASSERTE(!procArchs.empty());
-            auto isTarget = [&](Platform const &platform) { return candidates.find(platform) != candidates.end(); };
-            auto result = FindIf(procArchs | transformed(ToPlatform), isTarget);
-            if (!result)
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(ERROR_FILE_NOT_FOUND));
-
-            auto pAsmName = candidates.at(*result);
-            auto pAsmCache = pFuInfo->NewAssemblyCache();
-            auto pAsmInfo = pAsmCache->QueryAssemblyInfo(AssemblyQueryTypes::AQT_DEFAULT, pAsmName->GetFullName());
-            location = pAsmInfo->GetAssemblyPath();
-        }
     }
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

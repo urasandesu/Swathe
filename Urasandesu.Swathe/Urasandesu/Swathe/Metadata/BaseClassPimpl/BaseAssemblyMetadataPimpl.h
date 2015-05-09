@@ -186,11 +186,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     using boost::filesystem::path;
     using boost::single_pass_traversal_tag;
     using boost::iterator_range;
-    using boost::unordered_map;
     using boost::unordered_set;
     using Urasandesu::CppAnonym::Utilities::AutoPtr;
-    using Urasandesu::CppAnonym::Utilities::Hash;
-    using Urasandesu::CppAnonym::Utilities::EqualTo;
     using Urasandesu::CppAnonym::Utilities::TempPtr;
     using Urasandesu::CppAnonym::Version;
     using Urasandesu::Swathe::StrongNaming::IStrongNameKey;
@@ -213,7 +210,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BaseAssemblyMetadataPimpl(assembly_metadata_label_type *pClass);
         ~BaseAssemblyMetadataPimpl();
 
-        void Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, fusion_info_label_type const *pFuInfo, strong_name_info_label_type const *pSnInfo);
+        void Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, strong_name_info_label_type const *pSnInfo);
         mdAssembly GetToken() const;
         wstring const &GetFullName() const;
         path const &GetLocation() const;
@@ -334,14 +331,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static void FillPlatformByHeuristicAlgorithm(assembly_metadata_pimpl_label_type const *_this, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
         static void FillPlatform(DWORD dwPEKind, DWORD dwMachine, ASSEMBLYMETADATA &amd, vector<ProcessorArchitecture> &procArchs, AssemblyFlags &asmFlags);
         static void FillRuntimeVersionByCOMMetaDataImport(IMetaDataImport2 *pComMetaImp, wstring &runtimeVer);
-        static void ResolveAssemblyPathByCurrentDirectory(assembly_metadata_pimpl_label_type const *_this, wstring const &name, path &asmPath);
-        static void ResolveAssemblyPathByGAC(assembly_metadata_pimpl_label_type const *_this, unordered_map<Platform, AutoPtr<assembly_name_label_type const>, Hash<Platform>, EqualTo<Platform> > const &candidates, path &asmPath);
 
         mutable assembly_metadata_label_type *m_pClass;
         metadata_info_label_type *m_pMetaInfo;
         metadata_dispenser_label_type *m_pDisp;
         portable_executable_info_label_type const *m_pPEInfo;
-        fusion_info_label_type const *m_pFuInfo;
         strong_name_info_label_type const *m_pSnInfo;
         mutable unordered_set<module_metadata_label_type *, IModuleHash, IModuleEqualTo> m_mods;
         mutable unordered_set<type_metadata_label_type *, ITypeHash, ITypeEqualTo> m_types;
@@ -378,7 +372,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable IAssembly const *m_pSrcAsm;
         mutable ATL::CComPtr<IMetaDataAssemblyImport> m_pComMetaAsmImp;
         mutable ATL::CComPtr<IMetaDataImport2> m_pComMetaImp;
-        INT reserved;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

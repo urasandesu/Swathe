@@ -122,7 +122,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BaseAssemblyMetadata();
         ~BaseAssemblyMetadata();
 
-        void Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, fusion_info_label_type const *pFuInfo, strong_name_info_label_type const *pSnInfo);
+        void Initialize(metadata_info_label_type *pMetaInfo, metadata_dispenser_label_type *pDisp, portable_executable_info_label_type const *pPEInfo, strong_name_info_label_type const *pSnInfo);
         mdAssembly GetToken() const;
         wstring const &GetFullName() const;
         path const &GetLocation() const;
@@ -223,9 +223,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static INT const PIMPL_TYPE_SIZE = 1056;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 536;
+        static INT const PIMPL_TYPE_SIZE = 528;
 #else
-        static INT const PIMPL_TYPE_SIZE = 968;
+        static INT const PIMPL_TYPE_SIZE = 952;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

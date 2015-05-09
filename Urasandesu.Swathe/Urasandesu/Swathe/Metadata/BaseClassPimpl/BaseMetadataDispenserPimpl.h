@@ -100,6 +100,10 @@
 #include <Urasandesu/Swathe/Metadata/TypeKinds.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_ASSEMBLYRESOLVER_H
+#include <Urasandesu/Swathe/Metadata/AssemblyResolver.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     using boost::filesystem::path;
@@ -122,7 +126,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BaseMetadataDispenserPimpl(metadata_dispenser_label_type *pClass);
         ~BaseMetadataDispenserPimpl();
 
-        void Initialize(metadata_info_label_type *pMetaInfo);
+        void Initialize(metadata_info_label_type *pMetaInfo, fusion_info_label_type const *pFuInfo);
         IAssembly const *GetAssembly(wstring const &fullName) const;
         IAssembly const *GetAssemblyFrom(path const &asmPath) const;
         bool TryGetAssemblyWithPartialName(wstring const &name, IAssembly const *&pAsm) const;
@@ -130,6 +134,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         assembly_generator_label_type *DefineAssemblyWithPartialName(wstring const &name) const;
         IAssembly const *GetAssembly(IMetaDataImport2 *pComMetaImp) const;
         assembly_generator_label_type *GetModifiableAssembly(IMetaDataImport2 *pModifiableComMetaImp) const;
+        AssemblyResolver<fusion_info_label_type> &GetAssemblyResolver();
+        AssemblyResolver<fusion_info_label_type> const &GetAssemblyResolver() const;
         
     private:        
         void SetCOMMetaDataDispenser(IMetaDataDispenserEx *pComMetaDisp);
@@ -163,6 +169,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         mutable metadata_dispenser_label_type *m_pClass;
         metadata_info_label_type *m_pMetaInfo;
+        AssemblyResolver<fusion_info_label_type> m_asmResolver;
         mutable unordered_set<assembly_metadata_label_type *, IAssemblyHash, IAssemblyEqualTo> m_asms;
         mutable vector<assembly_generator_label_type *> m_asmGens;
         mutable ATL::CComPtr<IMetaDataDispenserEx> m_pComMetaDisp;

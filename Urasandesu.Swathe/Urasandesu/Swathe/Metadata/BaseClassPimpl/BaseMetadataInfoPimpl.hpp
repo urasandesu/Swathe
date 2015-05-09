@@ -145,7 +145,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto *pBaseProvider = BaseHeapProvider();
         auto &provider = pBaseProvider->FirstProviderOf<metadata_dispenser_label_type>();
         auto pDisp = provider.NewObject();
-        pDisp->Initialize(m_pClass);
+        auto const *pRuntime = m_pClass->GetRuntime();
+        auto const *pFuInfo = pRuntime->GetInfo<fusion_info_label_type>();
+        pDisp->Initialize(m_pClass, pFuInfo);
         auto handler = metadata_dispenser_persisted_handler_label_type(m_pClass);
         provider.AddPersistedHandler(pDisp, handler);
         return pDisp;
@@ -172,9 +174,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto pAsm = provider.NewObject();
         auto const *pRuntime = m_pClass->GetRuntime();
         auto const *pPEInfo = pRuntime->GetInfo<portable_executable_info_label_type>();
-        auto const *pFuInfo = pRuntime->GetInfo<fusion_info_label_type>();
         auto const *pSnInfo = pRuntime->GetInfo<strong_name_info_label_type>();
-        pAsm->Initialize(m_pClass, pDisp, pPEInfo, pFuInfo, pSnInfo);
+        pAsm->Initialize(m_pClass, pDisp, pPEInfo, pSnInfo);
         auto handler = assembly_metadata_persisted_handler_label_type(pDisp);
         provider.AddPersistedHandler(pAsm, handler);
         return pAsm;

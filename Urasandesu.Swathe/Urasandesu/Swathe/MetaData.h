@@ -292,6 +292,10 @@
 #include <Urasandesu/Swathe/Metadata/TypeKinds.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_ASSEMBLYRESOLVER_H
+#include <Urasandesu/Swathe/Metadata/AssemblyResolver.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_CALLINGCONVENTIONS_H
 #include <Urasandesu/Swathe/Metadata/CallingConventions.h>
 #endif
