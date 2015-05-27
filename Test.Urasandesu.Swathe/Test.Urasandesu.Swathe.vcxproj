@@ -168,7 +168,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;OUTPUT_DEBUG;_NET_3_5;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm254 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,7 +185,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;OUTPUT_DEBUG;_NET_4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm254 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -202,7 +202,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;OUTPUT_DEBUG;_NET_3_5;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm254 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -219,7 +219,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NOMINMAX;_SCL_SECURE_NO_WARNINGS;OUTPUT_DEBUG;_NET_4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm254 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -237,7 +237,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;_NET_3_5;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm254 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -258,7 +258,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;_NET_4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm254 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -279,7 +279,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;_NET_3_5;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm254 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -300,7 +300,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;_NET_4;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\boost_1_55_0;..\Urasandesu.Swathe;..\..\CppAnonym\Urasandesu.CppAnonym;..\..\CppAnonym\Test.Urasandesu.CppAnonym;C:\gtest-1.6.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalOptions>/Zm218 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/Zm254 /wd4231 /wd4345 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

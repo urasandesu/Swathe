@@ -87,19 +87,20 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
                 auto pCondition = m_pFuInfo->NewAssemblyName(fullName, NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
                 auto pAsmNames = m_pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
+                typedef remove_reference<decltype(*pAsmNames->end())>::type AssemblyNamePtr;
+                auto candidates = unordered_map<Platform, AssemblyNamePtr, Hash<Platform>, EqualTo<Platform> >();
+                FillCandidates(pAsmNames, candidates);
                 
-                typedef remove_reference<decltype(*pAsmNames->end())>::type AssemblyName;
-                auto orderedAsmNames = vector<AssemblyName>(pAsmNames->begin(), pAsmNames->end());
-                sort(orderedAsmNames, [](AssemblyName const &x, AssemblyName const &y) { return x->GetVersion() < y->GetVersion(); });
-                
-                // NOTE: 'candidates' is overridden by the latest version assembly if there are multiple candidates.
-                auto candidates = unordered_map<Platform, AssemblyName, Hash<Platform>, EqualTo<Platform> >();
-                BOOST_FOREACH (auto const &pAsmName, orderedAsmNames)
-                    candidates[pAsmName->GetPlatform()] = pAsmName;
+                if (candidates.empty())
+                {
+                    pCondition = m_pFuInfo->NewAssemblyName(pCondition->GetName(), NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
+                    pAsmNames = m_pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
+                    FillCandidates(pAsmNames, candidates);
+                }
 
                 return candidates.empty() ? 
-                            ResolveAssemblyPathBySearchDirectory(this, pCondition->GetName()) : 
-                            ResolveAssemblyPathByGAC(this, candidates, procArchs);
+                            ResolveAssemblyPathBySearchDirectory(pCondition->GetName()) : 
+                            ResolveAssemblyPathByGAC(candidates, procArchs);
             }
             
             void AddSearchDirectory(path const &searchDir)
@@ -110,6 +111,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             }
 
         private:
+            template<class AssemblyNameRangePtrType, class AssemblyNamePtrType>    
+            static void FillCandidates(AssemblyNameRangePtrType const &pAsmNames,  unordered_map<Platform, AssemblyNamePtrType, Hash<Platform>, EqualTo<Platform> > &candidates)
+            {
+                auto orderedAsmNames = vector<AssemblyNamePtrType>(pAsmNames->begin(), pAsmNames->end());
+                sort(orderedAsmNames, [](AssemblyNamePtrType const &x, AssemblyNamePtrType const &y) { return x->GetVersion() < y->GetVersion(); });
+                
+                // NOTE: 'candidates' is overridden by the latest version assembly if there are multiple candidates.
+                BOOST_FOREACH (auto const &pAsmName, orderedAsmNames)
+                    candidates[pAsmName->GetPlatform()] = pAsmName;
+            }
+
             static Platform ToPlatform(ProcessorArchitecture const &procArchs)
             {
                 using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
@@ -129,14 +141,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 }
             }
 
-            static path ResolveAssemblyPathBySearchDirectory(this_type const *_this, wstring const &name)
+            path ResolveAssemblyPathBySearchDirectory(wstring const &name) const
             {
                 using boost::filesystem::exists;
                 using Urasandesu::CppAnonym::CppAnonymArgumentException;
 
                 auto location = path();
-                auto &searchDirs = _this->m_searchDirs;
-                BOOST_FOREACH (auto const &searchDir, searchDirs)
+                BOOST_FOREACH (auto const &searchDir, m_searchDirs)
                 {
                     location = searchDir / (name + L".dll");
                     if (exists(location))
@@ -149,25 +160,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 
                 auto oss = std::wostringstream();
                 oss << L"The designated assembly is not found: " << name << std::endl;
-                BOOST_FOREACH (auto const &searchDir, searchDirs)
+                BOOST_FOREACH (auto const &searchDir, m_searchDirs)
                     oss << L"    Considering \"" << searchDir.native() << L"\"..." << std::endl;
                 BOOST_THROW_EXCEPTION(CppAnonymArgumentException(oss.str()));
             }
             
-            template<class AssemblyNameType>    
-            static path ResolveAssemblyPathByGAC(this_type const *_this, unordered_map<Platform, AutoPtr<AssemblyNameType>, Hash<Platform>, EqualTo<Platform> > const &candidates, vector<ProcessorArchitecture> &procArchs)
+            template<class AssemblyNamePtrType>    
+            path ResolveAssemblyPathByGAC(unordered_map<Platform, AssemblyNamePtrType, Hash<Platform>, EqualTo<Platform> > const &candidates, vector<ProcessorArchitecture> &procArchs) const
             {
                 using boost::adaptors::transformed;        
                 using Urasandesu::CppAnonym::CppAnonymCOMException;
                 using Urasandesu::CppAnonym::Collections::FindIf;
                 using Urasandesu::Swathe::Fusion::AssemblyQueryTypes;
 
-                auto const *pFuInfo = _this->m_pFuInfo;
-
                 if (candidates.size() == 1)
                 {
                     auto pAsmName = (*candidates.begin()).second;
-                    auto pAsmCache = pFuInfo->NewAssemblyCache();
+                    auto pAsmCache = m_pFuInfo->NewAssemblyCache();
                     auto pAsmInfo = pAsmCache->QueryAssemblyInfo(AssemblyQueryTypes::AQT_DEFAULT, pAsmName->GetFullName());
                     return pAsmInfo->GetAssemblyPath();
                 }
@@ -192,7 +201,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         BOOST_THROW_EXCEPTION(CppAnonymCOMException(ERROR_FILE_NOT_FOUND));
 
                     auto pAsmName = candidates.at(*result);
-                    auto pAsmCache = pFuInfo->NewAssemblyCache();
+                    auto pAsmCache = m_pFuInfo->NewAssemblyCache();
                     auto pAsmInfo = pAsmCache->QueryAssemblyInfo(AssemblyQueryTypes::AQT_DEFAULT, pAsmName->GetFullName());
                     return pAsmInfo->GetAssemblyPath();
                 }

@@ -167,7 +167,7 @@ namespace {
 #ifdef _M_IX86
         ASSERT_EQ(0x060002D3, pDateTime_get_UtcNow->GetToken());
 #else
-        ASSERT_EQ(0x060002D5, pDateTime_get_UtcNow->GetToken());
+        ASSERT_EQ(0x060002D6, pDateTime_get_UtcNow->GetToken());
 #endif
 
         auto const *pDateTime_ToLocalTime = static_cast<IMethod *>(nullptr);
@@ -179,7 +179,7 @@ namespace {
 #ifdef _M_IX86
         ASSERT_EQ(0x060002E7, pDateTime_ToLocalTime->GetToken());
 #else
-        ASSERT_EQ(0x060002E9, pDateTime_ToLocalTime->GetToken());
+        ASSERT_EQ(0x060002EA, pDateTime_ToLocalTime->GetToken());
 #endif
 
 
@@ -437,7 +437,7 @@ namespace {
 #ifdef _M_IX86
             pInt32_ToString_string_IFormatProvider = *(methods | filtered([](IMethod const *pMethod) { return pMethod->GetToken() == 0x06000B26; })).begin();
 #else
-            pInt32_ToString_string_IFormatProvider = *(methods | filtered([](IMethod const *pMethod) { return pMethod->GetToken() == 0x06000B28; })).begin();
+            pInt32_ToString_string_IFormatProvider = *(methods | filtered([](IMethod const *pMethod) { return pMethod->GetToken() == 0x06000B29; })).begin();
 #endif
         }
 
