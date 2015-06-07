@@ -769,4 +769,72 @@ namespace {
         ASSERT_TRUE(pEnumerable_Average_IEnumerable1Int32 != nullptr);
         ASSERT_EQ(0x0600049B, pEnumerable_Average_IEnumerable1Int32->GetToken());
     }
+
+
+    
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, SampleForGetMethod_02_00)
+    {
+        using namespace Urasandesu::Swathe::Hosting;
+        using namespace Urasandesu::Swathe::Metadata;
+        using namespace std;
+
+        auto const *pHost = HostInfo::CreateHost();
+        auto const *pRuntime = pHost->GetRuntime(L"v4.0.30319");
+        auto const *pMetaInfo = pRuntime->GetInfo<MetadataInfo>();
+        auto *pMetaDisp = pMetaInfo->CreateDispenser();
+
+        auto const *pMSCorLib = pMetaDisp->GetAssembly(L"mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+        auto const *pMSCorLibDll = pMSCorLib->GetModule(L"CommonLanguageRuntimeLibrary");
+        auto const *pEnum = pMSCorLibDll->GetType(L"System.Enum");
+        auto const *pType = pMSCorLibDll->GetType(L"System.Type");
+        auto const *pObject = pMSCorLibDll->GetType(L"System.Object");
+        auto const *pEnum_ToObjectTypeObject = static_cast<IMethod *>(nullptr);
+        {
+            auto params = vector<IType const *>();
+            params.push_back(pType);
+            params.push_back(pObject);
+            pEnum_ToObjectTypeObject = pEnum->GetMethod(L"ToObject", params);
+        }
+
+        ASSERT_TRUE(pEnum_ToObjectTypeObject != nullptr);
+        {
+            auto *pBody = pEnum_ToObjectTypeObject->GetMethodBody();
+
+            auto const &exClauses = pBody->GetExceptionClauses();
+            ASSERT_TRUE(exClauses.empty());
+        }
+    }
+
+
+    
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, SampleForGetMethod_02_01)
+    {
+        using namespace Urasandesu::Swathe::Hosting;
+        using namespace Urasandesu::Swathe::Metadata;
+        using namespace std;
+
+        auto const *pHost = HostInfo::CreateHost();
+        auto const *pRuntime = pHost->GetRuntime(L"v4.0.30319");
+        auto const *pMetaInfo = pRuntime->GetInfo<MetadataInfo>();
+        auto *pMetaDisp = pMetaInfo->CreateDispenser();
+
+        auto const *pMSCorLib = pMetaDisp->GetAssembly(L"mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+        auto const *pMSCorLibDll = pMSCorLib->GetModule(L"CommonLanguageRuntimeLibrary");
+        auto const *pAppDomain = pMSCorLibDll->GetType(L"System.AppDomain");
+        auto const *pString = pMSCorLibDll->GetType(L"System.String");
+        auto const *pAppDomain_GetData = static_cast<IMethod *>(nullptr);
+        {
+            auto params = vector<IType const *>();
+            params.push_back(pString);
+            pAppDomain_GetData = pAppDomain->GetMethod(L"GetData", params);
+        }
+
+        ASSERT_TRUE(pAppDomain_GetData != nullptr);
+        {
+            auto *pBody = pAppDomain_GetData->GetMethodBody();
+
+            auto const &exClauses = pBody->GetExceptionClauses();
+            ASSERT_FALSE(exClauses.empty());
+        }
+    }
 }

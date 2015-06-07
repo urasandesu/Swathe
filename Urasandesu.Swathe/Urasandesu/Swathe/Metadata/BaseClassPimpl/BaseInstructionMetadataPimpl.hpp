@@ -109,7 +109,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     SIZE_T BaseInstructionMetadataPimpl<ApiHolder>::GetSize() const
     {
-        // TODO: IInstruction に移動。
+        // TODO: Commonize.
+        using boost::get;
+        
         auto const &opCode = GetOpCode();
         auto opCodeLength = opCode.GetLength();
         auto const &operandParam = opCode.GetOperandParam();
@@ -117,7 +119,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         switch (operandParamType.Value())
         {
             case OperandParamTypes::OPT_INLINE_SWITCH: 
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                {
+                    auto const &operand = GetOperand();
+                    if (auto const *pOffsets = get<vector<INT> >(&operand))
+                        return pOffsets->size() * sizeof(INT);
+                    else if (auto const *pLabels = get<vector<Label> >(&operand))
+                        return pLabels->size() * sizeof(INT);
+                    else
+                        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                }
             case OperandParamTypes::OPT_INLINE_I8: 
             case OperandParamTypes::OPT_INLINE_R: 
                 return opCodeLength + 8;
