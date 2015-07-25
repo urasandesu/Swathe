@@ -92,6 +92,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
             void Encode(IType const *pType);
             void Encode(IMethod const *pMethod);
+            void Encode(CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params);
             void Encode(IProperty const *pProp);
             void Encode(IField const *pField);
             void Encode(IMethodBody const *pBody);

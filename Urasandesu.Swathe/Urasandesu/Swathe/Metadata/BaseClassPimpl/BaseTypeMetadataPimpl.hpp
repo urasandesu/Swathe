@@ -301,6 +301,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    GenericParamAttributes BaseTypeMetadataPimpl<ApiHolder>::GetGenericParameterAttributes() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    vector<IType const *> const &BaseTypeMetadataPimpl<ApiHolder>::GetGenericParameterConstraints() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     vector<IType const *> const &BaseTypeMetadataPimpl<ApiHolder>::GetGenericArguments() const
     {
         if (m_genericArgsInit)

@@ -55,6 +55,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_declaringMethodInit(false), 
         m_mdt(mdTokenNil), 
         m_attr(TypeAttributes::TA_UNREACHED), 
+        m_gpAttr(GenericParamAttributes::GPA_UNREACHED), 
         m_genericParamPos(static_cast<ULONG>(-1)), 
         m_genericArgsInit(false), 
         m_interfacesInit(false), 
@@ -94,48 +95,29 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 CPPANONYM_LOG_NAMED_SCOPE("if (!m_pSrcType)");
 
-                auto const *pDeclaringType = GetDeclaringType();
-                if (!pDeclaringType)
+                if (m_genericParamPos != -1)
                 {
-                    CPPANONYM_LOG_NAMED_SCOPE("if (!pDeclaringType)");
-
-                    auto const &fullName = GetFullName();
-                    CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 1: %|1$s|", fullName);
-                    auto attr = GetAttribute();
-                    auto const *pBaseType = GetBaseType();
-                    _ASSERTE(pBaseType);    // TODO: interface の場合に落ちる。
-                    auto mdExtends = pBaseType->GetToken();
-                    auto const &interfaces = GetInterfaces();
-                    auto mdImplements = vector<mdToken>();
-                    mdImplements.reserve(interfaces.size() + 1);
-                    for (auto i = interfaces.begin(), i_end = interfaces.end(); i != i_end; ++i)
-                        mdImplements.push_back((*i)->GetToken());
-                    mdImplements.push_back(mdTokenNil);
-                    auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                    auto hr = comMetaEmt.DefineTypeDef(fullName.c_str(), attr.Value(), mdExtends, &mdImplements[0], &m_mdt);
-                    if (FAILED(hr))
-                        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                    CPPANONYM_LOG_NAMED_SCOPE("if (m_genericParamPos != -1)");
+                    
+                    m_pAsmGen->UpdateGenericParam(GetDeclaringType(), GetDeclaringMethod(), GetGenericParameterPosition(), GetGenericParameterAttributes(), GetFullName(), GetGenericParameterConstraints(), m_mdt);
                 }
                 else
                 {
-                    CPPANONYM_LOG_NAMED_SCOPE("if (pDeclaringType)");
+                    CPPANONYM_LOG_NAMED_SCOPE("if (m_genericParamPos == -1)");
+                    
+                    auto const *pDeclaringType = GetDeclaringType();
+                    if (!pDeclaringType)
+                    {
+                        CPPANONYM_LOG_NAMED_SCOPE("if (!pDeclaringType)");
 
-                    auto const &fullName = GetFullName();
-                    CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 4: %|1$s|", fullName);
-                    auto attr = GetAttribute();
-                    auto const *pBaseType = GetBaseType();
-                    _ASSERTE(pBaseType);    // TODO: interface の場合に落ちる。
-                    auto mdExtends = pBaseType->GetToken();
-                    auto const &interfaces = GetInterfaces();
-                    auto mdImplements = vector<mdToken>();
-                    mdImplements.reserve(interfaces.size() + 1);
-                    for (auto i = interfaces.begin(), i_end = interfaces.end(); i != i_end; ++i)
-                        mdImplements.push_back((*i)->GetToken());
-                    mdImplements.push_back(mdTokenNil);
-                    auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                    auto hr = comMetaEmt.DefineNestedType(fullName.c_str(), attr.Value(), mdExtends, &mdImplements[0], pDeclaringType->GetToken(), &m_mdt);
-                    if (FAILED(hr))
-                        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                        m_pAsmGen->UpdateTypeDef(GetFullName(), GetAttribute(), GetBaseType(), GetInterfaces(), m_mdt);
+                    }
+                    else
+                    {
+                        CPPANONYM_LOG_NAMED_SCOPE("if (pDeclaringType)");
+
+                        m_pAsmGen->UpdateNestedType(GetFullName(), GetAttribute(), GetBaseType(), GetInterfaces(), pDeclaringType, m_mdt);
+                    }
                 }
             }
             else
@@ -151,43 +133,35 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     {
                         CPPANONYM_LOG_NAMED_SCOPE("if (isGenericTypeInstance)");
 
-                        CPPANONYM_D_LOGW(L"Getting Type Generator Token... 2: Generic Type Instance");
-                        auto const &sig = m_pClass->GetSignature();
-                        auto const &blob = sig.GetBlob();
-                        if (CPPANONYM_D_LOG_ENABLED())
-                        {
-                            auto oss = std::wostringstream();
-                            oss << L"Signature:";
-                            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
-                                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-                            CPPANONYM_D_LOGW(oss.str());
-                        }
-                        auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                        auto hr = comMetaEmt.GetTokenFromTypeSpec(&blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
-                        if (FAILED(hr))
-                            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                        m_pAsmGen->UpdateTypeSpec(GetSignature(), m_mdt);
                     }
                     else
                     {
                         CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericTypeInstance)");
 
-                        auto mdResolutionScope = m_pAsmGen->GetToken();
-                        auto const &fullName = m_pSrcType->GetFullName();
-                        CPPANONYM_D_LOGW1(L"Getting Type Generator Token... 3: %|1$s|", fullName);
-                        auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                        auto hr = comMetaEmt.DefineTypeRefByName(mdResolutionScope, fullName.c_str(), &m_mdt);
-                        if (FAILED(hr))
-                            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                        m_pAsmGen->UpdateTypeRef(m_pAsmGen->GetToken(), GetFullName(), m_mdt);
                     }
                 }
                 else
                 {
                     CPPANONYM_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
-                    CPPANONYM_D_LOGW(L"Getting Type Generator Token... 5: Modifiable Type");
-                    m_mdt = m_pSrcType->GetToken();
+
+                    auto isGenericTypeInstance = IsGenericType() && !IsGenericTypeDefinition();
+                    if (isGenericTypeInstance)
+                    {
+                        CPPANONYM_LOG_NAMED_SCOPE("if (isGenericTypeInstance)");
+
+                        m_pAsmGen->UpdateTypeSpec(GetSignature(), m_mdt);
+                    }
+                    else
+                    {
+                        CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericTypeInstance)");
+
+                        m_mdt = m_pSrcType->GetToken();
+                        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
+                    }
                 }
             }
-            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
         return m_mdt;
     }
@@ -301,7 +275,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     ULONG BaseTypeGeneratorPimpl<ApiHolder>::GetGenericParameterPosition() const
     {
-        if (m_genericParamPos == static_cast<ULONG>(-1))
+        if (m_genericParamPos == -1)
         {
             if (!m_pSrcType)
             {
@@ -313,6 +287,27 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             }
         }
         return m_genericParamPos;
+    }
+
+
+
+    template<class ApiHolder>    
+    GenericParamAttributes BaseTypeGeneratorPimpl<ApiHolder>::GetGenericParameterAttributes() const
+    {
+        if (m_gpAttr == GenericParamAttributes::GPA_UNREACHED)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        return m_gpAttr;
+    }
+
+
+
+    template<class ApiHolder>    
+    vector<IType const *> const &BaseTypeGeneratorPimpl<ApiHolder>::GetGenericParameterConstraints() const
+    {
+        // TODO: 
+        return MetadataSpecialValues::EMPTY_TYPES;
     }
 
 
@@ -871,7 +866,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     typename BaseTypeGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseTypeGeneratorPimpl<ApiHolder>::DefineNestedType(wstring const &fullName, TypeAttributes const &attr)
     {
-        return m_pAsmGen->DefineType(fullName, attr, static_cast<IType const *>(m_pClass));
+        return m_pAsmGen->DefineType(fullName, attr, GenericParamAttributes::GPA_UNREACHED, -1, static_cast<IType const *>(m_pClass));
     }
 
 
@@ -919,9 +914,29 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    typename BaseTypeGeneratorPimpl<ApiHolder>::method_generator_label_type *BaseTypeGeneratorPimpl<ApiHolder>::GetMethod(IType const *pDeclaringGenericInstanceType, IMethod const *pMethod)
+    {
+        using boost::polymorphic_cast;
+        
+        _ASSERTE(pDeclaringGenericInstanceType);
+        _ASSERTE(pMethod);
+        _ASSERTE(pDeclaringGenericInstanceType->IsGenericType() && !pDeclaringGenericInstanceType->IsGenericTypeDefinition());
+        _ASSERTE(pDeclaringGenericInstanceType->GetDeclaringType() == pMethod->GetDeclaringType());
+        // pMethod is specified as SrcMethod in the below, because we have to add the member of a generic type instance as MemberRef.
+        
+        auto *pDeclaringGenericInstanceTypeGen = polymorphic_cast<type_generator_label_type *>(const_cast<IType *>(pDeclaringGenericInstanceType));
+        auto *pAsmGen = polymorphic_cast<assembly_generator_label_type *>(const_cast<IAssembly *>(pDeclaringGenericInstanceTypeGen->GetAssembly()));
+        auto *pMethodGen = pAsmGen->DefineMethod(mdTokenNil, CallingConventions::CC_UNREACHED, false, MetadataSpecialValues::EMPTY_TYPES, nullptr, pMethod, pDeclaringGenericInstanceType);
+        _ASSERTE(pMethodGen->GetSourceMethod() == pMethod);
+        _ASSERTE(pMethodGen == pAsmGen->Resolve(pMethodGen));
+        return pMethodGen;
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseTypeGeneratorPimpl<ApiHolder>::SetFullName(wstring const &fullName)
     {
-        _ASSERTE(!fullName.empty());
         _ASSERTE(m_fullName.empty());
         m_fullName = fullName;
     }
@@ -931,9 +946,26 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseTypeGeneratorPimpl<ApiHolder>::SetAttributes(TypeAttributes const &attr)
     {
-        _ASSERTE(attr != TypeAttributes::TA_UNREACHED);
         _ASSERTE(m_attr == TypeAttributes::TA_UNREACHED);
         m_attr = attr;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseTypeGeneratorPimpl<ApiHolder>::SetGenericParameterAttributes(GenericParamAttributes const &gpAttr)
+    {
+        _ASSERTE(m_gpAttr == GenericParamAttributes::GPA_UNREACHED);
+        m_gpAttr = gpAttr;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseTypeGeneratorPimpl<ApiHolder>::SetGenericParameterPosition(ULONG genericParamPos)
+    {
+        _ASSERTE(m_genericParamPos == -1);
+        m_genericParamPos = genericParamPos;
     }
 
 

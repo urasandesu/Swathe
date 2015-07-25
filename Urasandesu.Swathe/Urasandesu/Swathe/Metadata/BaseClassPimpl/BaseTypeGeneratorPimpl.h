@@ -48,6 +48,10 @@
 #include <Urasandesu/Swathe/Metadata/TypeAttributes.hpp>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_GENERICPARAMATTRIBUTES_HPP
+#include <Urasandesu/Swathe/Metadata/GenericParamAttributes.hpp>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_FIELDATTRIBUTES_HPP
 #include <Urasandesu/Swathe/Metadata/FieldAttributes.hpp>
 #endif
@@ -138,6 +142,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool IsArray() const;
         bool IsNested() const;
         ULONG GetGenericParameterPosition() const;
+        GenericParamAttributes GetGenericParameterAttributes() const;
+        vector<IType const *> const &GetGenericParameterConstraints() const;
         vector<IType const *> const &GetGenericArguments() const;
         vector<ArrayDimension> const &GetDimensions() const;
         Signature const &GetSignature() const;
@@ -183,10 +189,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         method_generator_label_type *DefineMethod(wstring const &name, MethodAttributes const &attr, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes);
         method_generator_label_type *DefineDefaultConstructor(MethodAttributes const &attr);
         property_generator_label_type *DefineProperty(wstring const &name, PropertyAttributes const &attr, IType const *pPropType, vector<IType const *> const &paramTypes);
+        static method_generator_label_type *GetMethod(IType const *pDeclaringGenericInstanceType, IMethod const *pMethod);
     
     private:
         void SetFullName(wstring const &fullName);
         void SetAttributes(TypeAttributes const &attr);
+        void SetGenericParameterAttributes(GenericParamAttributes const &gpAttr);
+        void SetGenericParameterPosition(ULONG genericParamPos);
         void SetMember(TypeProvider const &member);
         void SetSourceType(IType const *pSrcType);
         void Accept(IMetadataVisitor *pVisitor) const;
@@ -202,6 +211,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable mdToken m_mdt;
         mutable wstring m_fullName;
         mutable TypeAttributes m_attr;
+        mutable GenericParamAttributes m_gpAttr;
         mutable ULONG m_genericParamPos;
         mutable bool m_genericArgsInit;
         mutable vector<IType const *> m_genericArgs;

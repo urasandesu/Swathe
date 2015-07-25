@@ -93,7 +93,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 96;
 #else
-        static INT const PIMPL_TYPE_SIZE = 136;
+        static INT const PIMPL_TYPE_SIZE = 144;
 #endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

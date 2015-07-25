@@ -52,6 +52,10 @@
 #include <Urasandesu/Swathe/Metadata/Label.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_CALLINGCONVENTIONS_H
+#include <Urasandesu/Swathe/Metadata/CallingConventions.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { 
     
     struct IInstruction;
@@ -74,7 +78,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IType const *, 
         Label, 
         std::vector<INT>, 
-        std::vector<Label>
+        std::vector<Label>, 
+        boost::tuple<CallingConventions, IType const *, std::vector<IType const *> >
     > Operand;
 
     typedef boost::any_range<IInstruction const *, boost::random_access_traversal_tag, IInstruction const *, std::ptrdiff_t> IInstructionPtrRange;

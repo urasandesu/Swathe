@@ -5328,6 +5328,9 @@
     <ClInclude Include="Urasandesu\Swathe\Metadata\AssemblyResolverFwd.h">
       <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
     </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Metadata\GenericParamAttributes.hpp">
+      <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Urasandesu.Swathe.rc">

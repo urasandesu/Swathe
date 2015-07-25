@@ -84,6 +84,10 @@
 #include <Urasandesu/Swathe/Metadata/MethodAttributes.hpp>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_METHODIMPLATTRIBUTES_HPP
+#include <Urasandesu/Swathe/Metadata/MethodImplAttributes.hpp>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_IFIELDFWD_H
 #include <Urasandesu/Swathe/Metadata/IFieldFwd.h>
 #endif
@@ -162,6 +166,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IDispenser const *GetDispenser() const;
         IField const *GetField(mdToken mdt) const;
         IMethod const *GetMethod(mdToken mdt) const;
+        method_generator_label_type *GetMethodGenerator(mdToken mdt);
         IMethod const *GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const;
         IType const *GetType(mdToken mdt) const;
         IType const *GetType(wstring const &fullName) const;
@@ -184,6 +189,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         custom_attribute_generator_label_type *DefineCustomAttribute(IMethod const *pCtor, vector<CustomAttributeArgument> const &constructorArgs);
         custom_attribute_generator_label_type *DefineCustomAttribute(IMethod const *pCtor, vector<CustomAttributeArgument> const &constructorArgs, vector<IProperty const *> const &namedProperties, vector<CustomAttributeArgument> const &propertyValues);
         method_generator_label_type *GetModifiableMethod(mdToken mdt, COR_ILMETHOD *pILBody) const;
+        IModule const *Resolve(IModule const *pMod) const;
+        IType const *Resolve(IType const *pType) const;
+        IField const *Resolve(IField const *pField) const;
+        IProperty const *Resolve(IProperty const *pProp) const;
+        IMethod const *Resolve(IMethod const *pMethod) const;
+        IMethodBody const *Resolve(IMethodBody const *pBody) const;
+        IParameter const *Resolve(IParameter const *pParam) const;
+        ILocal const *Resolve(ILocal const *pLocal) const;
+        ICustomAttribute const *Resolve(ICustomAttribute const *pCa) const;
     
     private:
         assembly_generator_pimpl_label_type *Pimpl();
@@ -200,12 +214,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         module_generator_label_type *DefineModule(IModule const *pSrcMod);
         void RegisterModuleGenerator(TempPtr<module_generator_label_type> &pModGen);
         
-        type_generator_label_type *DefineType(wstring const &fullName, TypeAttributes const &attr, TypeProvider const &member);
+        type_generator_label_type *DefineType(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member);
         type_generator_label_type *DefineType(IType const *pSrcType, TypeProvider const &member);
         void RegisterTypeGenerator(TempPtr<type_generator_label_type> &pTypeGen);
         
         method_generator_label_type *DefineMethod(wstring const &name, MethodAttributes const &attr, CallingConventions const &callingConvention, IType const *pRetType, bool paramsSpecified, vector<IParameter const *> const &params, MethodProvider const &member);
-        method_generator_label_type *DefineMethod(IMethod const *pSrcMethod, MethodProvider const &member);
+        method_generator_label_type *DefineMethod(mdToken mdt, CallingConventions const &callingConvention, bool genericArgsSpecified, vector<IType const *> const &genericArgs, COR_ILMETHOD *pILBody, IMethod const *pSrcMethod, MethodProvider const &member);
         void RegisterMethodGenerator(TempPtr<method_generator_label_type> &pMethodGen);
         
         property_generator_label_type *DefineProperty(wstring const &name, PropertyAttributes const &attr, IType const *pPropType, bool paramsSpecified, vector<IParameter const *> const &params, PropertyProvider const &member);
@@ -239,15 +253,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         vector<property_generator_label_type *> const &GetPropertyGeneratorToIndex() const;
         vector<custom_attribute_generator_label_type *> const &GetCustomAttributeGeneratorToIndex() const;
 
-        IModule const *Resolve(IModule const *pMod) const;
-        IType const *Resolve(IType const *pType) const;
-        IField const *Resolve(IField const *pField) const;
-        IProperty const *Resolve(IProperty const *pProp) const;
-        IMethod const *Resolve(IMethod const *pMethod) const;
-        IMethodBody const *Resolve(IMethodBody const *pBody) const;
-        IParameter const *Resolve(IParameter const *pParam) const;
-        ILocal const *Resolve(ILocal const *pLocal) const;
-        ICustomAttribute const *Resolve(ICustomAttribute const *pCa) const;
+        void UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, mdTypeDef &mdt);
+        void UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, mdToken mdExtends, mdToken mdNilTerminatedImplements[], mdTypeDef &mdt);
+        void UpdateNestedType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, IType const *pDeclaringType, mdTypeDef &mdt);
+        void UpdateNestedType(wstring const &fullName, TypeAttributes const &attr, mdToken mdExtends, mdToken mdNilTerminatedImplements[], mdTypeDef mdEncloser, mdTypeDef &mdt);
+        void UpdateTypeSpec(Signature const &sig, mdTypeSpec &mdt);
+        void UpdateTypeRef(mdToken mdResolutionScope, wstring const &fullName, mdTypeRef &mdt);
+        void UpdateGenericParam(IType const *pDeclaringType, IMethod const *pDeclaringMethod, ULONG genericParamPos, GenericParamAttributes const &gpAttr, wstring const &name, vector<IType const *> const &genericParamConstraints, mdGenericParam &mdt);
+        void UpdateGenericParam(mdToken mdtOwner, ULONG genericParamPos, GenericParamAttributes const &gpAttr, wstring const &name, mdToken mdNilTerminatedConstraints[], mdGenericParam &mdt);
+        void UpdateMethodDef(mdTypeDef mdtOwner, wstring const &name, MethodAttributes const &attr, Signature const &sig, ULONG codeRva, MethodImplAttributes const &implFlags, mdMethodDef &mdt);
+        void UpdateMethodSpec(mdToken mdtOwner, Signature const &sig, mdMethodSpec &mdt);
+        void UpdateMemberRef(mdTypeDef mdtOwner, wstring const &name, Signature const &sig, mdMemberRef &mdt);
+        ULONG GetValidRVA() const;
 
         IMetaDataAssemblyEmit &GetCOMMetaDataAssemblyEmit();
         IMetaDataEmit2 &GetCOMMetaDataEmit();

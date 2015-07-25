@@ -113,17 +113,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethod const *MakeGenericMethod(vector<IType const *> const &genericArgs) const;
         IAssembly const *GetAssembly() const;
         IType const *GetDeclaringType() const;
+        type_generator_label_type *GetDeclaringTypeGenerator();
         IMethod const *GetDeclaringMethod() const;
         MethodProvider const &GetMember() const;
         IMethod const *GetSourceMethod() const;
         bool Equals(IMethod const *pMethod) const;
         size_t GetHashCode() const;
-        //IDispenser const *GetDispenser() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         MethodAttributes GetAttribute() const;
         void OutDebugInfo() const;
         method_body_generator_label_type *DefineMethodBody();
         parameter_generator_label_type *DefineParameter(ULONG position, IType const *pParamType);
+        void DefineGenericParameters(vector<wstring> const &names);
+        void DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens);
         
     private:
         void SetToken(mdToken mdt);
@@ -133,6 +135,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetParameters(vector<IParameter const *> const &params);
         void SetAttributes(MethodAttributes const &attr);
         void SetMember(MethodProvider const &member);
+        void SetGenericArguments(vector<IType const *> const &genericArgs);
         void SetSourceMethod(IMethod const *pSrcMethod);
         void Accept(IMetadataVisitor *pVisitor) const;
 

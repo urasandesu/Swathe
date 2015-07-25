@@ -477,6 +477,7 @@
     <ClInclude Include="Urasandesu\Swathe\Metadata\ExceptionClause.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\ExceptionClauseFwd.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\FieldAttributes.hpp" />
+    <ClInclude Include="Urasandesu\Swathe\Metadata\GenericParamAttributes.hpp" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\IAssembly.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\IAssemblyFwd.h" />
     <ClInclude Include="Urasandesu\Swathe\Metadata\ICustomAttribute.h" />

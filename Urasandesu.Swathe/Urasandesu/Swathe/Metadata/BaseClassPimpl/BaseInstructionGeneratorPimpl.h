@@ -91,6 +91,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static void PutInlineI8(Operand const &operand, SimpleBlob &blob);
         static void PutInlineMethod(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
         static void PutInlineR(Operand const &operand, SimpleBlob &blob);
+        static void PutInlineSignature(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
         static void PutInlineString(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
         static void PutInlineSwitch(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);
         static void PutInlineToken(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob);

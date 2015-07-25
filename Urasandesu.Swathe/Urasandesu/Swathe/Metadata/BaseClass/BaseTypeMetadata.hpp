@@ -139,6 +139,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    GenericParamAttributes BaseTypeMetadata<ApiHolder>::GetGenericParameterAttributes() const
+    {
+        return Pimpl()->GetGenericParameterAttributes();
+    }
+
+    template<class ApiHolder>    
+    vector<IType const *> const &BaseTypeMetadata<ApiHolder>::GetGenericParameterConstraints() const
+    {
+        return Pimpl()->GetGenericParameterConstraints();
+    }
+
+    template<class ApiHolder>    
     vector<IType const *> const &BaseTypeMetadata<ApiHolder>::GetGenericArguments() const
     {
         return Pimpl()->GetGenericArguments();

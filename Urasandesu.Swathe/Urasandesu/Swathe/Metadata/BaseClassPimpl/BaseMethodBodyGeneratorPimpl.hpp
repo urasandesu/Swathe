@@ -864,6 +864,28 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseMethodBodyGeneratorPimpl<ApiHolder>::EmitCalli(OpCode const &opCode, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes)
+    {
+        using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
+
+        _ASSERTE(callingConvention != CallingConventions::CC_UNREACHED);
+        _ASSERTE(pRetType);
+
+        if (&opCode != &OpCodes::Calli)
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::EmitCalli(OpCode const &, CallingConventions const &, IType const *, vector<IParameter const *> const &)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
+        
+        auto *pInstGen = NewInstructionGeneratorCore();
+        pInstGen->SetOpCode(opCode);
+        pInstGen->SetOperand(boost::make_tuple(callingConvention, pRetType, paramTypes));
+    }
+
+
+
+    template<class ApiHolder>    
     typename BaseMethodBodyGeneratorPimpl<ApiHolder>::local_generator_label_type *BaseMethodBodyGeneratorPimpl<ApiHolder>::DefineLocal(IType const *pLocalType)
     {
         auto *pLocalGen = m_pAsmGen->DefineLocal(m_locals.size(), pLocalType, m_pClass);

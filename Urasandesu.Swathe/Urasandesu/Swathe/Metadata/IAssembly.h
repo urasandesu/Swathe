@@ -64,6 +64,10 @@
 #include <Urasandesu/Swathe/Metadata/TypeAttributes.hpp>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_GENERICPARAMATTRIBUTES_HPP
+#include <Urasandesu/Swathe/Metadata/GenericParamAttributes.hpp>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_ASSEMBLYFLAGS_H
 #include <Urasandesu/Swathe/Metadata/AssemblyFlags.h>
 #endif

@@ -61,6 +61,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_STRING = L"System.String";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_TYPEDBYREF = L"System.TypedReference";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_INTPTR = L"System.IntPtr";
+    std::wstring const MetadataSpecialValues::TYPE_NAME_OF_UINTPTR = L"System.UIntPtr";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_OBJECT = L"System.Object";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_VALUETYPE = L"System.ValueType";
     std::wstring const MetadataSpecialValues::TYPE_NAME_OF_ENUM = L"System.Enum";

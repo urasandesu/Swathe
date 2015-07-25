@@ -354,7 +354,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethod const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetMethod(mdToken mdt) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_pSrcAsm)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        else
+        {
+            return m_pClass->Resolve(m_pSrcAsm->GetMethod(mdt));
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    typename BaseAssemblyGeneratorPimpl<ApiHolder>::method_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::GetMethodGenerator(mdToken mdt)
+    {
+        using boost::polymorphic_cast;
+        return polymorphic_cast<method_generator_label_type *>(const_cast<IMethod *>(const_cast<class_pimpl_type *>(this)->GetMethod(mdt)));
     }
 
 
@@ -401,7 +417,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetGenericMethodParameter(ULONG genericParamPos) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_pSrcAsm)
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        else
+        {
+            return m_pClass->Resolve(m_pSrcAsm->GetGenericMethodParameter(genericParamPos));
+        }
     }
 
 
@@ -652,9 +675,172 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto const *pAsm = m_pClass->GetSourceAssembly();
         auto const *pSrcMethod = pAsm->GetMethod(mdt, pILBody);
         
-        auto pNewMethodGen = NewMethodGenerator(mdt, pSrcMethod, MethodProvider());
+        auto pNewMethodGen = NewMethodGenerator(mdt, CallingConventions::CC_UNREACHED, false, MetadataSpecialValues::EMPTY_TYPES, nullptr, pSrcMethod, MethodProvider());
         pNewMethodGen.Persist();
         return pNewMethodGen.Get();
+    }
+
+
+
+    template<class ApiHolder>    
+    IModule const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IModule const *pMod) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<module_generator_label_type const *> ModGens;
+        typedef ModGens::value_type Value;
+
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pMod->GetAssembly());
+        auto const &modGenToIndex = pRefAsmGen->GetModuleGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pMod); };
+        auto result = FindIf(modGenToIndex, isAlreadyExist);
+        if (result)
+            return *result;
+
+        return pRefAsmGen->DefineModule(pMod);
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IType const *pType) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<type_generator_label_type const *> TypeGens;
+        typedef TypeGens::value_type Value;
+
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pType->GetAssembly());
+        auto const &typeGenToIndex = pRefAsmGen->GetTypeGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pType); };
+        auto result = FindIf(typeGenToIndex, isAlreadyExist);
+        if (result)
+            return *result;
+
+        return pRefAsmGen->DefineType(pType, TypeProvider());
+    }
+
+
+
+    template<class ApiHolder>    
+    IField const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IField const *pField) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<field_generator_label_type const *> FieldGens;
+        typedef FieldGens::value_type Value;
+
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pField->GetAssembly());
+        auto const &fieldGenToIndex = pRefAsmGen->GetFieldGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pField); };
+        auto result = FindIf(fieldGenToIndex, isAlreadyExist);
+        if (result)
+            return *result;
+
+        return pRefAsmGen->DefineField(pField, FieldProvider());
+    }
+
+
+
+    template<class ApiHolder>    
+    IProperty const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IProperty const *pProp) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<property_generator_label_type const *> PropertyGens;
+        typedef PropertyGens::value_type Value;
+
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pProp->GetAssembly());
+        auto const &propGenToIndex = pRefAsmGen->GetPropertyGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pProp); };
+        auto result = FindIf(propGenToIndex, isAlreadyExist);
+        if (result)
+            return *result;
+
+        return pRefAsmGen->DefineProperty(pProp, PropertyProvider());
+    }
+
+
+
+    template<class ApiHolder>    
+    IMethod const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IMethod const *pMethod) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<method_generator_label_type const *> MethodGens;
+        typedef MethodGens::value_type Value;
+
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pMethod->GetAssembly());
+        auto const &methodGenToIndex = pRefAsmGen->GetMethodGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pMethod); };
+        auto result = FindIf(methodGenToIndex, isAlreadyExist);
+        if (result)
+            return *result;
+
+        return pRefAsmGen->DefineMethod(mdTokenNil, CallingConventions::CC_UNREACHED, false, MetadataSpecialValues::EMPTY_TYPES, nullptr, pMethod, MethodProvider());
+    }
+
+
+
+    template<class ApiHolder>    
+    IMethodBody const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IMethodBody const *pBody) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<method_body_generator_label_type const *> MethodBodyGens;
+        typedef MethodBodyGens::value_type Value;
+
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pBody->GetAssembly());
+        auto const &bodyGenToIndex = pRefAsmGen->GetMethodBodyGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pBody); };
+        auto result = FindIf(bodyGenToIndex, isAlreadyExist);
+        if (result)
+            return *result;
+
+        return pRefAsmGen->DefineMethodBody(pBody, nullptr);
+    }
+
+
+
+    template<class ApiHolder>    
+    IParameter const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IParameter const *pParam) const
+    {
+        using boost::adaptors::filtered;
+        using Urasandesu::CppAnonym::Collections::FindIf;
+
+        typedef vector<parameter_generator_label_type const *> ParamGens;
+        typedef ParamGens::value_type Value;
+
+        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pParam->GetAssembly());
+        auto const &paramGenToIndex = pRefAsmGen->GetParameterGeneratorToIndex();
+        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pParam); };
+        auto result = FindIf(paramGenToIndex, isAlreadyExist);
+        if (result)
+            return *result;
+
+        return pRefAsmGen->DefineParameter(pParam, ParameterProvider());
+    }
+
+
+
+    template<class ApiHolder>    
+    ILocal const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(ILocal const *pLocal) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    ICustomAttribute const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(ICustomAttribute const *pCa) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
 
 
@@ -772,9 +958,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr, TypeProvider const &member)
+    typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member)
     {
-        auto pNewTypeGen = NewTypeGenerator(fullName, attr, member);
+        auto pNewTypeGen = NewTypeGenerator(fullName, attr, gpAttr, genericParamPos, member);
         pNewTypeGen.Persist();
         return pNewTypeGen.Get();
     }
@@ -792,11 +978,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewTypeGenerator(wstring const &fullName, TypeAttributes const &attr, TypeProvider const &member) const
+    TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewTypeGenerator(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member) const
     {
         auto pTypeGen = m_pMetaInfo->NewTypeGeneratorCore(m_pClass);
         pTypeGen->SetFullName(fullName);
         pTypeGen->SetAttributes(attr);
+        pTypeGen->SetGenericParameterAttributes(gpAttr);
+        pTypeGen->SetGenericParameterPosition(genericParamPos);
         pTypeGen->SetMember(member);
         return pTypeGen;
     }
@@ -834,9 +1022,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseAssemblyGeneratorPimpl<ApiHolder>::method_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::DefineMethod(IMethod const *pSrcMethod, MethodProvider const &member)
+    typename BaseAssemblyGeneratorPimpl<ApiHolder>::method_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::DefineMethod(mdToken mdt, CallingConventions const &callingConvention, bool genericArgsSpecified, vector<IType const *> const &genericArgs, COR_ILMETHOD *pILBody, IMethod const *pSrcMethod, MethodProvider const &member)
     {
-        auto pNewMethodGen = NewMethodGenerator(mdTokenNil, pSrcMethod, member);
+        auto pNewMethodGen = NewMethodGenerator(mdt, callingConvention, genericArgsSpecified, genericArgs, pILBody, pSrcMethod, member);
         pNewMethodGen.Persist();
         return pNewMethodGen.Get();
     }
@@ -860,10 +1048,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::method_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewMethodGenerator(mdToken mdt, IMethod const *pSrcMethod, MethodProvider const &member) const
+    TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::method_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewMethodGenerator(mdToken mdt, CallingConventions const &callingConvention, bool genericArgsSpecified, vector<IType const *> const &genericArgs, COR_ILMETHOD *pILBody, IMethod const *pSrcMethod, MethodProvider const &member) const
     {
         auto pMethodGen = m_pMetaInfo->NewMethodGeneratorCore(m_pClass);
         pMethodGen->SetToken(mdt);
+        pMethodGen->SetCallingConvention(callingConvention);
+        if (genericArgsSpecified)
+            pMethodGen->SetGenericArguments(genericArgs);
+        // pMethodGen->SetILMethodBody(pILBody);    // TODO: 
         pMethodGen->SetSourceMethod(pSrcMethod);
         pMethodGen->SetMember(member);
         return pMethodGen;
@@ -1211,164 +1403,378 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    IModule const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IModule const *pMod) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, mdTypeDef &mdt)
     {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<module_generator_label_type const *> ModGens;
-        typedef ModGens::value_type Value;
-
-        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pMod->GetAssembly());
-        auto const &modGenToIndex = pRefAsmGen->GetModuleGeneratorToIndex();
-        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pMod); };
-        auto result = FindIf(modGenToIndex, isAlreadyExist);
-        if (result)
-            return *result;
-
-        return pRefAsmGen->DefineModule(pMod);
+        _ASSERTE(pBaseType);
+        auto mdExtends = pBaseType->GetToken();
+        
+        auto mdImplements = vector<mdToken>();
+        mdImplements.reserve(interfaces.size() + 1);
+        for (auto i = interfaces.begin(), i_end = interfaces.end(); i != i_end; ++i)
+            mdImplements.push_back((*i)->GetToken());
+        mdImplements.push_back(mdTokenNil);
+        
+        UpdateTypeDef(fullName, attr, mdExtends, &mdImplements[0], mdt);
     }
 
 
 
     template<class ApiHolder>    
-    IType const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IType const *pType) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, mdToken mdExtends, mdToken mdNilTerminatedImplements[], mdTypeDef &mdt)
     {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
+        CPPANONYM_LOG_FUNCTION();
 
-        typedef vector<type_generator_label_type const *> TypeGens;
-        typedef TypeGens::value_type Value;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        CPPANONYM_D_LOGW(L"Define TypeDef...");
+        CPPANONYM_D_LOGW1(L"fullName: %|1$s|", fullName);
+        CPPANONYM_D_LOGW1(L"attr: 0x%|1$08X|", attr.Value());
+        CPPANONYM_D_LOGW1(L"mdExtends: 0x%|1$08X|", mdExtends);
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"mdNilTerminatedImplements:";
+            for (auto i = 0; !IsNilToken(mdNilTerminatedImplements[i]); ++i)
+                oss << boost::wformat(L" 0x%|1$08X|") % mdNilTerminatedImplements[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pType->GetAssembly());
-        auto const &typeGenToIndex = pRefAsmGen->GetTypeGeneratorToIndex();
-        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pType); };
-        auto result = FindIf(typeGenToIndex, isAlreadyExist);
-        if (result)
-            return *result;
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.DefineTypeDef(fullName.c_str(), attr.Value(), mdExtends, &mdNilTerminatedImplements[0], &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
-        return pRefAsmGen->DefineType(pType, TypeProvider());
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
     }
 
 
 
     template<class ApiHolder>    
-    IField const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IField const *pField) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateNestedType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, IType const *pDeclaringType, mdTypeDef &mdt)
     {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<field_generator_label_type const *> FieldGens;
-        typedef FieldGens::value_type Value;
-
-        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pField->GetAssembly());
-        auto const &fieldGenToIndex = pRefAsmGen->GetFieldGeneratorToIndex();
-        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pField); };
-        auto result = FindIf(fieldGenToIndex, isAlreadyExist);
-        if (result)
-            return *result;
-
-        return pRefAsmGen->DefineField(pField, FieldProvider());
+        _ASSERTE(pBaseType);
+        auto mdExtends = pBaseType->GetToken();
+        
+        auto mdImplements = vector<mdToken>();
+        mdImplements.reserve(interfaces.size() + 1);
+        for (auto i = interfaces.begin(), i_end = interfaces.end(); i != i_end; ++i)
+            mdImplements.push_back((*i)->GetToken());
+        mdImplements.push_back(mdTokenNil);
+        
+        _ASSERTE(pDeclaringType);
+        auto mdEncloser = pDeclaringType->GetToken();
+        
+        UpdateNestedType(fullName, attr, mdExtends, &mdImplements[0], mdEncloser, mdt);
     }
 
 
 
     template<class ApiHolder>    
-    IProperty const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IProperty const *pProp) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateNestedType(wstring const &fullName, TypeAttributes const &attr, mdToken mdExtends, mdToken mdNilTerminatedImplements[], mdTypeDef mdEncloser, mdTypeDef &mdt)
     {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
+        CPPANONYM_LOG_FUNCTION();
 
-        typedef vector<property_generator_label_type const *> PropertyGens;
-        typedef PropertyGens::value_type Value;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        CPPANONYM_D_LOGW(L"Define NestedType...");
+        CPPANONYM_D_LOGW1(L"fullName: %|1$s|", fullName);
+        CPPANONYM_D_LOGW1(L"attr: 0x%|1$08X|", attr.Value());
+        CPPANONYM_D_LOGW1(L"mdExtends: 0x%|1$08X|", mdExtends);
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"mdNilTerminatedImplements:";
+            for (auto i = 0; !IsNilToken(mdNilTerminatedImplements[i]); ++i)
+                oss << boost::wformat(L" 0x%|1$08X|") % mdNilTerminatedImplements[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"mdEncloser: 0x%|1$08X|", mdEncloser);
+        
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.DefineNestedType(fullName.c_str(), attr.Value(), mdExtends, &mdNilTerminatedImplements[0], mdEncloser, &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pProp->GetAssembly());
-        auto const &propGenToIndex = pRefAsmGen->GetPropertyGeneratorToIndex();
-        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pProp); };
-        auto result = FindIf(propGenToIndex, isAlreadyExist);
-        if (result)
-            return *result;
-
-        return pRefAsmGen->DefineProperty(pProp, PropertyProvider());
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
     }
 
 
 
     template<class ApiHolder>    
-    IMethod const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IMethod const *pMethod) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateTypeSpec(Signature const &sig, mdTypeSpec &mdt)
     {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
+        CPPANONYM_LOG_FUNCTION();
 
-        typedef vector<method_generator_label_type const *> MethodGens;
-        typedef MethodGens::value_type Value;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        auto const &blob = sig.GetBlob();
+        _ASSERTE(!blob.empty());
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pMethod->GetAssembly());
-        auto const &methodGenToIndex = pRefAsmGen->GetMethodGeneratorToIndex();
-        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pMethod); };
-        auto result = FindIf(methodGenToIndex, isAlreadyExist);
-        if (result)
-            return *result;
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"Signature:";
+            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.GetTokenFromTypeSpec(&blob[0], static_cast<ULONG>(blob.size()), &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
-        return pRefAsmGen->DefineMethod(pMethod, MethodProvider());
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
     }
 
 
 
     template<class ApiHolder>    
-    IMethodBody const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IMethodBody const *pBody) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateTypeRef(mdToken mdResolutionScope, wstring const &fullName, mdTypeRef &mdt)
     {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
+        CPPANONYM_LOG_FUNCTION();
 
-        typedef vector<method_body_generator_label_type const *> MethodBodyGens;
-        typedef MethodBodyGens::value_type Value;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        CPPANONYM_D_LOGW(L"Define TypeRef...");
+        CPPANONYM_D_LOGW1(L"mdResolutionScope: 0x%|1$08X|", mdResolutionScope);
+        CPPANONYM_D_LOGW1(L"fullName: %|1$s|", fullName);
+        
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.DefineTypeRefByName(mdResolutionScope, fullName.c_str(), &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
-        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pBody->GetAssembly());
-        auto const &bodyGenToIndex = pRefAsmGen->GetMethodBodyGeneratorToIndex();
-        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pBody); };
-        auto result = FindIf(bodyGenToIndex, isAlreadyExist);
-        if (result)
-            return *result;
-
-        return pRefAsmGen->DefineMethodBody(pBody, nullptr);
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
     }
 
 
 
     template<class ApiHolder>    
-    IParameter const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IParameter const *pParam) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateGenericParam(IType const *pDeclaringType, IMethod const *pDeclaringMethod, ULONG genericParamPos, GenericParamAttributes const &gpAttr, wstring const &name, vector<IType const *> const &genericParamConstraints, mdGenericParam &mdt)
     {
-        using boost::adaptors::filtered;
-        using Urasandesu::CppAnonym::Collections::FindIf;
-
-        typedef vector<parameter_generator_label_type const *> ParamGens;
-        typedef ParamGens::value_type Value;
-
-        auto *pRefAsmGen = m_pDisp->ResolveAssemblyRef(m_pClass, pParam->GetAssembly());
-        auto const &paramGenToIndex = pRefAsmGen->GetParameterGeneratorToIndex();
-        auto isAlreadyExist = [&](Value const &v) { return v->Equals(pParam); };
-        auto result = FindIf(paramGenToIndex, isAlreadyExist);
-        if (result)
-            return *result;
-
-        return pRefAsmGen->DefineParameter(pParam, ParameterProvider());
+        auto mdtOwner = mdTokenNil;
+        _ASSERTE(pDeclaringType || pDeclaringMethod);
+        if (pDeclaringType)
+            mdtOwner = pDeclaringType->GetToken();
+        else if (pDeclaringMethod)
+            mdtOwner = pDeclaringMethod->GetToken();
+        
+        auto mdConstraints = vector<mdToken>();
+        mdConstraints.reserve(genericParamConstraints.size() + 1);
+        for (auto i = genericParamConstraints.begin(), i_end = genericParamConstraints.end(); i != i_end; ++i)
+            mdConstraints.push_back((*i)->GetToken());
+        mdConstraints.push_back(mdTokenNil);
+        
+        UpdateGenericParam(mdtOwner, genericParamPos, gpAttr, name, &mdConstraints[0], mdt);
     }
 
 
 
     template<class ApiHolder>    
-    ILocal const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(ILocal const *pLocal) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateGenericParam(mdToken mdtOwner, ULONG genericParamPos, GenericParamAttributes const &gpAttr, wstring const &name, mdToken mdNilTerminatedConstraints[], mdGenericParam &mdt)
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        CPPANONYM_LOG_FUNCTION();
+
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        CPPANONYM_D_LOGW(L"Define GenericParam...");
+        CPPANONYM_D_LOGW1(L"mdtOwner: 0x%|1$08X|", mdtOwner);
+        CPPANONYM_D_LOGW1(L"genericParamPos: 0x%|1$08X|", genericParamPos);
+        CPPANONYM_D_LOGW1(L"gpAttr: 0x%|1$08X|", gpAttr.Value());
+        CPPANONYM_D_LOGW1(L"name: %|1$s|", name);
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"mdNilTerminatedConstraints:";
+            for (auto i = 0; !IsNilToken(mdNilTerminatedConstraints[i]); ++i)
+                oss << boost::wformat(L" 0x%|1$08X|") % mdNilTerminatedConstraints[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.DefineGenericParam(mdtOwner, genericParamPos, gpAttr.Value(), name.c_str(), 0, &mdNilTerminatedConstraints[0], &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
     }
 
 
 
     template<class ApiHolder>    
-    ICustomAttribute const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(ICustomAttribute const *pCa) const
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateMethodDef(mdTypeDef mdtOwner, wstring const &name, MethodAttributes const &attr, Signature const &sig, ULONG codeRva, MethodImplAttributes const &implFlags, mdMethodDef &mdt)
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        CPPANONYM_LOG_FUNCTION();
+
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        auto const &blob = sig.GetBlob();
+        _ASSERTE(!blob.empty());
+
+        CPPANONYM_D_LOGW(L"Define MethodDef...");
+        CPPANONYM_D_LOGW1(L"mdtOwner: 0x%|1$08X|", mdtOwner);
+        CPPANONYM_D_LOGW1(L"name: %|1$s|", name);
+        CPPANONYM_D_LOGW1(L"attr: 0x%|1$08X|", attr.Value());
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"Signature:";
+            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"codeRva: 0x%|1$08X|", codeRva);
+        CPPANONYM_D_LOGW1(L"implFlags: 0x%|1$08X|", implFlags.Value());
+        
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.DefineMethod(mdtOwner, name.c_str(), attr.Value(), &blob[0], static_cast<ULONG>(blob.size()), codeRva, implFlags.Value(), &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateMethodSpec(mdToken mdtOwner, Signature const &sig, mdMethodSpec &mdt)
+    {
+        CPPANONYM_LOG_FUNCTION();
+
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        auto const &blob = sig.GetBlob();
+        _ASSERTE(!blob.empty());
+
+        CPPANONYM_D_LOGW(L"Define MethodSpec...");
+        CPPANONYM_D_LOGW1(L"mdtOwner: 0x%|1$08X|", mdtOwner);
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"Signature:";
+            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.DefineMethodSpec(mdtOwner, &blob[0], static_cast<ULONG>(blob.size()), &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateMemberRef(mdTypeDef mdtOwner, wstring const &name, Signature const &sig, mdMemberRef &mdt)
+    {
+        CPPANONYM_LOG_FUNCTION();
+
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        auto const &blob = sig.GetBlob();
+        _ASSERTE(!blob.empty());
+
+        CPPANONYM_D_LOGW(L"Define MemberRef...");
+        CPPANONYM_D_LOGW1(L"mdtOwner: 0x%|1$08X|", mdtOwner);
+        CPPANONYM_D_LOGW1(L"name: %|1$s|", name);
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"Signature:";
+            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.DefineMemberRef(mdtOwner, name.c_str(), &blob[0], static_cast<ULONG>(blob.size()), &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
+    }
+
+
+
+    template<class ApiHolder>    
+    ULONG BaseAssemblyGeneratorPimpl<ApiHolder>::GetValidRVA() const
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+        
+        if (!IsModifiable())
+            return 0;
+        
+        auto &comMetaEmt = const_cast<class_pimpl_type *>(this)->GetCOMMetaDataEmit();
+        
+        auto pComMetaImp = ATL::CComPtr<IMetaDataImport2>();
+        auto hr = comMetaEmt.QueryInterface(IID_IMetaDataImport2, reinterpret_cast<void **>(&pComMetaImp));
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        
+        auto mdtOwner = mdTokenNil;
+        {
+            auto hEnum = HCORENUM();
+            BOOST_SCOPE_EXIT((&hEnum)(pComMetaImp))
+            {
+                if (hEnum)
+                    pComMetaImp->CloseEnum(hEnum);
+            }
+            BOOST_SCOPE_EXIT_END
+            auto mdtds = array<mdTypeDef, 16>();
+            auto count = 0ul;
+            auto hr = E_FAIL;
+            hr = pComMetaImp->EnumTypeDefs(&hEnum, mdtds.c_array(), static_cast<ULONG>(mdtds.size()), &count);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            if (count == 0)
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
+            
+            mdtOwner = mdtds[0];
+        }
+        
+        auto mdtTarget = mdTokenNil;
+        {
+            auto hEnum = HCORENUM();
+            BOOST_SCOPE_EXIT((&hEnum)(pComMetaImp))
+            {
+                if (hEnum)
+                    pComMetaImp->CloseEnum(hEnum);
+            }
+            BOOST_SCOPE_EXIT_END
+            auto mdmds = array<mdMethodDef, 16>();
+            auto count = 0ul;
+            auto hr = E_FAIL;
+            hr = pComMetaImp->EnumMethods(&hEnum, mdtOwner, mdmds.c_array(), static_cast<ULONG>(mdmds.size()), &count);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+            if (count == 0)
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
+            
+            mdtTarget = mdmds[0];
+        }
+        
+        auto codeRva = ULONG();
+        {
+            auto mdtOwner = mdTypeDefNil;
+            auto wzname = array<WCHAR, MAX_SYM_NAME>();
+            auto wznameLength = 0ul;
+            auto dwattr = 0ul;
+            auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+            auto sigLength = 0ul;
+            auto dwimplFlags = 0ul;
+            auto hr = pComMetaImp->GetMethodProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &codeRva, &dwimplFlags);
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        }
+        
+        return codeRva;
     }
 
 

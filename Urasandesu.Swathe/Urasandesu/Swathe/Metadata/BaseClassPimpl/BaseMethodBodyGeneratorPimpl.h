@@ -145,6 +145,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Emit(OpCode const &opCode, FLOAT arg);
         void Emit(OpCode const &opCode);
         void Emit(IInstruction const *pInst);
+        void EmitCalli(OpCode const &opCode, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes);
         local_generator_label_type *DefineLocal(IType const *pLocalType);
         Label DefineLabel();
         void MarkLabel(Label const &label);

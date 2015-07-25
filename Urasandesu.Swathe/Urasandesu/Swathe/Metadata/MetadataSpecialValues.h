@@ -56,6 +56,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         static std::wstring const TYPE_NAME_OF_STRING;
         static std::wstring const TYPE_NAME_OF_TYPEDBYREF;
         static std::wstring const TYPE_NAME_OF_INTPTR;
+        static std::wstring const TYPE_NAME_OF_UINTPTR;
         static std::wstring const TYPE_NAME_OF_OBJECT;
         static std::wstring const TYPE_NAME_OF_VALUETYPE;
         static std::wstring const TYPE_NAME_OF_ENUM;
@@ -124,6 +125,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 case TypeKinds::TK_STRING: return TYPE_NAME_OF_STRING;
                 case TypeKinds::TK_TYPEDBYREF: return TYPE_NAME_OF_TYPEDBYREF;
                 case TypeKinds::TK_I: return TYPE_NAME_OF_INTPTR;
+                case TypeKinds::TK_U: return TYPE_NAME_OF_UINTPTR;
                 case TypeKinds::TK_OBJECT: return TYPE_NAME_OF_OBJECT;
                 default: return TYPE_NAME_OF_UNREACHED;
             }

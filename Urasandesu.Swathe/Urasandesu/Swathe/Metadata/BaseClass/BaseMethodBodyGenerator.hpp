@@ -271,6 +271,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    void BaseMethodBodyGenerator<ApiHolder>::EmitCalli(OpCode const &opCode, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes)
+    {
+        Pimpl()->EmitCalli(opCode, callingConvention, pRetType, paramTypes);
+    }
+
+    template<class ApiHolder>    
     typename BaseMethodBodyGenerator<ApiHolder>::local_generator_label_type *BaseMethodBodyGenerator<ApiHolder>::DefineLocal(IType const *pLocalType)
     {
         return Pimpl()->DefineLocal(pLocalType);

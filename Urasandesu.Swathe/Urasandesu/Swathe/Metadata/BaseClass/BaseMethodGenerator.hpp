@@ -175,6 +175,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    typename BaseMethodGenerator<ApiHolder>::type_generator_label_type *BaseMethodGenerator<ApiHolder>::GetDeclaringTypeGenerator()
+    {
+        return Pimpl()->GetDeclaringTypeGenerator();
+    }
+
+    template<class ApiHolder>    
     IMethod const *BaseMethodGenerator<ApiHolder>::GetDeclaringMethod() const
     {
         return Pimpl()->GetDeclaringMethod();
@@ -235,6 +241,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    void BaseMethodGenerator<ApiHolder>::DefineGenericParameters(vector<wstring> const &names)
+    {
+        Pimpl()->DefineGenericParameters(names);
+    }
+
+    template<class ApiHolder>    
+    void BaseMethodGenerator<ApiHolder>::DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens)
+    {
+        Pimpl()->DefineGenericParameters(names, genericArgGens);
+    }
+
+    template<class ApiHolder>    
     void BaseMethodGenerator<ApiHolder>::SetToken(mdToken mdt)
     {
         Pimpl()->SetToken(mdt);
@@ -274,6 +292,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseMethodGenerator<ApiHolder>::SetMember(MethodProvider const &member)
     {
         Pimpl()->SetMember(member);
+    }
+
+    template<class ApiHolder>    
+    void BaseMethodGenerator<ApiHolder>::SetGenericArguments(vector<IType const *> const &genericArgs)
+    {
+        Pimpl()->SetGenericArguments(genericArgs);
     }
 
     template<class ApiHolder>    

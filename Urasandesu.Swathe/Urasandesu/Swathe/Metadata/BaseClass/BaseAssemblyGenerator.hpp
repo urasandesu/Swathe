@@ -187,6 +187,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    typename BaseAssemblyGenerator<ApiHolder>::method_generator_label_type *BaseAssemblyGenerator<ApiHolder>::GetMethodGenerator(mdToken mdt)
+    {
+        return Pimpl()->GetMethodGenerator(mdt);
+    }
+
+    template<class ApiHolder>    
     IMethod const *BaseAssemblyGenerator<ApiHolder>::GetMethod(mdToken mdt, COR_ILMETHOD *pILBody) const
     {
         return Pimpl()->GetMethod(mdt, pILBody);
@@ -319,6 +325,60 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IModule const *BaseAssemblyGenerator<ApiHolder>::Resolve(IModule const *pMod) const
+    {
+        return Pimpl()->Resolve(pMod);
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseAssemblyGenerator<ApiHolder>::Resolve(IType const *pType) const
+    {
+        return Pimpl()->Resolve(pType);
+    }
+
+    template<class ApiHolder>    
+    IField const *BaseAssemblyGenerator<ApiHolder>::Resolve(IField const *pField) const
+    {
+        return Pimpl()->Resolve(pField);
+    }
+
+    template<class ApiHolder>    
+    IProperty const *BaseAssemblyGenerator<ApiHolder>::Resolve(IProperty const *pProp) const
+    {
+        return Pimpl()->Resolve(pProp);
+    }
+
+    template<class ApiHolder>    
+    IMethod const *BaseAssemblyGenerator<ApiHolder>::Resolve(IMethod const *pMethod) const
+    {
+        return Pimpl()->Resolve(pMethod);
+    }
+
+    template<class ApiHolder>    
+    IMethodBody const *BaseAssemblyGenerator<ApiHolder>::Resolve(IMethodBody const *pBody) const
+    {
+        return Pimpl()->Resolve(pBody);
+    }
+
+    template<class ApiHolder>    
+    IParameter const *BaseAssemblyGenerator<ApiHolder>::Resolve(IParameter const *pParam) const
+    {
+        return Pimpl()->Resolve(pParam);
+    }
+
+    template<class ApiHolder>    
+    ILocal const *BaseAssemblyGenerator<ApiHolder>::Resolve(ILocal const *pLocal) const
+    {
+        return Pimpl()->Resolve(pLocal);
+    }
+
+    template<class ApiHolder>    
+    ICustomAttribute const *BaseAssemblyGenerator<ApiHolder>::Resolve(ICustomAttribute const *pCa) const
+    {
+        return Pimpl()->Resolve(pCa);
+    }
+
+    template<class ApiHolder>    
     void BaseAssemblyGenerator<ApiHolder>::SetFullName(wstring const &fullName)
     {
         Pimpl()->SetFullName(fullName);
@@ -367,9 +427,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseAssemblyGenerator<ApiHolder>::type_generator_label_type *BaseAssemblyGenerator<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr, TypeProvider const &member)
+    typename BaseAssemblyGenerator<ApiHolder>::type_generator_label_type *BaseAssemblyGenerator<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member)
     {
-        return Pimpl()->DefineType(fullName, attr, member);
+        return Pimpl()->DefineType(fullName, attr, gpAttr, genericParamPos, member);
     }
 
     template<class ApiHolder>    
@@ -391,9 +451,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseAssemblyGenerator<ApiHolder>::method_generator_label_type *BaseAssemblyGenerator<ApiHolder>::DefineMethod(IMethod const *pSrcMethod, MethodProvider const &member)
+    typename BaseAssemblyGenerator<ApiHolder>::method_generator_label_type *BaseAssemblyGenerator<ApiHolder>::DefineMethod(mdToken mdt, CallingConventions const &callingConvention, bool genericArgsSpecified, vector<IType const *> const &genericArgs, COR_ILMETHOD *pILBody, IMethod const *pSrcMethod, MethodProvider const &member)
     {
-        return Pimpl()->DefineMethod(pSrcMethod, member);
+        return Pimpl()->DefineMethod(mdt, callingConvention, genericArgsSpecified, genericArgs, pILBody, pSrcMethod, member);
     }
 
     template<class ApiHolder>    
@@ -545,62 +605,79 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         return Pimpl()->GetCustomAttributeGeneratorToIndex();
     }
-
-    template<class ApiHolder>    
-    IModule const *BaseAssemblyGenerator<ApiHolder>::Resolve(IModule const *pMod) const
-    {
-        return Pimpl()->Resolve(pMod);
-    }
-
-    template<class ApiHolder>    
-    IType const *BaseAssemblyGenerator<ApiHolder>::Resolve(IType const *pType) const
-    {
-        return Pimpl()->Resolve(pType);
-    }
-
-    template<class ApiHolder>    
-    IField const *BaseAssemblyGenerator<ApiHolder>::Resolve(IField const *pField) const
-    {
-        return Pimpl()->Resolve(pField);
-    }
-
-    template<class ApiHolder>    
-    IProperty const *BaseAssemblyGenerator<ApiHolder>::Resolve(IProperty const *pProp) const
-    {
-        return Pimpl()->Resolve(pProp);
-    }
-
-    template<class ApiHolder>    
-    IMethod const *BaseAssemblyGenerator<ApiHolder>::Resolve(IMethod const *pMethod) const
-    {
-        return Pimpl()->Resolve(pMethod);
-    }
-
-    template<class ApiHolder>    
-    IMethodBody const *BaseAssemblyGenerator<ApiHolder>::Resolve(IMethodBody const *pBody) const
-    {
-        return Pimpl()->Resolve(pBody);
-    }
-
-    template<class ApiHolder>    
-    IParameter const *BaseAssemblyGenerator<ApiHolder>::Resolve(IParameter const *pParam) const
-    {
-        return Pimpl()->Resolve(pParam);
-    }
-
-    template<class ApiHolder>    
-    ILocal const *BaseAssemblyGenerator<ApiHolder>::Resolve(ILocal const *pLocal) const
-    {
-        return Pimpl()->Resolve(pLocal);
-    }
-
-    template<class ApiHolder>    
-    ICustomAttribute const *BaseAssemblyGenerator<ApiHolder>::Resolve(ICustomAttribute const *pCa) const
-    {
-        return Pimpl()->Resolve(pCa);
-    }
-
     
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, mdTypeDef &mdt)
+    {
+        Pimpl()->UpdateTypeDef(fullName, attr, pBaseType, interfaces, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, mdToken mdExtends, mdToken mdNilTerminatedImplements[], mdTypeDef &mdt)
+    {
+        Pimpl()->UpdateTypeDef(fullName, attr, mdExtends, mdNilTerminatedImplements, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateNestedType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, IType const *pDeclaringType, mdTypeDef &mdt)
+    {
+        Pimpl()->UpdateNestedType(fullName, attr, pBaseType, interfaces, pDeclaringType, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateNestedType(wstring const &fullName, TypeAttributes const &attr, mdToken mdExtends, mdToken mdNilTerminatedImplements[], mdTypeDef mdEncloser, mdTypeDef &mdt)
+    {
+        Pimpl()->UpdateNestedType(fullName, attr, mdExtends, mdNilTerminatedImplements, mdEncloser, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateTypeSpec(Signature const &sig, mdTypeSpec &mdt)
+    {
+        Pimpl()->UpdateTypeSpec(sig, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateTypeRef(mdToken mdResolutionScope, wstring const &fullName, mdTypeRef &mdt)
+    {
+        Pimpl()->UpdateTypeRef(mdResolutionScope, fullName, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateGenericParam(IType const *pDeclaringType, IMethod const *pDeclaringMethod, ULONG genericParamPos, GenericParamAttributes const &gpAttr, wstring const &name, vector<IType const *> const &genericParamConstraints, mdGenericParam &mdt)
+    {
+        Pimpl()->UpdateGenericParam(pDeclaringType, pDeclaringMethod, genericParamPos, gpAttr, name, genericParamConstraints, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateGenericParam(mdToken mdtOwner, ULONG genericParamPos, GenericParamAttributes const &gpAttr, wstring const &name, mdToken mdNilTerminatedConstraints[], mdGenericParam &mdt)
+    {
+        Pimpl()->UpdateGenericParam(mdtOwner, genericParamPos, gpAttr, name, mdNilTerminatedConstraints, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateMethodDef(mdTypeDef mdtOwner, wstring const &name, MethodAttributes const &attr, Signature const &sig, ULONG codeRva, MethodImplAttributes const &implFlags, mdMethodDef &mdt)
+    {
+        Pimpl()->UpdateMethodDef(mdtOwner, name, attr, sig, codeRva, implFlags, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateMethodSpec(mdToken mdtOwner, Signature const &sig, mdMethodSpec &mdt)
+    {
+        Pimpl()->UpdateMethodSpec(mdtOwner, sig, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateMemberRef(mdTypeDef mdtOwner, wstring const &name, Signature const &sig, mdMemberRef &mdt)
+    {
+        Pimpl()->UpdateMemberRef(mdtOwner, name, sig, mdt);
+    }
+
+    template<class ApiHolder>    
+    ULONG BaseAssemblyGenerator<ApiHolder>::GetValidRVA() const
+    {
+        return Pimpl()->GetValidRVA();
+    }
+
     template<class ApiHolder>    
     IMetaDataAssemblyEmit &BaseAssemblyGenerator<ApiHolder>::GetCOMMetaDataAssemblyEmit()
     {

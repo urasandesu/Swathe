@@ -56,6 +56,10 @@
 #include <Urasandesu/Swathe/Metadata/ILocal.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_SIGNATURE_H
+#include <Urasandesu/Swathe/Metadata/Signature.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<class ApiHolder>    
@@ -203,13 +207,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                         break;
                     case StackBehaviourTypes::SBT_VAR_POP: 
                         if (&GetOpCode() == &OpCodes::Call ||
-                            &GetOpCode() == &OpCodes::Calli ||
                             &GetOpCode() == &OpCodes::Callvirt)
                         {
                             auto const &operand = GetOperand();
                             auto const *pMethod = get<IMethod const *>(operand);
                             m_popingCount += pMethod->IsStatic() ? 0 : 1;
                             m_popingCount += static_cast<UINT>(pMethod->GetParameters().size());
+                        }
+                        else if (&GetOpCode() == &OpCodes::Calli)
+                        {
+                            auto const &operand = GetOperand();
+                            auto const &t = get<boost::tuple<CallingConventions, IType const *, vector<IType const *> > >(operand);
+                            m_popingCount += !(t.get<0>() & CallingConventions::CC_HAS_THIS) ? 0 : 1;
+                            m_popingCount += static_cast<UINT>(t.get<2>().size());
                         }
                         else if (&GetOpCode() == &OpCodes::Newobj)
                         {
@@ -265,12 +275,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                         break;
                     case StackBehaviourTypes::SBT_VAR_PUSH: 
                         if (&GetOpCode() == &OpCodes::Call ||
-                            &GetOpCode() == &OpCodes::Calli ||
                             &GetOpCode() == &OpCodes::Callvirt)
                         {
                             auto const &operand = GetOperand();
                             auto const *pMethod = get<IMethod const *>(operand);
                             m_pushingCount = pMethod->GetReturnType()->GetKind() == TypeKinds::TK_VOID ? 0 : 1;
+                        }
+                        else if (&GetOpCode() == &OpCodes::Calli)
+                        {
+                            auto const &operand = GetOperand();
+                            auto const &t = get<boost::tuple<CallingConventions, IType const *, vector<IType const *> > >(operand);
+                            m_pushingCount = t.get<1>()->GetKind() == TypeKinds::TK_VOID ? 0 : 1;
                         }
                         else
                         {
@@ -330,7 +345,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     PutInlineR(GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_SIG:
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                    PutInlineSignature(this, GetOperand(), blob);
                     break;
                 case OperandParamTypes::OPT_INLINE_STRING:
                     PutInlineString(this, GetOperand(), blob);
@@ -509,6 +524,48 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             blob.Put<DOUBLE>(*pArg);
         else
             BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineSignature(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob)
+    {
+        CPPANONYM_LOG_FUNCTION();
+
+        using boost::get;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        auto *pAsmGen = _this->m_pAsmGen;
+
+        auto const &t = get<boost::tuple<CallingConventions, IType const *, vector<IType const *> > >(operand);
+        auto const &callingConvention = t.get<0>();
+        auto const *pRetType = t.get<1>();
+        auto const &paramTypes = t.get<2>();
+        auto params = vector<IParameter const *>();
+        BOOST_FOREACH (auto const &pParamType, paramTypes)
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+
+        auto sig = Signature();
+        sig.Encode(callingConvention, pRetType, params);
+        auto const &blob_ = sig.GetBlob();
+        CPPANONYM_D_LOGW(L"Getting Call-Site Signature Token... :");
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"Signature:";
+            for (auto i = blob_.begin(), i_end = blob_.end(); i != i_end; ++i)
+                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        auto mds = mdSignatureNil;
+        auto &comMetaEmt = pAsmGen->GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.GetTokenFromSig(&blob_[0], static_cast<ULONG>(blob_.size()), &mds);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mds);
+
+        blob.Put<mdToken>(mds);
     }
 
 

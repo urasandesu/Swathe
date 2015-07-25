@@ -81,6 +81,10 @@
 #include <Urasandesu/Swathe/Metadata/TypeAttributes.hpp>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_GENERICPARAMATTRIBUTES_HPP
+#include <Urasandesu/Swathe/Metadata/GenericParamAttributes.hpp>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { 
 
     struct IType
@@ -96,6 +100,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual bool IsArray() const = 0;
         virtual bool IsNested() const = 0;
         virtual ULONG GetGenericParameterPosition() const = 0;
+        virtual GenericParamAttributes GetGenericParameterAttributes() const = 0;
+        virtual std::vector<IType const *> const &GetGenericParameterConstraints() const = 0;
         virtual std::vector<IType const *> const &GetGenericArguments() const = 0;
         virtual std::vector<ArrayDimension> const &GetDimensions() const = 0;
         virtual Signature const &GetSignature() const = 0;

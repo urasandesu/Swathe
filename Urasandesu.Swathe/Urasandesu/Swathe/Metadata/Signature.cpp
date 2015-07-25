@@ -371,6 +371,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     _ASSERTE(length != static_cast<ULONG>(-1));
                     for (auto i = data.begin(), i_end = i + length; i != i_end; ++i)
                         sb.Put<COR_SIGNATURE>(*i);
+                    if (CPPANONYM_D_LOG_ENABLED())
+                    {
+                        auto oss = std::wostringstream();
+                        oss << boost::wformat(L"Compressed Count Data: 0x%|1$08X| ->") % c.m_data.size();
+                        for (auto i = data.begin(), i_end = i + length; i != i_end; ++i)
+                            oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                        CPPANONYM_D_LOGW(oss.str());
+                    }
                 }
             };
 
@@ -384,6 +392,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     _ASSERTE(length != static_cast<ULONG>(-1));
                     for (auto i = data.begin(), i_end = i + length; i != i_end; ++i)
                         sb.Put<COR_SIGNATURE>(*i);
+                    if (CPPANONYM_D_LOG_ENABLED())
+                    {
+                        auto oss = std::wostringstream();
+                        oss << boost::wformat(L"Compressed Token Data: 0x%|1$08X| ->") % c.m_mdt;
+                        for (auto i = data.begin(), i_end = i + length; i != i_end; ++i)
+                            oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                        CPPANONYM_D_LOGW(oss.str());
+                    }
                 }
             };
 
@@ -397,6 +413,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     _ASSERTE(length != static_cast<ULONG>(-1));
                     for (auto i = data.begin(), i_end = i + length; i != i_end; ++i)
                         sb.Put<COR_SIGNATURE>(*i);
+                    if (CPPANONYM_D_LOG_ENABLED())
+                    {
+                        auto oss = std::wostringstream();
+                        oss << boost::wformat(L"Compressed ULONG Data: 0x%|1$08X| ->") % v.m_data;
+                        for (auto i = data.begin(), i_end = i + length; i != i_end; ++i)
+                            oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+                        CPPANONYM_D_LOGW(oss.str());
+                    }
                 }
             };
 
@@ -1507,6 +1531,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         case TypeKinds::TK_STRING:
                         case TypeKinds::TK_TYPEDBYREF:
                         case TypeKinds::TK_I:
+                        case TypeKinds::TK_U:
                         case TypeKinds::TK_OBJECT:
                             {
                                 auto const *pAsm = apply_visitor(GetAssemblyVisitor(), provider);
@@ -1736,6 +1761,29 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         pMethod->GetParameters()
                     ;
                 }
+
+                m_blob = vector<COR_SIGNATURE>();
+                m_blob.reserve(sb.Size());
+                m_blob.assign(sb.Ptr(), sb.Ptr() + sb.Size());
+            }
+
+
+
+            void Encode(CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params)
+            {
+                using namespace PutterDetail;
+
+                _ASSERTE(callingConvention != CallingConventions::CC_UNREACHED);
+                _ASSERTE(pRetType);
+
+                auto sb = SimpleBlob();
+
+                sb << 
+                    callingConvention << 
+                    CompressCount(params) << 
+                    pRetType << 
+                    params
+                ;
 
                 m_blob = vector<COR_SIGNATURE>();
                 m_blob.reserve(sb.Size());
@@ -2057,6 +2105,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         void SignatureImpl::Encode(IMethodBody const *pBody)
         {
             Pimpl()->Encode(pBody);
+        }
+
+        void SignatureImpl::Encode(CallingConventions const &callingConvention, IType const *pRetType, vector<IParameter const *> const &params)
+        {
+            Pimpl()->Encode(callingConvention, pRetType, params);
         }
 
         void SignatureImpl::Encode(IProperty const *pProp)

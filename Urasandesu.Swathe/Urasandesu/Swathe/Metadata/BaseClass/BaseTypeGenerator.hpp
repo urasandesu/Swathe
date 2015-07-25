@@ -139,6 +139,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    GenericParamAttributes BaseTypeGenerator<ApiHolder>::GetGenericParameterAttributes() const
+    {
+        return Pimpl()->GetGenericParameterAttributes();
+    }
+
+    template<class ApiHolder>    
+    vector<IType const *> const &BaseTypeGenerator<ApiHolder>::GetGenericParameterConstraints() const
+    {
+        return Pimpl()->GetGenericParameterConstraints();
+    }
+
+    template<class ApiHolder>    
     vector<IType const *> const &BaseTypeGenerator<ApiHolder>::GetGenericArguments() const
     {
         return Pimpl()->GetGenericArguments();
@@ -407,6 +419,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         return Pimpl()->DefineProperty(name, attr, pPropType, paramTypes);
     }
+
+    template<class ApiHolder>    
+    typename BaseTypeGenerator<ApiHolder>::method_generator_label_type *BaseTypeGenerator<ApiHolder>::GetMethod(IType const *pDeclaringGenericInstanceType, IMethod const *pMethod)
+    {
+        return class_pimpl_type::GetMethod(pDeclaringGenericInstanceType, pMethod);
+    }
     
     template<class ApiHolder>    
     void BaseTypeGenerator<ApiHolder>::SetFullName(wstring const &fullName)
@@ -418,6 +436,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseTypeGenerator<ApiHolder>::SetAttributes(TypeAttributes const &attr)
     {
         Pimpl()->SetAttributes(attr);
+    }
+
+    template<class ApiHolder>    
+    void BaseTypeGenerator<ApiHolder>::SetGenericParameterAttributes(GenericParamAttributes const &gpAttr)
+    {
+        Pimpl()->SetGenericParameterAttributes(gpAttr);
+    }
+
+    template<class ApiHolder>    
+    void BaseTypeGenerator<ApiHolder>::SetGenericParameterPosition(ULONG genericParamPos)
+    {
+        Pimpl()->SetGenericParameterPosition(genericParamPos);
     }
 
     template<class ApiHolder>    

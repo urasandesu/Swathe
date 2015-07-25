@@ -84,8 +84,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         CPPANONYM_LOG_FUNCTION();
 
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-
         if (IsNilToken(m_mdt))
         {
             CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mdt))");
@@ -97,31 +95,25 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 auto isGenericMethodInstance = IsGenericMethod() && !IsGenericMethodDefinition();
                 if (isGenericMethodInstance)
                 {
-                    // TODO: Generic な Method の Instance の場合、DefineMethodSpec での生成が必要になる！
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                    CPPANONYM_LOG_NAMED_SCOPE("if (isGenericMethodInstance)");
+                    
+                    m_pAsmGen->UpdateMethodSpec(GetDeclaringMethod()->GetToken(), GetSignature(), m_mdt);
                 }
                 else
                 {
                     CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
-
-                    auto mdtTarget = GetDeclaringType()->GetToken();
-                    auto const &name = m_pClass->GetName();
-                    auto attr = m_pClass->GetAttribute();
-                    auto const &sig = m_pClass->GetSignature();
-                    auto const &blob = sig.GetBlob();
-                    if (CPPANONYM_D_LOG_ENABLED())
+                    
+                    m_pAsmGen->UpdateMethodDef(GetDeclaringType()->GetToken(), GetName(), GetAttribute(), GetSignature(), m_pAsmGen->GetValidRVA(), MethodImplAttributes::MIA_IL, m_mdt);
+                    
+                    if (IsGenericMethod())
                     {
-                        auto oss = std::wostringstream();
-                        oss << L"Signature:";
-                        for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
-                            oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-                        CPPANONYM_D_LOGW(oss.str());
+                        CPPANONYM_LOG_NAMED_SCOPE("if (IsGenericMethod())");
+                        
+                        // We have to resolve the metadata token of the generic parameters beforehand because they are not accessed during the signature calculation.
+                        auto const &genericArgs = GetGenericArguments();
+                        BOOST_FOREACH (auto const &pGenericArg, genericArgs)
+                            pGenericArg->GetToken();
                     }
-                    CPPANONYM_D_LOGW1(L"Getting Method Generator Token... 2: %|1$s|", name);
-                    auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                    auto hr = comMetaEmt.DefineMethod(mdtTarget, name.c_str(), attr.Value(), &blob[0], static_cast<ULONG>(blob.size()), 0, 0, &m_mdt);
-                    if (FAILED(hr))
-                        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
                 }
             }
             else
@@ -136,56 +128,51 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     if (isGenericMethodInstance)
                     {
                         CPPANONYM_LOG_NAMED_SCOPE("if (isGenericMethodInstance)");
-
-                        CPPANONYM_D_LOGW(L"Getting Method Generator Token... 3: Generic Method Instance");
-                        auto mdtTarget = GetDeclaringMethod()->GetToken();
-                        auto const &sig = m_pClass->GetSignature();
-                        auto const &blob = sig.GetBlob();
-                        if (CPPANONYM_D_LOG_ENABLED())
-                        {
-                            auto oss = std::wostringstream();
-                            oss << L"Signature:";
-                            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
-                                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-                            CPPANONYM_D_LOGW(oss.str());
-                        }
-                        auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                        auto hr = comMetaEmt.DefineMethodSpec(mdtTarget, &blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
-                        if (FAILED(hr))
-                            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                        
+                        m_pAsmGen->UpdateMethodSpec(GetDeclaringMethod()->GetToken(), GetSignature(), m_mdt);
                     }
                     else
                     {
                         CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
 
-                        auto mdtTarget = GetDeclaringType()->GetToken();
-                        auto const &name = GetName();
-                        auto const &sig = m_pClass->GetSignature();
-                        auto const &blob = sig.GetBlob();
-                        CPPANONYM_D_LOGW1(L"Getting Method Generator Token... 4: %|1$s|", name);
-                        if (CPPANONYM_D_LOG_ENABLED())
-                        {
-                            auto oss = std::wostringstream();
-                            oss << L"Signature:";
-                            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
-                                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
-                            CPPANONYM_D_LOGW(oss.str());
-                        }
-                        auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
-                        auto hr = comMetaEmt.DefineMemberRef(mdtTarget, name.c_str(), &blob[0], static_cast<ULONG>(blob.size()), &m_mdt);
-                        if (FAILED(hr))
-                            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                        m_pAsmGen->UpdateMemberRef(GetDeclaringType()->GetToken(), GetName(), GetSignature(), m_mdt);
                     }
                 }
                 else
                 {
                     CPPANONYM_LOG_NAMED_SCOPE("if (m_pAsmGen->IsModifiable())");
+                    
+                    auto const *pSrcMethodGen = dynamic_cast<class_type const *>(m_pSrcMethod);
+                    if (!pSrcMethodGen)
+                    {
+                        CPPANONYM_LOG_NAMED_SCOPE("if (!pSrcMethodGen)");
 
-                    CPPANONYM_D_LOGW(L"Getting Method Generator Token... 5: Modifiable Method");
-                    m_mdt = m_pSrcMethod->GetToken();
+                        m_mdt = m_pSrcMethod->GetToken();
+                        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
+                    }
+                    else
+                    {
+                        CPPANONYM_LOG_NAMED_SCOPE("if (pSrcMethodGen)");
+
+                        auto const *pDeclaringType = GetDeclaringType();
+                        auto isDeclaringGenericInstanceType = pDeclaringType->IsGenericType() && !pDeclaringType->IsGenericTypeDefinition();
+                        if (isDeclaringGenericInstanceType)
+                        {
+                            CPPANONYM_LOG_NAMED_SCOPE("if (isDeclaringGenericInstanceType)");
+
+                            m_pSrcMethod->GetToken();   // We have to resolve the metadata token of the source method beforehand because the MemberRef token is resolved by its name.
+                            m_pAsmGen->UpdateMemberRef(GetDeclaringType()->GetToken(), GetName(), GetSignature(), m_mdt);
+                        }
+                        else
+                        {
+                            CPPANONYM_LOG_NAMED_SCOPE("if (!isDeclaringGenericInstanceType)");
+
+                            m_mdt = m_pSrcMethod->GetToken();
+                            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
+                        }
+                    }
                 }
             }
-            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
         }
         return m_mdt;
     }
@@ -241,10 +228,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             if (m_pSrcMethod == nullptr)
             {
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            }
-            else
-            {
+                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                }
+                else
+                {
                 m_attr = m_pSrcMethod->GetAttribute();
             }
         }
@@ -258,11 +245,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         if (!m_retTypeInit)
         {
-            if (m_pRetType == nullptr)
+            if (!m_pRetType)
             {
-                if (m_pSrcMethod == nullptr)
+                if (!m_pSrcMethod)
                 {
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                    auto const *pDeclaringMethod = GetDeclaringMethod();
+                    if (!pDeclaringMethod)
+                    {
+                        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                    }
+                    else
+                    {
+                        m_pRetType = m_pAsmGen->Resolve(pDeclaringMethod->GetReturnType());
+                    }
                 }
                 else
                 {
@@ -335,7 +330,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         if (!m_pSrcMethod)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            return !(GetCallingConvention() & CallingConventions::CC_HAS_THIS);
         }
         else
         {
@@ -358,7 +353,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         if (!m_pSrcMethod)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            return IsGenericMethod() && !(m_callingConvention & CallingConventions::CC_GENERIC_INST);
         }
         else
         {
@@ -418,7 +413,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethod const *BaseMethodGeneratorPimpl<ApiHolder>::MakeGenericMethod(vector<IType const *> const &genericArgs) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_pSrcMethod)
+        {
+            return m_pAsmGen->DefineMethod(mdTokenNil, CallingConventions::CC_GENERIC_INST, true, genericArgs, nullptr, nullptr, static_cast<IMethod const *>(m_pClass));
+        }
+        else
+        {
+            return m_pAsmGen->Resolve(m_pSrcMethod->MakeGenericMethod(genericArgs));
+        }
     }
 
 
@@ -452,6 +454,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *const *ppDeclaringType = get<IType const *>(&m_member);
         return !ppDeclaringType ? nullptr : *ppDeclaringType;
+    }
+
+
+
+    template<class ApiHolder>    
+    typename BaseMethodGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseMethodGeneratorPimpl<ApiHolder>::GetDeclaringTypeGenerator()
+    {
+        using boost::polymorphic_cast;
+        return polymorphic_cast<type_generator_label_type *>(const_cast<IType *>(const_cast<class_pimpl_type *>(this)->GetDeclaringType()));
     }
 
 
@@ -508,9 +519,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto const *pOtherMethodGen = dynamic_cast<class_type const *>(pMethod);
         if (!pOtherMethodGen)
+        {
+            auto const *pSrcMethodGen = dynamic_cast<class_type const *>(m_pSrcMethod);
+            if (pSrcMethodGen)
+                return false;
+            
             return pMethod->Equals(m_pSrcMethod);
+        }
         
-        return GetSourceMethod() == pOtherMethodGen->GetSourceMethod();
+        auto const *pSrcMethod = GetSourceMethod();
+        auto const *pOtherSrcMethod = pOtherMethodGen->GetSourceMethod();
+        if (pSrcMethod != pOtherSrcMethod)
+            return false;
+        
+        if (m_pClass == pSrcMethod)
+            return pOtherMethodGen == pOtherSrcMethod;
+        
+        return true;
     }
 
 
@@ -586,6 +611,35 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         return pParamGen;
     }
 
+
+
+    template<class ApiHolder>    
+    void BaseMethodGeneratorPimpl<ApiHolder>::DefineGenericParameters(vector<wstring> const &names)
+    {
+        auto genericArgGens = vector<type_generator_label_type *>();
+        genericArgGens.reserve(names.size());
+        DefineGenericParameters(names, genericArgGens);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodGeneratorPimpl<ApiHolder>::DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens)
+    {
+        _ASSERTE(!m_genericArgsInit);
+
+        for (auto i = 0; i < names.size(); ++i)
+        {
+            auto *pGenericArgGen = m_pAsmGen->DefineType(names[i], TypeAttributes::TA_UNREACHED, GenericParamAttributes::GPA_NON_VARIANT, i, static_cast<IMethod const *>(m_pClass));
+            m_genericArgs.push_back(pGenericArgGen);
+            genericArgGens.push_back(pGenericArgGen);
+        }
+        m_genericArgsInit = true;
+        
+        _ASSERTE(m_callingConvention != CallingConventions::CC_UNREACHED);
+        m_callingConvention = m_callingConvention | CallingConventions::CC_GENERIC;
+    }
+
     
     
     template<class ApiHolder>    
@@ -610,7 +664,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMethodGeneratorPimpl<ApiHolder>::SetCallingConvention(CallingConventions const &callingConvention)
     {
-        _ASSERTE(callingConvention != CallingConventions::CC_UNREACHED);
         _ASSERTE(m_callingConvention == CallingConventions::CC_UNREACHED);
         m_callingConvention = callingConvention;
     }
@@ -620,8 +673,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMethodGeneratorPimpl<ApiHolder>::SetReturnType(IType const *pRetType)
     {
-        _ASSERTE(pRetType != nullptr);
-        _ASSERTE(m_pRetType == nullptr);
+        _ASSERTE(!m_pRetType);
         m_pRetType = pRetType;
     }
 
@@ -638,7 +690,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseMethodGeneratorPimpl<ApiHolder>::SetAttributes(MethodAttributes const &attr)
     {
-        _ASSERTE(attr != MethodAttributes::MA_UNREACHED);
         _ASSERTE(m_attr == MethodAttributes::MA_UNREACHED);
         m_attr = attr;
     }
@@ -657,9 +708,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseMethodGeneratorPimpl<ApiHolder>::SetGenericArguments(vector<IType const *> const &genericArgs)
+    {
+        _ASSERTE(!m_genericArgsInit);
+        m_genericArgs = genericArgs;
+        m_genericArgsInit = true;
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseMethodGeneratorPimpl<ApiHolder>::SetSourceMethod(IMethod const *pSrcMethod)
     {
-        _ASSERTE(pSrcMethod);
         _ASSERTE(!m_pSrcMethod);
         auto const *pSrcMethodGen = dynamic_cast<class_type const *>(pSrcMethod);
         if (!pSrcMethodGen)
