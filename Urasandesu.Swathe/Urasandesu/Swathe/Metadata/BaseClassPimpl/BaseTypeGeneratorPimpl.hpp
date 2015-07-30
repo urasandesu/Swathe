@@ -158,6 +158,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                         CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericTypeInstance)");
 
                         m_mdt = m_pSrcType->GetToken();
+                        switch (TypeFromToken(m_mdt))
+                        {
+                            case mdtTypeVar:
+                            case mdtTypeMVar:
+                                m_pAsmGen->UpdateTypeSpec(m_pSrcType->GetSignature(), m_mdt);
+                                break;
+                        }
                         CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mdt);
                     }
                 }
