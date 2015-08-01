@@ -419,7 +419,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         else
         {
-            return m_pAsmGen->Resolve(m_pSrcMethod->MakeGenericMethod(genericArgs));
+            auto const *pSrcMethodGen = dynamic_cast<class_type const *>(m_pSrcMethod);
+            if (!pSrcMethodGen)
+            {
+                return m_pAsmGen->Resolve(m_pSrcMethod->MakeGenericMethod(genericArgs));
+            }
+            else
+            {
+                return m_pAsmGen->DefineMethod(mdTokenNil, CallingConventions::CC_GENERIC_INST, true, genericArgs, nullptr, nullptr, static_cast<IMethod const *>(m_pClass));
+            }
         }
     }
 
