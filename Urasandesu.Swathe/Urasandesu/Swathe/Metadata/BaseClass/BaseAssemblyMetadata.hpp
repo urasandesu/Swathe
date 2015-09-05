@@ -47,6 +47,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BOOST_MPL_ASSERT_RELATION(sizeof(assembly_metadata_pimpl_label_type), ==, sizeof(storage_type));
 #endif
         new(Pimpl())assembly_metadata_pimpl_label_type(this);
+#ifdef _DEBUG
+        m_pPimpl = Pimpl();
+#endif
     }
 
     template<class ApiHolder>    
@@ -256,6 +259,30 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     ITypePtrRange BaseAssemblyMetadata<ApiHolder>::GetTypes() const
     {
         return Pimpl()->GetTypes();
+    }
+
+    template<class ApiHolder>    
+    IMetaDataAssemblyImport &BaseAssemblyMetadata<ApiHolder>::GetCOMMetaDataAssemblyImport() const
+    {
+        return Pimpl()->GetCOMMetaDataAssemblyImport();
+    }
+
+    template<class ApiHolder>    
+    IMetaDataImport2 &BaseAssemblyMetadata<ApiHolder>::GetCOMMetaDataImport() const
+    {
+        return Pimpl()->GetCOMMetaDataImport();
+    }
+
+    template<class ApiHolder>    
+    IMetaDataAssemblyEmit &BaseAssemblyMetadata<ApiHolder>::GetCOMMetaDataAssemblyEmit()
+    {
+        return Pimpl()->GetCOMMetaDataAssemblyEmit();
+    }
+
+    template<class ApiHolder>    
+    IMetaDataEmit2 &BaseAssemblyMetadata<ApiHolder>::GetCOMMetaDataEmit()
+    {
+        return Pimpl()->GetCOMMetaDataEmit();
     }
 
     template<class ApiHolder>    
@@ -526,18 +553,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseAssemblyMetadata<ApiHolder>::FillCustomAttributeProperties(mdCustomAttribute mdtTarget, Signature &sig, mdToken &mdtOwner, mdToken &mdtCtor) const
     {
         Pimpl()->FillCustomAttributeProperties(mdtTarget, sig, mdtOwner, mdtCtor);
-    }
-
-    template<class ApiHolder>    
-    IMetaDataAssemblyImport &BaseAssemblyMetadata<ApiHolder>::GetCOMMetaDataAssemblyImport() const
-    {
-        return Pimpl()->GetCOMMetaDataAssemblyImport();
-    }
-
-    template<class ApiHolder>    
-    IMetaDataImport2 &BaseAssemblyMetadata<ApiHolder>::GetCOMMetaDataImport() const
-    {
-        return Pimpl()->GetCOMMetaDataImport();
     }
 
     template<class ApiHolder>    

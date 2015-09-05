@@ -47,6 +47,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BOOST_MPL_ASSERT_RELATION(sizeof(type_metadata_pimpl_label_type), ==, sizeof(storage_type));
 #endif
         new(Pimpl())type_metadata_pimpl_label_type(this);
+#ifdef _DEBUG
+        m_pPimpl = Pimpl();
+#endif
     }
 
     template<class ApiHolder>    
@@ -88,6 +91,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     wstring const &BaseTypeMetadata<ApiHolder>::GetFullName() const
     {
         return Pimpl()->GetFullName();
+    }
+
+    template<class ApiHolder>    
+    bool BaseTypeMetadata<ApiHolder>::IsPublic() const
+    {
+        return Pimpl()->IsPublic();
+    }
+
+    template<class ApiHolder>    
+    bool BaseTypeMetadata<ApiHolder>::IsNestedPublic() const
+    {
+        return Pimpl()->IsNestedPublic();
     }
 
     template<class ApiHolder>    
@@ -292,6 +307,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IType const *BaseTypeMetadata<ApiHolder>::MakeArrayType() const
     {
         return Pimpl()->MakeArrayType();
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseTypeMetadata<ApiHolder>::MakeArrayType(INT rank) const
+    {
+        return Pimpl()->MakeArrayType(rank);
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseTypeMetadata<ApiHolder>::MakeArrayType(vector<ArrayDimension> const &arrDims) const
+    {
+        return Pimpl()->MakeArrayType(arrDims);
     }
 
     template<class ApiHolder>    

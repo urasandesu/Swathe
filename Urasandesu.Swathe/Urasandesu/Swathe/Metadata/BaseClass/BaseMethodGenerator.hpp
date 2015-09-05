@@ -47,6 +47,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BOOST_MPL_ASSERT_RELATION(sizeof(method_generator_pimpl_label_type), ==, sizeof(storage_type));
 #endif
         new(Pimpl())method_generator_pimpl_label_type(this);
+#ifdef _DEBUG
+        m_pPimpl = Pimpl();
+#endif
     }
 
     template<class ApiHolder>    
@@ -100,6 +103,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     MethodAttributes BaseMethodGenerator<ApiHolder>::GetAttribute() const
     {
         return Pimpl()->GetAttribute();
+    }
+
+    template<class ApiHolder>    
+    MethodImplAttributes BaseMethodGenerator<ApiHolder>::GetMethodImplementationFlags() const
+    {
+        return Pimpl()->GetMethodImplementationFlags();
     }
 
     template<class ApiHolder>    
@@ -250,6 +259,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseMethodGenerator<ApiHolder>::DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens)
     {
         Pimpl()->DefineGenericParameters(names, genericArgGens);
+    }
+
+    template<class ApiHolder>    
+    void BaseMethodGenerator<ApiHolder>::SetImplementationFlags(MethodImplAttributes const &implAttr)
+    {
+        Pimpl()->SetImplementationFlags(implAttr);
     }
 
     template<class ApiHolder>    

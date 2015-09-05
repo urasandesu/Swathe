@@ -85,6 +85,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IAssembly const *BaseMetadataDispenser<ApiHolder>::GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const
+    {
+        return Pimpl()->GetAssembly(fullName, procArchs);
+    }
+
+    template<class ApiHolder>    
     IAssembly const *BaseMetadataDispenser<ApiHolder>::GetAssemblyFrom(path const &asmPath) const
     {
         return Pimpl()->GetAssemblyFrom(asmPath);

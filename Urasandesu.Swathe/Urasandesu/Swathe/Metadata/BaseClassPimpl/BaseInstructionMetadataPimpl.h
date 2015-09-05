@@ -73,6 +73,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mdToken GetToken() const;
         OpCode const &GetOpCode() const;
         Operand const &GetOperand() const;
+        Operand const &GetResolvedOperand() const;
         SIZE_T GetSize() const;
         UINT GetPopingCount() const;
         UINT GetPushingCount() const;

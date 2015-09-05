@@ -180,7 +180,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     typename BaseModuleGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseModuleGeneratorPimpl<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr)
     {
-        return m_pAsmGen->DefineType(fullName, attr, GenericParamAttributes::GPA_UNREACHED, -1, static_cast<IModule const *>(m_pClass));
+        return m_pAsmGen->DefineType(fullName, attr, nullptr, TypeKinds::TK_UNREACHED, GenericParamAttributes::GPA_UNREACHED, -1, static_cast<IModule const *>(m_pClass));
     }
 
 

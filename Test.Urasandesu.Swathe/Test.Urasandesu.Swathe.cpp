@@ -837,4 +837,83 @@ namespace {
             ASSERT_FALSE(exClauses.empty());
         }
     }
+
+
+
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, DelegateTest_01)
+    {
+        using namespace Urasandesu::Swathe;
+        using namespace Urasandesu::Swathe::Hosting;
+        using namespace Urasandesu::Swathe::Metadata;
+        using std::vector;
+        using std::wstring;
+
+        auto const *pHost = HostInfo::CreateHost();
+
+        auto const *pRuntime = pHost->GetRuntime(L"v4.0.30319");
+
+        auto const *pMetaInfo = pRuntime->GetInfo<MetadataInfo>();
+        auto *pDisp = pMetaInfo->CreateDispenser();
+
+        auto const *pMSCorLib = pDisp->GetAssembly(L"mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+        auto const *pMSCorLibDll = pMSCorLib->GetModule(L"CommonLanguageRuntimeLibrary");
+
+        auto const *pObject = pMSCorLibDll->GetType(L"System.Object");
+        auto const *pMulticastDelegate = pMSCorLibDll->GetType(L"System.MulticastDelegate");
+        auto const *pDateTime = pMSCorLibDll->GetType(L"System.DateTime");
+        auto const *pIntPtr = pMSCorLibDll->GetType(L"System.IntPtr");
+
+
+
+        auto *pStubDriverGen = pDisp->DefineAssemblyWithPartialName(L"StubDriver");
+        auto *pStubDriverDllGen = pStubDriverGen->DefineModule(L"StubDriver.dll");
+
+        // In actually, this type is that an indirection target method is declared.
+        auto *pProgramGen = 
+            pStubDriverDllGen->DefineType(L"StubDriver.Program",
+                                          TypeAttributes::TA_PUBLIC | 
+                                          TypeAttributes::TA_ABSTRACT | 
+                                          TypeAttributes::TA_AUTO_CLASS | 
+                                          TypeAttributes::TA_ANSI_CLASS | 
+                                          TypeAttributes::TA_BEFORE_FIELD_INIT);
+
+        auto pIndDlgtGen = static_cast<TypeGenerator *>(nullptr);
+        {
+            // In actually, these information are gotten from an indirection target method.
+            auto mdTarget = 0x0600000D;
+            auto targetName = wstring(L"get_Now");
+            auto name = boost::str(boost::wformat(L"IndirectionDelegate%|1$d|For%|2$s|") % RidFromToken(mdTarget) % targetName);
+            auto attr = TypeAttributes::TA_AUTO_CLASS | TypeAttributes::TA_ANSI_CLASS | TypeAttributes::TA_SEALED | TypeAttributes::TA_NESTED_PRIVATE;
+            auto const *pBaseType = pMulticastDelegate;
+            pIndDlgtGen = pProgramGen->DefineNestedType(name, attr, pBaseType);
+        }
+
+        auto *pIndDlgtGen_ctor = static_cast<MethodGenerator *>(nullptr);
+        {
+            auto attr = MethodAttributes::MA_PUBLIC | MethodAttributes::MA_HIDE_BY_SIG | MethodAttributes::MA_SPECIAL_NAME | MethodAttributes::MA_RT_SPECIAL_NAME;
+            auto callingConvention = CallingConventions::CC_HAS_THIS;
+            auto paramTypes = vector<IType const *>();
+            paramTypes.push_back(pObject);
+            paramTypes.push_back(pIntPtr);
+            pIndDlgtGen_ctor = pIndDlgtGen->DefineConstructor(attr, callingConvention, paramTypes);
+            
+            auto implAttr = MethodImplAttributes::MIA_RUNTIME | MethodImplAttributes::MIA_MANAGED;
+            pIndDlgtGen_ctor->SetImplementationFlags(implAttr);
+        }
+
+        auto *pIndDlgtGen_Invoke = static_cast<MethodGenerator *>(nullptr);
+        {
+            auto name = wstring(L"Invoke");
+            auto attr = MethodAttributes::MA_PUBLIC | MethodAttributes::MA_HIDE_BY_SIG | MethodAttributes::MA_NEW_SLOT | MethodAttributes::MA_VIRTUAL;
+            auto callingConvention = CallingConventions::CC_HAS_THIS;
+            auto const *pRetType = pDateTime;
+            auto const &paramTypes = MetadataSpecialValues::EMPTY_TYPES;
+            pIndDlgtGen_Invoke = pIndDlgtGen->DefineMethod(name, attr, callingConvention, pRetType, paramTypes);
+            
+            auto implAttr = MethodImplAttributes::MIA_RUNTIME | MethodImplAttributes::MIA_MANAGED;
+            pIndDlgtGen_Invoke->SetImplementationFlags(implAttr);
+        }
+
+        pStubDriverGen->Save(PortableExecutableKinds::PEK_IL_ONLY, ImageFileMachine::IFM_I386);
+    }
 }

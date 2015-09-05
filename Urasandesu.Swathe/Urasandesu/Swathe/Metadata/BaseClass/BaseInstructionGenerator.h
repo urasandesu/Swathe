@@ -74,6 +74,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mdToken GetToken() const;
         OpCode const &GetOpCode() const;
         Operand const &GetOperand() const;
+        Operand const &GetResolvedOperand() const;
         SIZE_T GetSize() const;
         UINT GetPopingCount() const;
         UINT GetPushingCount() const;
@@ -91,9 +92,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 96;
+        static INT const PIMPL_TYPE_SIZE = 128;
 #else
-        static INT const PIMPL_TYPE_SIZE = 144;
+        static INT const PIMPL_TYPE_SIZE = 192;
 #endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

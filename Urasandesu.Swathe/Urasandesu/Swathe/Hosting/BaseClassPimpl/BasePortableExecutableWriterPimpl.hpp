@@ -238,8 +238,7 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
 
         if (m_isClosed || 
             m_resolvedAsms.empty() || 
-            m_resolvedMods.empty() || 
-            m_resolvedMethodBodies.empty())
+            m_resolvedMods.empty())
             return;
         
 

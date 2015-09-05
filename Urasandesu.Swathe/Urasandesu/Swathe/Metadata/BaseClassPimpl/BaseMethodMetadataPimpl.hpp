@@ -189,6 +189,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    MethodImplAttributes BaseMethodMetadataPimpl<ApiHolder>::GetMethodImplementationFlags() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     IType const *BaseMethodMetadataPimpl<ApiHolder>::GetReturnType() const
     {
         if (!m_retTypeInit)

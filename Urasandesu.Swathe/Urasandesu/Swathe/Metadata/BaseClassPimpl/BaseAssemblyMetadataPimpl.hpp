@@ -579,6 +579,75 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IMetaDataAssemblyImport &BaseAssemblyMetadataPimpl<ApiHolder>::GetCOMMetaDataAssemblyImport() const
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (m_pOpeningAsm == nullptr)
+        {
+            if (m_pComMetaAsmImp.p == nullptr)
+            {
+                auto &comMetaImp = m_pClass->GetCOMMetaDataImport();
+                auto hr = comMetaImp.QueryInterface(IID_IMetaDataAssemblyImport, 
+                                                    reinterpret_cast<void **>(&m_pComMetaAsmImp));
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+            return *m_pComMetaAsmImp;
+        }
+        else
+        {
+            return m_pOpeningAsm->GetCOMMetaDataAssemblyImport();
+        }
+    }
+    
+    
+    template<class ApiHolder>    
+    IMetaDataImport2 &BaseAssemblyMetadataPimpl<ApiHolder>::GetCOMMetaDataImport() const
+    {
+        using boost::filesystem::path;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (m_pOpeningAsm == nullptr)
+        {
+            if (m_pComMetaImp.p == nullptr)
+            {
+                auto &comMetaDisp = m_pDisp->GetCOMMetaDataDispenser();
+
+                auto const &location = GetLocation();
+                auto openFlags = m_pClass->GetOpenFlags();
+                auto hr = comMetaDisp.OpenScope(location.c_str(), openFlags, 
+                                                IID_IMetaDataImport2, reinterpret_cast<IUnknown **>(&m_pComMetaImp));
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+            return *m_pComMetaImp.p;
+        }
+        else
+        {
+            return m_pOpeningAsm->GetCOMMetaDataImport();
+        }
+    }
+
+
+
+    template<class ApiHolder>    
+    IMetaDataAssemblyEmit &BaseAssemblyMetadataPimpl<ApiHolder>::GetCOMMetaDataAssemblyEmit()
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    IMetaDataEmit2 &BaseAssemblyMetadataPimpl<ApiHolder>::GetCOMMetaDataEmit()
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     bool BaseAssemblyMetadataPimpl<ApiHolder>::Equals(IAssembly const *pAsm) const
     {
         using Urasandesu::CppAnonym::Collections::SequenceEqual;
@@ -1735,59 +1804,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
 
         sig.SetBlob(pSig, sigLength);
-    }
-
-
-
-    template<class ApiHolder>    
-    IMetaDataAssemblyImport &BaseAssemblyMetadataPimpl<ApiHolder>::GetCOMMetaDataAssemblyImport() const
-    {
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-
-        if (m_pOpeningAsm == nullptr)
-        {
-            if (m_pComMetaAsmImp.p == nullptr)
-            {
-                auto &comMetaImp = m_pClass->GetCOMMetaDataImport();
-                auto hr = comMetaImp.QueryInterface(IID_IMetaDataAssemblyImport, 
-                                                    reinterpret_cast<void **>(&m_pComMetaAsmImp));
-                if (FAILED(hr))
-                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-            }
-            return *m_pComMetaAsmImp;
-        }
-        else
-        {
-            return m_pOpeningAsm->GetCOMMetaDataAssemblyImport();
-        }
-    }
-    
-    
-    template<class ApiHolder>    
-    IMetaDataImport2 &BaseAssemblyMetadataPimpl<ApiHolder>::GetCOMMetaDataImport() const
-    {
-        using boost::filesystem::path;
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-
-        if (m_pOpeningAsm == nullptr)
-        {
-            if (m_pComMetaImp.p == nullptr)
-            {
-                auto &comMetaDisp = m_pDisp->GetCOMMetaDataDispenser();
-
-                auto const &location = GetLocation();
-                auto openFlags = m_pClass->GetOpenFlags();
-                auto hr = comMetaDisp.OpenScope(location.c_str(), openFlags, 
-                                                IID_IMetaDataImport2, reinterpret_cast<IUnknown **>(&m_pComMetaImp));
-                if (FAILED(hr))
-                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-            }
-            return *m_pComMetaImp.p;
-        }
-        else
-        {
-            return m_pOpeningAsm->GetCOMMetaDataImport();
-        }
     }
     
     

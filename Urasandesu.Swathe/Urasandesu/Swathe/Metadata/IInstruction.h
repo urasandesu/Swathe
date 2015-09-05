@@ -52,6 +52,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual mdToken GetToken() const = 0;
         virtual OpCode const &GetOpCode() const = 0;
         virtual Operand const &GetOperand() const = 0;
+        virtual Operand const &GetResolvedOperand() const = 0;
         virtual SIZE_T GetSize() const = 0;
         virtual UINT GetPopingCount() const = 0;
         virtual UINT GetPushingCount() const = 0;

@@ -108,6 +108,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         wstring const &GetName() const;
         CallingConventions GetCallingConvention() const;
         MethodAttributes GetAttribute() const;
+        MethodImplAttributes GetMethodImplementationFlags() const;
         IType const *GetReturnType() const;
         vector<IParameter const *> const &GetParameters() const;
         IMethodBody const *GetMethodBody() const;

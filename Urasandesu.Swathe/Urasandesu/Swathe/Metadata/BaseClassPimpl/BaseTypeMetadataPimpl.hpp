@@ -153,6 +153,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    bool BaseTypeMetadataPimpl<ApiHolder>::IsPublic() const
+    {
+        return GetAttribute() & TypeAttributes::TA_PUBLIC ? true : false;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseTypeMetadataPimpl<ApiHolder>::IsNestedPublic() const
+    {
+        return GetAttribute() & TypeAttributes::TA_NESTED_PUBLIC ? true : false;
+    }
+
+
+
+    template<class ApiHolder>    
     bool BaseTypeMetadataPimpl<ApiHolder>::IsValueType() const
     {
         auto kind = GetKind();
@@ -406,7 +422,44 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (m_attr != TypeAttributes::TA_UNREACHED)
             return m_attr;
         
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        auto mdtTarget = GetToken();
+        switch (TypeFromToken(mdtTarget))
+        {
+            case mdtTypeDef:
+                m_pAsm->FillTypeDefProperties(mdtTarget, m_fullName, m_attr, m_mdtExt);
+                break;
+
+            case mdtGenericParam:
+            case mdtTypeVar:
+            case mdtTypeMVar:
+                m_attr = TypeAttributes::TA_AUTO_LAYOUT | TypeAttributes::TA_ANSI_CLASS | TypeAttributes::TA_CLASS | TypeAttributes::TA_PUBLIC;
+                break;
+            
+            case mdtTypeRef:
+                m_attr = GetSourceType()->GetAttribute();
+                break;
+            
+            case mdtTypeSpec:
+                switch (GetKind().Value())
+                {
+                    case TypeKinds::TK_VAR:
+                    case TypeKinds::TK_MVAR:
+                        m_attr = TypeAttributes::TA_AUTO_LAYOUT | TypeAttributes::TA_ANSI_CLASS | TypeAttributes::TA_CLASS | TypeAttributes::TA_PUBLIC;
+                        break;
+                        
+                    default:
+                        m_attr = GetDeclaringType()->GetAttribute();
+                        break;
+                }
+                break;
+
+            default:
+                auto oss = std::wostringstream();
+                oss << boost::wformat(L"mdtTarget: 0x%|1$08X|") % mdtTarget;
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException(oss.str()));
+        }
+        _ASSERTE(m_attr != TypeAttributes::TA_UNREACHED);
+        return m_attr;
     }
 
 
@@ -868,6 +921,22 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeArrayType() const
     {
         return m_pAsm->GetType(GetToken(), TypeKinds::TK_SZARRAY, true, MetadataSpecialValues::SZ_DIMENSIONS, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeArrayType(INT rank) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeArrayType(vector<ArrayDimension> const &arrDims) const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
     }
 
 

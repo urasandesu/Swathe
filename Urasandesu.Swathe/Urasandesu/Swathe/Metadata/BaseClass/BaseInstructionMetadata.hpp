@@ -96,6 +96,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    Operand const &BaseInstructionMetadata<ApiHolder>::GetResolvedOperand() const
+    {
+        return Pimpl()->GetResolvedOperand();
+    }
+
+    template<class ApiHolder>    
     SIZE_T BaseInstructionMetadata<ApiHolder>::GetSize() const
     {
         return Pimpl()->GetSize();

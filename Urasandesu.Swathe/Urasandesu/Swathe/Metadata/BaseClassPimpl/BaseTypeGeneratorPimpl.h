@@ -134,6 +134,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Initialize(assembly_generator_label_type *pAsmGen);
         mdToken GetToken() const;
         wstring const &GetFullName() const;
+        bool IsPublic() const;
+        bool IsNestedPublic() const;
         bool IsValueType() const;
         bool IsGenericParameter() const;
         bool IsGenericType() const;
@@ -148,6 +150,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         vector<ArrayDimension> const &GetDimensions() const;
         Signature const &GetSignature() const;
         IType const *MakeArrayType() const;
+        IType const *MakeArrayType(INT rank) const;
+        IType const *MakeArrayType(vector<ArrayDimension> const &arrDims) const;
         IType const *MakeGenericType(vector<IType const *> const &genericArgs) const;
         IType const *MakePointerType() const;
         IType const *MakeByRefType() const;
@@ -185,15 +189,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         size_t GetHashCode() const;
         void OutDebugInfo() const;
         type_generator_label_type *DefineNestedType(wstring const &fullName, TypeAttributes const &attr);
+        type_generator_label_type *DefineNestedType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType);
         field_generator_label_type *DefineField(wstring const &name, IType const *pFieldType, FieldAttributes const &attr);
         method_generator_label_type *DefineMethod(wstring const &name, MethodAttributes const &attr, CallingConventions const &callingConvention, IType const *pRetType, vector<IType const *> const &paramTypes);
+        method_generator_label_type *DefineConstructor(MethodAttributes const &attr, CallingConventions const &callingConvention, vector<IType const *> const &paramTypes);
         method_generator_label_type *DefineDefaultConstructor(MethodAttributes const &attr);
         property_generator_label_type *DefineProperty(wstring const &name, PropertyAttributes const &attr, IType const *pPropType, vector<IType const *> const &paramTypes);
         static method_generator_label_type *GetMethod(IType const *pDeclaringGenericInstanceType, IMethod const *pMethod);
+        void DefineGenericParameters(vector<wstring> const &names);
+        void DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens);
+        IType const *CreateType() const;
     
     private:
         void SetFullName(wstring const &fullName);
         void SetAttributes(TypeAttributes const &attr);
+        void SetBaseType(IType const *pBaseType);
+        void SetKind(TypeKinds const &kind);
+        void SetGenericArguments(vector<IType const *> const &genericArgs);
         void SetGenericParameterAttributes(GenericParamAttributes const &gpAttr);
         void SetGenericParameterPosition(ULONG genericParamPos);
         void SetMember(TypeProvider const &member);
@@ -220,7 +232,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable TypeKinds m_kind;
         mutable bool m_baseTypeInit;
         mutable IType const *m_pBaseType;
-        IType const *m_pSrcType;
+        mutable IType const *m_pSrcType;
         mutable Signature m_sig;
         
     };

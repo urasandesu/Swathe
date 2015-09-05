@@ -82,6 +82,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
     
     template<class ApiHolder>    
+    IAssembly const *BaseMetadataDispenserPimpl<ApiHolder>::GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const
+    {
+        return GetAssemblyCore(fullName, procArchs);
+    }
+
+
+
+    template<class ApiHolder>    
     IAssembly const *BaseMetadataDispenserPimpl<ApiHolder>::GetAssemblyFrom(path const &asmPath) const
     {
         auto pNewAsm = NewAssembly(asmPath);
@@ -402,9 +410,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::ResolveAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const
     {
+        CPPANONYM_LOG_FUNCTION();
+
         _ASSERTE(static_cast<IDispenser const *>(m_pClass) == pAsm->GetDispenser());
 
+#ifdef _DEBUG
+        CPPANONYM_D_LOGW2(L"pSavingAsmGen(0x%|1|): %|2|", reinterpret_cast<void *>(pSavingAsmGen), pSavingAsmGen->GetFullName());
+        CPPANONYM_D_LOGW3(L"pAsm(0x%|1|)(0x%|2|): %|3|", reinterpret_cast<void const *>(pAsm), reinterpret_cast<void const *>(dynamic_cast<assembly_generator_label_type const *>(pAsm)), pAsm->GetFullName());
+#endif
+
         auto *pResolvedAsm = ResolveOrDefineAssemblyRef(pSavingAsmGen, pAsm);
+#ifdef _DEBUG
+        CPPANONYM_D_LOGW2(L"pResolvedAsm(0x%|1|): %|2|", reinterpret_cast<void *>(pResolvedAsm), pResolvedAsm->GetFullName());
+#endif
         UpdateReferencedAssemblyIfNecessary(pSavingAsmGen, pResolvedAsm);
         return pResolvedAsm;
     }
@@ -424,6 +442,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         return GetTargetAssembly(const_cast<assembly_generator_label_type *>(pTargetAsmGen));
     }
 
+    
+    
     template<class ApiHolder>    
     typename BaseMetadataDispenserPimpl<ApiHolder>::assembly_generator_label_type *BaseMetadataDispenserPimpl<ApiHolder>::ResolveOrDefineAssemblyRef(assembly_generator_label_type *pSavingAsmGen, IAssembly const *pAsm) const
     {
@@ -436,7 +456,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         typedef AsmGens::value_type Value;
 
         auto const *pAsmGen = dynamic_cast<assembly_generator_label_type const *>(pAsm);
-        auto isAlreadyExist = [&](Value const &v) { return pAsmGen ? v->Equals(pAsmGen) : v->Equals(pAsm) && GetTargetAssembly(pSavingAsmGen)->Equals(v->GetTargetAssembly()); };
+        auto isAlreadyExist = [&](Value const &v) { return pAsmGen ? v->Equals(pAsmGen) : v->Equals(pAsm) && GetTargetAssembly(pSavingAsmGen)->Equals(GetTargetAssembly(v)); };
         auto result = FindIf(m_asmGens, isAlreadyExist);
         if (result)
             return *result;

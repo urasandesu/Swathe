@@ -128,6 +128,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         void Initialize(metadata_info_label_type *pMetaInfo, fusion_info_label_type const *pFuInfo);
         IAssembly const *GetAssembly(wstring const &fullName) const;
+        IAssembly const *GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const;
         IAssembly const *GetAssemblyFrom(path const &asmPath) const;
         bool TryGetAssemblyWithPartialName(wstring const &name, IAssembly const *&pAsm) const;
         IAssemblyPtrRange GetAssemblies() const;

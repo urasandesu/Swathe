@@ -60,6 +60,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
     
     struct IInstruction;
 
+    typedef std::wstring UserString;
+    typedef boost::tuple<CallingConventions, IType const *, std::vector<IType const *> > StandAloneSig;
+
     typedef boost::variant<
         boost::blank,
         bool,
@@ -69,17 +72,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         INT, 
         LONGLONG, 
         ILocal const *, 
-        Signature const *, 
         IField const *, 
         IMethod const *, 
         CHAR, 
         FLOAT, 
-        std::wstring, 
+        UserString, 
         IType const *, 
         Label, 
         std::vector<INT>, 
         std::vector<Label>, 
-        boost::tuple<CallingConventions, IType const *, std::vector<IType const *> >
+        StandAloneSig, 
+        mdToken, 
+        ResolvedLabel
     > Operand;
 
     typedef boost::any_range<IInstruction const *, boost::random_access_traversal_tag, IInstruction const *, std::ptrdiff_t> IInstructionPtrRange;

@@ -101,6 +101,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mdToken GetToken() const;
         wstring const &GetName() const;
         CallingConventions GetCallingConvention() const;
+        MethodImplAttributes GetMethodImplementationFlags() const;
         IType const *GetReturnType() const;
         vector<IParameter const *> const &GetParameters() const;
         IMethodBody const *GetMethodBody() const;
@@ -126,6 +127,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         parameter_generator_label_type *DefineParameter(ULONG position, IType const *pParamType);
         void DefineGenericParameters(vector<wstring> const &names);
         void DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens);
+        void SetImplementationFlags(MethodImplAttributes const &implAttr);
         
     private:
         void SetToken(mdToken mdt);
@@ -152,6 +154,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable bool m_paramsInit;
         mutable vector<IParameter const *> m_params;
         mutable MethodAttributes m_attr;
+        mutable MethodImplAttributes m_implAttr;
         mutable bool m_genericArgsInit;
         mutable vector<IType const *> m_genericArgs;
         mutable Signature m_sig;

@@ -47,6 +47,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BOOST_MPL_ASSERT_RELATION(sizeof(assembly_generator_pimpl_label_type), ==, sizeof(storage_type));
 #endif
         new(Pimpl())assembly_generator_pimpl_label_type(this);
+#ifdef _DEBUG
+        m_pPimpl = Pimpl();
+#endif
     }
 
     template<class ApiHolder>    
@@ -253,6 +256,30 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    IMetaDataAssemblyImport &BaseAssemblyGenerator<ApiHolder>::GetCOMMetaDataAssemblyImport() const
+    {
+        return Pimpl()->GetCOMMetaDataAssemblyImport();
+    }
+
+    template<class ApiHolder>    
+    IMetaDataImport2 &BaseAssemblyGenerator<ApiHolder>::GetCOMMetaDataImport() const
+    {
+        return Pimpl()->GetCOMMetaDataImport();
+    }
+
+    template<class ApiHolder>    
+    IMetaDataAssemblyEmit &BaseAssemblyGenerator<ApiHolder>::GetCOMMetaDataAssemblyEmit()
+    {
+        return Pimpl()->GetCOMMetaDataAssemblyEmit();
+    }
+
+    template<class ApiHolder>    
+    IMetaDataEmit2 &BaseAssemblyGenerator<ApiHolder>::GetCOMMetaDataEmit()
+    {
+        return Pimpl()->GetCOMMetaDataEmit();
+    }
+
+    template<class ApiHolder>    
     bool BaseAssemblyGenerator<ApiHolder>::Equals(IAssembly const *pAsm) const
     {
         return Pimpl()->Equals(pAsm);
@@ -427,15 +454,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
-    typename BaseAssemblyGenerator<ApiHolder>::type_generator_label_type *BaseAssemblyGenerator<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member)
+    typename BaseAssemblyGenerator<ApiHolder>::type_generator_label_type *BaseAssemblyGenerator<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, TypeKinds const &kind, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member)
     {
-        return Pimpl()->DefineType(fullName, attr, gpAttr, genericParamPos, member);
+        return Pimpl()->DefineType(fullName, attr, pBaseType, kind, gpAttr, genericParamPos, member);
     }
 
     template<class ApiHolder>    
-    typename BaseAssemblyGenerator<ApiHolder>::type_generator_label_type *BaseAssemblyGenerator<ApiHolder>::DefineType(IType const *pSrcType, TypeProvider const &member)
+    typename BaseAssemblyGenerator<ApiHolder>::type_generator_label_type *BaseAssemblyGenerator<ApiHolder>::DefineType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, IType const *pSrcType, TypeProvider const &member)
     {
-        return Pimpl()->DefineType(pSrcType, member);
+        return Pimpl()->DefineType(mdt, kind, arrDimsSpecified, arrDims, genericParamPos, genericArgsSpecified, genericArgs, pSrcType, member);
     }
 
     template<class ApiHolder>    
@@ -607,6 +634,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateAssembly(PublicKeyBlob const *pPubKeyBlob, DWORD pubKeyBlobSize, wstring const &name, ASSEMBLYMETADATA const &amd, AssemblyFlags const &asmFlags, mdAssembly &mda)
+    {
+        Pimpl()->UpdateAssembly(pPubKeyBlob, pubKeyBlobSize, name, amd, asmFlags, mda);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateAssemblyRef(BYTE const *pPubKeyToken, DWORD pubKeyTokenSize, wstring const &name, ASSEMBLYMETADATA const &amd, AssemblyFlags const &asmFlags, mdAssembly &mda)
+    {
+        Pimpl()->UpdateAssemblyRef(pPubKeyToken, pubKeyTokenSize, name, amd, asmFlags, mda);
+    }
+
+    template<class ApiHolder>    
     void BaseAssemblyGenerator<ApiHolder>::UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, mdTypeDef &mdt)
     {
         Pimpl()->UpdateTypeDef(fullName, attr, pBaseType, interfaces, mdt);
@@ -673,21 +712,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateImportMember(IAssembly const *pSrcAsm, mdToken mdMember, mdToken mdResolutionScope, mdMemberRef &mdt)
+    {
+        Pimpl()->UpdateImportMember(pSrcAsm, mdMember, mdResolutionScope, mdt);
+    }
+
+    template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateImportMember(IMetaDataAssemblyImport *pComMetaAsmImp, IMetaDataImport2 *pComMetaImp, mdToken mdMember, mdToken mdResolutionScope, mdMemberRef &mdt)
+    {
+        Pimpl()->UpdateImportMember(pComMetaAsmImp, pComMetaImp, mdMember, mdResolutionScope, mdt);
+    }
+
+    template<class ApiHolder>    
     ULONG BaseAssemblyGenerator<ApiHolder>::GetValidRVA() const
     {
         return Pimpl()->GetValidRVA();
-    }
-
-    template<class ApiHolder>    
-    IMetaDataAssemblyEmit &BaseAssemblyGenerator<ApiHolder>::GetCOMMetaDataAssemblyEmit()
-    {
-        return Pimpl()->GetCOMMetaDataAssemblyEmit();
-    }
-
-    template<class ApiHolder>    
-    IMetaDataEmit2 &BaseAssemblyGenerator<ApiHolder>::GetCOMMetaDataEmit()
-    {
-        return Pimpl()->GetCOMMetaDataEmit();
     }
 
     template<class ApiHolder>    

@@ -142,6 +142,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Emit(OpCode const &opCode, LONGLONG arg);
         void Emit(OpCode const &opCode, vector<INT> const &offsets);
         void Emit(OpCode const &opCode, vector<Label> const &labels);
+        void Emit(OpCode const &opCode, CHAR arg);
         void Emit(OpCode const &opCode, FLOAT arg);
         void Emit(OpCode const &opCode);
         void Emit(IInstruction const *pInst);
@@ -157,6 +158,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
     private:
         struct emit_instruction_visitor;
+        struct to_string_visitor;
         class exception_clause_marker;
         base_heap_provider_type *BaseHeapProvider();
         base_heap_provider_type const *BaseHeapProvider() const;

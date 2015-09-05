@@ -101,6 +101,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
+#ifdef _DEBUG
+        parameter_generator_pimpl_label_type *m_pPimpl;
+#endif
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClass { 

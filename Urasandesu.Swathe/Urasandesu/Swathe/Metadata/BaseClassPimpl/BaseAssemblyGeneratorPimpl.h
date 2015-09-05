@@ -96,6 +96,10 @@
 #include <Urasandesu/Swathe/Metadata/FieldAttributes.hpp>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_TYPEKINDS_H
+#include <Urasandesu/Swathe/Metadata/TypeKinds.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_CALLINGCONVENTIONS_H
 #include <Urasandesu/Swathe/Metadata/CallingConventions.h>
 #endif
@@ -180,6 +184,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes() const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         ITypePtrRange GetTypes() const;
+        IMetaDataAssemblyImport &GetCOMMetaDataAssemblyImport() const;
+        IMetaDataImport2 &GetCOMMetaDataImport() const;
+        IMetaDataAssemblyEmit &GetCOMMetaDataAssemblyEmit();
+        IMetaDataEmit2 &GetCOMMetaDataEmit();
         bool Equals(IAssembly const *pAsm) const;
         size_t GetHashCode() const;
         AutoPtr<IPortableExecutableReader const> const &GetPortableExecutableReader() const;
@@ -212,10 +220,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         TempPtr<module_generator_label_type> NewModuleGenerator(IModule const *pSrcMod) const;
         void RegisterModuleGenerator(TempPtr<module_generator_label_type> &pModGen);
 
-        type_generator_label_type *DefineType(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member);
-        type_generator_label_type *DefineType(IType const *pSrcType, TypeProvider const &member);
-        TempPtr<type_generator_label_type> NewTypeGenerator(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member) const;
-        TempPtr<type_generator_label_type> NewTypeGenerator(IType const *pSrcType, TypeProvider const &member) const;
+        type_generator_label_type *DefineType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, TypeKinds const &kind, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member);
+        type_generator_label_type *DefineType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, IType const *pSrcType, TypeProvider const &member);
+        TempPtr<type_generator_label_type> NewTypeGenerator(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, TypeKinds const &kind, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member) const;
+        TempPtr<type_generator_label_type> NewTypeGenerator(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, IType const *pSrcType, TypeProvider const &member) const;
         void RegisterTypeGenerator(TempPtr<type_generator_label_type> &pTypeGen);
         
         method_generator_label_type *DefineMethod(wstring const &name, MethodAttributes const &attr, CallingConventions const &callingConvention, IType const *pRetType, bool paramsSpecified, vector<IParameter const *> const &params, MethodProvider const &member);
@@ -264,6 +272,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         vector<property_generator_label_type *> const &GetPropertyGeneratorToIndex() const;
         vector<custom_attribute_generator_label_type *> const &GetCustomAttributeGeneratorToIndex() const;
 
+        void UpdateAssembly(PublicKeyBlob const *pPubKeyBlob, DWORD pubKeyBlobSize, wstring const &name, ASSEMBLYMETADATA const &amd, AssemblyFlags const &asmFlags, mdAssembly &mda);
+        void UpdateAssemblyRef(BYTE const *pPubKeyToken, DWORD pubKeyTokenSize, wstring const &name, ASSEMBLYMETADATA const &amd, AssemblyFlags const &asmFlags, mdAssembly &mda);
         void UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, mdTypeDef &mdt);
         void UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, mdToken mdExtends, mdToken mdNilTerminatedImplements[], mdTypeDef &mdt);
         void UpdateNestedType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, IType const *pDeclaringType, mdTypeDef &mdt);
@@ -275,9 +285,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void UpdateMethodDef(mdTypeDef mdtOwner, wstring const &name, MethodAttributes const &attr, Signature const &sig, ULONG codeRva, MethodImplAttributes const &implFlags, mdMethodDef &mdt);
         void UpdateMethodSpec(mdToken mdtOwner, Signature const &sig, mdMethodSpec &mdt);
         void UpdateMemberRef(mdTypeDef mdtOwner, wstring const &name, Signature const &sig, mdMemberRef &mdt);
+        void UpdateImportMember(IAssembly const *pSrcAsm, mdToken mdMember, mdToken mdResolutionScope, mdMemberRef &mdt);
+        void UpdateImportMember(IMetaDataAssemblyImport *pComMetaAsmImp, IMetaDataImport2 *pComMetaImp, mdToken mdMember, mdToken mdResolutionScope, mdMemberRef &mdt);
         ULONG GetValidRVA() const;
-        IMetaDataAssemblyEmit &GetCOMMetaDataAssemblyEmit();
-        IMetaDataEmit2 &GetCOMMetaDataEmit();
         
         void AddReferencedAssembly(assembly_generator_label_type *pAsmGen);
         void SetSavingAssembly(assembly_generator_label_type *pSavingAsmGen);
@@ -302,7 +312,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable wstring m_name;
         mutable bool m_amdInit;
         mutable ASSEMBLYMETADATA m_amd;
-        AutoPtr<IStrongNameKey const> m_pSnKey;
+        mutable bool m_snKeyInit;
+        mutable AutoPtr<IStrongNameKey const> m_pSnKey;
+        mutable vector<ProcessorArchitecture> m_procArchs;
         mutable bool m_casInit;
         mutable vector<ICustomAttribute const *> m_cas;
         mutable vector<assembly_generator_label_type *> m_refAsmGens;

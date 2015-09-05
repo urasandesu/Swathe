@@ -76,6 +76,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Initialize(assembly_metadata_label_type *pAsm);
         mdToken GetToken() const;
         wstring const &GetFullName() const;
+        bool IsPublic() const;
+        bool IsNestedPublic() const;
         bool IsValueType() const;
         bool IsGenericParameter() const;
         bool IsGenericType() const;
@@ -110,6 +112,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         size_t GetHashCode() const;
         void OutDebugInfo() const;
         IType const *MakeArrayType() const;
+        IType const *MakeArrayType(INT rank) const;
+        IType const *MakeArrayType(vector<ArrayDimension> const &arrDims) const;
         IType const *MakeGenericType(vector<IType const *> const &genericArgs) const;
         IType const *MakePointerType() const;
         IType const *MakeByRefType() const;
@@ -149,6 +153,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
+#ifdef _DEBUG
+        type_metadata_pimpl_label_type *m_pPimpl;
+#endif
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClass { 

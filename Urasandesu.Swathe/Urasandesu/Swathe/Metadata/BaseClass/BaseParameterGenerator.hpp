@@ -47,6 +47,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BOOST_MPL_ASSERT_RELATION(sizeof(parameter_generator_pimpl_label_type), ==, sizeof(storage_type));
 #endif
         new(Pimpl())parameter_generator_pimpl_label_type(this);
+#ifdef _DEBUG
+        m_pPimpl = Pimpl();
+#endif
     }
 
     template<class ApiHolder>    

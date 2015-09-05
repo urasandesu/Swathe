@@ -59,6 +59,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_paramsInit(false), 
         m_genericArgsInit(false), 
         m_attr(MethodAttributes::MA_UNREACHED), 
+        m_implAttr(MethodImplAttributes::MIA_UNREACHED), 
         m_pBody(nullptr), 
         m_pBodyGen(nullptr), 
         m_pSrcMethod(nullptr)
@@ -103,7 +104,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 {
                     CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
                     
-                    m_pAsmGen->UpdateMethodDef(GetDeclaringType()->GetToken(), GetName(), GetAttribute(), GetSignature(), m_pAsmGen->GetValidRVA(), MethodImplAttributes::MIA_IL, m_mdt);
+                    auto implAttr = GetMethodImplementationFlags();
+                    auto codeRva = implAttr != MethodImplAttributes::MIA_IL ? 0 : m_pAsmGen->GetValidRVA();
+                    m_pAsmGen->UpdateMethodDef(GetDeclaringType()->GetToken(), GetName(), GetAttribute(), GetSignature(), codeRva, implAttr, m_mdt);
                     
                     if (IsGenericMethod())
                     {
@@ -135,7 +138,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     {
                         CPPANONYM_LOG_NAMED_SCOPE("if (!isGenericMethodInstance)");
 
-                        m_pAsmGen->UpdateMemberRef(GetDeclaringType()->GetToken(), GetName(), GetSignature(), m_mdt);
+                        auto const *pSrcMethod = m_pSrcMethod->GetSourceMethod();
+                        auto const *pSrcAsm = pSrcMethod->GetAssembly();
+                        m_pAsmGen->UpdateImportMember(pSrcAsm, pSrcMethod->GetToken(), GetDeclaringType()->GetToken(), m_mdt);
                     }
                 }
                 else
@@ -228,14 +233,33 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             if (m_pSrcMethod == nullptr)
             {
-                    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-                }
-                else
-                {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
+            else
+            {
                 m_attr = m_pSrcMethod->GetAttribute();
             }
         }
         return m_attr;
+    }
+
+
+
+    template<class ApiHolder>    
+    MethodImplAttributes BaseMethodGeneratorPimpl<ApiHolder>::GetMethodImplementationFlags() const
+    {
+        if (m_implAttr == MethodImplAttributes::MIA_UNREACHED)
+        {
+            if (!m_pSrcMethod)
+            {
+                m_implAttr = MethodImplAttributes::MIA_IL;
+            }
+            else
+            {
+                m_implAttr = m_pSrcMethod->GetMethodImplementationFlags();
+            }
+        }
+        return m_implAttr;
     }
 
 
@@ -636,9 +660,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         _ASSERTE(!m_genericArgsInit);
 
-        for (auto i = 0; i < names.size(); ++i)
+        for (auto i = 0u; i < names.size(); ++i)
         {
-            auto *pGenericArgGen = m_pAsmGen->DefineType(names[i], TypeAttributes::TA_UNREACHED, GenericParamAttributes::GPA_NON_VARIANT, i, static_cast<IMethod const *>(m_pClass));
+            auto *pGenericArgGen = m_pAsmGen->DefineType(names[i], TypeAttributes::TA_UNREACHED, nullptr, TypeKinds::TK_MVAR, GenericParamAttributes::GPA_NON_VARIANT, i, static_cast<IMethod const *>(m_pClass));
             m_genericArgs.push_back(pGenericArgGen);
             genericArgGens.push_back(pGenericArgGen);
         }
@@ -650,6 +674,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
     
     
+    template<class ApiHolder>    
+    void BaseMethodGeneratorPimpl<ApiHolder>::SetImplementationFlags(MethodImplAttributes const &implAttr)
+    {
+        _ASSERTE(m_implAttr == MethodImplAttributes::MIA_UNREACHED);
+        m_implAttr = implAttr;
+    }
+
+
+
     template<class ApiHolder>    
     void BaseMethodGeneratorPimpl<ApiHolder>::SetToken(mdToken mdt)
     {

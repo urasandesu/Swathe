@@ -85,6 +85,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         wstring const &GetName() const;
         CallingConventions GetCallingConvention() const;
         MethodAttributes GetAttribute() const;
+        MethodImplAttributes GetMethodImplementationFlags() const;
         IType const *GetReturnType() const;
         vector<IParameter const *> const &GetParameters() const;
         IMethodBody const *GetMethodBody() const;
@@ -109,6 +110,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         parameter_generator_label_type *DefineParameter(ULONG position, IType const *pParamType);
         void DefineGenericParameters(vector<wstring> const &names);
         void DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens);
+        void SetImplementationFlags(MethodImplAttributes const &implAttr);
 
     private:
         method_generator_pimpl_label_type *Pimpl();
@@ -130,11 +132,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 #ifdef _M_IX86
         static INT const PIMPL_TYPE_SIZE = 128;
 #else
-        static INT const PIMPL_TYPE_SIZE = 216;
+        static INT const PIMPL_TYPE_SIZE = 224;
 #endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
         storage_type m_storage;
+#ifdef _DEBUG
+        method_generator_pimpl_label_type *m_pPimpl;
+#endif
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClass { 

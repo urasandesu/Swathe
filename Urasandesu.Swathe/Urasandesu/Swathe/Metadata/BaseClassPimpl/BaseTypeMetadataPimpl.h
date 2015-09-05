@@ -126,6 +126,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Initialize(assembly_metadata_label_type *pAsm);
         mdToken GetToken() const;
         wstring const &GetFullName() const;
+        bool IsPublic() const;
+        bool IsNestedPublic() const;
         bool IsValueType() const;
         bool IsGenericParameter() const;
         bool IsGenericType() const;
@@ -160,6 +162,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         size_t GetHashCode() const;
         void OutDebugInfo() const;
         IType const *MakeArrayType() const;
+        IType const *MakeArrayType(INT rank) const;
+        IType const *MakeArrayType(vector<ArrayDimension> const &arrDims) const;
         IType const *MakeGenericType(vector<IType const *> const &genericArgs) const;
         IType const *MakePointerType() const;
         IType const *MakeByRefType() const;

@@ -112,6 +112,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             wstring const &GetName() const { return MetadataSpecialValues::EMPTY_NAME; }
             CallingConventions GetCallingConvention() const { return CallingConventions::CC_UNREACHED; }
             MethodAttributes GetAttribute() const { return MethodAttributes::MA_UNREACHED; }
+            MethodImplAttributes GetMethodImplementationFlags() const { return MethodImplAttributes::MIA_UNREACHED; }
             IType const *GetReturnType() const { return nullptr; }
             vector<IParameter const *> const &GetParameters() const { return MetadataSpecialValues::EMPTY_PARAMETERS; }
             IMethodBody const *GetMethodBody() const { return nullptr; }

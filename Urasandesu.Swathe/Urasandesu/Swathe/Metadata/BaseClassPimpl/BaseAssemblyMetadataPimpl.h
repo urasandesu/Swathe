@@ -241,6 +241,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         ICustomAttributePtrRange GetCustomAttributes() const;
         ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const;
         ITypePtrRange GetTypes() const;
+        IMetaDataAssemblyImport &GetCOMMetaDataAssemblyImport() const;
+        IMetaDataImport2 &GetCOMMetaDataImport() const;
+        IMetaDataAssemblyEmit &GetCOMMetaDataAssemblyEmit();
+        IMetaDataEmit2 &GetCOMMetaDataEmit();
         bool Equals(IAssembly const *pAsm) const;
         size_t GetHashCode() const;
         AutoPtr<IPortableExecutableReader const> const &GetPortableExecutableReader() const;
@@ -319,8 +323,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void FillMemberRefProperties(mdMemberRef mdtTarget, mdToken &mdtOwner, wstring &name, Signature &sig) const;
         void FillCustomAttributeProperties(mdCustomAttribute mdtTarget, Signature &sig, mdToken &mdtOwner, mdToken &mdtCtor) const;
         
-        IMetaDataAssemblyImport &GetCOMMetaDataAssemblyImport() const;
-        IMetaDataImport2 &GetCOMMetaDataImport() const;
         DWORD GetOpenFlags() const;
         void SetOpenFlags(DWORD openFlags);
         void SetOpeningAssembly(assembly_metadata_label_type const *pOpeningAsm);

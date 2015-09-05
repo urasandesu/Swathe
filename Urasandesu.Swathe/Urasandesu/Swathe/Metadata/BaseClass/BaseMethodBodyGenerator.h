@@ -125,6 +125,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void Emit(OpCode const &opCode, LONGLONG arg);
         void Emit(OpCode const &opCode, vector<INT> const &offsets);
         void Emit(OpCode const &opCode, vector<Label> const &labels);
+        void Emit(OpCode const &opCode, CHAR arg);
         void Emit(OpCode const &opCode, FLOAT arg);
         void Emit(OpCode const &opCode);
         void Emit(IInstruction const *pInst);

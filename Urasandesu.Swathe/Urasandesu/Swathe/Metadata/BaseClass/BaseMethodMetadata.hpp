@@ -47,6 +47,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BOOST_MPL_ASSERT_RELATION(sizeof(method_metadata_pimpl_label_type), ==, sizeof(storage_type));
 #endif
         new(Pimpl())method_metadata_pimpl_label_type(this);
+#ifdef _DEBUG
+        m_pPimpl = Pimpl();
+#endif
     }
 
     template<class ApiHolder>    
@@ -100,6 +103,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     MethodAttributes BaseMethodMetadata<ApiHolder>::GetAttribute() const
     {
         return Pimpl()->GetAttribute();
+    }
+
+    template<class ApiHolder>    
+    MethodImplAttributes BaseMethodMetadata<ApiHolder>::GetMethodImplementationFlags() const
+    {
+        return Pimpl()->GetMethodImplementationFlags();
     }
 
     template<class ApiHolder>    

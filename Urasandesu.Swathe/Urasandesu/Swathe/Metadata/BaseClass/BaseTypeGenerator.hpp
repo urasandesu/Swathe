@@ -47,6 +47,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         BOOST_MPL_ASSERT_RELATION(sizeof(type_generator_pimpl_label_type), ==, sizeof(storage_type));
 #endif
         new(Pimpl())type_generator_pimpl_label_type(this);
+#ifdef _DEBUG
+        m_pPimpl = Pimpl();
+#endif
     }
 
     template<class ApiHolder>    
@@ -90,6 +93,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         return Pimpl()->GetFullName();
     }
     
+    template<class ApiHolder>    
+    bool BaseTypeGenerator<ApiHolder>::IsPublic() const
+    {
+        return Pimpl()->IsPublic();
+    }
+
+    template<class ApiHolder>    
+    bool BaseTypeGenerator<ApiHolder>::IsNestedPublic() const
+    {
+        return Pimpl()->IsNestedPublic();
+    }
+
     template<class ApiHolder>    
     bool BaseTypeGenerator<ApiHolder>::IsValueType() const
     {
@@ -172,6 +187,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IType const *BaseTypeGenerator<ApiHolder>::MakeArrayType() const
     {
         return Pimpl()->MakeArrayType();
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseTypeGenerator<ApiHolder>::MakeArrayType(INT rank) const
+    {
+        return Pimpl()->MakeArrayType(rank);
+    }
+
+    template<class ApiHolder>    
+    IType const *BaseTypeGenerator<ApiHolder>::MakeArrayType(vector<ArrayDimension> const &arrDims) const
+    {
+        return Pimpl()->MakeArrayType(arrDims);
     }
 
     template<class ApiHolder>    
@@ -397,6 +424,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    typename BaseTypeGenerator<ApiHolder>::type_generator_label_type *BaseTypeGenerator<ApiHolder>::DefineNestedType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType)
+    {
+        return Pimpl()->DefineNestedType(fullName, attr, pBaseType);
+    }
+
+    template<class ApiHolder>    
     typename BaseTypeGenerator<ApiHolder>::field_generator_label_type *BaseTypeGenerator<ApiHolder>::DefineField(wstring const &name, IType const *pFieldType, FieldAttributes const &attr)
     {
         return Pimpl()->DefineField(name, pFieldType, attr);
@@ -408,6 +441,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         return Pimpl()->DefineMethod(name, attr, callingConvention, pRetType, paramTypes);
     }
     
+    template<class ApiHolder>    
+    typename BaseTypeGenerator<ApiHolder>::method_generator_label_type *BaseTypeGenerator<ApiHolder>::DefineConstructor(MethodAttributes const &attr, CallingConventions const &callingConvention, vector<IType const *> const &paramTypes)
+    {
+        return Pimpl()->DefineConstructor(attr, callingConvention, paramTypes);
+    }
+
     template<class ApiHolder>    
     typename BaseTypeGenerator<ApiHolder>::method_generator_label_type *BaseTypeGenerator<ApiHolder>::DefineDefaultConstructor(MethodAttributes const &attr)
     {
@@ -427,6 +466,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
     
     template<class ApiHolder>    
+    void BaseTypeGenerator<ApiHolder>::DefineGenericParameters(vector<wstring> const &names)
+    {
+        Pimpl()->DefineGenericParameters(names);
+    }
+
+    template<class ApiHolder>    
+    void BaseTypeGenerator<ApiHolder>::DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens)
+    {
+        Pimpl()->DefineGenericParameters(names, genericArgGens);
+    }
+    
+    template<class ApiHolder>    
+    IType const *BaseTypeGenerator<ApiHolder>::CreateType() const
+    {
+        return Pimpl()->CreateType();
+    }
+
+    template<class ApiHolder>    
     void BaseTypeGenerator<ApiHolder>::SetFullName(wstring const &fullName)
     {
         Pimpl()->SetFullName(fullName);
@@ -436,6 +493,24 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseTypeGenerator<ApiHolder>::SetAttributes(TypeAttributes const &attr)
     {
         Pimpl()->SetAttributes(attr);
+    }
+
+    template<class ApiHolder>    
+    void BaseTypeGenerator<ApiHolder>::SetBaseType(IType const *pBaseType)
+    {
+        Pimpl()->SetBaseType(pBaseType);
+    }
+
+    template<class ApiHolder>    
+    void BaseTypeGenerator<ApiHolder>::SetKind(TypeKinds const &kind)
+    {
+        Pimpl()->SetKind(kind);
+    }
+
+    template<class ApiHolder>    
+    void BaseTypeGenerator<ApiHolder>::SetGenericArguments(vector<IType const *> const &genericArgs)
+    {
+        Pimpl()->SetGenericArguments(genericArgs);
     }
 
     template<class ApiHolder>    

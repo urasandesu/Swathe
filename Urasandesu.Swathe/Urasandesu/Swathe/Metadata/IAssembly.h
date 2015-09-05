@@ -120,6 +120,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual ICustomAttributePtrRange GetCustomAttributes(IType const *pAttributeType) const = 0;
         virtual ITypePtrRange GetTypes() const = 0;
         virtual Urasandesu::CppAnonym::Utilities::AutoPtr<Hosting::IPortableExecutableReader const> const &GetPortableExecutableReader() const = 0;
+        virtual IMetaDataAssemblyImport &GetCOMMetaDataAssemblyImport() const = 0;
+        virtual IMetaDataImport2 &GetCOMMetaDataImport() const = 0;
+        virtual IMetaDataAssemblyEmit &GetCOMMetaDataAssemblyEmit() = 0;
+        virtual IMetaDataEmit2 &GetCOMMetaDataEmit() = 0;
         virtual bool Equals(IAssembly const *pAsm) const = 0;
         virtual size_t GetHashCode() const = 0;
     };

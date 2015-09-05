@@ -107,6 +107,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    Operand const &BaseInstructionMetadataPimpl<ApiHolder>::GetResolvedOperand() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     SIZE_T BaseInstructionMetadataPimpl<ApiHolder>::GetSize() const
     {
         // TODO: Commonize.
@@ -486,12 +494,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         auto const *pBody = _this->m_pBody;
         
-        auto offset = static_cast<BYTE>(*i);
-        _ASSERTE(i + sizeof(BYTE) <= i_end);
+        auto offset = static_cast<CHAR>(*i);
+        _ASSERTE(i + sizeof(CHAR) <= i_end);
 
         operand = offset;
         
-        return sizeof(BYTE);
+        return sizeof(CHAR);
     }
     
     
@@ -501,12 +509,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         auto *pBody = _this->m_pBody;
 
-        auto value = static_cast<BYTE>(*i);
-        _ASSERTE(i + sizeof(BYTE) <= i_end);
+        auto value = static_cast<CHAR>(*i);
+        _ASSERTE(i + sizeof(CHAR) <= i_end);
 
         operand = value;
 
-        return sizeof(BYTE);
+        return sizeof(CHAR);
     }
     
     

@@ -92,6 +92,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IType() { }
         virtual mdToken GetToken() const = 0;
         virtual std::wstring const &GetFullName() const = 0;
+        virtual bool IsPublic() const = 0;
+        virtual bool IsNestedPublic() const = 0;
         virtual bool IsValueType() const = 0;
         virtual bool IsGenericParameter() const = 0;
         virtual bool IsGenericType() const = 0;
@@ -106,6 +108,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual std::vector<ArrayDimension> const &GetDimensions() const = 0;
         virtual Signature const &GetSignature() const = 0;
         virtual IType const *MakeArrayType() const = 0;
+        virtual IType const *MakeArrayType(INT rank) const = 0;
+        virtual IType const *MakeArrayType(std::vector<ArrayDimension> const &arrDims) const = 0;
         virtual IType const *MakeGenericType(std::vector<IType const *> const &genericArgs) const = 0;
         virtual IType const *MakePointerType() const = 0;
         virtual IType const *MakeByRefType() const = 0;

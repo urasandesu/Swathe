@@ -66,12 +66,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pPEInfo(nullptr),
         m_mda(mdAssemblyNil),
         m_amdInit(false),
+        m_snKeyInit(false), 
         m_casInit(false),
         m_refAsmsInit(false), 
         m_pSavingAsmGen(nullptr), 
         m_pSrcAsm(nullptr), 
         m_isModifiable(false)
-    { }
+    { 
+        ::ZeroMemory(&m_amd, sizeof(ASSEMBLYMETADATA));
+    }
 
     
     
@@ -134,8 +137,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         CPPANONYM_LOG_FUNCTION();
 
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-
         if (IsNilToken(m_mda))
         {
             CPPANONYM_LOG_NAMED_SCOPE("if (IsNilToken(m_mda))");
@@ -144,18 +145,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             {
                 CPPANONYM_LOG_NAMED_SCOPE("if (!m_pSrcAsm)");
 
-                _ASSERTE(!m_name.empty());
-                _ASSERTE(m_pSnKey);
-                ::ZeroMemory(&m_amd, sizeof(ASSEMBLYMETADATA));
-                
-                CPPANONYM_D_LOGW1(L"Getting Assembly Generator Token... 1: %|1$s|", m_name);
-                auto const &pubKeyBlob = m_pSnKey->GetPublicKeyBlob();
-                auto pubKeyBlobSize = m_pSnKey->GetPublicKeyBlobSize();
-                auto &comMetaAsmEmt = m_pClass->GetCOMMetaDataAssemblyEmit();
-                auto hr = comMetaAsmEmt.DefineAssembly(&pubKeyBlob, pubKeyBlobSize, CALG_SHA1, m_name.c_str(), &m_amd, AssemblyFlags::AF_PA_NONE, &m_mda);
-                if (FAILED(hr))
-                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-                
+                auto const *pPubKeyBlob = !m_pSnKey ? nullptr : &m_pSnKey->GetPublicKeyBlob();
+                auto pubKeyBlobSize = !m_pSnKey ? 0 : m_pSnKey->GetPublicKeyBlobSize();
+                m_pClass->UpdateAssembly(pPubKeyBlob, pubKeyBlobSize, m_name, m_amd, AssemblyFlags::AF_PA_NONE, m_mda);
                 m_amdInit = true;
             }
             else
@@ -163,18 +155,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                 CPPANONYM_LOG_NAMED_SCOPE("if (m_pSrcAsm)");
 
                 auto const &pSnKey = m_pSrcAsm->GetStrongNameKey();
-                auto const &pubKeyToken = pSnKey->GetPublicKeyToken();
-                auto const &name = m_pSrcAsm->GetName();
-                auto const &amd = m_pSrcAsm->GetAssemblyMetadata();
-                auto asmFlags = m_pSrcAsm->GetFlags();
-                asmFlags &= ~AssemblyFlags::AF_PUBLIC_KEY;
-                CPPANONYM_D_LOGW1(L"Getting Assembly Generator Token... 2: %|1$s|", name);
-                auto &comMetaAsmEmt = m_pClass->GetCOMMetaDataAssemblyEmit();   // TODO: この辺実装中。。。
-                auto hr = comMetaAsmEmt.DefineAssemblyRef(&pubKeyToken[0], static_cast<ULONG>(pubKeyToken.size()), name.c_str(), &amd, NULL, 0, asmFlags.Value(), &m_mda);
-                if (FAILED(hr))
-                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                auto const *pPubKeyToken = !pSnKey ? nullptr : &pSnKey->GetPublicKeyToken()[0];
+                auto pubKeyTokenSize = !pSnKey ? 0 : static_cast<ULONG>(pSnKey->GetPublicKeyToken().size());
+                m_pClass->UpdateAssemblyRef(pPubKeyToken, pubKeyTokenSize, m_pSrcAsm->GetName(), m_pSrcAsm->GetAssemblyMetadata(), m_pSrcAsm->GetFlags() & ~AssemblyFlags::AF_PUBLIC_KEY, m_mda);
             }
-            CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", m_mda);
         }
         return m_mda;
     }
@@ -234,9 +218,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     AutoPtr<IStrongNameKey const> const &BaseAssemblyGeneratorPimpl<ApiHolder>::GetStrongNameKey() const
     {
-        if (!m_pSnKey)
+        if (!m_snKeyInit)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (!m_pSrcAsm)
+            {
+                m_pSnKey = AutoPtr<IStrongNameKey const>();
+            }
+            else
+            {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
+            m_snKeyInit = true;
         }
         return m_pSnKey;
     }
@@ -246,9 +238,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     void BaseAssemblyGeneratorPimpl<ApiHolder>::SetStrongNameKey(AutoPtr<IStrongNameKey const> const &pSnKey)
     {
-        _ASSERTE(!m_pSnKey);
-        _ASSERTE(pSnKey);
+        _ASSERTE(!m_snKeyInit);
         m_pSnKey = pSnKey;
+        m_snKeyInit = true;
     }
     
     
@@ -434,7 +426,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         if (!m_pSrcAsm)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            if (m_procArchs.empty())
+            {
+                // TODO: 
+                m_procArchs.resize(2);
+#ifdef _M_IX86
+                m_procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_INTEL);
+                m_procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+#else
+                m_procArchs[0] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_AMD64);
+                m_procArchs[1] = ProcessorArchitecture(PROCESSOR_ARCHITECTURE_MSIL);
+#endif
+            }
+            return m_procArchs;
         }
         else
         {
@@ -455,7 +459,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IAssembly const *BaseAssemblyGeneratorPimpl<ApiHolder>::GetAssembly(wstring const &fullName, vector<ProcessorArchitecture> const &procArchs) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_pSrcAsm)
+        {
+            return m_pDisp->GetAssembly(fullName, procArchs);
+        }
+        else
+        {
+            return m_pSrcAsm->GetAssembly(fullName, procArchs);
+        }
     }
 
 
@@ -595,6 +606,73 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    IMetaDataAssemblyImport &BaseAssemblyGeneratorPimpl<ApiHolder>::GetCOMMetaDataAssemblyImport() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    IMetaDataImport2 &BaseAssemblyGeneratorPimpl<ApiHolder>::GetCOMMetaDataImport() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
+    IMetaDataAssemblyEmit &BaseAssemblyGeneratorPimpl<ApiHolder>::GetCOMMetaDataAssemblyEmit()
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (m_pSavingAsmGen == nullptr)
+        {
+            if (m_pComMetaAsmEmt.p == nullptr)
+            {
+                auto &comMetaEmt = m_pClass->GetCOMMetaDataEmit();
+                auto hr = comMetaEmt.QueryInterface(IID_IMetaDataAssemblyEmit, 
+                                                    reinterpret_cast<void **>(&m_pComMetaAsmEmt));
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+            return *m_pComMetaAsmEmt;
+        }
+        else
+        {
+            return m_pSavingAsmGen->GetCOMMetaDataAssemblyEmit();
+        }
+    }
+    
+    
+    
+    template<class ApiHolder>    
+    IMetaDataEmit2 &BaseAssemblyGeneratorPimpl<ApiHolder>::GetCOMMetaDataEmit()
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        if (m_pSavingAsmGen == nullptr)
+        {
+            if (m_pComMetaEmt.p == nullptr)
+            {
+                auto &comMetaDisp = m_pDisp->GetCOMMetaDataDispenser();
+
+                auto hr = comMetaDisp.DefineScope(CLSID_CorMetaDataRuntime, 0, IID_IMetaDataEmit2, 
+                                                  reinterpret_cast<IUnknown **>(&m_pComMetaEmt));
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+            return *m_pComMetaEmt.p;
+        }
+        else
+        {
+            return m_pSavingAsmGen->GetCOMMetaDataEmit();
+        }
+    }
+
+
+
+    template<class ApiHolder>    
     bool BaseAssemblyGeneratorPimpl<ApiHolder>::Equals(IAssembly const *pAsm) const
     {
         if (m_pClass == pAsm)
@@ -685,7 +763,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IModule const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IModule const *pMod) const
     {
-        using boost::adaptors::filtered;
         using Urasandesu::CppAnonym::Collections::FindIf;
 
         typedef vector<module_generator_label_type const *> ModGens;
@@ -706,7 +783,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IType const *pType) const
     {
-        using boost::adaptors::filtered;
         using Urasandesu::CppAnonym::Collections::FindIf;
 
         typedef vector<type_generator_label_type const *> TypeGens;
@@ -719,7 +795,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (result)
             return *result;
 
-        return pRefAsmGen->DefineType(pType, TypeProvider());
+        return pRefAsmGen->DefineType(mdTokenNil, TypeKinds::TK_UNREACHED, false, MetadataSpecialValues::EMPTY_DIMENSIONS, -1, false, MetadataSpecialValues::EMPTY_TYPES, pType, TypeProvider());
     }
 
 
@@ -727,7 +803,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IField const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IField const *pField) const
     {
-        using boost::adaptors::filtered;
         using Urasandesu::CppAnonym::Collections::FindIf;
 
         typedef vector<field_generator_label_type const *> FieldGens;
@@ -748,7 +823,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IProperty const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IProperty const *pProp) const
     {
-        using boost::adaptors::filtered;
         using Urasandesu::CppAnonym::Collections::FindIf;
 
         typedef vector<property_generator_label_type const *> PropertyGens;
@@ -769,7 +843,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethod const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IMethod const *pMethod) const
     {
-        using boost::adaptors::filtered;
         using Urasandesu::CppAnonym::Collections::FindIf;
 
         typedef vector<method_generator_label_type const *> MethodGens;
@@ -790,7 +863,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IMethodBody const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IMethodBody const *pBody) const
     {
-        using boost::adaptors::filtered;
         using Urasandesu::CppAnonym::Collections::FindIf;
 
         typedef vector<method_body_generator_label_type const *> MethodBodyGens;
@@ -811,7 +883,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IParameter const *BaseAssemblyGeneratorPimpl<ApiHolder>::Resolve(IParameter const *pParam) const
     {
-        using boost::adaptors::filtered;
         using Urasandesu::CppAnonym::Collections::FindIf;
 
         typedef vector<parameter_generator_label_type const *> ParamGens;
@@ -958,9 +1029,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member)
+    typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::DefineType(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, TypeKinds const &kind, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member)
     {
-        auto pNewTypeGen = NewTypeGenerator(fullName, attr, gpAttr, genericParamPos, member);
+        auto pNewTypeGen = NewTypeGenerator(fullName, attr, pBaseType, kind, gpAttr, genericParamPos, member);
         pNewTypeGen.Persist();
         return pNewTypeGen.Get();
     }
@@ -968,9 +1039,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::DefineType(IType const *pSrcType, TypeProvider const &member)
+    typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type *BaseAssemblyGeneratorPimpl<ApiHolder>::DefineType(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, IType const *pSrcType, TypeProvider const &member)
     {
-        auto pNewTypeGen = NewTypeGenerator(pSrcType, member);
+        auto pNewTypeGen = NewTypeGenerator(mdt, kind, arrDimsSpecified, arrDims, genericParamPos, genericArgsSpecified, genericArgs, pSrcType, member);
         pNewTypeGen.Persist();
         return pNewTypeGen.Get();
     }
@@ -978,11 +1049,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewTypeGenerator(wstring const &fullName, TypeAttributes const &attr, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member) const
+    TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewTypeGenerator(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, TypeKinds const &kind, GenericParamAttributes const &gpAttr, ULONG genericParamPos, TypeProvider const &member) const
     {
         auto pTypeGen = m_pMetaInfo->NewTypeGeneratorCore(m_pClass);
         pTypeGen->SetFullName(fullName);
         pTypeGen->SetAttributes(attr);
+        pTypeGen->SetBaseType(pBaseType);
+        pTypeGen->SetKind(kind);
         pTypeGen->SetGenericParameterAttributes(gpAttr);
         pTypeGen->SetGenericParameterPosition(genericParamPos);
         pTypeGen->SetMember(member);
@@ -992,9 +1065,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
-    TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewTypeGenerator(IType const *pSrcType, TypeProvider const &member) const
+    TempPtr<typename BaseAssemblyGeneratorPimpl<ApiHolder>::type_generator_label_type> BaseAssemblyGeneratorPimpl<ApiHolder>::NewTypeGenerator(mdToken mdt, TypeKinds const &kind, bool arrDimsSpecified, vector<ArrayDimension> const &arrDims, ULONG genericParamPos, bool genericArgsSpecified, vector<IType const *> const &genericArgs, IType const *pSrcType, TypeProvider const &member) const
     {
         auto pTypeGen = m_pMetaInfo->NewTypeGeneratorCore(m_pClass);
+        //pTypeGen->SetToken(mdt);  // TODO: 
+        pTypeGen->SetKind(kind);
+        //if (arrDimsSpecified)     // TODO: 
+        //    pTypeGen->SetDimensions(arrDims);
+        pTypeGen->SetGenericParameterPosition(genericParamPos);
+        if (genericArgsSpecified)
+            pTypeGen->SetGenericArguments(genericArgs);
         pTypeGen->SetSourceType(pSrcType);
         pTypeGen->SetMember(member);
         return pTypeGen;
@@ -1403,6 +1483,113 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateAssembly(PublicKeyBlob const *pPubKeyBlob, DWORD pubKeyBlobSize, wstring const &name, ASSEMBLYMETADATA const &amd, AssemblyFlags const &asmFlags, mdAssembly &mda)
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        _ASSERTE(!name.empty());
+        _ASSERTE(!pPubKeyBlob && !pubKeyBlobSize || pPubKeyBlob && pubKeyBlobSize);
+
+        CPPANONYM_D_LOGW(L"Define Assembly...");
+        CPPANONYM_D_LOGW1(L"pPubKeyBlob->SigAlgID: 0x%|1$08X|", (!pPubKeyBlob ? 0 : pPubKeyBlob->SigAlgID));
+        CPPANONYM_D_LOGW1(L"pPubKeyBlob->HashAlgID: 0x%|1$08X|", (!pPubKeyBlob ? 0 : pPubKeyBlob->HashAlgID));
+        CPPANONYM_D_LOGW1(L"pPubKeyBlob->cbPublicKey: 0x%|1$08X|", (!pPubKeyBlob ? 0 : pPubKeyBlob->cbPublicKey));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"pPubKeyBlob->PublicKey:";
+            for (auto i = 0ul; pPubKeyBlob && i < pPubKeyBlob->cbPublicKey; ++i)
+                oss << boost::wformat(L" %|1$02X|") % pPubKeyBlob->PublicKey[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"pubKeyBlobSize: 0x%|1$08X|", pubKeyBlobSize);
+        CPPANONYM_D_LOGW1(L"name: %|1$s|", name);
+        CPPANONYM_D_LOGW1(L"amd.usMajorVersion: %|1$d|", amd.usMajorVersion);
+        CPPANONYM_D_LOGW1(L"amd.usMinorVersion: %|1$d|", amd.usMinorVersion);
+        CPPANONYM_D_LOGW1(L"amd.usBuildNumber: %|1$d|", amd.usBuildNumber);
+        CPPANONYM_D_LOGW1(L"amd.usRevisionNumber: %|1$d|", amd.usRevisionNumber);
+        CPPANONYM_D_LOGW1(L"amd.szLocale: %|1$s|", (!amd.cbLocale ? wstring(L"neutral") : wstring(amd.szLocale, amd.cbLocale)));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"amd.rProcessor:";
+            for (auto i = 0ul; i < amd.ulProcessor; ++i)
+                oss << boost::wformat(L" %|1$02X|") % amd.rProcessor[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"amd.rOS:";
+            for (auto i = 0ul; i < amd.ulOS; ++i)
+                oss << boost::wformat(L" { dwOSPlatformId: 0x%|1$08X|, dwOSMajorVersion: 0x%|2$08X|, dwOSMinorVersion: 0x%|3$08X| }") % amd.rOS[i].dwOSPlatformId % amd.rOS[i].dwOSMajorVersion % amd.rOS[i].dwOSMinorVersion;
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"asmFlags: 0x%|1$08X|", asmFlags.Value());
+
+        auto &comMetaAsmEmt = GetCOMMetaDataAssemblyEmit();
+        auto hr = comMetaAsmEmt.DefineAssembly(pPubKeyBlob, pubKeyBlobSize, !pPubKeyBlob ? ULONG_MAX : CALG_SHA1, name.c_str(), &amd, asmFlags.Value(), &mda);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mda);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateAssemblyRef(BYTE const *pPubKeyToken, DWORD pubKeyTokenSize, wstring const &name, ASSEMBLYMETADATA const &amd, AssemblyFlags const &asmFlags, mdAssembly &mda)
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        _ASSERTE(!name.empty());
+        _ASSERTE(!pPubKeyToken && !pubKeyTokenSize || pPubKeyToken && pubKeyTokenSize);
+
+        CPPANONYM_D_LOGW(L"Define AssemblyRef...");
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"pPubKeyToken:";
+            for (auto i = 0ul; pPubKeyToken && i < pubKeyTokenSize; ++i)
+                oss << boost::wformat(L" %|1$02X|") % pPubKeyToken[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"pubKeyTokenSize: 0x%|1$08X|", pubKeyTokenSize);
+        CPPANONYM_D_LOGW1(L"name: %|1$s|", name);
+        CPPANONYM_D_LOGW1(L"amd.usMajorVersion: %|1$d|", amd.usMajorVersion);
+        CPPANONYM_D_LOGW1(L"amd.usMinorVersion: %|1$d|", amd.usMinorVersion);
+        CPPANONYM_D_LOGW1(L"amd.usBuildNumber: %|1$d|", amd.usBuildNumber);
+        CPPANONYM_D_LOGW1(L"amd.usRevisionNumber: %|1$d|", amd.usRevisionNumber);
+        CPPANONYM_D_LOGW1(L"amd.szLocale: %|1$s|", (!amd.cbLocale ? wstring(L"neutral") : wstring(amd.szLocale, amd.cbLocale)));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"amd.rProcessor:";
+            for (auto i = 0ul; i < amd.ulProcessor; ++i)
+                oss << boost::wformat(L" %|1$02X|") % amd.rProcessor[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"amd.rOS:";
+            for (auto i = 0ul; i < amd.ulOS; ++i)
+                oss << boost::wformat(L" { dwOSPlatformId: 0x%|1$08X|, dwOSMajorVersion: 0x%|2$08X|, dwOSMinorVersion: 0x%|3$08X| }") % amd.rOS[i].dwOSPlatformId % amd.rOS[i].dwOSMajorVersion % amd.rOS[i].dwOSMinorVersion;
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"asmFlags: 0x%|1$08X|", asmFlags.Value());
+
+        auto &comMetaAsmEmt = GetCOMMetaDataAssemblyEmit();
+        auto hr = comMetaAsmEmt.DefineAssemblyRef(pPubKeyToken, pubKeyTokenSize, name.c_str(), &amd, nullptr, 0, asmFlags.Value(), &mda);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mda);
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateTypeDef(wstring const &fullName, TypeAttributes const &attr, IType const *pBaseType, vector<IType const *> const &interfaces, mdTypeDef &mdt)
     {
         _ASSERTE(pBaseType);
@@ -1510,6 +1697,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto const &blob = sig.GetBlob();
         _ASSERTE(!blob.empty());
 
+        CPPANONYM_D_LOGW(L"Define TypeSpec...");
         if (CPPANONYM_D_LOG_ENABLED())
         {
             auto oss = std::wostringstream();
@@ -1701,6 +1889,41 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateImportMember(IAssembly const *pSrcAsm, mdToken mdMember, mdToken mdResolutionScope, mdMemberRef &mdt)
+    {
+        _ASSERTE(pSrcAsm);
+        UpdateImportMember(&pSrcAsm->GetCOMMetaDataAssemblyImport(), &pSrcAsm->GetCOMMetaDataImport(), mdMember, mdResolutionScope, mdt);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateImportMember(IMetaDataAssemblyImport *pComMetaAsmImp, IMetaDataImport2 *pComMetaImp, mdToken mdMember, mdToken mdResolutionScope, mdMemberRef &mdt)
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        _ASSERTE(pComMetaAsmImp);
+        _ASSERTE(pComMetaImp);
+        _ASSERTE(!IsNilToken(mdMember));
+        _ASSERTE(!IsNilToken(mdResolutionScope));
+
+        CPPANONYM_D_LOGW(L"Define Import Member...");
+        CPPANONYM_D_LOGW1(L"pComMetaAsmImp: 0x%|1|", reinterpret_cast<void *>(pComMetaAsmImp));
+        CPPANONYM_D_LOGW1(L"pComMetaImp: 0x%|1|", reinterpret_cast<void *>(pComMetaImp));
+        CPPANONYM_D_LOGW1(L"mdMember: 0x%|1$08X|", mdMember);
+        CPPANONYM_D_LOGW1(L"mdResolutionScope: 0x%|1$08X|", mdResolutionScope);
+
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.DefineImportMember(pComMetaAsmImp, nullptr, 0, pComMetaImp, mdMember, &GetCOMMetaDataAssemblyEmit(), mdResolutionScope, &mdt);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Token: 0x%|1$08X|", mdt);
+    }
+
+
+
+    template<class ApiHolder>    
     ULONG BaseAssemblyGeneratorPimpl<ApiHolder>::GetValidRVA() const
     {
         using boost::array;
@@ -1775,57 +1998,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         
         return codeRva;
-    }
-
-
-
-    template<class ApiHolder>    
-    IMetaDataAssemblyEmit &BaseAssemblyGeneratorPimpl<ApiHolder>::GetCOMMetaDataAssemblyEmit()
-    {
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-
-        if (m_pSavingAsmGen == nullptr)
-        {
-            if (m_pComMetaAsmEmt.p == nullptr)
-            {
-                auto &comMetaEmt = m_pClass->GetCOMMetaDataEmit();
-                auto hr = comMetaEmt.QueryInterface(IID_IMetaDataAssemblyEmit, 
-                                                    reinterpret_cast<void **>(&m_pComMetaAsmEmt));
-                if (FAILED(hr))
-                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-            }
-            return *m_pComMetaAsmEmt;
-        }
-        else
-        {
-            return m_pSavingAsmGen->GetCOMMetaDataAssemblyEmit();
-        }
-    }
-    
-    
-    
-    template<class ApiHolder>    
-    IMetaDataEmit2 &BaseAssemblyGeneratorPimpl<ApiHolder>::GetCOMMetaDataEmit()
-    {
-        using Urasandesu::CppAnonym::CppAnonymCOMException;
-
-        if (m_pSavingAsmGen == nullptr)
-        {
-            if (m_pComMetaEmt.p == nullptr)
-            {
-                auto &comMetaDisp = m_pDisp->GetCOMMetaDataDispenser();
-
-                auto hr = comMetaDisp.DefineScope(CLSID_CorMetaDataRuntime, 0, IID_IMetaDataEmit2, 
-                                                  reinterpret_cast<IUnknown **>(&m_pComMetaEmt));
-                if (FAILED(hr))
-                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-            }
-            return *m_pComMetaEmt.p;
-        }
-        else
-        {
-            return m_pSavingAsmGen->GetCOMMetaDataEmit();
-        }
     }
 
 

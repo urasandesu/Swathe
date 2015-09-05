@@ -48,6 +48,10 @@
 #include <Urasandesu/Swathe/Metadata/MethodAttributes.hpp>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_METHODIMPLATTRIBUTES_HPP
+#include <Urasandesu/Swathe/Metadata/MethodImplAttributes.hpp>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_SIGNATUREFWD_H
 #include <Urasandesu/Swathe/Metadata/SignatureFwd.h>
 #endif
@@ -73,6 +77,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         virtual std::wstring const &GetName() const = 0;
         virtual CallingConventions GetCallingConvention() const = 0;
         virtual MethodAttributes GetAttribute() const = 0;
+        virtual MethodImplAttributes GetMethodImplementationFlags() const = 0;
         virtual IType const *GetReturnType() const = 0;
         virtual std::vector<IParameter const *> const &GetParameters() const = 0;
         virtual IMethodBody const *GetMethodBody() const = 0;

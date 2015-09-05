@@ -55,6 +55,23 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         SIZE_T m_index;
     };
     
+    class ResolvedLabel
+    {
+    public: 
+        ResolvedLabel() : 
+            m_targetOffset(-1)
+        { }
+
+        ResolvedLabel(ULONG32 targetOffset) : 
+            m_targetOffset(targetOffset)
+        { }
+
+        ULONG32 GetTargetOffset() const { return m_targetOffset; }
+
+    private:
+        ULONG32 m_targetOffset;
+    };
+    
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 
 #endif  // URASANDESU_SWATHE_METADATA_LABEL_H

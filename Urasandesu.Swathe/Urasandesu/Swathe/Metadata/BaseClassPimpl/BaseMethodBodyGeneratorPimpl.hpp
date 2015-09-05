@@ -44,6 +44,10 @@
 #include <Urasandesu/Swathe/Metadata/IType.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IFIELD_H
+#include <Urasandesu/Swathe/Metadata/IField.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<class ApiHolder>    
@@ -288,15 +292,132 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         }
         return m_rawHeader;
     }
+    
+    
+    
+    template<class ApiHolder>    
+    struct BaseMethodBodyGeneratorPimpl<ApiHolder>::to_string_visitor : 
+        static_visitor<wstring>
+    {
+        to_string_visitor(IInstruction const *pInst) : 
+            m_pInst(pInst)
+        { }
 
+        template<class T>
+        wstring operator ()(T const &v) const
+        {
+            auto oss = std::wostringstream();
+            oss << v;
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| %|3$s|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % oss.str());
+        }
 
+        template<>
+        wstring operator ()<boost::blank>(boost::blank const &) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName());
+        }
+
+        template<> 
+        wstring operator ()<bool>(bool const &arg) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| 0x%|3$02X|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % static_cast<INT>(arg));
+        }
+
+        template<>
+        wstring operator ()<BYTE>(BYTE const &arg) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| 0x%|3$02X|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % static_cast<INT>(arg));
+        }
+        
+        template<> 
+        wstring operator ()<ILocal const *>(ILocal const *const &pLocal) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| 0x%|3$08X|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % pLocal->GetToken());
+        }
+        
+        template<> 
+        wstring operator ()<IField const *>(IField const *const &pField) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| 0x%|3$08X|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % pField->GetToken());
+        }
+        
+        template<> 
+        wstring operator ()<IMethod const *>(IMethod const *const &pMethod) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| 0x%|3$08X|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % pMethod->GetToken());
+        }
+        
+        template<> 
+        wstring operator ()<UserString>(UserString const &us) const
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotSupportedException());
+        }
+        
+        template<> 
+        wstring operator ()<IType const *>(IType const *const &pType) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| 0x%|3$08X|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % pType->GetToken());
+        }
+        
+        template<> 
+        wstring operator ()<Label>(Label const &label) const
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotSupportedException());
+        }
+        
+        template<> 
+        wstring operator ()<std::vector<INT> >(vector<INT> const &offsets) const
+        {
+            using boost::adaptors::transformed;
+            using boost::algorithm::join;
+            using std::back_inserter;
+            using std::function;
+            using std::copy;
+            
+            auto v = vector<wstring>();
+            v.reserve(offsets.size());
+            auto toString = function<wstring(INT)>();
+            toString = [this](INT offset) { return boost::str(boost::wformat(L"0x%|1$04X|") % (m_pInst->GetToken() + m_pInst->GetSize() + offset)); };
+            copy(offsets | transformed(toString), back_inserter(v));
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| %|3$s|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % join(v, L" "));
+        }
+        
+        template<> 
+        wstring operator ()<std::vector<Label> >(std::vector<Label> const &labels) const
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotSupportedException());
+        }
+        
+        template<> 
+        wstring operator ()<StandAloneSig>(StandAloneSig const &t) const
+        {
+            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotSupportedException());
+        }
+        
+        template<> 
+        wstring operator ()<mdToken>(mdToken const &tok) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| 0x%|3$08X|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % tok);
+        }
+        
+        template<> 
+        wstring operator ()<ResolvedLabel>(ResolvedLabel const &label) const
+        {
+            return boost::str(boost::wformat(L"0x%|1$04X| %|2$s| 0x%|3$04X|") % m_pInst->GetToken() % m_pInst->GetOpCode().GetName() % label.GetTargetOffset());
+        }
+
+        IInstruction const *m_pInst;
+    };
 
     template<class ApiHolder>    
     vector<BYTE> const &BaseMethodBodyGeneratorPimpl<ApiHolder>::GetRawBody() const
     {
         CPPANONYM_LOG_FUNCTION();
 
+        using boost::adaptors::transformed;
+        using boost::algorithm::join;
         using std::back_inserter;
+        using std::function;
         using std::copy;
 
         if (!m_rawBodyInit)
@@ -312,8 +433,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             
             if (CPPANONYM_D_LOG_ENABLED())
             {
+                auto v = vector<wstring>();
+                v.reserve(insts.size());
+                auto toString = function<wstring(IInstruction const *)>();
+                toString = [this](IInstruction const *pInst) { return apply_visitor(to_string_visitor(pInst), pInst->GetResolvedOperand()); };
+                copy(insts | transformed(toString), back_inserter(v));
+                CPPANONYM_D_LOGW1(L"Method Body IL Stream: %|1$s|.", join(v, L","));
+            }
+            
+            if (CPPANONYM_D_LOG_ENABLED())
+            {
                 auto oss = std::wostringstream();
-                oss << L"Method Body IL Stream:";
+                oss << L"Method Body IL Stream(RAW):";
                 for (auto i = m_rawBody.begin(), i_end = m_rawBody.end(); i != i_end; ++i)
                     oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
                 CPPANONYM_D_LOGW(oss.str());
@@ -659,25 +790,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
 
-        if (&opCode != &OpCodes::Beq_S && 
-            &opCode != &OpCodes::Bge_S && 
-            &opCode != &OpCodes::Bge_Un_S && 
-            &opCode != &OpCodes::Bgt_S && 
-            &opCode != &OpCodes::Bgt_Un_S && 
-            &opCode != &OpCodes::Ble_S && 
-            &opCode != &OpCodes::Ble_Un_S && 
-            &opCode != &OpCodes::Blt_S && 
-            &opCode != &OpCodes::Blt_Un_S && 
-            &opCode != &OpCodes::Bne_Un_S && 
-            &opCode != &OpCodes::Br_S && 
-            &opCode != &OpCodes::Brfalse_S && 
-            &opCode != &OpCodes::Brtrue_S && 
-            &opCode != &OpCodes::Ldarg_S && 
+        if (&opCode != &OpCodes::Ldarg_S && 
             &opCode != &OpCodes::Ldarga_S && 
-            &opCode != &OpCodes::Ldc_I4_S && 
             &opCode != &OpCodes::Ldloc_S && 
             &opCode != &OpCodes::Ldloca_S && 
-            &opCode != &OpCodes::Leave_S && 
             &opCode != &OpCodes::Starg_S && 
             &opCode != &OpCodes::Stloc_S && 
             &opCode != &OpCodes::Unaligned)
@@ -823,6 +939,39 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto *pInstGen = NewInstructionGeneratorCore();
         pInstGen->SetOpCode(opCode);
         pInstGen->SetOperand(labels);
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodBodyGeneratorPimpl<ApiHolder>::Emit(OpCode const &opCode, CHAR arg)
+    {
+        using Urasandesu::CppAnonym::CppAnonymNotSupportedException;
+
+        if (&opCode != &OpCodes::Beq_S && 
+            &opCode != &OpCodes::Bge_S && 
+            &opCode != &OpCodes::Bge_Un_S && 
+            &opCode != &OpCodes::Bgt_S && 
+            &opCode != &OpCodes::Bgt_Un_S && 
+            &opCode != &OpCodes::Ble_S && 
+            &opCode != &OpCodes::Ble_Un_S && 
+            &opCode != &OpCodes::Blt_S && 
+            &opCode != &OpCodes::Blt_Un_S && 
+            &opCode != &OpCodes::Bne_Un_S && 
+            &opCode != &OpCodes::Br_S && 
+            &opCode != &OpCodes::Brfalse_S && 
+            &opCode != &OpCodes::Brtrue_S && 
+            &opCode != &OpCodes::Ldc_I4_S && 
+            &opCode != &OpCodes::Leave_S)
+        {
+            auto oss = std::wostringstream();
+            oss << L"OpCodes(" << opCode.CStr() << L") is not supported in the overloaded method \"MethodBodyGenerator::Emit(OpCode const &, CHAR)\".";
+            BOOST_THROW_EXCEPTION(CppAnonymNotSupportedException(oss.str()));
+        }
+
+        auto *pInstGen = NewInstructionGeneratorCore();
+        pInstGen->SetOpCode(opCode);
+        pInstGen->SetOperand(arg);
     }
 
 
@@ -1164,6 +1313,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void operator ()<vector<Label> >(vector<Label> const &labels) const
         {
             m__this->Emit(m_opCode, labels);
+        }
+
+        template<>
+        void operator ()<CHAR>(CHAR const &arg) const
+        {
+            m__this->Emit(m_opCode, arg);
         }
 
         mutable method_body_generator_pimpl_label_type *m__this;
