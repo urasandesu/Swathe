@@ -1070,8 +1070,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto pTypeGen = m_pMetaInfo->NewTypeGeneratorCore(m_pClass);
         //pTypeGen->SetToken(mdt);  // TODO: 
         pTypeGen->SetKind(kind);
-        //if (arrDimsSpecified)     // TODO: 
-        //    pTypeGen->SetDimensions(arrDims);
+        if (arrDimsSpecified)     // TODO: 
+            pTypeGen->SetDimensions(arrDims);
         pTypeGen->SetGenericParameterPosition(genericParamPos);
         if (genericArgsSpecified)
             pTypeGen->SetGenericArguments(genericArgs);

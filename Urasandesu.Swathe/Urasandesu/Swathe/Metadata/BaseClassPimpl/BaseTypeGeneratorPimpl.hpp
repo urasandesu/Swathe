@@ -61,6 +61,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_mdt(mdTokenNil), 
         m_attr(TypeAttributes::TA_UNREACHED), 
         m_gpAttr(GenericParamAttributes::GPA_UNREACHED), 
+        m_arrDimsInit(false), 
         m_genericParamPos(static_cast<ULONG>(-1)), 
         m_genericArgsInit(false), 
         m_interfacesInit(false), 
@@ -425,7 +426,19 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     vector<ArrayDimension> const &BaseTypeGeneratorPimpl<ApiHolder>::GetDimensions() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (!m_arrDimsInit)
+        {
+            if (!m_pSrcType)
+            {
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            }
+            else
+            {
+                m_arrDims = m_pSrcType->GetDimensions();
+            }
+            m_arrDimsInit = true;
+        }
+        return m_arrDims;
     }
 
 
@@ -1168,6 +1181,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         _ASSERTE(m_kind == TypeKinds::TK_UNREACHED);
         m_kind = kind;
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseTypeGeneratorPimpl<ApiHolder>::SetDimensions(vector<ArrayDimension> const &arrDims)
+    {
+        _ASSERTE(!m_arrDimsInit);
+        m_arrDims = arrDims;        
+        m_arrDimsInit = true;
     }
 
 

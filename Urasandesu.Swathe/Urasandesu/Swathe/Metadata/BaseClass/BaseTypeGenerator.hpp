@@ -508,6 +508,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    void BaseTypeGenerator<ApiHolder>::SetDimensions(vector<ArrayDimension> const &arrDims)
+    {
+        Pimpl()->SetDimensions(arrDims);
+    }
+
+    template<class ApiHolder>    
     void BaseTypeGenerator<ApiHolder>::SetGenericArguments(vector<IType const *> const &genericArgs)
     {
         Pimpl()->SetGenericArguments(genericArgs);

@@ -349,6 +349,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 CustomAttributeArgument m_arg;
             };
 
+            struct ArrayShape
+            {
+                explicit ArrayShape(vector<ArrayDimension> const &arrDims) : 
+                    m_arrDims(arrDims)
+                { }
+            
+                vector<ArrayDimension> const &m_arrDims;
+            };
+
 
 
             template<class T>
@@ -569,6 +578,50 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                 static void Put(SimpleBlob &sb, SafeFlagsEnum<EnumDef, EnumType> const &e)
                 {
                     sb.Put<COR_SIGNATURE>(e.Value());
+                }
+            };
+
+            template<>
+            struct PutImplForAnother<ArrayShape>
+            {
+                static void Put(SimpleBlob &sb, ArrayShape const &v)
+                {
+                    using boost::range::count_if;
+                    
+                    auto rank = static_cast<ULONG>(v.m_arrDims.size());
+                    sb <<
+                        CompressData(rank)
+                    ;
+                    
+                    auto numSizes = static_cast<ULONG>(count_if(v.m_arrDims, [](ArrayDimension const &arrDim) { return arrDim.GetSize() != -1; }));
+                    sb <<
+                        CompressData(numSizes)
+                    ;
+                    
+                    BOOST_FOREACH (auto const &arrDim, v.m_arrDims)
+                    {
+                        if (arrDim.GetSize() == -1)
+                            continue;
+                        
+                        sb <<
+                            CompressData(arrDim.GetSize())
+                        ;
+                    }
+                    
+                    auto numLoBounds = static_cast<ULONG>(count_if(v.m_arrDims, [](ArrayDimension const &arrDim) { return arrDim.GetLowerBound() != -1; }));
+                    sb <<
+                        CompressData(numLoBounds)
+                    ;
+                    
+                    BOOST_FOREACH (auto const &arrDim, v.m_arrDims)
+                    {
+                        if (arrDim.GetLowerBound() == -1)
+                            continue;
+                        
+                        sb <<
+                            CompressData(arrDim.GetLowerBound())
+                        ;
+                    }
                 }
             };
 
@@ -1422,38 +1475,46 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                     }
                 }
             };
-            
-            
-            
+
             template<>
             struct TakeImplForAnother<ArrayShape>
             {
                 static void Take(SignatureProvider const &provider, vector<COR_SIGNATURE> const &blob, SIZE_T &index, ArrayShape &v)
                 {
                     auto rank = 0ul;
-                    index += ::CorSigUncompressData(&blob[index], &rank);
+                    (blob, index, provider) >> 
+                        CompressData(rank)
+                    ;
                     
                     auto numSizes = 0ul;
-                    index += ::CorSigUncompressData(&blob[index], &numSizes);
+                    (blob, index, provider) >> 
+                        CompressData(numSizes)
+                    ;
                     
                     auto sizes = vector<UINT>();
                     sizes.resize(numSizes);
                     for (auto i = 0ul; i < sizes.size(); i++)
                     {
                         auto size = 0ul;
-                        index += ::CorSigUncompressData(&blob[index], &size);
+                        (blob, index, provider) >> 
+                            CompressData(size)
+                        ;
                         sizes[i] = size;
                     }
                     
                     auto numLoBounds = 0ul;
-                    index += ::CorSigUncompressData(&blob[index], &numLoBounds);
+                    (blob, index, provider) >> 
+                        CompressData(numLoBounds)
+                    ;
                     
                     auto loBounds = vector<UINT>();
                     loBounds.resize(numLoBounds);
                     for (auto i = 0ul; i < loBounds.size(); i++)
                     {
                         auto loBound = 0ul;
-                        index += ::CorSigUncompressData(&blob[index], &loBound);
+                        (blob, index, provider) >> 
+                            CompressData(loBound)
+                        ;
                         loBounds[i] = loBound;
                     }
                     
@@ -1563,6 +1624,20 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                                 auto mdt = mdTokenNil;
                                 index += ::CorSigUncompressToken(&blob[index], &mdt);
                                 pType = pAsm->GetType(mdt);
+                            }
+                            break;
+
+                        case TypeKinds::TK_ARRAY:
+                            {
+                                auto const *pType_ = static_cast<IType *>(nullptr);
+                                auto arrDims_ = vector<ArrayDimension>();
+                                
+                                (blob, index, provider) >> 
+                                    pType_ >> 
+                                    ArrayShape(arrDims_)
+                                ;
+
+                                pType = pType_->MakeArrayType(arrDims_);
                             }
                             break;
 
@@ -1688,6 +1763,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
                         sb <<
                             kind << 
                             CompressToken(pType->GetToken())
+                        ;
+                        break;
+
+                    case TypeKinds::TK_ARRAY:
+                        sb <<
+                            kind << 
+                            pType->GetDeclaringType() << 
+                            ArrayShape(pType->GetDimensions())
                         ;
                         break;
 

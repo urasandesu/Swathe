@@ -928,7 +928,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeArrayType(INT rank) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        auto arrDims = vector<ArrayDimension>();
+        arrDims.push_back(ArrayDimension(-1, 0));
+        return MakeArrayType(arrDims);
     }
 
 
@@ -936,7 +938,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     IType const *BaseTypeMetadataPimpl<ApiHolder>::MakeArrayType(vector<ArrayDimension> const &arrDims) const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        return m_pAsm->GetType(GetToken(), TypeKinds::TK_ARRAY, true, arrDims, -1, true, MetadataSpecialValues::EMPTY_TYPES, static_cast<IType const *>(m_pClass));
     }
 
 

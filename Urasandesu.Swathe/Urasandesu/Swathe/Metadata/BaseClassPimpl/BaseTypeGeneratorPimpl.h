@@ -205,6 +205,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetAttributes(TypeAttributes const &attr);
         void SetBaseType(IType const *pBaseType);
         void SetKind(TypeKinds const &kind);
+        void SetDimensions(vector<ArrayDimension> const &arrDims);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
         void SetGenericParameterAttributes(GenericParamAttributes const &gpAttr);
         void SetGenericParameterPosition(ULONG genericParamPos);
@@ -224,6 +225,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable wstring m_fullName;
         mutable TypeAttributes m_attr;
         mutable GenericParamAttributes m_gpAttr;
+        mutable bool m_arrDimsInit;
+        mutable vector<ArrayDimension> m_arrDims;
         mutable ULONG m_genericParamPos;
         mutable bool m_genericArgsInit;
         mutable vector<IType const *> m_genericArgs;

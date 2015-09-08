@@ -156,6 +156,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetAttributes(TypeAttributes const &attr);
         void SetBaseType(IType const *pBaseType);
         void SetKind(TypeKinds const &kind);
+        void SetDimensions(vector<ArrayDimension> const &arrDims);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
         void SetGenericParameterAttributes(GenericParamAttributes const &gpAttr);
         void SetGenericParameterPosition(ULONG genericParamPos);
@@ -166,9 +167,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 128;
+        static INT const PIMPL_TYPE_SIZE = 144;
 #else
-        static INT const PIMPL_TYPE_SIZE = 208;
+        static INT const PIMPL_TYPE_SIZE = 240;
 #endif
 #endif
         typedef typename boost::aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;
