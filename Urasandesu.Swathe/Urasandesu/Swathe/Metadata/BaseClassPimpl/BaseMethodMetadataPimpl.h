@@ -127,6 +127,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool Equals(IMethod const *pMethod) const;
         size_t GetHashCode() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
+        void ResetProperties() const;
         void OutDebugInfo() const;
         
     private:

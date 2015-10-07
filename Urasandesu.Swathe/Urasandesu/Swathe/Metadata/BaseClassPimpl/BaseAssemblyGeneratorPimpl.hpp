@@ -1826,6 +1826,27 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateMethodDefProperties(mdMethodDef mdt, MethodAttributes const &attr, ULONG codeRva, MethodImplAttributes const &implFlags)
+    {
+        CPPANONYM_LOG_FUNCTION();
+
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        CPPANONYM_D_LOGW(L"Set MethodDef Properties...");
+        CPPANONYM_D_LOGW1(L"mdt: 0x%|1$08X|", mdt);
+        CPPANONYM_D_LOGW1(L"attr: 0x%|1$08X|", attr.Value());
+        CPPANONYM_D_LOGW1(L"codeRva: 0x%|1$08X|", codeRva);
+        CPPANONYM_D_LOGW1(L"implFlags: 0x%|1$08X|", implFlags.Value());
+        
+        auto &comMetaEmt = GetCOMMetaDataEmit();
+        auto hr = comMetaEmt.SetMethodProps(mdt, attr.Value(), codeRva, implFlags.Value());
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseAssemblyGeneratorPimpl<ApiHolder>::UpdateMethodSpec(mdToken mdtOwner, Signature const &sig, mdMethodSpec &mdt)
     {
         CPPANONYM_LOG_FUNCTION();
@@ -1939,63 +1960,67 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
         
-        auto mdtOwner = mdTokenNil;
-        {
-            auto hEnum = HCORENUM();
-            BOOST_SCOPE_EXIT((&hEnum)(pComMetaImp))
-            {
-                if (hEnum)
-                    pComMetaImp->CloseEnum(hEnum);
-            }
-            BOOST_SCOPE_EXIT_END
-            auto mdtds = array<mdTypeDef, 16>();
-            auto count = 0ul;
-            auto hr = E_FAIL;
-            hr = pComMetaImp->EnumTypeDefs(&hEnum, mdtds.c_array(), static_cast<ULONG>(mdtds.size()), &count);
-            if (FAILED(hr))
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-
-            if (count == 0)
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
-            
-            mdtOwner = mdtds[0];
-        }
-        
-        auto mdtTarget = mdTokenNil;
-        {
-            auto hEnum = HCORENUM();
-            BOOST_SCOPE_EXIT((&hEnum)(pComMetaImp))
-            {
-                if (hEnum)
-                    pComMetaImp->CloseEnum(hEnum);
-            }
-            BOOST_SCOPE_EXIT_END
-            auto mdmds = array<mdMethodDef, 16>();
-            auto count = 0ul;
-            auto hr = E_FAIL;
-            hr = pComMetaImp->EnumMethods(&hEnum, mdtOwner, mdmds.c_array(), static_cast<ULONG>(mdmds.size()), &count);
-            if (FAILED(hr))
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
-
-            if (count == 0)
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
-            
-            mdtTarget = mdmds[0];
-        }
-        
         auto codeRva = ULONG();
+        auto hEnum1 = HCORENUM();
+        BOOST_SCOPE_EXIT((&hEnum1)(pComMetaImp))
         {
-            auto mdtOwner = mdTypeDefNil;
-            auto wzname = array<WCHAR, MAX_SYM_NAME>();
-            auto wznameLength = 0ul;
-            auto dwattr = 0ul;
-            auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
-            auto sigLength = 0ul;
-            auto dwimplFlags = 0ul;
-            auto hr = pComMetaImp->GetMethodProps(mdtTarget, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &codeRva, &dwimplFlags);
-            if (FAILED(hr))
-                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            if (hEnum1)
+                pComMetaImp->CloseEnum(hEnum1);
         }
+        BOOST_SCOPE_EXIT_END
+        auto mdtds = array<mdTypeDef, 16>();
+        auto count1 = 0ul;
+        auto hr1 = E_FAIL;
+        do
+        {
+            hr1 = pComMetaImp->EnumTypeDefs(&hEnum1, mdtds.c_array(), static_cast<ULONG>(mdtds.size()), &count1);
+            if (FAILED(hr1))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr1));
+
+            for (auto i = 0u; i < count1; ++i)
+            {
+                auto mdtOwner1 = mdtds[i];
+                
+                auto hEnum2 = HCORENUM();
+                BOOST_SCOPE_EXIT((&hEnum2)(pComMetaImp))
+                {
+                    if (hEnum2)
+                        pComMetaImp->CloseEnum(hEnum2);
+                }
+                BOOST_SCOPE_EXIT_END
+                auto mdmds = array<mdMethodDef, 16>();
+                auto count2 = 0ul;
+                auto hr2 = E_FAIL;
+                do
+                {
+                    hr2 = pComMetaImp->EnumMethods(&hEnum2, mdtOwner1, mdmds.c_array(), static_cast<ULONG>(mdmds.size()), &count2);
+                    if (FAILED(hr2))
+                        BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr2));
+                    
+                    for (auto j = 0u; j < count2; ++j)
+                    {
+                        auto mdtTarget = mdmds[j];
+                        
+                        auto mdtOwner2 = mdTypeDefNil;
+                        auto wzname = array<WCHAR, MAX_SYM_NAME>();
+                        auto wznameLength = 0ul;
+                        auto dwattr = 0ul;
+                        auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+                        auto sigLength = 0ul;
+                        auto dwimplFlags = 0ul;
+                        auto hr = pComMetaImp->GetMethodProps(mdtTarget, &mdtOwner2, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &codeRva, &dwimplFlags);
+                        if (FAILED(hr))
+                            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+                        
+                        if (0ul < codeRva)
+                            goto RETURN;
+                    }
+                } while (0 < count2);
+            }
+        } while (0 < count1);
+RETURN:
+        if (codeRva == 0)
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(CLDB_E_RECORD_NOTFOUND));
         
         return codeRva;
     }

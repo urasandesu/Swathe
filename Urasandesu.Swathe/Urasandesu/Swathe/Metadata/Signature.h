@@ -110,6 +110,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             void Decode(ICustomAttribute const *pCa, vector<CustomAttributeArgument> &constructorArgs, vector<IProperty const *> &namedProps, vector<CustomAttributeArgument> &propValues, vector<IField const *> &namedFields, vector<CustomAttributeArgument> &fieldValues) const;
             
             void SetBlob(PCCOR_SIGNATURE pSig, ULONG sigLength);
+            void ClearBlob();
             vector<COR_SIGNATURE> const &GetBlob() const;
         
         private:

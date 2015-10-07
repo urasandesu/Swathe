@@ -131,6 +131,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
             bool Equals(IMethod const *pMethod) const { return this == pMethod; }
             size_t GetHashCode() const { return HashValue(this); }
             IParameter const *GetParameter(ULONG position, IType const *pParamType) const { return nullptr; }
+            void ResetProperties() const { }
             void OutDebugInfo() const { }
     
         private:

@@ -105,11 +105,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         bool Equals(IMethod const *pMethod) const;
         size_t GetHashCode() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
+        void ResetProperties() const;
         void OutDebugInfo() const;
         method_body_generator_label_type *DefineMethodBody();
         parameter_generator_label_type *DefineParameter(ULONG position, IType const *pParamType);
         void DefineGenericParameters(vector<wstring> const &names);
         void DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens);
+        method_generator_label_type *CloneShell(wstring const &newName);
+        void SetAttributes(MethodAttributes const &attr);
         void SetImplementationFlags(MethodImplAttributes const &implAttr);
 
     private:
@@ -120,7 +123,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetCallingConvention(CallingConventions const &callingConvention);
         void SetReturnType(IType const *pRetType);
         void SetParameters(vector<IParameter const *> const &params);
-        void SetAttributes(MethodAttributes const &attr);
         void SetMember(MethodProvider const &member);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
         void SetSourceMethod(IMethod const *pSrcMethod);
@@ -130,7 +132,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static INT const PIMPL_TYPE_SIZE = 1024;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 128;
+        static INT const PIMPL_TYPE_SIZE = 136;
 #else
         static INT const PIMPL_TYPE_SIZE = 224;
 #endif

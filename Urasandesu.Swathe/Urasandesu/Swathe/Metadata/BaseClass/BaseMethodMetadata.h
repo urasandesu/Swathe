@@ -103,8 +103,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         IMethod const *GetSourceMethod() const;
         bool Equals(IMethod const *pMethod) const;
         size_t GetHashCode() const;
-        //IDispenser const *GetDispenser() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
+        void ResetProperties() const;
         void OutDebugInfo() const;
     
     private:

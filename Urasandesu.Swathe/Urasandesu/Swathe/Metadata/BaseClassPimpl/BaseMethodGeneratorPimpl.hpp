@@ -44,6 +44,10 @@
 #include <Urasandesu/Swathe/Metadata/IMetadataVisitor.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_METADATASPECIALVALUES_H
+#include <Urasandesu/Swathe/Metadata/MetadataSpecialValues.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 
 
     template<class ApiHolder>    
@@ -57,6 +61,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_pRetType(nullptr), 
         m_retTypeInit(false), 
         m_paramsInit(false), 
+        m_isPropsReModified(false), 
         m_genericArgsInit(false), 
         m_attr(MethodAttributes::MA_UNREACHED), 
         m_implAttr(MethodImplAttributes::MIA_UNREACHED), 
@@ -178,6 +183,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
                     }
                 }
             }
+            m_isPropsReModified = false;
+        }
+        if (m_isPropsReModified)
+        {
+            if (m_pSrcMethod && TypeFromToken(m_mdt) == mdtMethodDef)
+            {
+                auto implAttr = GetMethodImplementationFlags();
+                auto codeRva = implAttr != MethodImplAttributes::MIA_IL ? 0 : m_pAsmGen->GetValidRVA();
+                m_pAsmGen->UpdateMethodDefProperties(m_mdt, GetAttribute(), codeRva, implAttr);
+                m_pSrcMethod->ResetProperties();
+            }
+            m_isPropsReModified = false;
         }
         return m_mdt;
     }
@@ -614,6 +631,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    void BaseMethodGeneratorPimpl<ApiHolder>::ResetProperties() const
+    {
+        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseMethodGeneratorPimpl<ApiHolder>::OutDebugInfo() const
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
@@ -675,10 +700,154 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     
     
     template<class ApiHolder>    
+    typename BaseMethodGeneratorPimpl<ApiHolder>::method_generator_label_type *BaseMethodGeneratorPimpl<ApiHolder>::CloneShell(wstring const &newName)
+    {
+        using boost::array;
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        _ASSERTE(m_pSrcMethod);
+        auto mdmd = GetToken();
+        _ASSERTE(TypeFromToken(mdmd) == mdtMethodDef);
+        _ASSERTE(!IsGenericMethod());
+        auto const &sig = GetSignature();
+        _ASSERTE(!sig.GetBlob().empty());
+        auto const &blob = sig.GetBlob();
+        
+        
+        auto &comMetaEmt = m_pAsmGen->GetCOMMetaDataEmit();
+        
+        auto pComMetaImp = ATL::CComPtr<IMetaDataImport2>();
+        {
+            auto hr = comMetaEmt.QueryInterface(IID_IMetaDataImport2, reinterpret_cast<void **>(&pComMetaImp));
+            if (FAILED(hr))
+                BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        }
+        
+        auto mdmdNew = mdTokenNil;
+        auto callingConvention = CallingConventions(blob[0]);
+        {
+            auto wzname = array<WCHAR, MAX_SYM_NAME>();
+            auto wznameLength = 0ul;
+            auto mdtOwner = mdTokenNil;
+            auto dwattr = 0ul;
+            auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+            auto sigLength = 0ul;
+            auto codeRva = 0ul;
+            auto dwimplFlags = 0ul;
+            {
+                auto hr = pComMetaImp->GetMethodProps(mdmd, &mdtOwner, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &pSig, &sigLength, &codeRva, &dwimplFlags);
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+            
+            codeRva = dwimplFlags != MethodImplAttributes::MIA_IL ? 0 : m_pAsmGen->GetValidRVA();
+            {
+                auto hr = comMetaEmt.DefineMethod(mdtOwner, newName.c_str(), dwattr, pSig, sigLength, codeRva, dwimplFlags, &mdmdNew);
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+        }
+
+        {
+            auto dwMappingFlags = 0ul;
+            auto wzname = array<WCHAR, MAX_SYM_NAME>();
+            auto wznameLength = 0ul;
+            auto mdmr = mdTokenNil;
+            {
+                auto hr = pComMetaImp->GetPinvokeMap(mdmd, &dwMappingFlags, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &mdmr);
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+
+            {
+                auto hr = comMetaEmt.DefinePinvokeMap(mdmdNew, dwMappingFlags, wzname.c_array(), mdmr);
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+        }
+        
+        auto mdpds = vector<mdParamDef>();
+        {
+            auto hEnum = static_cast<HCORENUM>(nullptr);
+            BOOST_SCOPE_EXIT((&hEnum)(pComMetaImp))
+            {
+                if (hEnum)
+                    pComMetaImp->CloseEnum(hEnum);
+            }
+            BOOST_SCOPE_EXIT_END
+            auto mdpds_ = array<mdParamDef, 16>();
+            auto count = 0ul;
+            auto hr = E_FAIL;
+            do
+            {
+                hr = pComMetaImp->EnumParams(&hEnum, mdmd, mdpds_.c_array(), static_cast<ULONG>(mdpds_.size()), &count);
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+                mdpds.reserve(mdpds.size() + count);
+                for (auto i = 0u; i < count; ++i)
+                    mdpds.push_back(mdpds_[i]);
+            } while (0 < count);
+        }
+        
+        BOOST_FOREACH (auto const &mdpd, mdpds)
+        {
+            auto mdtOwner = mdTokenNil;
+            auto position = 0ul;
+            auto wzname = array<WCHAR, MAX_SYM_NAME>();
+            auto wznameLength = 0ul;
+            auto dwattr = 0ul;
+            auto cplusTypeFlag = 0ul;
+            auto const *pDefaultValue = static_cast<UVCP_CONSTANT>(nullptr);
+            auto defaultValueLength = 0ul;
+            {
+                auto hr = pComMetaImp->GetParamProps(mdpd, &mdtOwner, &position, wzname.c_array(), static_cast<ULONG>(wzname.size()), &wznameLength, &dwattr, &cplusTypeFlag, &pDefaultValue, &defaultValueLength);
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+            
+            auto const *pSig = static_cast<PCOR_SIGNATURE>(nullptr);
+            auto sigLength = 0ul;
+            {
+                auto hr = pComMetaImp->GetFieldMarshal(mdpd, &pSig, &sigLength);
+                if (hr != CLDB_E_RECORD_NOTFOUND && FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+            
+            auto mdpdNew = mdTokenNil;
+            {
+                auto hr = comMetaEmt.DefineParam(mdmdNew, position, wzname.c_array(), dwattr, cplusTypeFlag, pDefaultValue, defaultValueLength, &mdpdNew);
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+            
+            if (sigLength)
+            {
+                auto hr = comMetaEmt.SetFieldMarshal(mdpdNew, pSig, sigLength);
+                if (FAILED(hr))
+                    BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+            }
+        }
+
+        return m_pAsmGen->DefineMethod(mdmdNew, callingConvention, true, MetadataSpecialValues::EMPTY_TYPES, nullptr, m_pAsmGen->GetMethod(mdmdNew), m_pSrcMethod->GetMember());
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodGeneratorPimpl<ApiHolder>::SetAttributes(MethodAttributes const &attr)
+    {
+        m_attr = attr;
+        m_isPropsReModified = true;
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseMethodGeneratorPimpl<ApiHolder>::SetImplementationFlags(MethodImplAttributes const &implAttr)
     {
-        _ASSERTE(m_implAttr == MethodImplAttributes::MIA_UNREACHED);
         m_implAttr = implAttr;
+        m_isPropsReModified = true;
     }
 
 
@@ -724,15 +893,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseMethodGeneratorPimpl<ApiHolder>::SetParameters(vector<IParameter const *> const &params)
     {
         BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-    }
-
-
-
-    template<class ApiHolder>    
-    void BaseMethodGeneratorPimpl<ApiHolder>::SetAttributes(MethodAttributes const &attr)
-    {
-        _ASSERTE(m_attr == MethodAttributes::MA_UNREACHED);
-        m_attr = attr;
     }
 
 

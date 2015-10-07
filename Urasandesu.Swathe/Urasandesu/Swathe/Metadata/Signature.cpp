@@ -2122,6 +2122,13 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
 
 
 
+            void ClearBlob()
+            {
+                m_blob.clear();
+            }
+
+
+
             void SetBlob(PCCOR_SIGNATURE pSig, ULONG sigLength)
             {
                 _ASSERTE(pSig != nullptr);
@@ -2258,6 +2265,11 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         void SignatureImpl::Decode(ICustomAttribute const *pCa, vector<CustomAttributeArgument> &constructorArgs, vector<IProperty const *> &namedProps, vector<CustomAttributeArgument> &propValues, vector<IField const *> &namedFields, vector<CustomAttributeArgument> &fieldValues) const
         {
             Pimpl()->Decode(pCa, constructorArgs, namedProps, propValues, namedFields, fieldValues);
+        }
+
+        void SignatureImpl::ClearBlob()
+        {
+            Pimpl()->ClearBlob();
         }
 
         void SignatureImpl::SetBlob(PCCOR_SIGNATURE pSig, ULONG sigLength)

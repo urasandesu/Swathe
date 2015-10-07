@@ -219,16 +219,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         return Pimpl()->GetHashCode();
     }
 
-    //template<class ApiHolder>    
-    //IDispenser const *BaseMethodGenerator<ApiHolder>::GetDispenser() const
-    //{
-    //    return Pimpl()->GetDispenser();
-    //}
-
     template<class ApiHolder>    
     IParameter const *BaseMethodGenerator<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         return Pimpl()->GetParameter(position, pParamType);
+    }
+
+    template<class ApiHolder>    
+    void BaseMethodGenerator<ApiHolder>::ResetProperties() const
+    {
+        Pimpl()->ResetProperties();
     }
 
     template<class ApiHolder>    
@@ -259,6 +259,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseMethodGenerator<ApiHolder>::DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens)
     {
         Pimpl()->DefineGenericParameters(names, genericArgGens);
+    }
+
+    template<class ApiHolder>    
+    typename BaseMethodGenerator<ApiHolder>::method_generator_label_type *BaseMethodGenerator<ApiHolder>::CloneShell(wstring const &newName)
+    {
+        return Pimpl()->CloneShell(newName);
+    }
+
+    template<class ApiHolder>    
+    void BaseMethodGenerator<ApiHolder>::SetAttributes(MethodAttributes const &attr)
+    {
+        Pimpl()->SetAttributes(attr);
     }
 
     template<class ApiHolder>    
@@ -295,12 +307,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     void BaseMethodGenerator<ApiHolder>::SetParameters(vector<IParameter const *> const &params)
     {
         Pimpl()->SetParameters(params);
-    }
-
-    template<class ApiHolder>    
-    void BaseMethodGenerator<ApiHolder>::SetAttributes(MethodAttributes const &attr)
-    {
-        Pimpl()->SetAttributes(attr);
     }
 
     template<class ApiHolder>    

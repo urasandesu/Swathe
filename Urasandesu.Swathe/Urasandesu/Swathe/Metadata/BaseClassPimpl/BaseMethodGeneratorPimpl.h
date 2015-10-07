@@ -122,11 +122,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         size_t GetHashCode() const;
         IParameter const *GetParameter(ULONG position, IType const *pParamType) const;
         MethodAttributes GetAttribute() const;
+        void ResetProperties() const;
         void OutDebugInfo() const;
         method_body_generator_label_type *DefineMethodBody();
         parameter_generator_label_type *DefineParameter(ULONG position, IType const *pParamType);
         void DefineGenericParameters(vector<wstring> const &names);
         void DefineGenericParameters(vector<wstring> const &names, vector<type_generator_label_type *> &genericArgGens);
+        method_generator_label_type *CloneShell(wstring const &newName);
+        void SetAttributes(MethodAttributes const &attr);
         void SetImplementationFlags(MethodImplAttributes const &implAttr);
         
     private:
@@ -135,7 +138,6 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetCallingConvention(CallingConventions const &callingConvention);
         void SetReturnType(IType const *pRetType);
         void SetParameters(vector<IParameter const *> const &params);
-        void SetAttributes(MethodAttributes const &attr);
         void SetMember(MethodProvider const &member);
         void SetGenericArguments(vector<IType const *> const &genericArgs);
         void SetSourceMethod(IMethod const *pSrcMethod);
@@ -153,6 +155,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable bool m_retTypeInit;
         mutable bool m_paramsInit;
         mutable vector<IParameter const *> m_params;
+        mutable bool m_isPropsReModified;
         mutable MethodAttributes m_attr;
         mutable MethodImplAttributes m_implAttr;
         mutable bool m_genericArgsInit;

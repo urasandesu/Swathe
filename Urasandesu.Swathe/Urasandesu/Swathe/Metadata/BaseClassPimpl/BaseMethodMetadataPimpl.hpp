@@ -58,7 +58,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_srcMethodInit(false), 
         m_pSrcMethod(nullptr), 
         m_attr(MethodAttributes::MA_UNREACHED), 
-        m_codeRva(-1)
+        m_codeRva(-1), 
+        m_implFlags(MethodImplAttributes::MIA_UNREACHED)
     { }
     
 #define SWATHE_DECLARE_BASE_METHOD_METADATA_PIMPL_ADDITIONAL_INSTANTIATION \
@@ -171,17 +172,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         if (m_attr == MethodAttributes::MA_UNREACHED)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
-            //auto mdtTarget = GetToken();
-            //if (TypeFromToken(mdtTarget) == mdtMethodDef)
-            //{
-            //    auto const *pDeclaringType = static_cast<IType *>(nullptr);
-            //    FillMethodDefProperties(this, mdtTarget, m_pDeclaringType, m_name, m_attr, m_sig, m_codeRva, m_implFlags);
-            //    if (!m_declaringTypeInit)
-            //        m_pDeclaringType = pDeclaringType;
-            //}
-            //else
-            //    BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            auto mdtTarget = GetToken();
+            if (TypeFromToken(mdtTarget) == mdtMethodDef)
+            {
+                if (m_sig.GetBlob().empty())
+                    m_pAsm->FillMethodDefProperties(mdtTarget, m_mdtOwner, m_name, m_attr, m_sig, m_codeRva, m_implFlags);
+            }
+            else
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
         }
         return m_attr;
     }
@@ -191,7 +189,18 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     template<class ApiHolder>    
     MethodImplAttributes BaseMethodMetadataPimpl<ApiHolder>::GetMethodImplementationFlags() const
     {
-        BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        if (m_implFlags == MethodImplAttributes::MIA_UNREACHED)
+        {
+            auto mdtTarget = GetToken();
+            if (TypeFromToken(mdtTarget) == mdtMethodDef)
+            {
+                if (m_sig.GetBlob().empty())
+                    m_pAsm->FillMethodDefProperties(mdtTarget, m_mdtOwner, m_name, m_attr, m_sig, m_codeRva, m_implFlags);
+            }
+            else
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        }
+        return m_implFlags;
     }
 
 
@@ -270,7 +279,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     {
         if (m_codeRva == -1)
         {
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+            auto mdtTarget = GetToken();
+            if (TypeFromToken(mdtTarget) == mdtMethodDef)
+            {
+                if (m_sig.GetBlob().empty())
+                    m_pAsm->FillMethodDefProperties(mdtTarget, m_mdtOwner, m_name, m_attr, m_sig, m_codeRva, m_implFlags);
+            }
+            else
+                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
         }
         return m_codeRva;
     }
@@ -587,6 +603,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     IParameter const *BaseMethodMetadataPimpl<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         return m_pAsm->GetParameter(position, pParamType, static_cast<IMethod const *>(m_pClass));
+    }
+
+
+
+    template<class ApiHolder>    
+    void BaseMethodMetadataPimpl<ApiHolder>::ResetProperties() const
+    {
+        m_sig.ClearBlob();
+        m_attr = MethodAttributes::MA_UNREACHED;
+        m_codeRva = -1;
+        m_implFlags = MethodImplAttributes::MIA_UNREACHED;
     }
 
 

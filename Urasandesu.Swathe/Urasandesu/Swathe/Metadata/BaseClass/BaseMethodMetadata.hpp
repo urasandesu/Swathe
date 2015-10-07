@@ -213,16 +213,16 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         return Pimpl()->GetHashCode();
     }
 
-    //template<class ApiHolder>    
-    //IDispenser const *BaseMethodMetadata<ApiHolder>::GetDispenser() const
-    //{
-    //    return Pimpl()->GetDispenser();
-    //}
-
     template<class ApiHolder>    
     IParameter const *BaseMethodMetadata<ApiHolder>::GetParameter(ULONG position, IType const *pParamType) const
     {
         return Pimpl()->GetParameter(position, pParamType);
+    }
+
+    template<class ApiHolder>    
+    void BaseMethodMetadata<ApiHolder>::ResetProperties() const
+    {
+        Pimpl()->ResetProperties();
     }
 
     template<class ApiHolder>    

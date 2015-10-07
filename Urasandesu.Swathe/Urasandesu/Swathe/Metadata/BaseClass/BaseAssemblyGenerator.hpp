@@ -700,6 +700,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    void BaseAssemblyGenerator<ApiHolder>::UpdateMethodDefProperties(mdMethodDef mdt, MethodAttributes const &attr, ULONG codeRva, MethodImplAttributes const &implFlags)
+    {
+        Pimpl()->UpdateMethodDefProperties(mdt, attr, codeRva, implFlags);
+    }
+
+    template<class ApiHolder>    
     void BaseAssemblyGenerator<ApiHolder>::UpdateMethodSpec(mdToken mdtOwner, Signature const &sig, mdMethodSpec &mdt)
     {
         Pimpl()->UpdateMethodSpec(mdtOwner, sig, mdt);

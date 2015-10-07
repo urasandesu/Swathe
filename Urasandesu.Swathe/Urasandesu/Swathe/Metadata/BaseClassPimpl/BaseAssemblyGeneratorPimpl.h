@@ -283,6 +283,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void UpdateGenericParam(IType const *pDeclaringType, IMethod const *pDeclaringMethod, ULONG genericParamPos, GenericParamAttributes const &gpAttr, wstring const &name, vector<IType const *> const &genericParamConstraints, mdGenericParam &mdt);
         void UpdateGenericParam(mdToken mdtOwner, ULONG genericParamPos, GenericParamAttributes const &gpAttr, wstring const &name, mdToken mdNilTerminatedConstraints[], mdGenericParam &mdt);
         void UpdateMethodDef(mdTypeDef mdtOwner, wstring const &name, MethodAttributes const &attr, Signature const &sig, ULONG codeRva, MethodImplAttributes const &implFlags, mdMethodDef &mdt);
+        void UpdateMethodDefProperties(mdMethodDef mdt, MethodAttributes const &attr, ULONG codeRva, MethodImplAttributes const &implFlags);
         void UpdateMethodSpec(mdToken mdtOwner, Signature const &sig, mdMethodSpec &mdt);
         void UpdateMemberRef(mdTypeDef mdtOwner, wstring const &name, Signature const &sig, mdMemberRef &mdt);
         void UpdateImportMember(IAssembly const *pSrcAsm, mdToken mdMember, mdToken mdResolutionScope, mdMemberRef &mdt);
