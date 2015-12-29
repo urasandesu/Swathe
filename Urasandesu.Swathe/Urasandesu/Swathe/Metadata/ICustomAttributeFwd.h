@@ -67,7 +67,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IType const *
     > CustomAttributeProvider;
 
-    typedef boost::any_range<ICustomAttribute const *, boost::single_pass_traversal_tag, ICustomAttribute const *, std::ptrdiff_t> ICustomAttributePtrRange;
+    typedef boost::any_range<ICustomAttribute const *, boost::single_pass_traversal_tag, ICustomAttribute const * const, std::ptrdiff_t> ICustomAttributePtrRange;
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 

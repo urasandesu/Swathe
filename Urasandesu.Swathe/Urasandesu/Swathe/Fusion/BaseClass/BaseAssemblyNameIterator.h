@@ -60,6 +60,11 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         SWATHE_BEGIN_ASSEMBLY_NAME_ITERATOR_FACADE_TYPEDEF_ALIAS
             SWATHE_DECLARE_ASSEMBLY_NAME_ITERATOR_FACADE_TYPEDEF_ALIAS
         SWATHE_END_ASSEMBLY_NAME_ITERATOR_FACADE_TYPEDEF_ALIAS
+
+        typedef typename iterator_facade<
+            BaseAssemblyNameIterator<ApiHolder>, 
+            AutoPtr<typename Urasandesu::Swathe::AutoGen::Fusion::ClassFacade::AssemblyNameIteratorFacade<ApiHolder>::assembly_name_label_type const>, 
+            single_pass_traversal_tag>::reference reference;
         
         BaseAssemblyNameIterator();
         BaseAssemblyNameIterator(assembly_name_range_label_type *pAsmNameRng, bool hasNext = true);

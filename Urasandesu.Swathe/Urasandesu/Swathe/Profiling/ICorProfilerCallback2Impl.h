@@ -36,6 +36,14 @@
 #include <Urasandesu/Swathe/Profiling/ICorProfilerCallbackImpl.h>
 #endif
 
+#include <boost/version.hpp> 
+#if defined(_MSC_VER) && BOOST_VERSION == 106000 
+#pragma warning(push)
+#pragma warning(disable:4003)
+#undef BOOST_PP_VARIADICS
+#define BOOST_PP_VARIADICS 0 
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Profiling {
 
     template<
@@ -115,3 +123,9 @@ namespace Urasandesu { namespace Swathe { namespace Profiling {
 }}}  // namespace Urasandesu { namespace Swathe { namespace Profiling {
 
 #endif  // URASANDESU_SWATHE_PROFILING_ICORPROFILERCALLBACK2IMPL_H
+
+#if defined(_MSC_VER) && BOOST_VERSION == 106000 
+#pragma warning(pop)
+#undef BOOST_PP_VARIADICS
+#define BOOST_PP_VARIADICS 1
+#endif

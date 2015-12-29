@@ -48,7 +48,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         IMethod const *
     > MethodProvider;
 
-    typedef boost::any_range<IMethod const *, boost::single_pass_traversal_tag, IMethod const *, std::ptrdiff_t> IMethodPtrRange;
+    typedef boost::any_range<IMethod const *, boost::single_pass_traversal_tag, IMethod const * const, std::ptrdiff_t> IMethodPtrRange;
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 

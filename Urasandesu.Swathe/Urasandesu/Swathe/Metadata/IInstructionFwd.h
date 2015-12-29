@@ -86,7 +86,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata {
         ResolvedLabel
     > Operand;
 
-    typedef boost::any_range<IInstruction const *, boost::random_access_traversal_tag, IInstruction const *, std::ptrdiff_t> IInstructionPtrRange;
+    typedef boost::any_range<IInstruction const *, boost::random_access_traversal_tag, IInstruction const * const, std::ptrdiff_t> IInstructionPtrRange;
     
 }}}   // namespace Urasandesu { namespace Swathe { namespace Metadata {
 
