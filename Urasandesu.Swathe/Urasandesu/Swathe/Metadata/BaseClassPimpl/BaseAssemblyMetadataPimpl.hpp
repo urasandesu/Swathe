@@ -427,6 +427,15 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
             FillPlatformByCOMMetaDataImport(&GetCOMMetaDataImport(), m_amd, m_procArchs, m_asmFlags);
             if (m_procArchs.size() != 2 || m_procArchs[1] == ProcessorArchitecture::PA_UNKNOWN)
                 FillPlatformByHeuristicAlgorithm(this, m_amd, m_procArchs, m_asmFlags);
+            if (CPPANONYM_D_LOG_ENABLED())
+            {
+                auto oss = std::wostringstream();
+                oss << L"m_procArchs:";
+                for (auto i = 0ul; i < m_procArchs.size(); ++i)
+                    oss << boost::wformat(L" %|1$02X|") % m_procArchs[i];
+                CPPANONYM_D_LOGW(oss.str());
+            }
+            CPPANONYM_D_LOGW1(L"m_asmFlags: 0x%|1$08X|", m_asmFlags.Value());
         }
         return m_procArchs;
     }
@@ -1861,6 +1870,10 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto wznameSize = 0ul;
         ::ZeroMemory(&amd, sizeof(ASSEMBLYMETADATA));
         auto dwasmFlags = 0ul;
+        
+        CPPANONYM_D_LOGW(L"Get Assembly Properties...");
+        CPPANONYM_D_LOGW1(L"mdtTarget: 0x%|1$08X|", mdtTarget);
+        
         hr = comMetaAsmImp.GetAssemblyProps(mdtTarget, NULL, NULL, NULL, NULL, 0, &wznameSize, &amd, &dwasmFlags);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
@@ -1875,6 +1888,42 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         name = &wzname[0];
         asmFlags = AssemblyFlags(dwasmFlags);
         pSnKey = pSnInfo->NewStrongNameKey(*reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob), pubKeyBlobSize);
+        
+        CPPANONYM_D_LOGW1(L"pPubKeyBlob->SigAlgID: 0x%|1$08X|", (!reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob) ? 0 : reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob)->SigAlgID));
+        CPPANONYM_D_LOGW1(L"pPubKeyBlob->HashAlgID: 0x%|1$08X|", (!reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob) ? 0 : reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob)->HashAlgID));
+        CPPANONYM_D_LOGW1(L"pPubKeyBlob->cbPublicKey: 0x%|1$08X|", (!reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob) ? 0 : reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob)->cbPublicKey));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"pPubKeyBlob->PublicKey:";
+            for (auto i = 0ul; pPubKeyBlob && i < reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob)->cbPublicKey; ++i)
+                oss << boost::wformat(L" %|1$02X|") % reinterpret_cast<PublicKeyBlob *>(pPubKeyBlob)->PublicKey[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"pubKeyBlobSize: 0x%|1$08X|", pubKeyBlobSize);
+        CPPANONYM_D_LOGW1(L"name: %|1$s|", name);
+        CPPANONYM_D_LOGW1(L"amd.usMajorVersion: %|1$d|", amd.usMajorVersion);
+        CPPANONYM_D_LOGW1(L"amd.usMinorVersion: %|1$d|", amd.usMinorVersion);
+        CPPANONYM_D_LOGW1(L"amd.usBuildNumber: %|1$d|", amd.usBuildNumber);
+        CPPANONYM_D_LOGW1(L"amd.usRevisionNumber: %|1$d|", amd.usRevisionNumber);
+        CPPANONYM_D_LOGW1(L"amd.szLocale: %|1$s|", (!amd.cbLocale ? wstring(L"neutral") : wstring(amd.szLocale, amd.cbLocale)));
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"amd.rProcessor:";
+            for (auto i = 0ul; i < amd.ulProcessor; ++i)
+                oss << boost::wformat(L" %|1$02X|") % amd.rProcessor[i];
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"amd.rOS:";
+            for (auto i = 0ul; i < amd.ulOS; ++i)
+                oss << boost::wformat(L" { dwOSPlatformId: 0x%|1$08X|, dwOSMajorVersion: 0x%|2$08X|, dwOSMinorVersion: 0x%|3$08X| }") % amd.rOS[i].dwOSPlatformId % amd.rOS[i].dwOSMajorVersion % amd.rOS[i].dwOSMinorVersion;
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"asmFlags: 0x%|1$08X|", asmFlags.Value());
     }
     
     
@@ -1926,12 +1975,17 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         
         _ASSERTE(pComMetaImp);
         
+        CPPANONYM_D_LOGW(L"Get PE Kind...");
+        
         auto dwPEKind = 0ul;
         auto dwMachine = 0ul;
         auto hr = pComMetaImp->GetPEKind(&dwPEKind, &dwMachine);
         if (FAILED(hr))
             BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
         
+        CPPANONYM_D_LOGW1(L"hr: 0x%|1$08X|", hr);
+        CPPANONYM_D_LOGW1(L"dwPEKind: 0x%|1$08X|", dwPEKind);
+        CPPANONYM_D_LOGW1(L"dwMachine: 0x%|1$08X|", dwMachine);
         if (hr == S_FALSE)
             return;
         
@@ -1985,7 +2039,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             auto sysInfo = SYSTEM_INFO();
             ::ZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
+            CPPANONYM_D_LOGW(L"Get System Info...");
             ::GetSystemInfo(&sysInfo);
+            CPPANONYM_D_LOGW1(L"sysInfo.wProcessorArchitecture: %|1$d|", sysInfo.wProcessorArchitecture);
             procArchs[1] = ProcessorArchitecture(sysInfo.wProcessorArchitecture);
         }
     }

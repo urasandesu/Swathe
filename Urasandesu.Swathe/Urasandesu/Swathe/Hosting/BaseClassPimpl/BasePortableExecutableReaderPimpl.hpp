@@ -102,7 +102,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         _ASSERTE(dosHeader.e_magic == 0x5A4D);
         _ASSERTE(i != i_end);
         
-        i = PEGetData(i, i_end, dosStubBody.size(), dosStubBody.begin());
+        PEGetData(i, i_end, dosStubBody.size(), dosStubBody.begin());
+        i += dosHeader.e_lfanew - sizeof(IMAGE_DOS_HEADER);
         _ASSERTE(i != i_end);
         
         auto signature = DWORD();
@@ -172,6 +173,8 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
         
         if (COR_IS_32BIT_PREFERRED(cliHeader.Flags))
             dwPEKind |= static_cast<DWORD>(pe32BitPreferred);
+        CPPANONYM_D_LOGW1(L"dwPEKind: 0x%|1$08X|", dwPEKind);
+        CPPANONYM_D_LOGW1(L"dwMachine: 0x%|1$04X|", dwMachine);
     }
 
 
@@ -240,6 +243,12 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
             params.flags = mapped_file_base::readonly;
             try
             {
+                CPPANONYM_D_LOGW(L"Open Mapped File Source...");
+                CPPANONYM_D_LOGW1(L"params.path: %|1$s|", params.path.native());
+                CPPANONYM_D_LOGW1(L"params.flags: 0x%|1$08X|", params.flags);
+                CPPANONYM_D_LOGW1(L"params.offset: %|1$d|", params.offset);
+                CPPANONYM_D_LOGW1(L"params.new_file_size: %|1$d|", params.new_file_size);
+                CPPANONYM_D_LOGW1(L"params.hint: 0x%|1|", reinterpret_cast<void const *>(params.hint));
                 auto file = mapped_file_source();
                 file.open(params);
                 m_file.assign(file.begin(), file.end());
