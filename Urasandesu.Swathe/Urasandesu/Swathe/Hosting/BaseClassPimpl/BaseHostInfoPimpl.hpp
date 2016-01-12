@@ -69,9 +69,6 @@ namespace Urasandesu { namespace Swathe { namespace Hosting { namespace BaseClas
             auto &provider = pBaseProvider->FirstProviderOf<host_info_label_type>();
             BOOST_FOREACH (auto const &pHost, m_hosts)
                 provider.DeleteObject(pHost);
-
-            // If we delegate releasing the resources to system, the result will become unintended consequences for Boost.Log.
-            boost::log::core::get()->remove_all_sinks();
         }
 
         BaseHeapProvider()->~base_heap_provider_type();
