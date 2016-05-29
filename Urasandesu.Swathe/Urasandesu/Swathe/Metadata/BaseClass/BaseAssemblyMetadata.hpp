@@ -340,6 +340,12 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
     }
 
     template<class ApiHolder>    
+    bool BaseAssemblyMetadata<ApiHolder>::IsModifiable() const
+    {
+        return Pimpl()->IsModifiable();
+    }
+
+    template<class ApiHolder>    
     typename BaseAssemblyMetadata<ApiHolder>::module_metadata_label_type const *BaseAssemblyMetadata<ApiHolder>::GetModuleCore(wstring const &name) const
     {
         return Pimpl()->GetModuleCore(name);

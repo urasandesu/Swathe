@@ -256,6 +256,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetCOMMetaDataImport(IMetaDataImport2 *pComMetaImp);
         void SetAssemblyFilePath(path const &asmPath);
         void SetToken(mdToken mdt);
+        bool IsModifiable() const;
 
         module_metadata_label_type const *GetModuleCore(wstring const &name) const;
         TempPtr<module_metadata_label_type> NewModule(wstring const &name) const;
@@ -374,6 +375,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         mutable IAssembly const *m_pSrcAsm;
         mutable ATL::CComPtr<IMetaDataAssemblyImport> m_pComMetaAsmImp;
         mutable ATL::CComPtr<IMetaDataImport2> m_pComMetaImp;
+        bool m_isModifiable;
+        int m_reserved;
     };
 
 }}}}   // namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseClassPimpl { 

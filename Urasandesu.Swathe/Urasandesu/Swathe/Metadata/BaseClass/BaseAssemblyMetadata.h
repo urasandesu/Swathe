@@ -170,6 +170,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         void SetCOMMetaDataImport(IMetaDataImport2 *pComMetaImp);
         void SetAssemblyFilePath(path const &asmPath);
         void SetToken(mdToken mdt);
+        bool IsModifiable() const;
 
         module_metadata_label_type const *GetModuleCore(wstring const &name) const;
         void RegisterModule(TempPtr<module_metadata_label_type> &pMod);
@@ -225,9 +226,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         static INT const PIMPL_TYPE_SIZE = 1056;
 #else
 #ifdef _M_IX86
-        static INT const PIMPL_TYPE_SIZE = 528;
+        static INT const PIMPL_TYPE_SIZE = 536;
 #else
-        static INT const PIMPL_TYPE_SIZE = 952;
+        static INT const PIMPL_TYPE_SIZE = 960;
 #endif
 #endif
         typedef typename aligned_storage<PIMPL_TYPE_SIZE>::type storage_type;

@@ -61,7 +61,8 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         m_refAsmsInit(false), 
         m_openFlags(ofRead), 
         m_pOpeningAsm(nullptr), 
-        m_pSrcAsm(nullptr)
+        m_pSrcAsm(nullptr), 
+        m_isModifiable(false)
     { }
 
     
@@ -673,6 +674,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
         auto isEqual = true;
         if (isEqual)
+            isEqual &= IsModifiable() == pOtherAsm->IsModifiable();
+
+        if (isEqual)
             isEqual &= GetToken() == pOtherAsm->GetToken();
 
         if (isEqual)
@@ -701,8 +705,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto fullNameHash = boost::hash_value(GetFullName());
         auto targetAsmHash = !GetTargetAssembly() ? 0 : GetTargetAssembly()->GetHashCode();
         auto procArchsHash = SequenceHashValue(GetProcessorArchitectures());
+        auto isModifiableHash = boost::hash_value(IsModifiable());
         
-        return mdtTarget ^ fullNameHash ^ targetAsmHash ^ procArchsHash;
+        return mdtTarget ^ fullNameHash ^ targetAsmHash ^ procArchsHash ^ isModifiableHash;
     }
 
 
@@ -766,6 +771,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         _ASSERTE(m_pComMetaImp.p == nullptr);
         _ASSERTE(pComMetaImp != nullptr);
         m_pComMetaImp = pComMetaImp;
+        m_isModifiable = true;
     }
     
     
@@ -786,6 +792,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         _ASSERTE(!IsNilToken(mdt));
         _ASSERTE(IsNilToken(m_mdt));
         m_mdt = mdt;
+    }
+
+
+
+    template<class ApiHolder>    
+    bool BaseAssemblyMetadataPimpl<ApiHolder>::IsModifiable() const
+    {
+        return m_isModifiable;
     }
 
 
@@ -1644,6 +1658,9 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         _ASSERTE(!IsNilToken(mdtTarget));
         _ASSERTE(sig.GetBlob().empty());
 
+        CPPANONYM_D_LOGW(L"Get MethodDef Properties...");
+        CPPANONYM_D_LOGW1(L"mdtTarget: 0x%|1$08X|", mdtTarget);
+
         auto &comMetaImp = GetCOMMetaDataImport();
 
         auto wzname = array<WCHAR, MAX_SYM_NAME>();
@@ -1660,6 +1677,21 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         attr = MethodAttributes(dwattr);
         sig.SetBlob(pSig, sigLength);
         implFlags = MethodImplAttributes(dwimplFlags);
+
+        CPPANONYM_D_LOGW1(L"mdtOwner: 0x%|1$08X|", mdtOwner);
+        CPPANONYM_D_LOGW1(L"name: %|1$s|", name);
+        CPPANONYM_D_LOGW1(L"attr: 0x%|1$08X|", attr.Value());
+        if (CPPANONYM_D_LOG_ENABLED())
+        {
+            auto oss = std::wostringstream();
+            oss << L"Signature:";
+            auto const &blob = sig.GetBlob();
+            for (auto i = blob.begin(), i_end = blob.end(); i != i_end; ++i)
+                oss << boost::wformat(L" %|1$02X|") % static_cast<INT>(*i);
+            CPPANONYM_D_LOGW(oss.str());
+        }
+        CPPANONYM_D_LOGW1(L"codeRva: 0x%|1$08X|", codeRva);
+        CPPANONYM_D_LOGW1(L"implFlags: 0x%|1$08X|", implFlags.Value());
     }
 
 
