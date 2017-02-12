@@ -59,6 +59,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
         void Initialize(process_profiler_label_type *pProcProf);
         UINT_PTR GetID() const;
+        process_profiler_label_type *GetProcessProfiler();
         TempPtr<class_profiler_label_type> AttachToClass();
         TempPtr<module_profiler_label_type> AttachToModule();
         method_generator_label_type *GetMethodGenerator(assembly_generator_label_type *pAsmGen);

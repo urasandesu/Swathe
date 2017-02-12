@@ -74,6 +74,15 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
 
     template<class ApiHolder>    
+    typename BaseFunctionProfilerPimpl<ApiHolder>::process_profiler_label_type *BaseFunctionProfilerPimpl<ApiHolder>::GetProcessProfiler()
+    {
+        _ASSERTE(m_pProcProf);
+        return m_pProcProf;
+    }
+
+
+
+    template<class ApiHolder>    
     TempPtr<typename BaseFunctionProfilerPimpl<ApiHolder>::class_profiler_label_type> BaseFunctionProfilerPimpl<ApiHolder>::AttachToClass()
     {
         if (m_classId == -1)

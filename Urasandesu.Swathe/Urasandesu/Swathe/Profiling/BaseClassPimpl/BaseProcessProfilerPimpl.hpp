@@ -233,6 +233,35 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
 
 
 
+    template<class ApiHolder>
+    TempPtr<typename BaseProcessProfilerPimpl<ApiHolder>::app_domain_profiler_label_type> BaseProcessProfilerPimpl<ApiHolder>::GetCurrentAppDomain()
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        CPPANONYM_LOG_FUNCTION();
+
+        auto hr = E_FAIL;
+
+        auto &comProfInfo = GetCOMProfilerInfo();
+        auto threadId = ThreadID();
+        hr = comProfInfo.GetCurrentThreadID(&threadId);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Current ThreadID: 0x%|1$X|", reinterpret_cast<void *>(threadId));
+
+        auto appDomainId = AppDomainID();
+        hr = comProfInfo.GetThreadAppDomain(threadId, &appDomainId);
+        if (FAILED(hr))
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+
+        CPPANONYM_D_LOGW1(L"Current AppDomainID: 0x%|1$X|", reinterpret_cast<void *>(appDomainId));
+
+        return AttachToAppDomain(appDomainId);
+    }
+
+
+
     template<class ApiHolder>    
     void BaseProcessProfilerPimpl<ApiHolder>::Initialize(profiling_info_label_type *pProfInfo)
     {

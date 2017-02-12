@@ -40,6 +40,10 @@
 #include <Urasandesu/Swathe/Metadata/IMetadataVisitor.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_METADATA_IPARAMETER_H
+#include <Urasandesu/Swathe/Metadata/IParameter.h>
+#endif
+
 #ifndef URASANDESU_SWATHE_METADATA_IMETHOD_H
 #include <Urasandesu/Swathe/Metadata/IMethod.h>
 #endif
@@ -556,12 +560,37 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
 
+    struct InlineSignatureParameter : IParameter
+    {
+        InlineSignatureParameter(IType const *pParamType) : 
+            m_pParamType(pParamType)
+        { }
+
+        mdToken GetToken() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        ULONG GetPosition() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        std::wstring const &GetName() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        ParameterAttributes GetAttribute() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        IType const *GetParameterType() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        Signature const &GetSignature() const { return m_pParamType->GetSignature(); };
+        IMethod const *GetMethod() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        IProperty const *GetProperty() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        ParameterProvider const &GetMember() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        IAssembly const *GetAssembly() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        IParameter const *GetSourceParameter() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        bool Equals(IParameter const *pParam) const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        size_t GetHashCode() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+        void OutDebugInfo() const { BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException()); };
+
+        IType const *m_pParamType;
+    };
+
     template<class ApiHolder>    
     void BaseInstructionGeneratorPimpl<ApiHolder>::PutInlineSignature(instruction_generator_pimpl_label_type const *_this, Operand const &operand, SimpleBlob &blob, Operand &resolvedOperand)
     {
         CPPANONYM_LOG_FUNCTION();
 
         using boost::get;
+        using boost::ptr_vector;
         using Urasandesu::CppAnonym::CppAnonymCOMException;
 
         auto *pAsmGen = _this->m_pAsmGen;
@@ -570,9 +599,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         auto const &callingConvention = t.get<0>();
         auto const *pRetType = t.get<1>();
         auto const &paramTypes = t.get<2>();
+        auto paramPtrs = ptr_vector<InlineSignatureParameter>();
         auto params = vector<IParameter const *>();
         BOOST_FOREACH (auto const &pParamType, paramTypes)
-            BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+        {
+            auto *pParam = new InlineSignatureParameter(pParamType);
+            paramPtrs.push_back(pParam);
+            params.push_back(pParam);
+        }
 
         auto sig = Signature();
         sig.Encode(callingConvention, pRetType, params);

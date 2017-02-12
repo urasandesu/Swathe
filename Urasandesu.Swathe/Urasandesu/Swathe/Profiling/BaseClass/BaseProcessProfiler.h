@@ -72,6 +72,7 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
         TempPtr<function_profiler_label_type> AttachToFunction(FunctionID functionId);
         void DetachFromFunction(FunctionID functionId);
         TempPtr<function_body_profiler_label_type> AttachToFunctionBody(FunctionID functionId, FunctionBodyID functionBodyId);
+        TempPtr<app_domain_profiler_label_type> GetCurrentAppDomain();
     
     private:
         process_profiler_pimpl_label_type *Pimpl();

@@ -133,6 +133,12 @@ namespace Urasandesu { namespace Swathe { namespace Profiling { namespace BaseCl
     }
 
     template<class ApiHolder>    
+    TempPtr<typename BaseProcessProfiler<ApiHolder>::app_domain_profiler_label_type> BaseProcessProfiler<ApiHolder>::GetCurrentAppDomain()
+    {
+        return Pimpl()->GetCurrentAppDomain();
+    }
+
+    template<class ApiHolder>    
     void BaseProcessProfiler<ApiHolder>::Initialize(profiling_info_label_type *pProfInfo)
     {
         Pimpl()->Initialize(pProfInfo);
