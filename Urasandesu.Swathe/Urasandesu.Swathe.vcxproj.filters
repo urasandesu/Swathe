@@ -5331,6 +5331,12 @@
     <ClInclude Include="Urasandesu\Swathe\Metadata\GenericParamAttributes.hpp">
       <Filter>Header Files\Urasandesu\Swathe\Metadata</Filter>
     </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\AssemblyCacheInstallFlags.h">
+      <Filter>Header Files\Urasandesu\Swathe\Fusion</Filter>
+    </ClInclude>
+    <ClInclude Include="Urasandesu\Swathe\Fusion\AssemblyCacheUninstallDispositions.h">
+      <Filter>Header Files\Urasandesu\Swathe\Fusion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Urasandesu.Swathe.rc">

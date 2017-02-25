@@ -78,6 +78,18 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
     }
 
     template<class ApiHolder>    
+    void BaseAssemblyCache<ApiHolder>::InstallAssembly(AssemblyCacheInstallFlags const &flag, path const &asmPath)
+    {
+        Pimpl()->InstallAssembly(flag, asmPath);
+    }
+
+    template<class ApiHolder>    
+    AssemblyCacheUninstallDispositions BaseAssemblyCache<ApiHolder>::UninstallAssembly(wstring const &fullName)
+    {
+        return Pimpl()->UninstallAssembly(fullName);
+    }
+
+    template<class ApiHolder>    
     void BaseAssemblyCache<ApiHolder>::Initialize(fusion_info_label_type const *pFuInfo)
     {
         Pimpl()->Initialize(pFuInfo);

@@ -408,7 +408,7 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
         {
             if (!m_pSrcType)
             {
-                BOOST_THROW_EXCEPTION(Urasandesu::CppAnonym::CppAnonymNotImplementedException());
+                // nop
             }
             else
             {

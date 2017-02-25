@@ -453,6 +453,8 @@
     <ClInclude Include="Urasandesu\Swathe\ClassLabel\SwatheStorageLabel.h" />
     <ClInclude Include="Urasandesu\Swathe\Fusion.h" />
     <ClInclude Include="Urasandesu\Swathe\Fusion\AssemblyCacheFlags.h" />
+    <ClInclude Include="Urasandesu\Swathe\Fusion\AssemblyCacheInstallFlags.h" />
+    <ClInclude Include="Urasandesu\Swathe\Fusion\AssemblyCacheUninstallDispositions.h" />
     <ClInclude Include="Urasandesu\Swathe\Fusion\AssemblyQueryTypes.h" />
     <ClInclude Include="Urasandesu\Swathe\Fusion\FusionDependsOn.h" />
     <ClInclude Include="Urasandesu\Swathe\Fusion\NewAssemblyNameFlags.h" />

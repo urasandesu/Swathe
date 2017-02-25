@@ -767,7 +767,7 @@ namespace {
         }
 
         ASSERT_TRUE(pEnumerable_Average_IEnumerable1Int32 != nullptr);
-        ASSERT_EQ(0x0600049B, pEnumerable_Average_IEnumerable1Int32->GetToken());
+        ASSERT_EQ(0x06000844, pEnumerable_Average_IEnumerable1Int32->GetToken());
     }
 
 
@@ -915,5 +915,139 @@ namespace {
         }
 
         pStubDriverGen->Save(PortableExecutableKinds::PEK_IL_ONLY, ImageFileMachine::IFM_I386);
+    }
+
+
+
+    namespace _819E4142 {
+
+        namespace Details {
+
+            using boost::filesystem::path;
+            using std::vector;
+
+            void FillPrigAssemblyToGACPaths(path const &libPath, vector<path> &prigAsmToGACPaths)
+            {
+                using boost::filesystem::directory_iterator;
+                using boost::filesystem::is_regular_file;
+                using std::regex_constants::icase;
+                using std::regex_search;
+                using std::wregex;
+
+                auto patternStr = L"(Urasandesu\\.NAnonym\\.dll)|(Urasandesu\\.Prig\\.Framework\\.dll)";
+                auto pattern = wregex(patternStr, icase);
+                for (directory_iterator i(libPath), i_end; i != i_end; ++i)
+                {
+                    if (!is_regular_file(i->status()))
+                        continue;
+            
+                    if (!regex_search(i->path().filename().native(), pattern))
+                        continue;
+            
+                    prigAsmToGACPaths.push_back(canonical(i->path()));
+                }
+            }
+
+        } // namespace Details {
+
+        using Details::FillPrigAssemblyToGACPaths;
+
+    } // namespace _819E4142 {
+
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, Fusion_API_can_install_to_GAC)
+    {
+        using namespace _819E4142;
+        using namespace Urasandesu::CppAnonym::Traits;
+        using namespace Urasandesu::Swathe;
+        using namespace Urasandesu::Swathe::Hosting;
+        using namespace Urasandesu::Swathe::Fusion;
+
+        using boost::distance;
+        using boost::filesystem::path;
+        using boost::remove_reference;
+        using std::map;
+        using std::vector;
+        using std::wstring;
+
+        auto const *pHost = HostInfo::CreateHost();
+        auto const &runtimes = pHost->GetRuntimes();
+            
+        typedef remove_reference<RemoveConst<decltype(runtimes)>::type>::type Runtimes;
+        typedef Runtimes::key_type Key;
+        typedef Runtimes::mapped_type Mapped;
+        auto orderedRuntimes = map<Key, Mapped>(runtimes.begin(), runtimes.end());
+        auto const *pLatestRuntime = (*orderedRuntimes.rbegin()).second;
+
+        auto libPath = path(L"..\\..\\..\\..\\..\\Debug\\AnyCPU");
+        auto prigAsmToGACPaths = vector<path>();
+        FillPrigAssemblyToGACPaths(libPath, prigAsmToGACPaths);
+
+        auto const *pFuInfo = pLatestRuntime->GetInfo<FusionInfo>();
+
+        {
+            auto pAsmCache = pFuInfo->NewAssemblyCache();
+            BOOST_FOREACH (auto const &prigAsmToGACPath, prigAsmToGACPaths)
+                pAsmCache->InstallAssembly(AssemblyCacheInstallFlags::ACIF_REFRESH, prigAsmToGACPath);
+        }
+
+        {
+            auto pAsmCache = pFuInfo->NewAssemblyCache();
+            BOOST_FOREACH (auto const &prigAsmToGACPath, prigAsmToGACPaths)
+            {
+                auto pCondition = pFuInfo->NewAssemblyName(prigAsmToGACPath.stem().native(), NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
+                auto pAsmNames = pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
+                ASSERT_EQ(1, distance(*pAsmNames));
+            }
+        }
+    }
+
+
+
+    CPPANONYM_TEST(Urasandesu_Swathe_Test3, Fusion_API_can_uninstall_from_GAC)
+    {
+        using namespace _819E4142;
+        using namespace Urasandesu::CppAnonym::Traits;
+        using namespace Urasandesu::Swathe;
+        using namespace Urasandesu::Swathe::Hosting;
+        using namespace Urasandesu::Swathe::Fusion;
+
+        using boost::distance;
+        using boost::filesystem::path;
+        using boost::remove_reference;
+        using std::map;
+        using std::vector;
+        using std::wstring;
+
+        auto const *pHost = HostInfo::CreateHost();
+        auto const &runtimes = pHost->GetRuntimes();
+            
+        typedef remove_reference<RemoveConst<decltype(runtimes)>::type>::type Runtimes;
+        typedef Runtimes::key_type Key;
+        typedef Runtimes::mapped_type Mapped;
+        auto orderedRuntimes = map<Key, Mapped>(runtimes.begin(), runtimes.end());
+        auto const *pLatestRuntime = (*orderedRuntimes.rbegin()).second;
+
+        auto libPath = path(L"..\\..\\..\\..\\..\\Debug\\AnyCPU");
+        auto prigAsmToGACPaths = vector<path>();
+        FillPrigAssemblyToGACPaths(libPath, prigAsmToGACPaths);
+
+        auto const *pFuInfo = pLatestRuntime->GetInfo<FusionInfo>();
+
+        {
+            auto pAsmCache = pFuInfo->NewAssemblyCache();
+            BOOST_FOREACH (auto const &prigAsmToGACPath, prigAsmToGACPaths)
+                ASSERT_TRUE(pAsmCache->UninstallAssembly(prigAsmToGACPath.stem().native()) == AssemblyCacheUninstallDispositions::ACUD_UNINSTALLED);
+        }
+
+        BOOST_FOREACH (auto const &pair, runtimes)
+        {
+            auto pAsmCache = pFuInfo->NewAssemblyCache();
+            BOOST_FOREACH (auto const &prigAsmToGACPath, prigAsmToGACPaths)
+            {
+                auto pCondition = pFuInfo->NewAssemblyName(prigAsmToGACPath.stem().native(), NewAssemblyNameFlags::NANF_CANOF_PARSE_DISPLAY_NAME);
+                auto pAsmNames = pFuInfo->EnumerateAssemblyName(pCondition, AssemblyCacheFlags::ACF_GAC);
+                ASSERT_EQ(0, distance(*pAsmNames));
+            }
+        }
     }
 }

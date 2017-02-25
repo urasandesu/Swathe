@@ -1,10 +1,10 @@
 ﻿/* 
- * File: stdafx.h
+ * File: AssemblyCacheInstallFlags.h
  * 
  * Author: Akira Sugiura (urasandesu@gmail.com)
  * 
  * 
- * Copyright (c) 2014 Akira Sugiura
+ * Copyright (c) 2017 Akira Sugiura
  *  
  *  This software is MIT License.
  *  
@@ -28,53 +28,28 @@
  */
 
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but are changed infrequently
-
 #pragma once
+#ifndef URASANDESU_SWATHE_FUSION_ASSEMBLYCACHEINSTALLFLAGS_H
+#define URASANDESU_SWATHE_FUSION_ASSEMBLYCACHEINSTALLFLAGS_H
 
-#include "targetver.h"
+namespace Urasandesu { namespace Swathe { namespace Fusion {
 
-#include <stdio.h>
-#include <tchar.h>
+    namespace AssemblyCacheInstallFlagsDetail {
 
-#ifndef URASANDESU_SWATHE_SWATHEDEPENDSON_H
-#include <Urasandesu/Swathe/SwatheDependsOn.h>
-#endif
+        struct AssemblyCacheInstallFlagsDef
+        {
+            enum type
+            {
+                ACIF_REFRESH = IASSEMBLYCACHE_INSTALL_FLAG_REFRESH, 
+                ACIF_FORCE_REFRESH = IASSEMBLYCACHE_INSTALL_FLAG_FORCE_REFRESH, 
+                ACIF_UNREACHED
+            };
+        };
 
-#include <boost/assign/std/list.hpp>
-#include <boost/assign/std/vector.hpp>
-#include <boost/detail/atomic_count.hpp>
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/range/algorithm_ext.hpp>
+    }   // AssemblyCacheInstallFlagsDetail
 
-#ifndef CPPANONYMTEST_H
-#include "CppAnonymTest.h"
-#endif
+    typedef Urasandesu::CppAnonym::SafeEnum<AssemblyCacheInstallFlagsDetail::AssemblyCacheInstallFlagsDef> AssemblyCacheInstallFlags;
 
-#ifndef ATOMICCOUNTER_H
-#include "AtomicCounter.h"
-#endif
+}}}  // namespace Urasandesu { namespace Swathe { namespace Fusion {
 
-#ifndef BASICCOUNTER_H
-#include "BasicCounter.h"
-#endif
-
-#ifndef SURVIVALCOUNTER_H
-#include "SurvivalCounter.h"
-#endif
-
-#ifndef COUNTERWITHVALUE1_H
-#include "CounterWithValue1.h"
-#endif
-
-#ifndef ACTIONCOUNER_H
-#include "ActionCouner.h"
-#endif
-
-#ifndef COUNTERWITHACTION1_H
-#include "CounterWithAction1.h"
-#endif
-
-#include <regex>
+#endif  // URASANDESU_SWATHE_FUSION_ASSEMBLYCACHEINSTALLFLAGS_H

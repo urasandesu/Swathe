@@ -76,6 +76,37 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
 
 
     template<class ApiHolder>    
+    void BaseAssemblyCachePimpl<ApiHolder>::InstallAssembly(AssemblyCacheInstallFlags const &flag, path const &asmPath)
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        auto &comAsmCache = m_pClass->GetCOMAssemblyCache();
+
+        auto hr = comAsmCache.InstallAssembly(flag.Value(), asmPath.native().c_str(), nullptr);
+        if (FAILED(hr)) 
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+    }
+
+
+
+    template<class ApiHolder>    
+    AssemblyCacheUninstallDispositions BaseAssemblyCachePimpl<ApiHolder>::UninstallAssembly(wstring const &fullName)
+    {
+        using Urasandesu::CppAnonym::CppAnonymCOMException;
+
+        auto &comAsmCache = m_pClass->GetCOMAssemblyCache();
+
+        auto ulDisposition = ULONG();
+        auto hr = comAsmCache.UninstallAssembly(0, fullName.c_str(), nullptr, &ulDisposition);
+        if (FAILED(hr)) 
+            BOOST_THROW_EXCEPTION(CppAnonymCOMException(hr));
+        
+        return AssemblyCacheUninstallDispositions(ulDisposition);
+    }
+
+
+
+    template<class ApiHolder>    
     void BaseAssemblyCachePimpl<ApiHolder>::Initialize(fusion_info_label_type const *pFuInfo)
     {
         _ASSERTE(!m_pFuInfo);

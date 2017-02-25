@@ -44,9 +44,18 @@
 #include <Urasandesu/Swathe/Fusion/AssemblyQueryTypes.h>
 #endif
 
+#ifndef URASANDESU_SWATHE_FUSION_ASSEMBLYCACHEINSTALLFLAGS_H
+#include <Urasandesu/Swathe/Fusion/AssemblyCacheInstallFlags.h>
+#endif
+
+#ifndef URASANDESU_SWATHE_FUSION_ASSEMBLYCACHEUNINSTALLDISPOSITIONS_H
+#include <Urasandesu/Swathe/Fusion/AssemblyCacheUninstallDispositions.h>
+#endif
+
 namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClassPimpl { 
 
     using boost::aligned_storage;
+    using boost::filesystem::path;
     using std::wstring;
     using Urasandesu::CppAnonym::Utilities::AutoPtr;
     
@@ -63,6 +72,8 @@ namespace Urasandesu { namespace Swathe { namespace Fusion { namespace BaseClass
         BaseAssemblyCachePimpl(assembly_cache_label_type *pClass);
 
         AutoPtr<assembly_info_label_type> QueryAssemblyInfo(AssemblyQueryTypes const &type, wstring const &assemblyFullName) const;
+        void InstallAssembly(AssemblyCacheInstallFlags const &flag, path const &asmPath);
+        AssemblyCacheUninstallDispositions UninstallAssembly(wstring const &fullName);
         
     private:
         void Initialize(fusion_info_label_type const *pFuInfo);
