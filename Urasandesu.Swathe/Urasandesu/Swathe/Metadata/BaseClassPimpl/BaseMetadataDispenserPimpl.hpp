@@ -109,6 +109,14 @@ namespace Urasandesu { namespace Swathe { namespace Metadata { namespace BaseCla
 
 
     template<class ApiHolder>    
+    TempPtr<IAssembly const> BaseMetadataDispenserPimpl<ApiHolder>::GetTempAssemblyFrom(path const &asmPath) const
+    {
+        return NewAssembly(asmPath);
+    }
+
+
+
+    template<class ApiHolder>    
     bool BaseMetadataDispenserPimpl<ApiHolder>::TryGetAssemblyWithPartialName(wstring const &name, IAssembly const *&pAsm) const
     {
         pAsm = nullptr;
